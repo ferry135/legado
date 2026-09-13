@@ -68,7 +68,7 @@
                 android:text="TXT"
                 android:maxLines="1"
                 android:maxWidth="50dp"
-                app:radius="2dp"
+                app:radius="8dp"
                 tools:ignore="HardcodedText,RtlHardcoded" />
 
             <TextView

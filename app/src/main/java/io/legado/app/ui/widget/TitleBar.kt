@@ -2,6 +2,7 @@ package io.legado.app.ui.widget
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.ColorDrawable
@@ -20,7 +21,7 @@ import com.google.android.material.appbar.AppBarLayout
 import io.legado.app.R
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.elevation
-import io.legado.app.lib.theme.primaryColor
+import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.activity
 import io.legado.app.utils.setOnApplyWindowInsetsListenerCompat
 import splitties.views.bottomPadding
@@ -58,6 +59,7 @@ class TitleBar @JvmOverloads constructor(
     private val fitStatusBar: Boolean
     private val fitNavigationBar: Boolean
     private val attachToActivity: Boolean
+    private val themeMode: Int
 
     init {
         val a = context.obtainStyledAttributes(
@@ -77,7 +79,8 @@ class TitleBar @JvmOverloads constructor(
         val titleText = a.getString(R.styleable.TitleBar_title)
         val subtitleText = a.getString(R.styleable.TitleBar_subtitle)
 
-        when (a.getInt(R.styleable.TitleBar_themeMode, 0)) {
+        themeMode = a.getInt(R.styleable.TitleBar_themeMode, 0)
+        when (themeMode) {
             1 -> inflate(context, R.layout.view_title_bar_dark, this)
             else -> inflate(context, R.layout.view_title_bar, this)
         }
@@ -177,16 +180,38 @@ class TitleBar @JvmOverloads constructor(
                 }
             }
 
-            if (AppConfig.isEInkMode) {
-                setBackgroundResource(R.drawable.bg_eink_border_bottom)
-            } else {
-                setBackgroundColor(context.primaryColor)
-            }
+            upTheme()
 
             stateListAnimator = null
-            elevation = context.elevation
+            elevation = if (themeMode == 3) 0f else context.elevation
         }
         a.recycle()
+    }
+
+    fun upTheme() {
+        if (isInEditMode) return
+        if (AppConfig.isEInkMode) {
+            setBackgroundResource(R.drawable.bg_eink_border_bottom)
+        } else if (themeMode == 1) {
+            //沉浸式：封面/播放器大图穿透工具栏
+            setBackgroundColor(Color.TRANSPARENT)
+        } else if (themeMode == 3) {
+            //融入式：与页面背景同色，状态栏自然过渡到内容区
+            setBackgroundColor(context.getCompatColor(R.color.surface))
+            toolbar.setTitleTextColor(context.getCompatColor(R.color.on_surface))
+            toolbar.setSubtitleTextColor(context.getCompatColor(R.color.on_surface_variant))
+            val iconTint = ColorStateList.valueOf(context.getCompatColor(R.color.on_surface))
+            toolbar.navigationIcon?.setTintList(iconTint)
+            toolbar.overflowIcon?.setTintList(iconTint)
+        } else {
+            //浅色工具栏：白天浅色表面，夜间深色表面，主题色只作点缀（起点读书/QQ阅读风格）
+            setBackgroundColor(context.getCompatColor(R.color.surface_container))
+            toolbar.setTitleTextColor(context.getCompatColor(R.color.on_surface))
+            toolbar.setSubtitleTextColor(context.getCompatColor(R.color.on_surface_variant))
+            val iconTint = ColorStateList.valueOf(context.getCompatColor(R.color.on_surface))
+            toolbar.navigationIcon?.setTintList(iconTint)
+            toolbar.overflowIcon?.setTintList(iconTint)
+        }
     }
 
     override fun onAttachedToWindow() {

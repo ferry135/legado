@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/btn_bg_press" />
+            <corners android:radius="@dimen/corner_radius_md" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/surface_container" />
+            <corners android:radius="@dimen/corner_radius_md" />
+            <stroke
+                android:width="0.5dp"
+                android:color="@color/outline_variant" />
+        </shape>
+    </item>
+
+</selector>

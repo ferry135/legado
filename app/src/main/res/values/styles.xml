@@ -28,6 +28,9 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primaryDark</item>
         <item name="colorAccent">@color/accent</item>
+        <item name="tabTextColor">@color/on_surface_variant</item>
+        <item name="tabSelectedTextColor">@color/on_surface</item>
+        <item name="tabIndicatorColor">@color/accent</item>
         <item name="actionOverflowMenuStyle">@style/Style.PopupMenu</item>
         <item name="android:itemTextAppearance">@style/Style.MenuItemText</item>
         <item name="android:popupMenuStyle">@style/Style.PopupMenu</item>
@@ -107,7 +110,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/font_size_normal</item>
-        <item name="android:textColor">#000</item>
+        <item name="android:textColor">@color/on_surface</item>
         <item name="android:includeFontPadding">false</item>
     </style>
 
@@ -119,12 +122,85 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/font_size_normal</item>
-        <item name="android:textColor">#676767</item>
+        <item name="android:textColor">@color/on_surface_variant</item>
         <item name="android:includeFontPadding">false</item>
     </style>
 
     <style name="Style.Text.Second.Normal.Wrap">
         <item name="android:layout_width">wrap_content</item>
+    </style>
+
+    //**********Material 3 Text Appearances**********//
+
+    <style name="TextAppearance.Legado" parent="android:Widget" />
+
+    <style name="TextAppearance.Legado.PageTitle" parent="TextAppearance.Legado">
+        <item name="android:textSize">28sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+
+    <style name="TextAppearance.Legado.Tab" parent="TextAppearance.Legado">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ThemeOverlay.Legado.Search" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:textColor">@color/on_surface</item>
+        <item name="android:editTextColor">@color/on_surface</item>
+        <item name="android:textColorHint">@color/on_surface_variant</item>
+        <item name="colorAccent">@color/design_orange</item>
+    </style>
+
+    <style name="TextAppearance.Legado.TitleLarge" parent="TextAppearance.Legado">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+
+    <style name="TextAppearance.Legado.TitleMedium" parent="TextAppearance.Legado">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+
+    <style name="TextAppearance.Legado.TitleSmall" parent="TextAppearance.Legado">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+
+    <style name="TextAppearance.Legado.BodyMedium" parent="TextAppearance.Legado">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/on_surface_variant</item>
+    </style>
+
+    <style name="TextAppearance.Legado.LabelSmall" parent="TextAppearance.Legado">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/on_surface_variant</item>
+    </style>
+
+    //**********Cards and Containers**********//
+
+    <style name="Style.Card" parent="android:Widget">
+        <item name="android:background">@drawable/bg_card</item>
+    </style>
+
+    //**********Bottom Navigation**********//
+
+    <style name="ShapeAppearance.Legado.Pill" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="Widget.Legado.BottomNavigationView.ActiveIndicator" parent="">
+        <item name="android:color">@color/bnv_item_indicator</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Legado.Pill</item>
+    </style>
+
+    <style name="Widget.Legado.BottomNavigationView" parent="Widget.Design.BottomNavigationView">
+        <item name="itemActiveIndicatorStyle">@style/Widget.Legado.BottomNavigationView.ActiveIndicator</item>
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="itemIconSize">24dp</item>
+        <item name="elevation">0dp</item>
     </style>
 
 </resources>

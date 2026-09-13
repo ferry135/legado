@@ -5,6 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
+    android:theme="@style/ThemeOverlay.AppCompat.DayNight"
     app:tabBackground="@android:color/transparent"
     app:tabRippleColor="@android:color/transparent"
-    android:theme="?attr/actionBarStyle" />
+    app:tabIndicatorColor="@color/accent"
+    app:tabSelectedTextColor="@color/on_surface"
+    app:tabTextColor="@color/on_surface_variant" />

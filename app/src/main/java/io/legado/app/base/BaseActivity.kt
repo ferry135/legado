@@ -25,6 +25,7 @@ import io.legado.app.help.config.ThemeConfig
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.lib.theme.view.ThemeBottomNavigationVIew
 import io.legado.app.ui.widget.TitleBar
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.applyBackgroundTint
@@ -49,6 +50,8 @@ abstract class BaseActivity<VB : ViewBinding>(
 ) : AppCompatActivity() {
 
     protected abstract val binding: VB
+
+    private var lastNightMode = -1
 
     val isInMultiWindow: Boolean
         @SuppressLint("ObsoleteSdkInt")
@@ -104,7 +107,16 @@ abstract class BaseActivity<VB : ViewBinding>(
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
+        val nightMode = newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val nightModeChanged = lastNightMode != -1 && lastNightMode != nightMode
+        lastNightMode = nightMode
         super.onConfigurationChanged(newConfig)
+        if (nightModeChanged) {
+            //声明了 uiMode configChanges 的 Activity 不会重建，深浅模式切换时手动同步主题存储
+            ThemeConfig.applyTheme(this)
+            findViewById<TitleBar>(R.id.title_bar)?.upTheme()
+            findViewById<ThemeBottomNavigationVIew>(R.id.bottom_navigation_view)?.upTheme()
+        }
         findViewById<TitleBar>(R.id.title_bar)
             ?.onMultiWindowModeChanged(isInMultiWindow, fullScreen)
         setupSystemBar()

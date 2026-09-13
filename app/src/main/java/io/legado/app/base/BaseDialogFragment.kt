@@ -2,6 +2,7 @@ package io.legado.app.base
 
 import android.content.DialogInterface
 import android.content.DialogInterface.OnDismissListener
+import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
@@ -80,7 +81,10 @@ abstract class BaseDialogFragment(
             view.findViewById<View>(R.id.vw_bg)?.setOnClickListener(null)
             view.setOnClickListener { dismiss() }
         } else if (!AppConfig.isEInkMode) {
-            view.setBackgroundColor(ThemeStore.backgroundColor())
+            view.background = GradientDrawable().apply {
+                setColor(ThemeStore.backgroundColor())
+                cornerRadius = 16.dpToPx().toFloat()
+            }
         }
         onFragmentCreated(view, savedInstanceState)
         observeLiveBus()

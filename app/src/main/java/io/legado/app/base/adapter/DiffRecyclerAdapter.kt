@@ -143,7 +143,8 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
     ) {
         registerListener(holder, (holder.binding as VB))
         registerItemListener(holder)
-        getItem(holder.layoutPosition)?.let {
+        //使用 bindingAdapterPosition 取适配器内局部位置，兼容 ConcatAdapter 的全局偏移
+        getItem(holder.bindingAdapterPosition)?.let {
             convert(holder, holder.binding, it, payloads)
         }
     }
@@ -151,7 +152,7 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
     private fun registerItemListener(holder: ItemViewHolder) {
         if (itemClickListener != null) {
             holder.itemView.setOnClickListener {
-                getItem(holder.layoutPosition)?.let {
+                getItem(holder.bindingAdapterPosition)?.let {
                     itemClickListener?.invoke(holder, it)
                 }
             }
@@ -159,7 +160,7 @@ abstract class DiffRecyclerAdapter<ITEM, VB : ViewBinding>(protected val context
 
         if (itemLongClickListener != null) {
             holder.itemView.onLongClick {
-                getItem(holder.layoutPosition)?.let {
+                getItem(holder.bindingAdapterPosition)?.let {
                     itemLongClickListener?.invoke(holder, it)
                 }
             }
