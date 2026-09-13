@@ -96,7 +96,10 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         initSearchView()
         initOtherView()
         initData()
-        receiptIntent(intent)
+        if (savedInstanceState == null) {
+            // 旋转屏幕重建时搜索已在 ViewModel 中继续，重新接收 intent 会导致搜索重启
+            receiptIntent(intent)
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -198,6 +201,10 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
+                if (newText.trim() == viewModel.searchKey) {
+                    // 旋转屏幕后 SearchView 恢复文本会触发此回调，不应中断正在进行的搜索
+                    return false
+                }
                 viewModel.stop()
                 binding.fbStartStop.invisible()
                 upHistory(newText.trim())
@@ -407,6 +414,8 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      * 开始搜索
      */
     private fun startSearch() {
+        // 旋转屏幕重建并恢复搜索时，输入帮助不会因焦点变化而隐藏
+        visibleInputHelp(false)
         binding.refreshProgressBar.visible()
         binding.refreshProgressBar.isAutoLoading = true
         binding.fbStartStop.setImageResource(R.drawable.ic_stop_black_24dp)
