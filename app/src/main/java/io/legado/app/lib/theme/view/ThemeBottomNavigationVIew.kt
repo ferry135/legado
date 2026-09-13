@@ -1,6 +1,7 @@
 package io.legado.app.lib.theme.view
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
@@ -20,16 +21,10 @@ import io.legado.app.utils.ColorUtils
 class ThemeBottomNavigationVIew(context: Context, attrs: AttributeSet) :
     BottomNavigationView(context, attrs) {
 
+    private var lastUiMode = context.resources.configuration.uiMode
+
     init {
-        val bgColor = context.bottomBackground
-        setBackgroundColor(bgColor)
-        val textIsDark = ColorUtils.isColorLight(bgColor)
-        val textColor = context.getSecondaryTextColor(textIsDark)
-        val colorStateList = Selector.colorBuild()
-            .setDefaultColor(textColor)
-            .setSelectedColor(ThemeStore.accentColor(context)).create()
-        itemIconTintList = colorStateList
-        itemTextColor = colorStateList
+        upTheme()
 
         if (AppConfig.isEInkMode) {
             isItemHorizontalTranslationEnabled = false
@@ -37,6 +32,29 @@ class ThemeBottomNavigationVIew(context: Context, attrs: AttributeSet) :
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(this, null)
+    }
+
+    fun upTheme() {
+        val bgColor = context.bottomBackground
+        setBackgroundColor(bgColor)
+        //与页面保持同层，无投影分层感
+        elevation = 0f
+        val textIsDark = ColorUtils.isColorLight(bgColor)
+        val textColor = context.getSecondaryTextColor(textIsDark)
+        val colorStateList = Selector.colorBuild()
+            .setDefaultColor(textColor)
+            .setSelectedColor(ThemeStore.accentColor(context)).create()
+        itemIconTintList = colorStateList
+        itemTextColor = colorStateList
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        //声明了 uiMode configChanges 的 Activity 不会被重建，深浅模式切换时在这里重新着色
+        if (newConfig.uiMode != lastUiMode) {
+            lastUiMode = newConfig.uiMode
+            upTheme()
+        }
     }
 
     fun addBadgeView(index: Int): BadgeView {

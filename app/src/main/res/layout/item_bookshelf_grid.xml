@@ -76,8 +76,8 @@
             android:lines="2"
             android:scrollbars="none"
             android:text="@string/book_name"
-            android:textColor="@color/primaryText"
-            android:textSize="12sp"
+            android:textColor="@color/on_surface"
+            android:textSize="13sp"
             tools:ignore="RtlHardcoded,RtlSymmetry" />
 
     </LinearLayout>

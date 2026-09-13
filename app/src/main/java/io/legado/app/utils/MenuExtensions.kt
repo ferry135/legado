@@ -101,11 +101,11 @@ object MenuExtensions {
         val defaultTextColor = context.getCompatColor(R.color.primaryText)
         if (requiresOverflow)
             return defaultTextColor
-        val primaryTextColor = context.primaryTextColor
         return when (theme) {
             Theme.Dark -> context.getCompatColor(R.color.md_white_1000)
             Theme.Light -> context.getCompatColor(R.color.md_black_1000)
-            else -> primaryTextColor
+            //浅色工具栏：图标跟随表面明暗（起点读书/QQ阅读风格）
+            else -> context.getCompatColor(R.color.on_surface)
         }
     }
 

@@ -13,14 +13,17 @@
         android:layout_weight="1"
         tools:ignore="SpeakableTextPresentCheck" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_subtle" />
+
     <io.legado.app.lib.theme.view.ThemeBottomNavigationVIew
         android:id="@+id/bottom_navigation_view"
+        style="@style/Widget.Legado.BottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/background"
-        android:minHeight="50dp"
-        app:itemActiveIndicatorStyle="@color/transparent"
-        app:labelVisibilityMode="unlabeled"
         app:menu="@menu/main_bnv" />
 
 </LinearLayout>

@@ -5,19 +5,18 @@
     android:id="@+id/cv_content"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_item_focused_on_tv"
+    android:minHeight="160dp"
     android:clickable="true"
     android:focusable="true"
-    android:scrollbars="none"
+    android:paddingStart="24dp"
+    android:paddingTop="16dp"
+    android:paddingEnd="24dp"
     tools:ignore="UnusedAttribute">
 
     <io.legado.app.ui.widget.image.CoverImageView
         android:id="@+id/iv_cover"
-        android:layout_width="66dp"
-        android:layout_height="90dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="12dp"
+        android:layout_width="88dp"
+        android:layout_height="123dp"
         android:contentDescription="@string/img_cover"
         android:scaleType="centerCrop"
         android:src="@drawable/image_cover_default"
@@ -27,13 +26,26 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="UnusedAttribute" />
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_row_more"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/more"
+        android:padding="4dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_more_vert"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/on_surface_variant"
+        tools:ignore="RtlHardcoded" />
+
     <FrameLayout
         android:id="@+id/fl_has_new"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="@+id/tv_name"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/iv_row_more"
         app:layout_constraintTop_toTopOf="@+id/tv_name">
 
         <io.legado.app.ui.widget.text.BadgeView
@@ -60,21 +72,20 @@
         android:id="@+id/tv_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginStart="16dp"
         android:includeFontPadding="false"
-        android:paddingLeft="2dp"
-        android:paddingBottom="4dp"
         android:scrollbars="none"
         android:singleLine="true"
         android:text="@string/book_name"
         android:textColor="@color/primaryText"
-        android:textSize="16sp"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/tv_author"
         app:layout_constraintLeft_toRightOf="@+id/iv_cover"
         app:layout_constraintRight_toLeftOf="@id/fl_has_new"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="RtlHardcoded,RtlSymmetry" />
+        app:layout_constraintVertical_chainStyle="spread_inside"
+        tools:ignore="RtlHardcoded" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_author"
@@ -102,7 +113,7 @@
         android:singleLine="true"
         android:text="@string/author"
         android:textColor="@color/tv_text_summary"
-        android:textSize="13sp"
+        android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@+id/tv_read"
         app:layout_constraintLeft_toRightOf="@+id/iv_author"
         app:layout_constraintRight_toLeftOf="@id/tv_last_update_time"
@@ -120,9 +131,9 @@
         android:singleLine="true"
         android:text=""
         android:textColor="@color/tv_text_summary"
-        android:textSize="13sp"
+        android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@+id/tv_read"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toRightOf="@+id/tv_author"
         app:layout_constraintRight_toRightOf="@id/fl_has_new"
         app:layout_constraintTop_toBottomOf="@+id/tv_name"
@@ -136,7 +147,7 @@
         android:paddingStart="2dp"
         android:paddingEnd="2dp"
         android:scrollbars="none"
-        android:src="@drawable/ic_history"
+        android:src="@drawable/ic_book_last"
         app:layout_constraintBottom_toBottomOf="@+id/tv_read"
         app:layout_constraintLeft_toLeftOf="@+id/tv_name"
         app:layout_constraintTop_toTopOf="@+id/tv_read"
@@ -152,7 +163,7 @@
         android:singleLine="true"
         android:text="@string/read_dur_progress"
         android:textColor="@color/tv_text_summary"
-        android:textSize="13sp"
+        android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@id/tv_last"
         app:layout_constraintLeft_toRightOf="@+id/iv_read"
         app:layout_constraintRight_toRightOf="@+id/fl_has_new"
@@ -167,7 +178,7 @@
         android:paddingStart="2dp"
         android:paddingEnd="2dp"
         android:scrollbars="none"
-        android:src="@drawable/ic_book_last"
+        android:src="@drawable/ic_history"
         app:layout_constraintBottom_toBottomOf="@+id/tv_last"
         app:layout_constraintLeft_toLeftOf="@+id/tv_name"
         app:layout_constraintTop_toTopOf="@+id/tv_last"
@@ -178,12 +189,12 @@
         android:id="@+id/tv_last"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:scrollbars="none"
         android:singleLine="true"
         android:text="@string/lasted_show"
         android:textColor="@color/tv_text_summary"
-        android:textSize="13sp"
+        android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/iv_last"
         app:layout_constraintRight_toRightOf="@id/fl_has_new"
@@ -200,5 +211,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
         tools:layout_editor_absoluteX="0dp" />
+
+    <View
+        android:id="@+id/vw_divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/divider_subtle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@+id/tv_name"
+        app:layout_constraintRight_toRightOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

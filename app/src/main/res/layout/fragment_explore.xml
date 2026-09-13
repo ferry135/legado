@@ -13,6 +13,7 @@
         app:attachToActivity="false"
         app:contentLayout="@layout/view_search"
         app:layout_constraintTop_toTopOf="parent"
+        app:themeMode="blend"
         app:title="@string/discovery" />
 
     <io.legado.app.ui.widget.recycler.RecyclerViewAtPager2
@@ -29,6 +30,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:gravity="center"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="14sp"
         android:visibility="gone"
         android:text="@string/explore_empty"
         app:layout_constraintTop_toBottomOf="@+id/title_bar"

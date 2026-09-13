@@ -120,7 +120,7 @@ val Context.buttonDisabledColor: Int
     }
 
 val Context.isDarkTheme: Boolean
-    get() = ColorUtils.isColorLight(ThemeStore.primaryColor(this))
+    get() = !ColorUtils.isColorLight(ThemeStore.backgroundColor(this))
 
 val Fragment.isDarkTheme: Boolean
     get() = requireContext().isDarkTheme

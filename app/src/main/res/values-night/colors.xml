@@ -1,14 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    //**********Material 3 语义令牌（暖黑层级化表面）**********//
+    <color name="surface">#141312</color>
+    <color name="surface_container">#1D1B19</color>
+    <color name="surface_container_high">#242220</color>
+    <color name="surface_hero">#1D1B19</color>
+    <color name="bnv_item_indicator">#3A241B</color>
+    <color name="on_surface">#F3F0EB</color>
+    <color name="on_surface_variant">#B4B0AA</color>
+    <color name="divider_subtle">#0FFFFFFF</color>
+    <color name="progress_track">#353331</color>
+    <color name="hero_stroke">#14FFFFFF</color>
+    <color name="go_circle">#14FFFFFF</color>
+    <color name="outline">#8F8B7F</color>
+    <color name="outline_variant">#36342E</color>
+    <color name="primary_container">#004C64</color>
+    <color name="on_primary_container">#C2E8FF</color>
+    <color name="scrim">#66000000</color>
+
     <color name="primary">@color/md_blue_grey_600</color>
     <color name="primaryDark">@color/md_blue_grey_700</color>
     <color name="accent">@color/md_deep_orange_800</color>
 
     <color name="disabled">@color/md_dark_disabled</color>
 
-    <color name="background">@color/md_grey_900</color>
-    <color name="background_card">@color/md_grey_850</color>
-    <color name="background_menu">@color/md_grey_800</color>
+    <color name="background">@color/surface</color>
+    <color name="background_card">@color/surface_container</color>
+    <color name="background_menu">@color/surface_container_high</color>
     <color name="background_prefs">#10303030</color>
 
     <color name="night_mask">#69000000</color>
@@ -18,7 +36,10 @@
     <color name="transparent30">#30ffffff</color>
     <color name="transparent50">#50ffffff</color>
 
-    <color name="bg_divider_line">#363636</color>
+    <color name="error">#FFB4AB</color>
+    <color name="success">#7FD891</color>
+
+    <color name="bg_divider_line">@color/outline_variant</color>
 
     <color name="btn_bg_press">#634D4D4D</color>
     <color name="btn_bg_press_2">#63686868</color>
@@ -29,14 +50,14 @@
     <color name="tv_btn_normal_black">#737373</color>
     <color name="tv_btn_press_black">#565656</color>
 
-    <color name="primaryText">#ffffffff</color>
-    <color name="secondaryText">#b3ffffff</color>
-    <color name="tv_text_summary">#B3B3B3</color>
-    <color name="menu_color_default">#b7b7b7</color>
+    <color name="primaryText">@color/on_surface</color>
+    <color name="secondaryText">@color/on_surface_variant</color>
+    <color name="tv_text_summary">@color/on_surface_variant</color>
+    <color name="menu_color_default">@color/on_surface</color>
 
 
     <color name="tv_text_button_nor">#303030</color>
 
     <!--statusBarBackground-->
-    <color name="navigation_bar_bag">#222222</color>
+    <color name="navigation_bar_bag">#2A2925</color>
 </resources>

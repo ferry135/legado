@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
+import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.data.entities.Book
 import io.legado.app.databinding.ItemBookshelfListBinding
@@ -35,7 +36,7 @@ class BooksAdapterList(
             tvName.text = item.name
             tvAuthor.text = item.author
             tvRead.text = item.durChapterTitle
-            tvLast.text = item.latestChapterTitle
+            upReadProgress(binding, item)
             ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
             upRefresh(binding, item)
             upLastUpdateTime(binding, item)
@@ -47,7 +48,7 @@ class BooksAdapterList(
                         "name" -> tvName.text = item.name
                         "author" -> tvAuthor.text = item.author
                         "dur" -> tvRead.text = item.durChapterTitle
-                        "last" -> tvLast.text = item.latestChapterTitle
+                        "last" -> upReadProgress(binding, item)
                         "cover" -> ivCover.load(
                             item.getDisplayCover(),
                             item.name,
@@ -63,6 +64,24 @@ class BooksAdapterList(
                     }
                 }
             }
+        }
+    }
+
+    private fun upReadProgress(binding: ItemBookshelfListBinding, item: Book) {
+        val progressText = buildString {
+            val percent = if (item.totalChapterNum > 0) {
+                ((item.durChapterIndex + 1) * 100 / item.totalChapterNum).coerceIn(0, 100)
+            } else {
+                0
+            }
+            if (percent > 0) {
+                append(context.getString(R.string.read_percent, percent))
+                append(" · ")
+            }
+            append(item.durChapterTime.toTimeAgo())
+        }
+        if (binding.tvLast.text != progressText) {
+            binding.tvLast.text = progressText
         }
     }
 
@@ -95,15 +114,20 @@ class BooksAdapterList(
     override fun registerListener(holder: ItemViewHolder, binding: ItemBookshelfListBinding) {
         holder.itemView.apply {
             setOnClickListener {
-                getItem(holder.layoutPosition)?.let {
+                getItem(holder.bindingAdapterPosition)?.let {
                     callBack.open(it)
                 }
             }
 
             onLongClick {
-                getItem(holder.layoutPosition)?.let {
+                getItem(holder.bindingAdapterPosition)?.let {
                     callBack.openBookInfo(it)
                 }
+            }
+        }
+        binding.ivRowMore.setOnClickListener {
+            getItem(holder.bindingAdapterPosition)?.let {
+                callBack.openBookInfo(it)
             }
         }
     }

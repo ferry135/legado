@@ -37,6 +37,8 @@
         android:layout_margin="16dp"
         android:gravity="center"
         android:text="@string/bookshelf_empty"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="14sp"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/title_bar"
         app:layout_constraintBottom_toBottomOf="parent"

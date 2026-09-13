@@ -190,13 +190,13 @@ object ThemeConfig {
 
     fun saveDayTheme(context: Context, name: String) {
         val primary =
-            context.getPrefInt(PreferKey.cPrimary, context.getCompatColor(R.color.md_brown_500))
+            context.getPrefInt(PreferKey.cPrimary, context.getCompatColor(R.color.design_orange))
         val accent =
-            context.getPrefInt(PreferKey.cAccent, context.getCompatColor(R.color.md_red_600))
+            context.getPrefInt(PreferKey.cAccent, context.getCompatColor(R.color.design_orange))
         val background =
             context.getPrefInt(PreferKey.cBackground, context.getCompatColor(R.color.md_grey_100))
         val bBackground =
-            context.getPrefInt(PreferKey.cBBackground, context.getCompatColor(R.color.md_grey_200))
+            context.getPrefInt(PreferKey.cBBackground, context.getCompatColor(R.color.day_bottom_nav))
         val config = Config(
             themeName = name,
             isNightTheme = false,
@@ -212,17 +212,17 @@ object ThemeConfig {
         val primary =
             context.getPrefInt(
                 PreferKey.cNPrimary,
-                context.getCompatColor(R.color.md_blue_grey_600)
+                context.getCompatColor(R.color.design_orange)
             )
         val accent =
             context.getPrefInt(
                 PreferKey.cNAccent,
-                context.getCompatColor(R.color.md_deep_orange_800)
+                context.getCompatColor(R.color.design_orange)
             )
         val background =
             context.getPrefInt(PreferKey.cNBackground, context.getCompatColor(R.color.md_grey_900))
         val bBackground =
-            context.getPrefInt(PreferKey.cNBBackground, context.getCompatColor(R.color.md_grey_850))
+            context.getPrefInt(PreferKey.cNBBackground, context.getCompatColor(R.color.night_bottom_nav))
         val config = Config(
             themeName = name,
             isNightTheme = true,
@@ -249,18 +249,31 @@ object ThemeConfig {
             }
 
             AppConfig.isNightTheme -> {
-                val primary =
-                    getPrefInt(PreferKey.cNPrimary, getCompatColor(R.color.md_blue_grey_600))
-                val accent =
-                    getPrefInt(PreferKey.cNAccent, getCompatColor(R.color.md_deep_orange_800))
-                var background =
-                    getPrefInt(PreferKey.cNBackground, getCompatColor(R.color.md_grey_900))
+                val primary = getPrefInt(PreferKey.cNPrimary, -1)
+                    .takeIf {
+                        it != -1 && it != getCompatColor(R.color.md_blue_grey_600)
+                                && it != getCompatColor(R.color.md_red_600)
+                    }
+                    ?: getCompatColor(R.color.design_orange)
+                val accent = getPrefInt(PreferKey.cNAccent, -1)
+                    .takeIf {
+                        it != -1 && it != getCompatColor(R.color.md_deep_orange_800)
+                                && it != getCompatColor(R.color.md_red_600)
+                    }
+                    ?: getCompatColor(R.color.design_orange)
+                var background = getPrefInt(PreferKey.cNBackground, -1)
+                    .takeIf { it != -1 && it != getCompatColor(R.color.md_grey_900) }
+                    ?: getCompatColor(R.color.night_surface)
                 if (ColorUtils.isColorLight(background)) {
-                    background = getCompatColor(R.color.md_grey_900)
+                    background = getCompatColor(R.color.night_surface)
                     putPrefInt(PreferKey.cNBackground, background)
                 }
-                val bBackground =
-                    getPrefInt(PreferKey.cNBBackground, getCompatColor(R.color.md_grey_850))
+                val bBackground = getPrefInt(PreferKey.cNBBackground, -1)
+                    .takeIf {
+                        it != -1 && it != getCompatColor(R.color.md_grey_850)
+                                && it != getCompatColor(R.color.legacy_bottom_night)
+                    }
+                    ?: getCompatColor(R.color.night_bottom_nav)
                 ThemeStore.editTheme(this)
                     .primaryColor(ColorUtils.withAlpha(primary, 1f))
                     .accentColor(ColorUtils.withAlpha(accent, 1f))
@@ -270,18 +283,28 @@ object ThemeConfig {
             }
 
             else -> {
-                val primary =
-                    getPrefInt(PreferKey.cPrimary, getCompatColor(R.color.md_brown_500))
-                val accent =
-                    getPrefInt(PreferKey.cAccent, getCompatColor(R.color.md_red_600))
-                var background =
-                    getPrefInt(PreferKey.cBackground, getCompatColor(R.color.md_grey_100))
+                val primary = getPrefInt(PreferKey.cPrimary, -1)
+                    .takeIf {
+                        it != -1 && it != getCompatColor(R.color.md_brown_500)
+                                && it != getCompatColor(R.color.md_red_600)
+                    }
+                    ?: getCompatColor(R.color.design_orange)
+                val accent = getPrefInt(PreferKey.cAccent, -1)
+                    .takeIf { it != -1 && it != getCompatColor(R.color.md_red_600) }
+                    ?: getCompatColor(R.color.design_orange)
+                var background = getPrefInt(PreferKey.cBackground, -1)
+                    .takeIf { it != -1 && it != getCompatColor(R.color.md_grey_100) }
+                    ?: getCompatColor(R.color.day_surface)
                 if (!ColorUtils.isColorLight(background)) {
-                    background = getCompatColor(R.color.md_grey_100)
+                    background = getCompatColor(R.color.day_surface)
                     putPrefInt(PreferKey.cBackground, background)
                 }
-                val bBackground =
-                    getPrefInt(PreferKey.cBBackground, getCompatColor(R.color.md_grey_200))
+                val bBackground = getPrefInt(PreferKey.cBBackground, -1)
+                    .takeIf {
+                        it != -1 && it != getCompatColor(R.color.md_grey_200)
+                                && it != getCompatColor(R.color.legacy_bottom_day)
+                    }
+                    ?: getCompatColor(R.color.day_bottom_nav)
                 ThemeStore.editTheme(this)
                     .primaryColor(ColorUtils.withAlpha(primary, 1f))
                     .accentColor(ColorUtils.withAlpha(accent, 1f))

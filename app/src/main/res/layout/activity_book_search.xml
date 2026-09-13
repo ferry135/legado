@@ -13,6 +13,7 @@
         app:contentInsetStartWithNavigation="0dp"
         app:contentLayout="@layout/view_search"
         app:layout_constraintTop_toTopOf="parent"
+        app:themeMode="blend"
         app:title="搜索" />
 
     <io.legado.app.ui.widget.anima.RefreshProgressBar
