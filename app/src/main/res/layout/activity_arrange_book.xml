@@ -12,6 +12,7 @@
         app:contentInsetStartWithNavigation="0dp"
         app:contentLayout="@layout/view_search"
         app:layout_constraintTop_toTopOf="parent"
+        app:themeMode="blend"
         app:title="@string/bookshelf_management" />
 
     <io.legado.app.ui.widget.recycler.scroller.FastScrollRecyclerView

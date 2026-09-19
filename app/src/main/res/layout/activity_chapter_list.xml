@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:contentInsetStartWithNavigation="0dp"
-        app:contentLayout="@layout/view_tab_layout" />
+        app:contentLayout="@layout/view_tab_layout"
+        app:themeMode="blend" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager"
