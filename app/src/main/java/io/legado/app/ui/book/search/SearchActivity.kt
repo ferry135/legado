@@ -13,6 +13,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -310,8 +311,10 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             adapter.setItems(it)
         }
         lifecycleScope.launch {
-            appDb.bookSourceDao.flowEnabledGroups().collect {
-                groups = it
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appDb.bookSourceDao.flowEnabledGroups().collect {
+                    groups = it
+                }
             }
         }
         lifecycleScope.launch {
@@ -380,7 +383,10 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 binding.tvBookShow.gone()
                 binding.rvBookshelfSearch.gone()
             } else {
-                appDb.bookDao.flowSearch(key).conflate().collect {
+                appDb.bookDao.flowSearch(key)
+                    .conflate()
+                    .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                    .collect {
                     if (it.isEmpty()) {
                         binding.tvBookShow.gone()
                         binding.rvBookshelfSearch.gone()
@@ -399,7 +405,9 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 else -> appDb.searchKeywordDao.flowSearch(key)
             }.catch {
                 AppLog.put("搜索界面获取搜索历史数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).conflate().collect {
+            }.flowOn(IO).conflate()
+                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                .collect {
                 historyKeyAdapter.setItems(it)
                 if (it.isEmpty()) {
                     binding.tvClearHistory.invisible()
