@@ -27,25 +27,29 @@ data class ImageColumn(
 
         val height = textLine.height
 
-        val bitmap = ImageProvider.getImage(
+        // 锁定绘制期间的 bitmap，防止其他线程淘汰缓存时将其回收
+        val bitmap = ImageProvider.getImageAndPin(
             book,
             src,
             (end - start).toInt(),
             height.toInt()
         )
-
-        val rectF = if (textLine.isImage) {
-            RectF(start, 0f, end, height)
-        } else {
-            /*以宽度为基准保持图片的原始比例叠加，当div为负数时，允许高度比字符更高*/
-            val h = (end - start) / bitmap.width * bitmap.height
-            val div = (height - h) / 2
-            RectF(start, div, end, height - div)
-        }
-        kotlin.runCatching {
-            canvas.drawBitmap(bitmap, null, rectF, view.imagePaint)
-        }.onFailure { e ->
-            appCtx.toastOnUi(e.localizedMessage)
+        try {
+            val rectF = if (textLine.isImage) {
+                RectF(start, 0f, end, height)
+            } else {
+                /*以宽度为基准保持图片的原始比例叠加，当div为负数时，允许高度比字符更高*/
+                val h = (end - start) / bitmap.width * bitmap.height
+                val div = (height - h) / 2
+                RectF(start, div, end, height - div)
+            }
+            kotlin.runCatching {
+                canvas.drawBitmap(bitmap, null, rectF, view.imagePaint)
+            }.onFailure { e ->
+                appCtx.toastOnUi(e.localizedMessage)
+            }
+        } finally {
+            ImageProvider.bitmapLruCache.unpin(bitmap)
         }
     }
 

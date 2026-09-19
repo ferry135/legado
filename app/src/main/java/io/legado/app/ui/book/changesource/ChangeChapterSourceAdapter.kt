@@ -127,13 +127,13 @@ class ChangeChapterSourceAdapter(
             if (binding.ivBad.isVisible) {
                 DrawableCompat.setTint(binding.ivGood.drawable, appCtx.getCompatColor(R.color.md_red_A200))
                 binding.ivBad.gone()
-                getItem(holder.layoutPosition)?.let {
+                getItem(holder.bindingAdapterPosition)?.let {
                     callBack.setBookScore(it, 1)
                 }
             } else {
                 DrawableCompat.setTint(binding.ivGood.drawable, appCtx.getCompatColor(R.color.md_red_100))
                 binding.ivBad.visible()
-                getItem(holder.layoutPosition)?.let {
+                getItem(holder.bindingAdapterPosition)?.let {
                     callBack.setBookScore(it, 0)
                 }
             }
@@ -142,24 +142,24 @@ class ChangeChapterSourceAdapter(
             if (binding.ivGood.isVisible) {
                 DrawableCompat.setTint(binding.ivBad.drawable, appCtx.getCompatColor(R.color.md_blue_A200))
                 binding.ivGood.gone()
-                getItem(holder.layoutPosition)?.let {
+                getItem(holder.bindingAdapterPosition)?.let {
                     callBack.setBookScore(it, -1)
                 }
             } else {
                 DrawableCompat.setTint(binding.ivBad.drawable, appCtx.getCompatColor(R.color.md_blue_100))
                 binding.ivGood.visible()
-                getItem(holder.layoutPosition)?.let {
+                getItem(holder.bindingAdapterPosition)?.let {
                     callBack.setBookScore(it, 0)
                 }
             }
         }
         holder.itemView.setOnClickListener {
-            getItem(holder.layoutPosition)?.let {
+            getItem(holder.bindingAdapterPosition)?.let {
                 callBack.openToc(it)
             }
         }
         holder.itemView.onLongClick {
-            showMenu(holder.itemView, getItem(holder.layoutPosition))
+            showMenu(holder.itemView, getItem(holder.bindingAdapterPosition))
         }
     }
 

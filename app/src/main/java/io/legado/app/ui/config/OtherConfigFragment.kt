@@ -63,6 +63,7 @@ class OtherConfigFragment : PreferenceFragment(),
         upPreferenceSummary(PreferKey.preDownloadNum, AppConfig.preDownloadNum.toString())
         upPreferenceSummary(PreferKey.threadCount, AppConfig.threadCount.toString())
         upPreferenceSummary(PreferKey.webPort, AppConfig.webPort.toString())
+        upPreferenceSummary(PreferKey.webToken, AppConfig.webToken)
         AppConfig.defaultBookTreeUri?.let {
             upPreferenceSummary(PreferKey.defaultBookTreeUri, it)
         }
@@ -109,6 +110,8 @@ class OtherConfigFragment : PreferenceFragment(),
                 .show {
                     AppConfig.threadCount = it
                 }
+
+            PreferKey.webToken -> showWebTokenDialog()
 
             PreferKey.webPort -> NumberPickerDialog(requireContext())
                 .setTitle(getString(R.string.web_port_title))
@@ -177,6 +180,10 @@ class OtherConfigFragment : PreferenceFragment(),
                     WebService.stop(requireContext())
                     WebService.start(requireContext())
                 }
+            }
+
+            PreferKey.webToken -> {
+                upPreferenceSummary(key, AppConfig.webToken)
             }
 
             PreferKey.defaultBookTreeUri -> {
@@ -249,6 +256,25 @@ class OtherConfigFragment : PreferenceFragment(),
     }
 
     @SuppressLint("InflateParams")
+    private fun showWebTokenDialog() {
+        alert(getString(R.string.web_token_title)) {
+            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.hint = getString(R.string.web_token_summary)
+                editView.setText(AppConfig.webToken)
+            }
+            customView { alertBinding.root }
+            okButton {
+                val token = alertBinding.editView.text?.toString()?.trim()
+                if (token.isNullOrBlank()) {
+                    removePref(PreferKey.webToken)
+                } else {
+                    putPrefString(PreferKey.webToken, token)
+                }
+            }
+            cancelButton()
+        }
+    }
+
     private fun showUserAgentDialog() {
         alert(getString(R.string.user_agent)) {
             val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {

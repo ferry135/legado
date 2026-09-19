@@ -7,6 +7,7 @@ import io.legado.app.api.controller.BookController
 import io.legado.app.api.controller.BookSourceController
 import io.legado.app.api.controller.ReplaceRuleController
 import io.legado.app.api.controller.RssSourceController
+import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.service.WebService
 import io.legado.app.utils.GSON
@@ -34,13 +35,24 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
             "${session.method.name} - $uri - ${session.queryParameterString} - Start($startAt)"
         }
 
+        // 配置了访问令牌后，数据接口需携带令牌；静态页面保持开放，
+        // 浏览器用户用 ?token=xxx 打开一次即可通过 Cookie 继续访问
+        val token = AppConfig.webToken
+        val tokenValid = checkToken(session, token)
+        if (!tokenValid && uri in apiUris) {
+            return newFixedLengthResponse(Response.Status.UNAUTHORIZED, "text/plain", "unauthorized")
+        }
+
         try {
             when (session.method) {
                 Method.OPTIONS -> {
                     val response = newFixedLengthResponse("")
                     response.addHeader("Access-Control-Allow-Methods", "POST")
                     response.addHeader("Access-Control-Allow-Headers", "content-type")
-                    response.addHeader("Access-Control-Allow-Origin", session.headers["origin"])
+                    // 不回显任意 Origin；仅在持有有效令牌时允许跨域
+                    if (token.isNotBlank() && tokenValid) {
+                        response.addHeader("Access-Control-Allow-Origin", session.headers["origin"])
+                    }
                     //response.addHeader("Access-Control-Max-Age", "3600");
                     return response
                 }
@@ -97,7 +109,9 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
             if (returnData == null) {
                 if (uri.endsWith("/"))
                     uri += "index.html"
-                return assetsWeb.getResponse(uri)
+                val response = assetsWeb.getResponse(uri)
+                addCommonHeaders(response, session, token, tokenValid)
+                return response
             }
 
             val response = if (returnData.data is Bitmap) {
@@ -130,8 +144,7 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                     newFixedLengthResponse(GSON.toJson(returnData))
                 }
             }
-            response.addHeader("Access-Control-Allow-Methods", "GET, POST")
-            response.addHeader("Access-Control-Allow-Origin", session.headers["origin"])
+            addCommonHeaders(response, session, token, tokenValid)
             LogUtils.d(TAG) {
                 "${session.method.name} - $uri - ${session.queryParameterString} - End($startAt)"
             }
@@ -145,8 +158,47 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
 
     }
 
+    private fun checkToken(session: IHTTPSession, token: String): Boolean {
+        if (token.isBlank()) {
+            return true
+        }
+        if (session.parameters["token"]?.firstOrNull() == token) {
+            return true
+        }
+        if (session.headers["authorization"] == "Bearer $token") {
+            return true
+        }
+        return session.cookies.read("authToken") == token
+    }
+
+    private fun addCommonHeaders(
+        response: Response,
+        session: IHTTPSession,
+        token: String,
+        tokenValid: Boolean
+    ) {
+        if (token.isNotBlank() && tokenValid) {
+            response.addHeader("Access-Control-Allow-Methods", "GET, POST")
+            response.addHeader("Access-Control-Allow-Origin", session.headers["origin"])
+            // 通过 ?token= 访问时种下 Cookie，浏览器后续请求自动携带
+            if (session.parameters["token"]?.firstOrNull() == token) {
+                response.addHeader("Set-Cookie", "authToken=$token; Path=/")
+            }
+        }
+    }
+
     companion object {
         private const val TAG = "HttpServer"
+
+        private val apiUris = setOf(
+            "/saveBookSource", "/saveBookSources", "/deleteBookSources",
+            "/saveBook", "/deleteBook", "/saveBookProgress", "/addLocalBook",
+            "/saveReadConfig", "/saveRssSource", "/saveRssSources", "/deleteRssSources",
+            "/saveReplaceRule", "/deleteReplaceRule", "/testReplaceRule",
+            "/getBookSource", "/getBookSources", "/getBookshelf", "/getChapterList",
+            "/refreshToc", "/getBookContent", "/cover", "/image", "/getReadConfig",
+            "/getRssSource", "/getRssSources", "/getReplaceRules"
+        )
     }
 
 }

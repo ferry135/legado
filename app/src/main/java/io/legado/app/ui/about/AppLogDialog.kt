@@ -77,7 +77,7 @@ class AppLogDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemAppLogBinding) {
             binding.root.onClick {
-                getItem(holder.layoutPosition)?.let { item ->
+                getItem(holder.bindingAdapterPosition)?.let { item ->
                     item.third?.let {
                         showDialogFragment(TextDialog("Log", it.stackTraceToString()))
                     }

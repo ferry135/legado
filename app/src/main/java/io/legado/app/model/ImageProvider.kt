@@ -52,6 +52,10 @@ object ImageProvider {
     class BitmapLruCache : LruCache<String, Bitmap>(cacheSize) {
 
         private var removeCount = 0
+        /** 正在绘制的 bitmap，绘制期间不回收 */
+        private val pinned = HashSet<Bitmap>()
+        /** 淘汰时仍被绘制持有，等待 unpin 后再回收 */
+        private val pendingRecycle = HashSet<Bitmap>()
 
         val count get() = putCount() + createCount() - evictionCount() - removeCount
 
@@ -72,9 +76,49 @@ object ImageProvider {
             }
             //错误图片不能释放,占位用,防止一直重复获取图片
             if (oldValue != errorBitmap) {
-                oldValue.recycle()
-                //putDebug("ImageProvider: trigger bitmap recycle. URI: $filePath")
-                //putDebug("ImageProvider : cacheUsage ${size()}bytes / ${maxSize()}bytes")
+                val recycleNow = synchronized(this) {
+                    if (oldValue in pinned) {
+                        pendingRecycle.add(oldValue)
+                        false
+                    } else {
+                        true
+                    }
+                }
+                if (recycleNow) {
+                    oldValue.recycle()
+                }
+            }
+        }
+
+        /**
+         * 取图并在绘制期间锁定，防止绘制中 bitmap 被淘汰线程回收导致崩溃
+         */
+        fun getAndPin(key: String): Bitmap? {
+            synchronized(this) {
+                val bitmap = get(key) ?: return null
+                if (bitmap.isRecycled) {
+                    remove(key)
+                    return null
+                }
+                pinned.add(bitmap)
+                return bitmap
+            }
+        }
+
+        fun pin(bitmap: Bitmap) {
+            synchronized(this) {
+                if (!bitmap.isRecycled) {
+                    pinned.add(bitmap)
+                }
+            }
+        }
+
+        fun unpin(bitmap: Bitmap) {
+            val recycle = synchronized(this) {
+                pinned.remove(bitmap) && pendingRecycle.remove(bitmap)
+            }
+            if (recycle) {
+                bitmap.recycle()
             }
         }
 
@@ -203,6 +247,24 @@ object ImageProvider {
             //错误图片占位,防止重复获取
             put(vFile.absolutePath, errorBitmap)
         }.getOrDefault(errorBitmap)
+    }
+
+    /**
+     * 获取用于绘制的 bitmap，绘制期间锁定避免被淘汰回收
+     * 用完必须调用 bitmapLruCache.unpin(bitmap)
+     */
+    fun getImageAndPin(
+        book: Book,
+        src: String,
+        width: Int,
+        height: Int? = null
+    ): Bitmap {
+        val vFile = BookHelp.getImage(book, src)
+        if (!vFile.exists()) return errorBitmap
+        bitmapLruCache.getAndPin(vFile.absolutePath)?.let { return it }
+        val bitmap = getImage(book, src, width, height)
+        bitmapLruCache.pin(bitmap)
+        return bitmap
     }
 
     fun clear() {

@@ -183,7 +183,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
         override fun registerListener(holder: ItemViewHolder, binding: ItemReadRecordBinding) {
             binding.apply {
                 root.setOnClickListener {
-                    val item = getItem(holder.layoutPosition) ?: return@setOnClickListener
+                    val item = getItem(holder.bindingAdapterPosition) ?: return@setOnClickListener
                     lifecycleScope.launch {
                         val book = withContext(IO) {
                             appDb.bookDao.findByName(item.bookName).firstOrNull()
@@ -196,7 +196,7 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
                     }
                 }
                 tvRemove.setOnClickListener {
-                    getItem(holder.layoutPosition)?.let { item ->
+                    getItem(holder.bindingAdapterPosition)?.let { item ->
                         sureDelAlert(item)
                     }
                 }
