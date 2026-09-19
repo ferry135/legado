@@ -221,9 +221,9 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
             payloads: MutableList<Any>
         ) {
             binding.apply {
-                cbSourceName.isChecked = viewModel.selectStatus[holder.layoutPosition]
+                cbSourceName.isChecked = viewModel.selectStatus[holder.bindingAdapterPosition]
                 cbSourceName.text = item.sourceName
-                tvSourceState.text = if (viewModel.checkSources[holder.layoutPosition] != null) {
+                tvSourceState.text = if (viewModel.checkSources[holder.bindingAdapterPosition] != null) {
                     "已有"
                 } else {
                     "新增"
@@ -235,22 +235,28 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
             binding.apply {
                 cbSourceName.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (buttonView.isPressed) {
-                        viewModel.selectStatus[holder.layoutPosition] = isChecked
+                        holder.bindingAdapterPosition.takeIf { it >= 0 }?.let {
+                            viewModel.selectStatus[it] = isChecked
+                        }
                         upSelectText()
                     }
                 }
                 root.onClick {
                     cbSourceName.isChecked = !cbSourceName.isChecked
-                    viewModel.selectStatus[holder.layoutPosition] = cbSourceName.isChecked
+                    holder.bindingAdapterPosition.takeIf { it >= 0 }?.let {
+                        viewModel.selectStatus[it] = cbSourceName.isChecked
+                    }
                     upSelectText()
                 }
                 tvOpen.setOnClickListener {
-                    val source = viewModel.allSources[holder.layoutPosition]
+                    val position = holder.bindingAdapterPosition
+                    if (position < 0) return@setOnClickListener
+                    val source = viewModel.allSources[position]
                     showDialogFragment(
                         CodeDialog(
                             GSON.toJson(source),
                             disableEdit = false,
-                            requestId = holder.layoutPosition.toString()
+                            requestId = position.toString()
                         )
                     )
                 }

@@ -78,7 +78,7 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
     override fun registerListener(holder: ItemViewHolder, binding: ItemDownloadBinding) {
         binding.run {
             ivDownload.setOnClickListener {
-                getItem(holder.layoutPosition)?.let { book ->
+                getItem(holder.bindingAdapterPosition)?.let { book ->
                     CacheBook.cacheBookMap[book.bookUrl]?.let {
                         if (!it.isStop()) {
                             CacheBook.remove(context, book.bookUrl)
@@ -91,7 +91,9 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
                 }
             }
             tvExport.setOnClickListener {
-                callBack.export(holder.layoutPosition)
+                getItem(holder.bindingAdapterPosition)?.let {
+                    callBack.export(holder.bindingAdapterPosition)
+                }
             }
         }
     }

@@ -199,13 +199,13 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
             payloads: MutableList<Any>
         ) {
             binding.run {
-                cbSourceName.isChecked = viewModel.selectStatus[holder.layoutPosition]
+                cbSourceName.isChecked = viewModel.selectStatus[holder.bindingAdapterPosition]
                 cbSourceName.text = if (item.group.isNullOrBlank()) {
                     item.name
                 } else {
                     "${item.name}(${item.group})"
                 }
-                val localRule = viewModel.checkRules[holder.layoutPosition]
+                val localRule = viewModel.checkRules[holder.bindingAdapterPosition]
                 tvSourceState.text = when {
                     localRule == null -> "新增"
                     item.pattern != localRule.pattern
@@ -221,22 +221,28 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
             binding.run {
                 cbSourceName.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (buttonView.isPressed) {
-                        viewModel.selectStatus[holder.layoutPosition] = isChecked
+                        holder.bindingAdapterPosition.takeIf { it >= 0 }?.let {
+                            viewModel.selectStatus[it] = isChecked
+                        }
                         upSelectText()
                     }
                 }
                 root.onClick {
                     cbSourceName.isChecked = !cbSourceName.isChecked
-                    viewModel.selectStatus[holder.layoutPosition] = cbSourceName.isChecked
+                    holder.bindingAdapterPosition.takeIf { it >= 0 }?.let {
+                        viewModel.selectStatus[it] = cbSourceName.isChecked
+                    }
                     upSelectText()
                 }
                 tvOpen.setOnClickListener {
-                    val source = viewModel.allRules[holder.layoutPosition]
+                    val position = holder.bindingAdapterPosition
+                    if (position < 0) return@setOnClickListener
+                    val source = viewModel.allRules[position]
                     showDialogFragment(
                         CodeDialog(
                             GSON.toJson(source),
                             disableEdit = false,
-                            requestId = holder.layoutPosition.toString()
+                            requestId = position.toString()
                         )
                     )
                 }

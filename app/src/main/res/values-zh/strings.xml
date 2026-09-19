@@ -551,6 +551,8 @@
     <string name="e_ink_mode_detail">去除动画，优化电纸书使用体验</string>
     <string name="web_menu">Web 服务</string>
     <string name="web_port_title">Web 端口</string>
+    <string name="web_token_title">Web 服务访问令牌</string>
+    <string name="web_token_summary">配置后局域网访问需携带令牌，用 http://ip:port/?token=xxx 打开一次即可；留空则不校验</string>
     <string name="web_port_summary">当前端口 %s</string>
     <string name="qr_share">二维码分享</string>
     <string name="str_share">字符串分享</string>

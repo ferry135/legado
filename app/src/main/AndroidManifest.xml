@@ -501,7 +501,8 @@
             android:authorities="${applicationId}.readerProvider"
             android:enabled="true"
             android:exported="true"
-            tools:ignore="ExportedContentProvider" />
+            android:readPermission="${applicationId}.permission.READER"
+            android:writePermission="${applicationId}.permission.READER" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileProvider"
@@ -525,6 +526,10 @@
             android:name="channel"
             android:value="${APP_CHANNEL_VALUE}" />
     </application>
+
+    <permission
+        android:name="${applicationId}.permission.READER"
+        android:protectionLevel="signature" />
 
     <queries>
         <intent>

@@ -129,7 +129,7 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         override fun registerListener(holder: ItemViewHolder, binding: ItemBookGroupManageBinding) {
             binding.run {
                 tvEdit.setOnClickListener {
-                    getItem(holder.layoutPosition)?.let { bookGroup ->
+                    getItem(holder.bindingAdapterPosition)?.let { bookGroup ->
                         showDialogFragment(
                             GroupEditDialog(bookGroup)
                         )
@@ -137,7 +137,7 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                 }
                 swShow.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (buttonView.isPressed) {
-                        getItem(holder.layoutPosition)?.let {
+                        getItem(holder.bindingAdapterPosition)?.let {
                             viewModel.upGroup(it.copy(show = isChecked))
                         }
                     }

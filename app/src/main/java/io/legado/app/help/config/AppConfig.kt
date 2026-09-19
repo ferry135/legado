@@ -377,6 +377,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefInt(PreferKey.webPort, value)
         }
 
+    var webToken: String
+        get() = appCtx.getPrefString(PreferKey.webToken).orEmpty()
+        set(value) {
+            appCtx.putPrefString(PreferKey.webToken, value)
+        }
+
     var tocUiUseReplace: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.tocUiUseReplace)
         set(value) {

@@ -42,7 +42,7 @@ class CoverAdapter(context: Context, val callBack: CallBack) :
     override fun registerListener(holder: ItemViewHolder, binding: ItemCoverBinding) {
         holder.itemView.apply {
             setOnClickListener {
-                getItem(holder.layoutPosition)?.let {
+                getItem(holder.bindingAdapterPosition)?.let {
                     callBack.changeTo(it.coverUrl ?: "")
                 }
             }
