@@ -8,6 +8,7 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.view.WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
 import android.view.animation.Animation
 import android.widget.FrameLayout
@@ -170,7 +171,6 @@ class ReadMenu @JvmOverloads constructor(
         if (immersiveMenu) {
             val lightTextColor = ColorUtils.withAlpha(ColorUtils.lightenColor(textColor), 0.75f)
             titleBar.setTextColor(textColor)
-            titleBar.setBackgroundColor(bgColor)
             titleBar.setColorFilter(textColor)
             tvChapterName.setTextColor(lightTextColor)
             tvChapterUrl.setTextColor(lightTextColor)
@@ -178,28 +178,30 @@ class ReadMenu @JvmOverloads constructor(
             val bgColor = context.primaryColor
             val textColor = context.primaryTextColor
             titleBar.setTextColor(textColor)
-            titleBar.setBackgroundColor(bgColor)
             titleBar.setColorFilter(textColor)
             tvChapterName.setTextColor(textColor)
             tvChapterUrl.setTextColor(textColor)
         }
+        upPanelBackground(titleBar, R.drawable.bg_read_menu_top_panel, bgColor)
+        titleBar.elevation = 0f
         val brightnessBackground = GradientDrawable()
-        brightnessBackground.cornerRadius = 5F.dpToPx()
+        brightnessBackground.cornerRadius = 16F.dpToPx()
         brightnessBackground.setColor(ColorUtils.adjustAlpha(bgColor, 0.5f))
         llBrightness.background = brightnessBackground
         if (AppConfig.isEInkMode) {
             titleBar.setBackgroundResource(R.drawable.bg_eink_border_bottom)
             llBottomBg.setBackgroundResource(R.drawable.bg_eink_border_top)
         } else {
-            llBottomBg.setBackgroundColor(bgColor)
+            upPanelBackground(llBottomBg, R.drawable.bg_read_menu_bottom_panel, bgColor)
         }
-        fabSearch.backgroundTintList = bottomBackgroundList
+        val fabTint = ColorStateList.valueOf(ColorUtils.adjustAlpha(textColor, 0.1f))
+        fabSearch.backgroundTintList = fabTint
         fabSearch.setColorFilter(textColor)
-        fabAutoPage.backgroundTintList = bottomBackgroundList
+        fabAutoPage.backgroundTintList = fabTint
         fabAutoPage.setColorFilter(textColor)
-        fabReplaceRule.backgroundTintList = bottomBackgroundList
+        fabReplaceRule.backgroundTintList = fabTint
         fabReplaceRule.setColorFilter(textColor)
-        fabNightTheme.backgroundTintList = bottomBackgroundList
+        fabNightTheme.backgroundTintList = fabTint
         fabNightTheme.setColorFilter(textColor)
         tvPre.setTextColor(textColor)
         tvNext.setTextColor(textColor)
@@ -237,6 +239,11 @@ class ReadMenu @JvmOverloads constructor(
         if (immersiveMenu) {
             binding.titleBar.setColorFilter(textColor)
         }
+    }
+
+    private fun upPanelBackground(view: View, drawableRes: Int, color: Int) {
+        view.setBackgroundResource(drawableRes)
+        view.backgroundTintList = ColorStateList.valueOf(color)
     }
 
     private fun upColorConfig() {

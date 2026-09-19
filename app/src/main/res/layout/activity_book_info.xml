@@ -71,8 +71,8 @@
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
                             android:layout_margin="3dp"
-                            app:cardCornerRadius="5dp"
-                            app:cardElevation="8dp">
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp">
 
                             <io.legado.app.ui.widget.image.CoverImageView
                                 android:id="@+id/iv_cover"
@@ -119,8 +119,9 @@
                                     android:includeFontPadding="false"
                                     android:singleLine="true"
                                     android:text="@string/book_name"
-                                    android:textColor="@color/primaryText"
-                                    android:textSize="18sp"
+                                    android:textColor="@color/on_surface"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold"
                                     tools:ignore="RtlHardcoded" />
                             </HorizontalScrollView>
 
@@ -163,7 +164,7 @@
                                     android:contentDescription="@string/author"
                                     android:paddingRight="2dp"
                                     android:src="@drawable/ic_author"
-                                    app:tint="@color/tv_text_summary"
+                                    app:tint="@color/on_surface_variant"
                                     tools:ignore="RtlHardcoded,RtlSymmetry" />
 
                                 <TextView
@@ -176,7 +177,7 @@
                                     android:paddingRight="6dp"
                                     android:singleLine="true"
                                     android:text="@string/author"
-                                    android:textColor="@color/tv_text_summary"
+                                    android:textColor="@color/on_surface_variant"
                                     android:textSize="13sp"
                                     tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry" />
 
@@ -197,7 +198,7 @@
                                     android:contentDescription="@string/origin_format"
                                     android:paddingRight="2dp"
                                     android:src="@drawable/ic_web_outline"
-                                    app:tint="@color/tv_text_summary"
+                                    app:tint="@color/on_surface_variant"
                                     tools:ignore="RtlHardcoded,RtlSymmetry" />
 
                                 <TextView
@@ -209,7 +210,7 @@
                                     android:includeFontPadding="false"
                                     android:paddingRight="6dp"
                                     android:singleLine="true"
-                                    android:textColor="@color/tv_text_summary"
+                                    android:textColor="@color/on_surface_variant"
                                     android:textSize="13sp"
                                     tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
                                     tools:text="@string/origin_format" />
@@ -243,7 +244,7 @@
                                     android:contentDescription="@string/read_dur_progress"
                                     android:paddingRight="2dp"
                                     android:src="@drawable/ic_book_last"
-                                    app:tint="@color/tv_text_summary"
+                                    app:tint="@color/on_surface_variant"
                                     tools:ignore="RtlHardcoded,RtlSymmetry" />
 
                                 <TextView
@@ -255,7 +256,7 @@
                                     android:includeFontPadding="false"
                                     android:paddingRight="6dp"
                                     android:singleLine="true"
-                                    android:textColor="@color/tv_text_summary"
+                                    android:textColor="@color/on_surface_variant"
                                     android:textSize="13sp"
                                     tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
                                     tools:text="@string/read_dur_progress" />
@@ -276,7 +277,7 @@
                                     android:contentDescription="@string/read_dur_progress"
                                     android:paddingRight="2dp"
                                     android:src="@drawable/ic_groups"
-                                    app:tint="@color/tv_text_summary"
+                                    app:tint="@color/on_surface_variant"
                                     tools:ignore="RtlHardcoded,RtlSymmetry" />
 
                                 <TextView
@@ -288,7 +289,7 @@
                                     android:includeFontPadding="false"
                                     android:paddingRight="6dp"
                                     android:singleLine="true"
-                                    android:textColor="@color/tv_text_summary"
+                                    android:textColor="@color/on_surface_variant"
                                     android:textSize="13sp"
                                     tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
                                     tools:text="@string/group_s" />
@@ -321,7 +322,7 @@
                                     android:contentDescription="@string/read_dur_progress"
                                     android:paddingRight="2dp"
                                     android:src="@drawable/ic_folder_open"
-                                    app:tint="@color/tv_text_summary"
+                                    app:tint="@color/on_surface_variant"
                                     tools:ignore="RtlHardcoded,RtlSymmetry" />
 
                                 <TextView
@@ -333,7 +334,7 @@
                                     android:includeFontPadding="false"
                                     android:paddingRight="6dp"
                                     android:singleLine="true"
-                                    android:textColor="@color/tv_text_summary"
+                                    android:textColor="@color/on_surface_variant"
                                     android:textSize="13sp"
                                     tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
                                     tools:text="@string/toc_s" />
@@ -364,7 +365,7 @@
                             android:paddingLeft="8dp"
                             android:paddingBottom="8dp"
                             android:text="@string/book_intro"
-                            android:textColor="@color/secondaryText"
+                            android:textColor="@color/on_surface_variant"
                             android:textIsSelectable="true"
                             android:textSize="14sp"
                             android:visibility="visible"
@@ -381,13 +382,13 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="@color/bg_divider_line" />
+            android:background="@color/divider_subtle" />
 
         <LinearLayout
             android:id="@+id/fl_action"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/background_menu"
+            android:background="@color/surface_container"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent">
 
@@ -402,7 +403,7 @@
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:text="@string/remove_from_bookshelf"
-                android:textColor="@color/primaryText"
+                android:textColor="@color/on_surface"
                 android:textSize="15sp" />
 
             <io.legado.app.ui.widget.text.AccentBgTextView
