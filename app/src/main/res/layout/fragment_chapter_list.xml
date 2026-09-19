@@ -18,10 +18,10 @@
         android:id="@+id/ll_chapter_base_info"
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        android:background="@color/background"
+        android:background="@color/surface"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:elevation="5dp"
+        android:elevation="0dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
@@ -37,7 +37,7 @@
             android:paddingRight="10dp"
             android:singleLine="true"
             android:gravity="center_vertical"
-            android:textColor="@color/primaryText"
+            android:textColor="@color/on_surface"
             android:textSize="12sp" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -48,7 +48,7 @@
             android:contentDescription="@string/go_to_top"
             android:src="@drawable/ic_arrow_drop_up"
             android:tooltipText="@string/go_to_top"
-            app:tint="@color/primaryText"
+            app:tint="@color/on_surface"
             tools:ignore="UnusedAttribute" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -59,7 +59,7 @@
             android:contentDescription="@string/go_to_bottom"
             android:src="@drawable/ic_arrow_drop_down"
             android:tooltipText="@string/go_to_bottom"
-            app:tint="@color/primaryText"
+            app:tint="@color/on_surface"
             tools:ignore="UnusedAttribute" />
     </LinearLayout>
 
