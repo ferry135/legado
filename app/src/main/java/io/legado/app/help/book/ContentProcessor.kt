@@ -166,10 +166,13 @@ class ContentProcessor private constructor(
                             mContent = tmp
                         }
                     } catch (e: RegexTimeoutException) {
+                        // 正则超时：禁用该规则并保留原文，不能把堆栈写进正文
                         item.isEnabled = false
                         appDb.replaceRuleDao.update(item)
-                        mContent = item.name + e.stackTraceStr
-                    } catch (_: CancellationException) {
+                        AppLog.put("替换净化: 规则 ${item.name}执行超时，已自动禁用", e)
+                        appCtx.toastOnUi("替换净化: 规则 ${item.name}执行超时，已自动禁用")
+                    } catch (e: CancellationException) {
+                        throw e
                     } catch (e: Exception) {
                         AppLog.put("替换净化: 规则 ${item.name}替换出错.\n${mContent}", e)
                         appCtx.toastOnUi("替换净化: 规则 ${item.name}替换出错")

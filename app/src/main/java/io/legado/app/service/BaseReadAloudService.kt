@@ -198,7 +198,9 @@ abstract class BaseReadAloudService : BaseService(),
         notificationManager.cancel(NotificationId.ReadAloudService)
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_STOPPED)
         mediaSessionCompat.release()
-        ReadBook.uploadProgress()
+        if (AppConfig.syncBookProgress) {
+            ReadBook.uploadProgress()
+        }
         unregisterPhoneStateListener(phoneStateListener)
         upNotificationJob?.invokeOnCompletion {
             notificationManager.cancel(NotificationId.ReadAloudService)

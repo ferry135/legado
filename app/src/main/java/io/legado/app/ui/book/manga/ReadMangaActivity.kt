@@ -368,10 +368,12 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         if (ReadManga.inBookshelf) {
             ReadManga.saveRead()
             if (!BuildConfig.DEBUG) {
-                if (AppConfig.syncBookProgressPlus) {
-                    ReadManga.syncProgress()
-                } else {
-                    ReadManga.uploadProgress()
+                if (AppConfig.syncBookProgress) {
+                    if (AppConfig.syncBookProgressPlus) {
+                        ReadManga.syncProgress()
+                    } else {
+                        ReadManga.uploadProgress()
+                    }
                 }
                 Backup.autoBack(this)
             }
@@ -687,6 +689,9 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         menu.findItem(R.id.menu_enable_horizontal_scroll).isChecked =
             AppConfig.enableMangaHorizontalScroll
         menu.findItem(R.id.menu_epaper_manga).isChecked = AppConfig.enableMangaEInk
+        // 旋转/重建后恢复自动翻页、自动滚动的选中态，否则功能静默停止
+        menu.findItem(R.id.menu_enable_auto_page)?.isChecked = enableAutoScrollPage
+        menu.findItem(R.id.menu_enable_auto_scroll)?.isChecked = enableAutoScroll
         menu.findItem(R.id.menu_epaper_manga_setting).isVisible = AppConfig.enableMangaEInk
         menu.findItem(R.id.menu_disable_horizontal_animation).run {
             isVisible =
