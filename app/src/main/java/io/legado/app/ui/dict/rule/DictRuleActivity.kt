@@ -6,6 +6,8 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -125,10 +127,13 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
 
     private fun observeDictRuleData() {
         lifecycleScope.launch {
-            appDb.dictRuleDao.flowAll().catch {
-                AppLog.put("字典规则获取数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).collect {
-                adapter.setItems(it, adapter.diffItemCallBack)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appDb.dictRuleDao.flowAll().catch {
+                    AppLog.put("字典规则获取数据失败\n${it.localizedMessage}", it)
+                }.flowOn(IO).collect {
+                    adapter.setItems(it, adapter.diffItemCallBack)
+                }
+        
             }
         }
     }

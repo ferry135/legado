@@ -13,6 +13,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -240,10 +241,13 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
             }
         }
         lifecycleScope.launch {
-            appDb.bookSourceDao.flowEnabledGroups().conflate().collect {
-                groups.clear()
-                groups.addAll(it)
-                upGroupMenu()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appDb.bookSourceDao.flowEnabledGroups().conflate().collect {
+                    groups.clear()
+                    groups.addAll(it)
+                    upGroupMenu()
+                }
+        
             }
         }
     }

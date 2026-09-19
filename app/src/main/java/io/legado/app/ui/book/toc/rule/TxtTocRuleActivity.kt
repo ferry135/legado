@@ -6,6 +6,8 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import io.legado.app.R
@@ -116,10 +118,13 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
 
     private fun initData() {
         lifecycleScope.launch {
-            appDb.txtTocRuleDao.observeAll().catch {
-                AppLog.put("TXT目录规则界面获取数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).conflate().collect { tocRules ->
-                adapter.setItems(tocRules, adapter.diffItemCallBack)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appDb.txtTocRuleDao.observeAll().catch {
+                    AppLog.put("TXT目录规则界面获取数据失败\n${it.localizedMessage}", it)
+                }.flowOn(IO).conflate().collect { tocRules ->
+                    adapter.setItems(tocRules, adapter.diffItemCallBack)
+                }
+        
             }
         }
     }

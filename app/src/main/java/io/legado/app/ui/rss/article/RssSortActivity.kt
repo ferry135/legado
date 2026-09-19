@@ -12,7 +12,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.databinding.ActivityRssArtivlesBinding
+import io.legado.app.databinding.ActivityRssArticlesBinding
 import io.legado.app.help.source.sortUrls
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.login.SourceLoginActivity
@@ -24,10 +24,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RssSortActivity : VMBaseActivity<ActivityRssArtivlesBinding, RssSortViewModel>(),
+class RssSortActivity : VMBaseActivity<ActivityRssArticlesBinding, RssSortViewModel>(),
     VariableDialog.Callback {
 
-    override val binding by viewBinding(ActivityRssArtivlesBinding::inflate)
+    override val binding by viewBinding(ActivityRssArticlesBinding::inflate)
     override val viewModel by viewModels<RssSortViewModel>()
     private val adapter by lazy { TabFragmentPageAdapter() }
     private val sortList = mutableListOf<Pair<String, String>>()

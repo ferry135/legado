@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -120,11 +122,14 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
 
     private fun initData() {
         lifecycleScope.launch {
-            appDb.txtTocRuleDao.observeAll().catch {
-                AppLog.put("TXT目录规则对话框获取数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).conflate().collect { tocRules ->
-                initSelectedName(tocRules)
-                adapter.setItems(tocRules, adapter.diffItemCallBack)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appDb.txtTocRuleDao.observeAll().catch {
+                    AppLog.put("TXT目录规则对话框获取数据失败\n${it.localizedMessage}", it)
+                }.flowOn(IO).conflate().collect { tocRules ->
+                    initSelectedName(tocRules)
+                    adapter.setItems(tocRules, adapter.diffItemCallBack)
+                }
+        
             }
         }
     }

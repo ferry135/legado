@@ -11,6 +11,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -205,41 +207,47 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         dataInit = false
         replaceRuleFlowJob?.cancel()
         replaceRuleFlowJob = lifecycleScope.launch {
-            when {
-                searchKey.isNullOrEmpty() -> {
-                    appDb.replaceRuleDao.flowAll()
-                }
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                when {
+                    searchKey.isNullOrEmpty() -> {
+                        appDb.replaceRuleDao.flowAll()
+                    }
 
-                searchKey == getString(R.string.no_group) -> {
-                    appDb.replaceRuleDao.flowNoGroup()
-                }
+                    searchKey == getString(R.string.no_group) -> {
+                        appDb.replaceRuleDao.flowNoGroup()
+                    }
 
-                searchKey.startsWith("group:") -> {
-                    val key = searchKey.substringAfter("group:")
-                    appDb.replaceRuleDao.flowGroupSearch("%$key%")
+                    searchKey.startsWith("group:") -> {
+                        val key = searchKey.substringAfter("group:")
+                        appDb.replaceRuleDao.flowGroupSearch("%$key%")
+                    }
+                    else -> {
+                        appDb.replaceRuleDao.flowSearch("%$searchKey%")
+                    }
+                }.catch {
+                    AppLog.put("替换规则管理界面更新数据出错", it)
+                }.flowOn(IO).conflate().collect {
+                    if (dataInit) {
+                        setResult(Activity.RESULT_OK)
+                    }
+                    adapter.setItems(it, adapter.diffItemCallBack)
+                    dataInit = true
+                    delay(100)
                 }
-                else -> {
-                    appDb.replaceRuleDao.flowSearch("%$searchKey%")
-                }
-            }.catch {
-                AppLog.put("替换规则管理界面更新数据出错", it)
-            }.flowOn(IO).conflate().collect {
-                if (dataInit) {
-                    setResult(Activity.RESULT_OK)
-                }
-                adapter.setItems(it, adapter.diffItemCallBack)
-                dataInit = true
-                delay(100)
+        
             }
         }
     }
 
     private fun observeGroupData() {
         lifecycleScope.launch {
-            appDb.replaceRuleDao.flowGroups().collect {
-                groups.clear()
-                groups.addAll(it)
-                upGroupMenu()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appDb.replaceRuleDao.flowGroups().collect {
+                    groups.clear()
+                    groups.addAll(it)
+                    upGroupMenu()
+                }
+        
             }
         }
     }

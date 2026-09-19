@@ -8,6 +8,8 @@ import android.view.MenuItem
 import android.view.SubMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import io.legado.app.R
@@ -112,20 +114,23 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>() {
 
     private fun upFragments() {
         lifecycleScope.launch {
-            appDb.rssStarDao.flowGroups().catch {
-                AppLog.put("订阅分组数据获取失败\n${it.localizedMessage}", it)
-            }.distinctUntilChanged().flowOn(IO).collect {
-                groupList.clear()
-                groupList.addAll(it)
-                if (groupList.size == 1) {
-                    binding.tabLayout.gone()
-                } else {
-                    binding.tabLayout.visible()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appDb.rssStarDao.flowGroups().catch {
+                    AppLog.put("订阅分组数据获取失败\n${it.localizedMessage}", it)
+                }.distinctUntilChanged().flowOn(IO).collect {
+                    groupList.clear()
+                    groupList.addAll(it)
+                    if (groupList.size == 1) {
+                        binding.tabLayout.gone()
+                    } else {
+                        binding.tabLayout.visible()
+                    }
+                    if (groupsMenu != null) {
+                        upGroupsMenu()
+                    }
+                    adapter.notifyDataSetChanged()
                 }
-                if (groupsMenu != null) {
-                    upGroupsMenu()
-                }
-                adapter.notifyDataSetChanged()
+        
             }
         }
     }

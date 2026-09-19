@@ -464,9 +464,9 @@ class ReadBookActivity : BaseReadBookActivity(),
 
             R.id.menu_chapter_change_source -> lifecycleScope.launch {
                 val book = ReadBook.book ?: return@launch
-                val chapter =
+                val chapter = withContext(IO) {
                     appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
-                        ?: return@launch
+                } ?: return@launch
                 binding.readMenu.runMenuOut()
                 showDialogFragment(
                     ChangeChapterSourceDialog(book.name, book.author, chapter.index, chapter.title)
@@ -1273,14 +1273,17 @@ class ReadBookActivity : BaseReadBookActivity(),
     override fun payAction() {
         val book = ReadBook.book ?: return
         if (book.isLocal) return
-        val chapter = appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
-        if (chapter == null) {
-            toastOnUi("no chapter")
-            return
-        }
-        alert(R.string.chapter_pay) {
-            setMessage(chapter.title)
-            yesButton {
+        lifecycleScope.launch {
+            val chapter = withContext(IO) {
+                appDb.bookChapterDao.getChapter(book.bookUrl, ReadBook.durChapterIndex)
+            }
+            if (chapter == null) {
+                toastOnUi("no chapter")
+                return@launch
+            }
+            alert(R.string.chapter_pay) {
+                setMessage(chapter.title)
+                yesButton {
                 Coroutine.async(lifecycleScope) {
                     val source =
                         ReadBook.bookSource ?: throw NoStackTraceException("no book source")
@@ -1315,7 +1318,8 @@ class ReadBookActivity : BaseReadBookActivity(),
                     AppLog.put("执行购买操作出错\n${it.localizedMessage}", it, true)
                 }
             }
-            noButton()
+                noButton()
+            }
         }
     }
 

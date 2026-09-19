@@ -9,6 +9,8 @@ import android.view.SubMenu
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import io.legado.app.R
@@ -247,10 +249,13 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
 
     private fun initGroupFlow() {
         lifecycleScope.launch {
-            appDb.rssSourceDao.flowGroups().conflate().collect {
-                groups.clear()
-                groups.addAll(it)
-                upGroupMenu()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appDb.rssSourceDao.flowGroups().conflate().collect {
+                    groups.clear()
+                    groups.addAll(it)
+                    upGroupMenu()
+                }
+        
             }
         }
     }
@@ -328,40 +333,43 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
     private fun upSourceFlow(searchKey: String? = null) {
         sourceFlowJob?.cancel()
         sourceFlowJob = lifecycleScope.launch {
-            when {
-                searchKey.isNullOrBlank() -> {
-                    appDb.rssSourceDao.flowAll()
-                }
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                when {
+                    searchKey.isNullOrBlank() -> {
+                        appDb.rssSourceDao.flowAll()
+                    }
 
-                searchKey == getString(R.string.enabled) -> {
-                    appDb.rssSourceDao.flowEnabled()
-                }
+                    searchKey == getString(R.string.enabled) -> {
+                        appDb.rssSourceDao.flowEnabled()
+                    }
 
-                searchKey == getString(R.string.disabled) -> {
-                    appDb.rssSourceDao.flowDisabled()
-                }
+                    searchKey == getString(R.string.disabled) -> {
+                        appDb.rssSourceDao.flowDisabled()
+                    }
 
-                searchKey == getString(R.string.need_login) -> {
-                    appDb.rssSourceDao.flowLogin()
-                }
+                    searchKey == getString(R.string.need_login) -> {
+                        appDb.rssSourceDao.flowLogin()
+                    }
 
-                searchKey == getString(R.string.no_group) -> {
-                    appDb.rssSourceDao.flowNoGroup()
-                }
+                    searchKey == getString(R.string.no_group) -> {
+                        appDb.rssSourceDao.flowNoGroup()
+                    }
 
-                searchKey.startsWith("group:") -> {
-                    val key = searchKey.substringAfter("group:")
-                    appDb.rssSourceDao.flowGroupSearch(key)
-                }
+                    searchKey.startsWith("group:") -> {
+                        val key = searchKey.substringAfter("group:")
+                        appDb.rssSourceDao.flowGroupSearch(key)
+                    }
 
-                else -> {
-                    appDb.rssSourceDao.flowSearch(searchKey)
+                    else -> {
+                        appDb.rssSourceDao.flowSearch(searchKey)
+                    }
+                }.catch {
+                    AppLog.put("订阅源管理界面更新数据出错", it)
+                }.flowOn(IO).conflate().collect {
+                    adapter.setItems(it, adapter.diffItemCallback)
+                    delay(100)
                 }
-            }.catch {
-                AppLog.put("订阅源管理界面更新数据出错", it)
-            }.flowOn(IO).conflate().collect {
-                adapter.setItems(it, adapter.diffItemCallback)
-                delay(100)
+        
             }
         }
     }

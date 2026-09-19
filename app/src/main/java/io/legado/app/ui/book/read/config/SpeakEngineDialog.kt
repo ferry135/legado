@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
@@ -168,10 +170,13 @@ class SpeakEngineDialog() : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     private fun initData() {
         lifecycleScope.launch {
-            appDb.httpTTSDao.flowAll().catch {
-                AppLog.put("朗读引擎界面获取数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).conflate().collect {
-                adapter.setItems(it)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appDb.httpTTSDao.flowAll().catch {
+                    AppLog.put("朗读引擎界面获取数据失败\n${it.localizedMessage}", it)
+                }.flowOn(IO).conflate().collect {
+                    adapter.setItems(it)
+                }
+        
             }
         }
     }

@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
@@ -56,8 +58,11 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     private fun initData() {
         lifecycleScope.launch {
-            appDb.bookSourceDao.flowGroups().collect {
-                adapter.setItems(it)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appDb.bookSourceDao.flowGroups().collect {
+                    adapter.setItems(it)
+                }
+        
             }
         }
     }

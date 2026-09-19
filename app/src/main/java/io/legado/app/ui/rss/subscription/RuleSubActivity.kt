@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.core.view.isGone
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import io.legado.app.R
@@ -68,11 +70,14 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
 
     private fun initData() {
         lifecycleScope.launch {
-            appDb.ruleSubDao.flowAll().catch {
-                AppLog.put("规则订阅界面获取数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).conflate().collect {
-                binding.tvEmptyMsg.isGone = it.isNotEmpty()
-                adapter.setItems(it)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appDb.ruleSubDao.flowAll().catch {
+                    AppLog.put("规则订阅界面获取数据失败\n${it.localizedMessage}", it)
+                }.flowOn(IO).conflate().collect {
+                    binding.tvEmptyMsg.isGone = it.isNotEmpty()
+                    adapter.setItems(it)
+                }
+        
             }
         }
     }
