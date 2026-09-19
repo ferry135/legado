@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         app:attachToActivity="false"
         app:layout_constraintTop_toTopOf="parent"
+        app:themeMode="blend"
         app:title="@string/bookshelf" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
