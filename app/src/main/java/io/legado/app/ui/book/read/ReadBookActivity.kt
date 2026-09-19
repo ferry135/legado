@@ -368,10 +368,12 @@ class ReadBookActivity : BaseReadBookActivity(),
         unregisterReceiver(timeBatteryReceiver)
         upSystemUiVisibility()
         if (!BuildConfig.DEBUG) {
-            if (AppConfig.syncBookProgressPlus) {
-                ReadBook.syncProgress()
-            } else {
-                ReadBook.uploadProgress()
+            if (AppConfig.syncBookProgress) {
+                if (AppConfig.syncBookProgressPlus) {
+                    ReadBook.syncProgress()
+                } else {
+                    ReadBook.uploadProgress()
+                }
             }
             Backup.autoBack(this)
         }

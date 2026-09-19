@@ -134,7 +134,7 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
             TipConfigDialog().show(childFragmentManager, "tipConfigDialog")
         }
         rgPageAnim.setOnCheckedChangeListener { _, checkedId ->
-            ReadBook.book?.setPageAnim(-1)
+            // 不清除本书的动画覆盖，显式设置过动画的书保留自己的设置
             ReadBookConfig.pageAnim = binding.rgPageAnim.getIndexById(checkedId)
             callBack?.upPageAnim()
             ReadBook.loadContent(false)

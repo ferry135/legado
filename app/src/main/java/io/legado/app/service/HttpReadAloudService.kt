@@ -386,6 +386,8 @@ class HttpReadAloudService : BaseReadAloudService(),
                             throw e
                         } else {
                             AppLog.put("TTS下载音频出错，使用无声音频代替。\n朗读文本：$speakText")
+                            // 静音跳段对用户不可感知，需提示否则像"假朗读"
+                            toastOnUi("TTS下载出错，本段将静音跳过")
                             break
                         }
                     }

@@ -5,6 +5,7 @@ package io.legado.app.utils
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.FLAG_MUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.app.PendingIntent.getActivity
@@ -86,7 +87,6 @@ inline fun <reified T : Service> Context.stopService() {
     stopService(Intent(this, T::class.java))
 }
 
-@SuppressLint("UnspecifiedImmutableFlag")
 inline fun <reified T : Service> Context.servicePendingIntent(
     action: String,
     requestCode: Int = 0,
@@ -96,28 +96,26 @@ inline fun <reified T : Service> Context.servicePendingIntent(
     intent.action = action
     configIntent.invoke(intent)
     val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        FLAG_UPDATE_CURRENT or FLAG_MUTABLE
+        FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
     } else {
         FLAG_UPDATE_CURRENT
     }
     return getService(this, requestCode, intent, flags)
 }
 
-@SuppressLint("UnspecifiedImmutableFlag")
 fun Context.activityPendingIntent(
     intent: Intent,
     action: String,
 ): PendingIntent? {
     intent.action = action
     val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        FLAG_UPDATE_CURRENT or FLAG_MUTABLE
+        FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
     } else {
         FLAG_UPDATE_CURRENT
     }
     return getActivity(this, 0, intent, flags)
 }
 
-@SuppressLint("UnspecifiedImmutableFlag")
 inline fun <reified T : Activity> Context.activityPendingIntent(
     action: String,
     configIntent: Intent.() -> Unit = {},
@@ -126,14 +124,13 @@ inline fun <reified T : Activity> Context.activityPendingIntent(
     intent.action = action
     configIntent.invoke(intent)
     val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        FLAG_UPDATE_CURRENT or FLAG_MUTABLE
+        FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
     } else {
         FLAG_UPDATE_CURRENT
     }
     return getActivity(this, 0, intent, flags)
 }
 
-@SuppressLint("UnspecifiedImmutableFlag")
 inline fun <reified T : BroadcastReceiver> Context.broadcastPendingIntent(
     action: String,
     configIntent: Intent.() -> Unit = {},
@@ -142,7 +139,7 @@ inline fun <reified T : BroadcastReceiver> Context.broadcastPendingIntent(
     intent.action = action
     configIntent.invoke(intent)
     val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        FLAG_UPDATE_CURRENT or FLAG_MUTABLE
+        FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
     } else {
         FLAG_UPDATE_CURRENT
     }

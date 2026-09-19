@@ -75,6 +75,8 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
             }
         } else {
             toastOnUi(R.string.tts_init_failed)
+            // 初始化失败继续挂着只会僵尸运行，停止服务
+            stopSelf()
         }
     }
 
@@ -231,16 +233,22 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
         }
 
         private fun nextParagraph() {
-            //跳过全标点段落
-            do {
-                readAloudNumber += contentList[nowSpeak].length + 1 - paragraphStartPos
-                paragraphStartPos = 0
-                nowSpeak++
-                if (nowSpeak >= contentList.size) {
-                    nextChapter()
-                    return
-                }
-            } while (contentList[nowSpeak].matches(AppPattern.notReadAloudRegex))
+            // TTS 引擎回调可能来自不同线程，串行推进进度避免跳段/越界
+            synchronized(this@TTSReadAloudService) {
+                //跳过全标点段落
+                do {
+                    if (nowSpeak >= contentList.size) {
+                        return
+                    }
+                    readAloudNumber += contentList[nowSpeak].length + 1 - paragraphStartPos
+                    paragraphStartPos = 0
+                    nowSpeak++
+                    if (nowSpeak >= contentList.size) {
+                        nextChapter()
+                        return
+                    }
+                } while (contentList[nowSpeak].matches(AppPattern.notReadAloudRegex))
+            }
         }
 
         @Deprecated("Deprecated in Java")
