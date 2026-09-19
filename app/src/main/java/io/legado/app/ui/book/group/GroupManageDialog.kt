@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -76,10 +78,13 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     private fun initData() {
         lifecycleScope.launch {
-            appDb.bookGroupDao.flowAll().catch {
-                AppLog.put("书籍分组管理界面获取分组数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).conflate().collect {
-                adapter.setItems(it)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appDb.bookGroupDao.flowAll().catch {
+                    AppLog.put("书籍分组管理界面获取分组数据失败\n${it.localizedMessage}", it)
+                }.flowOn(IO).conflate().collect {
+                    adapter.setItems(it)
+                }
+        
             }
         }
     }

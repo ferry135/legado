@@ -141,8 +141,12 @@ class BookInfoActivity :
             return@registerForActivityResult
         }
         book?.let { book ->
-            viewModel.bookSource = appDb.bookSourceDao.getBookSource(book.origin)
-            viewModel.refreshBook(book)
+            lifecycleScope.launch {
+                viewModel.bookSource = withContext(IO) {
+                    appDb.bookSourceDao.getBookSource(book.origin)
+                }
+                viewModel.refreshBook(book)
+            }
         }
     }
     private var chapterChanged = false

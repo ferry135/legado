@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.setPadding
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -76,10 +78,13 @@ class KeyboardAssistsConfig : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     private fun initData() {
         lifecycleScope.launch {
-            appDb.keyboardAssistsDao.flowAll.catch {
-                AppLog.put("辅助按键配置获取数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).collect {
-                adapter.setItems(it)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appDb.keyboardAssistsDao.flowAll.catch {
+                    AppLog.put("辅助按键配置获取数据失败\n${it.localizedMessage}", it)
+                }.flowOn(IO).collect {
+                    adapter.setItems(it)
+                }
+        
             }
         }
     }

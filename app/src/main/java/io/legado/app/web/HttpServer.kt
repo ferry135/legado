@@ -116,13 +116,14 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
 
             val response = if (returnData.data is Bitmap) {
                 val outputStream = ByteArrayOutputStream()
-                (returnData.data as Bitmap).compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                // 封面类图片用 JPEG 编码，体积与编码速度远优于 PNG
+                (returnData.data as Bitmap).compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
                 val byteArray = outputStream.toByteArray()
                 outputStream.close()
                 val inputStream = ByteArrayInputStream(byteArray)
                 newFixedLengthResponse(
                     Response.Status.OK,
-                    "image/png",
+                    "image/jpeg",
                     inputStream,
                     byteArray.size.toLong()
                 )

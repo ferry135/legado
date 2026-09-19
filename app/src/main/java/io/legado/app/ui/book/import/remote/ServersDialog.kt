@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
@@ -86,10 +88,13 @@ class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     private fun initData() {
         lifecycleScope.launch {
-            appDb.serverDao.observeAll().catch {
-                AppLog.put("服务器配置界面获取数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).collect {
-                adapter.setItems(it)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appDb.serverDao.observeAll().catch {
+                    AppLog.put("服务器配置界面获取数据失败\n${it.localizedMessage}", it)
+                }.flowOn(IO).collect {
+                    adapter.setItems(it)
+                }
+        
             }
         }
     }

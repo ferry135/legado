@@ -4,6 +4,8 @@ package io.legado.app.ui.rss.favorites
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
@@ -58,11 +60,14 @@ class RssFavoritesFragment() : VMBaseFragment<RssFavoritesViewModel>(R.layout.fr
 
     private fun loadArticles() {
         lifecycleScope.launch {
-            val group = arguments?.getString("group") ?: "默认分组"
-            appDb.rssStarDao.flowByGroup(group).catch {
-                AppLog.put("订阅文章界面获取数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).collect {
-                adapter.setItems(it)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                val group = arguments?.getString("group") ?: "默认分组"
+                appDb.rssStarDao.flowByGroup(group).catch {
+                    AppLog.put("订阅文章界面获取数据失败\n${it.localizedMessage}", it)
+                }.flowOn(IO).collect {
+                    adapter.setItems(it)
+                }
+        
             }
         }
     }
