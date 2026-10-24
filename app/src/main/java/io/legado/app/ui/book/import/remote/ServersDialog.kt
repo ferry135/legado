@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
@@ -32,6 +31,7 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
+import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
@@ -87,15 +87,14 @@ class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
     }
 
     private fun initData() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                appDb.serverDao.observeAll().catch {
-                    AppLog.put("服务器配置界面获取数据失败\n${it.localizedMessage}", it)
-                }.flowOn(IO).collect {
-                    adapter.setItems(it)
-                }
-        
+        launchCollectWithLifecycle {
+            appDb.serverDao.observeAll().catch {
+                AppLog.put("服务器配置界面获取数据失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).collect {
+                adapter.setItems(it)
             }
+
+
         }
     }
 

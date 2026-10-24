@@ -10,7 +10,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -44,6 +43,7 @@ import io.legado.app.utils.showHelp
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
@@ -121,16 +121,15 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
     }
 
     private fun initData() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                appDb.txtTocRuleDao.observeAll().catch {
-                    AppLog.put("TXT目录规则对话框获取数据失败\n${it.localizedMessage}", it)
-                }.flowOn(IO).conflate().collect { tocRules ->
-                    initSelectedName(tocRules)
-                    adapter.setItems(tocRules, adapter.diffItemCallBack)
-                }
-        
+        launchCollectWithLifecycle {
+            appDb.txtTocRuleDao.observeAll().catch {
+                AppLog.put("TXT目录规则对话框获取数据失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).conflate().collect { tocRules ->
+                initSelectedName(tocRules)
+                adapter.setItems(tocRules, adapter.diffItemCallBack)
             }
+
+
         }
     }
 

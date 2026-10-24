@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,6 +29,7 @@ import io.legado.app.utils.applyTint
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
@@ -88,13 +88,12 @@ class GroupSelectDialog() : BaseDialogFragment(R.layout.dialog_book_group_picker
     }
 
     private fun initData() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                appDb.bookGroupDao.flowSelect().conflate().collect {
-                    adapter.setItems(it)
-                }
-        
+        launchCollectWithLifecycle {
+            appDb.bookGroupDao.flowSelect().conflate().collect {
+                adapter.setItems(it)
             }
+
+
         }
     }
 

@@ -5,7 +5,6 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -17,6 +16,7 @@ import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
@@ -44,15 +44,14 @@ class AllBookmarkActivity : VMBaseActivity<ActivityAllBookmarkBinding, AllBookma
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                appDb.bookmarkDao.flowAll().catch {
-                    AppLog.put("所有书签界面获取数据失败\n${it.localizedMessage}", it)
-                }.flowOn(IO).collect {
-                    adapter.setItems(it)
-                }
-        
+        launchCollectWithLifecycle {
+            appDb.bookmarkDao.flowAll().catch {
+                AppLog.put("所有书签界面获取数据失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).collect {
+                adapter.setItems(it)
             }
+
+
         }
     }
 

@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
@@ -28,6 +27,7 @@ import io.legado.app.utils.applyTint
 import io.legado.app.utils.requestInputMethod
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
@@ -62,13 +62,12 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
     }
 
     private fun initData() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                appDb.replaceRuleDao.flowGroups().conflate().collect {
-                    adapter.setItems(it)
-                }
-        
+        launchCollectWithLifecycle {
+            appDb.replaceRuleDao.flowGroups().conflate().collect {
+                adapter.setItems(it)
             }
+
+
         }
     }
 

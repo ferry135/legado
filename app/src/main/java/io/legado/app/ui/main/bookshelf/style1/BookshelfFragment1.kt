@@ -46,6 +46,14 @@ class BookshelfFragment1() : BaseBookshelfFragment(R.layout.fragment_bookshelf1)
     private val adapter by lazy { TabFragmentPageAdapter(childFragmentManager, viewLifecycleOwner.lifecycle) }
     private val tabLayout: TabLayout by lazy { binding.tabLayout }
     private val bookGroups = mutableListOf<BookGroup>()
+    private val sortLabelResList = intArrayOf(
+        R.string.bookshelf_px_0,
+        R.string.bookshelf_px_1,
+        R.string.bookshelf_px_2,
+        R.string.bookshelf_px_3,
+        R.string.bookshelf_px_4,
+        R.string.bookshelf_px_5
+    )
     private var fakeDragAnimator: ValueAnimator? = null
     override val groupId: Long get() = selectedGroup?.groupId ?: 0
 
@@ -145,28 +153,16 @@ class BookshelfFragment1() : BaseBookshelfFragment(R.layout.fragment_bookshelf1)
     }
 
     private fun upSortLabel() {
-        binding.tvSort.text = when (AppConfig.bookshelfSort) {
-            1 -> getString(R.string.bookshelf_px_1)
-            2 -> getString(R.string.bookshelf_px_2)
-            3 -> getString(R.string.bookshelf_px_3)
-            4 -> getString(R.string.bookshelf_px_4)
-            5 -> getString(R.string.bookshelf_px_5)
-            else -> getString(R.string.bookshelf_px_0)
-        }
+        binding.tvSort.setText(sortLabelRes(AppConfig.bookshelfSort))
     }
+
+    private fun sortLabelRes(sort: Int): Int =
+        sortLabelResList[sort.coerceIn(0, sortLabelResList.lastIndex)]
 
     private fun showSortMenu() {
         val popup = PopupMenu(requireContext(), binding.tvSort)
-        for (i in 0..5) {
-            val titleRes = when (i) {
-                1 -> R.string.bookshelf_px_1
-                2 -> R.string.bookshelf_px_2
-                3 -> R.string.bookshelf_px_3
-                4 -> R.string.bookshelf_px_4
-                5 -> R.string.bookshelf_px_5
-                else -> R.string.bookshelf_px_0
-            }
-            popup.menu.add(0, i, i, titleRes)
+        for (i in sortLabelResList.indices) {
+            popup.menu.add(0, i, i, sortLabelResList[i])
         }
         popup.setOnMenuItemClickListener {
             if (AppConfig.bookshelfSort != it.itemId) {

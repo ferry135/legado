@@ -9,7 +9,6 @@ import android.view.SubMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import io.legado.app.R
@@ -22,6 +21,7 @@ import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
+import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
@@ -113,25 +113,24 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>() {
     }
 
     private fun upFragments() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                appDb.rssStarDao.flowGroups().catch {
-                    AppLog.put("订阅分组数据获取失败\n${it.localizedMessage}", it)
-                }.distinctUntilChanged().flowOn(IO).collect {
-                    groupList.clear()
-                    groupList.addAll(it)
-                    if (groupList.size == 1) {
-                        binding.tabLayout.gone()
-                    } else {
-                        binding.tabLayout.visible()
-                    }
-                    if (groupsMenu != null) {
-                        upGroupsMenu()
-                    }
-                    adapter.notifyDataSetChanged()
+        launchCollectWithLifecycle {
+            appDb.rssStarDao.flowGroups().catch {
+                AppLog.put("订阅分组数据获取失败\n${it.localizedMessage}", it)
+            }.distinctUntilChanged().flowOn(IO).collect {
+                groupList.clear()
+                groupList.addAll(it)
+                if (groupList.size == 1) {
+                    binding.tabLayout.gone()
+                } else {
+                    binding.tabLayout.visible()
                 }
-        
+                if (groupsMenu != null) {
+                    upGroupsMenu()
+                }
+                adapter.notifyDataSetChanged()
             }
+
+
         }
     }
 

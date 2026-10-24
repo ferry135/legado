@@ -13,7 +13,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
@@ -46,6 +45,7 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.transaction
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.conflate
@@ -231,42 +231,39 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
             }
             binding.toolBar.menu.applyTint(requireContext())
         }
-        lifecycleScope.launch {
-            repeatOnLifecycle(STARTED) {
-                viewModel.searchDataFlow.conflate().collect {
-                    adapter.setItems(it)
-                    delay(1000)
-                }
+        launchCollectWithLifecycle {
+            viewModel.searchDataFlow.conflate().collect {
+                adapter.setItems(it)
+                delay(1000)
             }
+
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(STARTED) {
-                viewModel.changeSourceProgress
-                    .drop(1)
-                    .collect { (count, name) ->
-                        binding.tvDur.text =
-                            getString(
-                                R.string.change_source_progress,
-                                adapter.itemCount,
-                                count,
-                                viewModel.totalSourceCount,
-                                name
-                            )
-                        delay(500)
-                    }
-            }
+        launchCollectWithLifecycle {
+            viewModel.changeSourceProgress
+                .drop(1)
+                .collect { (count, name) ->
+                    binding.tvDur.text =
+                        getString(
+                            R.string.change_source_progress,
+                            adapter.itemCount,
+                            count,
+                            viewModel.totalSourceCount,
+                            name
+                        )
+                    delay(500)
+                }
+
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                appDb.bookSourceDao.flowEnabledGroups().conflate().collect {
-                    groups.clear()
-                    groups.addAll(it)
-                    upGroupMenu()
-                }
-        
+        launchCollectWithLifecycle {
+            appDb.bookSourceDao.flowEnabledGroups().conflate().collect {
+                groups.clear()
+                groups.addAll(it)
+                upGroupMenu()
             }
+
+
         }
     }
 

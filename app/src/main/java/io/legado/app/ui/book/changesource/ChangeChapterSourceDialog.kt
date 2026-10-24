@@ -14,7 +14,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
@@ -47,6 +46,7 @@ import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.transaction
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
+import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.conflate
@@ -232,23 +232,21 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
             }
             binding.toolBar.menu.applyTint(requireContext())
         }
-        lifecycleScope.launch {
-            repeatOnLifecycle(STARTED) {
-                viewModel.searchDataFlow.conflate().collect {
-                    searchBookAdapter.setItems(it)
-                    delay(1000)
-                }
+        launchCollectWithLifecycle {
+            viewModel.searchDataFlow.conflate().collect {
+                searchBookAdapter.setItems(it)
+                delay(1000)
             }
+
         }
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                appDb.bookSourceDao.flowEnabledGroups().conflate().collect {
-                    groups.clear()
-                    groups.addAll(it)
-                    upGroupMenu()
-                }
-        
+        launchCollectWithLifecycle {
+            appDb.bookSourceDao.flowEnabledGroups().conflate().collect {
+                groups.clear()
+                groups.addAll(it)
+                upGroupMenu()
             }
+
+
         }
     }
 

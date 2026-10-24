@@ -11,7 +11,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -52,6 +51,7 @@ import io.legado.app.utils.shouldHideSoftInput
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
@@ -221,58 +221,56 @@ class BookshelfManageActivity :
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initGroupData() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                appDb.bookGroupDao.flowAll().catch {
-                    AppLog.put("书架管理界面获取分组数据失败\n${it.localizedMessage}", it)
-                }.flowOn(IO).conflate().collect {
-                    groupList.clear()
-                    groupList.addAll(it)
-                    adapter.notifyDataSetChanged()
-                    upMenu()
-                }
-        
+        launchCollectWithLifecycle {
+            appDb.bookGroupDao.flowAll().catch {
+                AppLog.put("书架管理界面获取分组数据失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).conflate().collect {
+                groupList.clear()
+                groupList.addAll(it)
+                adapter.notifyDataSetChanged()
+                upMenu()
             }
+
+
         }
     }
 
     private fun upBookDataByGroupId() {
         booksFlowJob?.cancel()
-        booksFlowJob = lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                val bookSort = AppConfig.getBookSortByGroupId(viewModel.groupId)
-                appDb.bookDao.flowByGroup(viewModel.groupId).map { list ->
-                    when (bookSort) {
-                        1 -> list.sortedByDescending {
-                            it.latestChapterTime
-                        }
-
-                        2 -> list.sortedWith { o1, o2 ->
-                            o1.name.cnCompare(o2.name)
-                        }
-
-                        3 -> list.sortedBy {
-                            it.order
-                        }
-
-                        4 -> list.sortedByDescending {
-                            max(it.latestChapterTime, it.durChapterTime)
-                        }
-
-                        else -> list.sortedByDescending {
-                            it.durChapterTime
-                        }
+        booksFlowJob = launchCollectWithLifecycle {
+            val bookSort = AppConfig.getBookSortByGroupId(viewModel.groupId)
+            appDb.bookDao.flowByGroup(viewModel.groupId).map { list ->
+                when (bookSort) {
+                    1 -> list.sortedByDescending {
+                        it.latestChapterTime
                     }
-                }.catch {
-                    AppLog.put("书架管理界面获取书籍列表失败\n${it.localizedMessage}", it)
-                }.flowOn(IO)
-                    .conflate().collect {
-                        books = it
-                        upBookData()
-                        itemTouchCallback.isCanDrag = bookSort == 3
+
+                    2 -> list.sortedWith { o1, o2 ->
+                        o1.name.cnCompare(o2.name)
                     }
-        
-            }
+
+                    3 -> list.sortedBy {
+                        it.order
+                    }
+
+                    4 -> list.sortedByDescending {
+                        max(it.latestChapterTime, it.durChapterTime)
+                    }
+
+                    else -> list.sortedByDescending {
+                        it.durChapterTime
+                    }
+                }
+            }.catch {
+                AppLog.put("书架管理界面获取书籍列表失败\n${it.localizedMessage}", it)
+            }.flowOn(IO)
+                .conflate().collect {
+                    books = it
+                    upBookData()
+                    itemTouchCallback.isCanDrag = bookSort == 3
+                }
+
+
         }
     }
 

@@ -9,7 +9,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textfield.TextInputLayout
@@ -56,6 +55,7 @@ import io.legado.app.utils.startService
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.verificationField
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
@@ -271,18 +271,17 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initGroupData() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                appDb.bookGroupDao.flowAll().catch {
-                    AppLog.put("缓存管理界面获取分组数据失败\n${it.localizedMessage}", it)
-                }.flowOn(IO).conflate().collect {
-                    groupList.clear()
-                    groupList.addAll(it)
-                    adapter.notifyDataSetChanged()
-                    upMenu()
-                }
-        
+        launchCollectWithLifecycle {
+            appDb.bookGroupDao.flowAll().catch {
+                AppLog.put("缓存管理界面获取分组数据失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).conflate().collect {
+                groupList.clear()
+                groupList.addAll(it)
+                adapter.notifyDataSetChanged()
+                upMenu()
             }
+
+
         }
     }
 

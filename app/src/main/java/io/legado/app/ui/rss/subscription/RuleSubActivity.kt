@@ -5,7 +5,6 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.core.view.isGone
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import io.legado.app.R
@@ -24,6 +23,7 @@ import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
@@ -69,16 +69,15 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
     }
 
     private fun initData() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                appDb.ruleSubDao.flowAll().catch {
-                    AppLog.put("规则订阅界面获取数据失败\n${it.localizedMessage}", it)
-                }.flowOn(IO).conflate().collect {
-                    binding.tvEmptyMsg.isGone = it.isNotEmpty()
-                    adapter.setItems(it)
-                }
-        
+        launchCollectWithLifecycle {
+            appDb.ruleSubDao.flowAll().catch {
+                AppLog.put("规则订阅界面获取数据失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).conflate().collect {
+                binding.tvEmptyMsg.isGone = it.isNotEmpty()
+                adapter.setItems(it)
             }
+
+
         }
     }
 
