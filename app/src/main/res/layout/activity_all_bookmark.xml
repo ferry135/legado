@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/all_bookmark" />
+        app:title="@string/all_bookmark" 
+        app:themeMode="blend" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"

@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         app:contentInsetStartWithNavigation="0dp"
         app:displayHomeAsUp="true"
-        app:title="@string/rss_source_edit" />
+        app:title="@string/rss_source_edit" 
+        app:themeMode="blend" />
 
     <HorizontalScrollView
         android:layout_width="match_parent"

@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:contentLayout="@layout/view_search"
-        app:title="@string/read_record" />
+        app:title="@string/read_record" 
+        app:themeMode="blend" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

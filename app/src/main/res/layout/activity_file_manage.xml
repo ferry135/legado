@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         app:contentInsetRight="24dp"
         app:contentLayout="@layout/view_search"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" 
+        app:themeMode="blend" />
 
     <!--path-->
     <androidx.recyclerview.widget.RecyclerView
