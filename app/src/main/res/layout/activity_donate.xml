@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:subtitle="您的支持是我更新的动力"
-        app:title="@string/donate" />
+        app:title="@string/donate" 
+        app:themeMode="blend" />
 
     <FrameLayout
         android:id="@+id/fl_fragment"

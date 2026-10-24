@@ -34,9 +34,9 @@
     <color name="design_orange">#FF6B2C</color>
 
     //**********主题默认主色（运行时可被 ThemeStore 覆盖）**********//
-    <color name="primary">@color/md_light_blue_600</color>
-    <color name="primaryDark">@color/md_light_blue_700</color>
-    <color name="accent">@color/md_pink_800</color>
+    <color name="primary">@color/design_orange</color>
+    <color name="primaryDark">@color/md_deep_orange_800</color>
+    <color name="accent">@color/design_orange</color>
 
     <color name="disabled">@color/md_light_disabled</color>
 

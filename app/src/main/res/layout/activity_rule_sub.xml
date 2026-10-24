@@ -10,7 +10,8 @@
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="@string/rule_subscription" />
+        app:title="@string/rule_subscription" 
+        app:themeMode="blend" />
 
     <FrameLayout
         android:layout_width="match_parent"

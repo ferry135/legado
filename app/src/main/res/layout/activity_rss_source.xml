@@ -12,7 +12,8 @@
         app:contentInsetStartWithNavigation="0dp"
         app:contentLayout="@layout/view_search"
         app:displayHomeAsUp="true"
-        app:title="@string/rss_source" />
+        app:title="@string/rss_source" 
+        app:themeMode="blend" />
 
     <FrameLayout
         android:layout_width="match_parent"

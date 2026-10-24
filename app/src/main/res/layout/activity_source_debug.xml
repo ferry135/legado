@@ -14,7 +14,8 @@
         app:contentInsetStartWithNavigation="0dp"
         app:contentLayout="@layout/view_search"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/debug_source" />
+        app:title="@string/debug_source" 
+        app:themeMode="blend" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"

@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:contentInsetStartWithNavigation="0dp"
-        app:contentLayout="@layout/view_search" />
+        app:contentLayout="@layout/view_search" 
+        app:themeMode="blend" />
  
     <!--path-->
     <LinearLayout

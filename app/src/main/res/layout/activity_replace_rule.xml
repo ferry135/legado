@@ -13,7 +13,8 @@
         android:layout_height="wrap_content"
         app:contentInsetStartWithNavigation="0dp"
         app:contentLayout="@layout/view_search"
-        app:title="@string/replace_purify" />
+        app:title="@string/replace_purify" 
+        app:themeMode="blend" />
 
     <FrameLayout
         android:layout_width="match_parent"
