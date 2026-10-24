@@ -27,6 +27,7 @@ import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -110,15 +111,14 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
     private fun initData() {
         val rssUrl = activityViewModel.url ?: return
         articlesFlowJob?.cancel()
-        articlesFlowJob = viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                appDb.rssArticleDao.flowByOriginSort(rssUrl, viewModel.sortName).catch {
-                    AppLog.put("订阅文章界面获取数据失败\n${it.localizedMessage}", it)
-                }.flowOn(IO).collect {
-                    adapter.setItems(it)
-                }
-        
+        articlesFlowJob = viewLifecycleOwner.launchCollectWithLifecycle {
+            appDb.rssArticleDao.flowByOriginSort(rssUrl, viewModel.sortName).catch {
+                AppLog.put("订阅文章界面获取数据失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).collect {
+                adapter.setItems(it)
             }
+
+
         }
     }
 

@@ -35,14 +35,6 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
             "${session.method.name} - $uri - ${session.queryParameterString} - Start($startAt)"
         }
 
-        // 配置了访问令牌后，数据接口需携带令牌；静态页面保持开放，
-        // 浏览器用户用 ?token=xxx 打开一次即可通过 Cookie 继续访问
-        val token = AppConfig.webToken
-        val tokenValid = checkToken(session, token)
-        if (!tokenValid && uri in apiUris) {
-            return newFixedLengthResponse(Response.Status.UNAUTHORIZED, "text/plain", "unauthorized")
-        }
-
         try {
             when (session.method) {
                 Method.OPTIONS -> {
@@ -50,7 +42,8 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                     response.addHeader("Access-Control-Allow-Methods", "POST")
                     response.addHeader("Access-Control-Allow-Headers", "content-type")
                     // 不回显任意 Origin；仅在持有有效令牌时允许跨域
-                    if (token.isNotBlank() && tokenValid) {
+                    val token = AppConfig.webToken
+                    if (token.isNotBlank() && checkToken(session, token)) {
                         response.addHeader("Access-Control-Allow-Origin", session.headers["origin"])
                     }
                     //response.addHeader("Access-Control-Max-Age", "3600");
@@ -60,46 +53,19 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                 Method.POST -> {
                     val files = HashMap<String, String>()
                     session.parseBody(files)
-                    val postData = files["postData"]
-
-                    returnData = runBlocking {
-                        when (uri) {
-                            "/saveBookSource" -> BookSourceController.saveSource(postData)
-                            "/saveBookSources" -> BookSourceController.saveSources(postData)
-                            "/deleteBookSources" -> BookSourceController.deleteSources(postData)
-                            "/saveBook" -> BookController.saveBook(postData)
-                            "/deleteBook" -> BookController.deleteBook(postData)
-                            "/saveBookProgress" -> BookController.saveBookProgress(postData)
-                            "/addLocalBook" -> BookController.addLocalBook(session.parameters, files)
-                            "/saveReadConfig" -> BookController.saveWebReadConfig(postData)
-                            "/saveRssSource" -> RssSourceController.saveSource(postData)
-                            "/saveRssSources" -> RssSourceController.saveSources(postData)
-                            "/deleteRssSources" -> RssSourceController.deleteSources(postData)
-                            "/saveReplaceRule" -> ReplaceRuleController.saveRule(postData)
-                            "/deleteReplaceRule" -> ReplaceRuleController.delete(postData)
-                            "/testReplaceRule" -> ReplaceRuleController.testRule(postData)
-                            else -> null
-                        }
+                    val handler = postRoutes[uri]
+                    if (handler != null) {
+                        checkAuth(session)?.let { return it }
+                        val postData = files["postData"]
+                        returnData = runBlocking { handler(session, postData, files) }
                     }
                 }
 
                 Method.GET -> {
-                    val parameters = session.parameters
-
-                    returnData = when (uri) {
-                        "/getBookSource" -> BookSourceController.getSource(parameters)
-                        "/getBookSources" -> BookSourceController.sources
-                        "/getBookshelf" -> BookController.bookshelf
-                        "/getChapterList" -> BookController.getChapterList(parameters)
-                        "/refreshToc" -> BookController.refreshToc(parameters)
-                        "/getBookContent" -> BookController.getBookContent(parameters)
-                        "/cover" -> BookController.getCover(parameters)
-                        "/image" -> BookController.getImg(parameters)
-                        "/getReadConfig" -> BookController.getWebReadConfig()
-                        "/getRssSource" -> RssSourceController.getSource(parameters)
-                        "/getRssSources" -> RssSourceController.sources
-                        "/getReplaceRules" -> ReplaceRuleController.allRules
-                        else -> null
+                    val handler = getRoutes[uri]
+                    if (handler != null) {
+                        checkAuth(session)?.let { return it }
+                        returnData = handler(session)
                     }
                 }
 
@@ -110,7 +76,7 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                 if (uri.endsWith("/"))
                     uri += "index.html"
                 val response = assetsWeb.getResponse(uri)
-                addCommonHeaders(response, session, token, tokenValid)
+                addCommonHeaders(response, session)
                 return response
             }
 
@@ -145,7 +111,7 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                     newFixedLengthResponse(GSON.toJson(returnData))
                 }
             }
-            addCommonHeaders(response, session, token, tokenValid)
+            addCommonHeaders(response, session)
             LogUtils.d(TAG) {
                 "${session.method.name} - $uri - ${session.queryParameterString} - End($startAt)"
             }
@@ -159,26 +125,42 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
 
     }
 
+    /**
+     * 数据接口鉴权：配置了访问令牌后必须携带令牌。
+     * 通过 ?token= 访问时由 addCommonHeaders 种下 Cookie，浏览器后续请求自动携带。
+     * 校验通过返回 null，否则返回 401 响应。
+     */
+    private fun checkAuth(session: IHTTPSession): Response? {
+        val token = AppConfig.webToken
+        if (token.isBlank()) {
+            return null
+        }
+        val passed = session.parameters["token"]?.firstOrNull() == token
+            || session.headers["authorization"] == "Bearer $token"
+            || session.cookies.read("authToken") == token
+        return if (passed) {
+            null
+        } else {
+            newFixedLengthResponse(Response.Status.UNAUTHORIZED, "text/plain", "unauthorized")
+        }
+    }
+
     private fun checkToken(session: IHTTPSession, token: String): Boolean {
         if (token.isBlank()) {
             return true
         }
-        if (session.parameters["token"]?.firstOrNull() == token) {
-            return true
-        }
-        if (session.headers["authorization"] == "Bearer $token") {
-            return true
-        }
-        return session.cookies.read("authToken") == token
+        return session.parameters["token"]?.firstOrNull() == token
+            || session.headers["authorization"] == "Bearer $token"
+            || session.cookies.read("authToken") == token
     }
 
-    private fun addCommonHeaders(
-        response: Response,
-        session: IHTTPSession,
-        token: String,
-        tokenValid: Boolean
-    ) {
-        if (token.isNotBlank() && tokenValid) {
+    private fun addCommonHeaders(response: Response, session: IHTTPSession) {
+        val token = AppConfig.webToken
+        if (token.isBlank()) {
+            return
+        }
+        val tokenValid = checkToken(session, token)
+        if (tokenValid) {
             response.addHeader("Access-Control-Allow-Methods", "GET, POST")
             response.addHeader("Access-Control-Allow-Origin", session.headers["origin"])
             // 通过 ?token= 访问时种下 Cookie，浏览器后续请求自动携带
@@ -191,14 +173,43 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
     companion object {
         private const val TAG = "HttpServer"
 
-        private val apiUris = setOf(
-            "/saveBookSource", "/saveBookSources", "/deleteBookSources",
-            "/saveBook", "/deleteBook", "/saveBookProgress", "/addLocalBook",
-            "/saveReadConfig", "/saveRssSource", "/saveRssSources", "/deleteRssSources",
-            "/saveReplaceRule", "/deleteReplaceRule", "/testReplaceRule",
-            "/getBookSource", "/getBookSources", "/getBookshelf", "/getChapterList",
-            "/refreshToc", "/getBookContent", "/cover", "/image", "/getReadConfig",
-            "/getRssSource", "/getRssSources", "/getReplaceRules"
+        /**
+         * POST 数据接口路由表，键集合即鉴权范围，新增接口无需另行登记
+         */
+        private val postRoutes: Map<String, suspend (IHTTPSession, String?, HashMap<String, String>) -> ReturnData?> =
+            mapOf(
+                "/saveBookSource" to { _, postData, _ -> BookSourceController.saveSource(postData) },
+                "/saveBookSources" to { _, postData, _ -> BookSourceController.saveSources(postData) },
+                "/deleteBookSources" to { _, postData, _ -> BookSourceController.deleteSources(postData) },
+                "/saveBook" to { _, postData, _ -> BookController.saveBook(postData) },
+                "/deleteBook" to { _, postData, _ -> BookController.deleteBook(postData) },
+                "/saveBookProgress" to { _, postData, _ -> BookController.saveBookProgress(postData) },
+                "/addLocalBook" to { session, _, files -> BookController.addLocalBook(session.parameters, files) },
+                "/saveReadConfig" to { _, postData, _ -> BookController.saveWebReadConfig(postData) },
+                "/saveRssSource" to { _, postData, _ -> RssSourceController.saveSource(postData) },
+                "/saveRssSources" to { _, postData, _ -> RssSourceController.saveSources(postData) },
+                "/deleteRssSources" to { _, postData, _ -> RssSourceController.deleteSources(postData) },
+                "/saveReplaceRule" to { _, postData, _ -> ReplaceRuleController.saveRule(postData) },
+                "/deleteReplaceRule" to { _, postData, _ -> ReplaceRuleController.delete(postData) },
+                "/testReplaceRule" to { _, postData, _ -> ReplaceRuleController.testRule(postData) }
+            )
+
+        /**
+         * GET 数据接口路由表
+         */
+        private val getRoutes: Map<String, (IHTTPSession) -> ReturnData?> = mapOf(
+            "/getBookSource" to { session -> BookSourceController.getSource(session.parameters) },
+            "/getBookSources" to { _ -> BookSourceController.sources },
+            "/getBookshelf" to { _ -> BookController.bookshelf },
+            "/getChapterList" to { session -> BookController.getChapterList(session.parameters) },
+            "/refreshToc" to { session -> BookController.refreshToc(session.parameters) },
+            "/getBookContent" to { session -> BookController.getBookContent(session.parameters) },
+            "/cover" to { session -> BookController.getCover(session.parameters) },
+            "/image" to { session -> BookController.getImg(session.parameters) },
+            "/getReadConfig" to { _ -> BookController.getWebReadConfig() },
+            "/getRssSource" to { session -> RssSourceController.getSource(session.parameters) },
+            "/getRssSources" to { _ -> RssSourceController.sources },
+            "/getReplaceRules" to { _ -> ReplaceRuleController.allRules }
         )
     }
 

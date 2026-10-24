@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
@@ -22,6 +21,7 @@ import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
@@ -59,16 +59,15 @@ class RssFavoritesFragment() : VMBaseFragment<RssFavoritesViewModel>(R.layout.fr
     }
 
     private fun loadArticles() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                val group = arguments?.getString("group") ?: "默认分组"
-                appDb.rssStarDao.flowByGroup(group).catch {
-                    AppLog.put("订阅文章界面获取数据失败\n${it.localizedMessage}", it)
-                }.flowOn(IO).collect {
-                    adapter.setItems(it)
-                }
-        
+        launchCollectWithLifecycle {
+            val group = arguments?.getString("group") ?: "默认分组"
+            appDb.rssStarDao.flowByGroup(group).catch {
+                AppLog.put("订阅文章界面获取数据失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).collect {
+                adapter.setItems(it)
             }
+
+
         }
     }
 

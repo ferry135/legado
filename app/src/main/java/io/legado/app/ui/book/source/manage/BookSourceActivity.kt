@@ -16,7 +16,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.snackbar.Snackbar
 import io.legado.app.R
@@ -69,6 +68,7 @@ import io.legado.app.utils.startActivity
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.transaction
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -662,28 +662,27 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
 
     private fun startCheckMessageRefreshJob(firstItem: Int, lastItem: Int) {
         checkMessageRefreshJob?.cancel()
-        checkMessageRefreshJob = lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                while (isActive) {
-                    if (lastItem == 0) {
-                        adapter.notifyItemRangeChanged(
-                            0,
-                            adapter.itemCount,
-                            bundleOf(Pair("checkSourceMessage", null))
-                        )
-                    } else {
-                        adapter.notifyItemRangeChanged(
-                            firstItem,
-                            lastItem + 1,
-                            bundleOf(Pair("checkSourceMessage", null))
-                        )
-                    }
-                    if (!Debug.isChecking) {
-                        checkMessageRefreshJob?.cancel()
-                    }
-                    delay(300L)
+        checkMessageRefreshJob = launchCollectWithLifecycle {
+            while (isActive) {
+                if (lastItem == 0) {
+                    adapter.notifyItemRangeChanged(
+                        0,
+                        adapter.itemCount,
+                        bundleOf(Pair("checkSourceMessage", null))
+                    )
+                } else {
+                    adapter.notifyItemRangeChanged(
+                        firstItem,
+                        lastItem + 1,
+                        bundleOf(Pair("checkSourceMessage", null))
+                    )
                 }
+                if (!Debug.isChecking) {
+                    checkMessageRefreshJob?.cancel()
+                }
+                delay(300L)
             }
+
         }
     }
 

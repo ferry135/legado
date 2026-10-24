@@ -50,6 +50,7 @@ import io.legado.app.utils.startActivity
 import io.legado.app.utils.transaction
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
+import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.awaitCancellation
@@ -310,12 +311,11 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         viewModel.searchBookLiveData.observe(this) {
             adapter.setItems(it)
         }
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                appDb.bookSourceDao.flowEnabledGroups().collect {
-                    groups = it
-                }
+        launchCollectWithLifecycle {
+            appDb.bookSourceDao.flowEnabledGroups().collect {
+                groups = it
             }
+
         }
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {

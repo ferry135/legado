@@ -9,7 +9,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.setPadding
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
@@ -30,6 +29,7 @@ import io.legado.app.utils.applyTint
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
@@ -88,18 +88,17 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker),
 
     private fun initData(searchKey: String? = null) {
         sourceFlowJob?.cancel()
-        sourceFlowJob = lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                when {
-                    searchKey.isNullOrEmpty() -> appDb.bookSourceDao.flowEnabled()
-                    else -> appDb.bookSourceDao.flowSearchEnabled(searchKey)
-                }.catch {
-                    AppLog.put("书源选择界面获取书源数据失败\n${it.localizedMessage}", it)
-                }.flowOn(IO).collect {
-                    adapter.setItems(it)
-                }
-        
+        sourceFlowJob = launchCollectWithLifecycle {
+            when {
+                searchKey.isNullOrEmpty() -> appDb.bookSourceDao.flowEnabled()
+                else -> appDb.bookSourceDao.flowSearchEnabled(searchKey)
+            }.catch {
+                AppLog.put("书源选择界面获取书源数据失败\n${it.localizedMessage}", it)
+            }.flowOn(IO).collect {
+                adapter.setItems(it)
             }
+
+
         }
     }
 
