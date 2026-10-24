@@ -116,11 +116,12 @@ class BookshelfFragment1() : BaseBookshelfFragment(R.layout.fragment_bookshelf1)
             return
         }
         val distance = (position - viewPager.currentItem) * viewPager.width.toFloat()
+        // 先结束旧动画（其 onAnimationEnd 会 endFakeDrag），再开启新拖拽，快速连点才不会互相踩踏
+        fakeDragAnimator?.cancel()
         if (!viewPager.beginFakeDrag()) {
             viewPager.setCurrentItem(position, true)
             return
         }
-        fakeDragAnimator?.cancel()
         var lastOffset = 0f
         fakeDragAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
             duration = 300
@@ -159,8 +160,8 @@ class BookshelfFragment1() : BaseBookshelfFragment(R.layout.fragment_bookshelf1)
         for (i in 0..5) {
             val titleRes = when (i) {
                 1 -> R.string.bookshelf_px_1
-            2 -> R.string.bookshelf_px_2
-            3 -> R.string.bookshelf_px_3
+                2 -> R.string.bookshelf_px_2
+                3 -> R.string.bookshelf_px_3
                 4 -> R.string.bookshelf_px_4
                 5 -> R.string.bookshelf_px_5
                 else -> R.string.bookshelf_px_0
