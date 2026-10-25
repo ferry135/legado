@@ -27,8 +27,8 @@ import io.legado.app.lib.theme.primaryTextColor
 import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.dpToPx
-import io.legado.app.utils.setLayout
 import io.legado.app.utils.launchCollectWithLifecycle
+import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job

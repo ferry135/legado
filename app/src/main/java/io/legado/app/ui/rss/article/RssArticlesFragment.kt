@@ -23,9 +23,9 @@ import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyNavigationBarPadding
+import io.legado.app.utils.launchCollectWithLifecycle
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.startActivity
-import io.legado.app.utils.launchCollectWithLifecycle
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job

@@ -14,8 +14,8 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.databinding.DialogChangeCoverBinding
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.applyTint
-import io.legado.app.utils.setLayout
 import io.legado.app.utils.launchCollectWithLifecycle
+import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.conflate
