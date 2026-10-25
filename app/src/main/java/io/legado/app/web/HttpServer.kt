@@ -132,17 +132,10 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
      */
     private fun checkAuth(session: IHTTPSession): Response? {
         val token = AppConfig.webToken
-        if (token.isBlank()) {
+        if (token.isBlank() || checkToken(session, token)) {
             return null
         }
-        val passed = session.parameters["token"]?.firstOrNull() == token
-            || session.headers["authorization"] == "Bearer $token"
-            || session.cookies.read("authToken") == token
-        return if (passed) {
-            null
-        } else {
-            newFixedLengthResponse(Response.Status.UNAUTHORIZED, "text/plain", "unauthorized")
-        }
+        return newFixedLengthResponse(Response.Status.UNAUTHORIZED, "text/plain", "unauthorized")
     }
 
     private fun checkToken(session: IHTTPSession, token: String): Boolean {

@@ -29,9 +29,9 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
+import io.legado.app.utils.launchCollectWithLifecycle
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
-import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
@@ -53,7 +53,6 @@ class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         super.onStart()
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
-
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setBackgroundColor(primaryColor)
@@ -93,7 +92,6 @@ class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
             }.flowOn(IO).collect {
                 adapter.setItems(it)
             }
-
 
         }
     }

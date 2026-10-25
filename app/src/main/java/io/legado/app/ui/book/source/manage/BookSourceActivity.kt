@@ -67,8 +67,8 @@ import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.transaction
-import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.launchCollectWithLifecycle
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -305,7 +305,6 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         searchView.queryHint = getString(R.string.search_book_source)
         searchView.setOnQueryTextListener(this)
     }
-
 
     private fun upBookSource(searchKey: String? = null) {
         sourceFlowJob?.cancel()

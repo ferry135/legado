@@ -48,9 +48,9 @@ import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.transaction
+import io.legado.app.utils.launchCollectWithLifecycle
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
-import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.awaitCancellation
@@ -387,15 +387,15 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                     .conflate()
                     .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                     .collect {
-                    if (it.isEmpty()) {
-                        binding.tvBookShow.gone()
-                        binding.rvBookshelfSearch.gone()
-                    } else {
-                        binding.tvBookShow.visible()
-                        binding.rvBookshelfSearch.visible()
+                        if (it.isEmpty()) {
+                            binding.tvBookShow.gone()
+                            binding.rvBookshelfSearch.gone()
+                        } else {
+                            binding.tvBookShow.visible()
+                            binding.rvBookshelfSearch.visible()
+                        }
+                        bookAdapter.setItems(it)
                     }
-                    bookAdapter.setItems(it)
-                }
             }
         }
         historyFlowJob?.cancel()
@@ -523,7 +523,6 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     override fun deleteHistory(searchKeyword: SearchKeyword) {
         viewModel.deleteHistory(searchKeyword)
     }
-
 
     override fun onSearchScopeOk(searchScope: SearchScope) {
         viewModel.searchScope.update(searchScope.toString())

@@ -28,8 +28,8 @@ import io.legado.app.ui.widget.number.NumberPickerDialog
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.setLayout
-import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.launchCollectWithLifecycle
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
@@ -97,7 +97,6 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker),
             }.flowOn(IO).collect {
                 adapter.setItems(it)
             }
-
 
         }
     }

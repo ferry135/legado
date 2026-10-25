@@ -6,7 +6,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
-import android.app.PendingIntent.FLAG_MUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.app.PendingIntent.getActivity
 import android.app.PendingIntent.getBroadcast

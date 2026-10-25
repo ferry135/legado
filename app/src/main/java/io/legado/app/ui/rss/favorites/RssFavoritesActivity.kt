@@ -19,9 +19,9 @@ import io.legado.app.databinding.ActivityRssFavoritesBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.gone
+import io.legado.app.utils.launchCollectWithLifecycle
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
-import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
@@ -129,7 +129,6 @@ class RssFavoritesActivity : BaseActivity<ActivityRssFavoritesBinding>() {
                 }
                 adapter.notifyDataSetChanged()
             }
-
 
         }
     }

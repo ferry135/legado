@@ -50,8 +50,8 @@ import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.shouldHideSoftInput
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.startActivity
-import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.launchCollectWithLifecycle
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
@@ -231,7 +231,6 @@ class BookshelfManageActivity :
                 upMenu()
             }
 
-
         }
     }
 
@@ -269,7 +268,6 @@ class BookshelfManageActivity :
                     upBookData()
                     itemTouchCallback.isCanDrag = bookSort == 3
                 }
-
 
         }
     }

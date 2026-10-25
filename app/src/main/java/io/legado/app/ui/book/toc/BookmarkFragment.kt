@@ -20,15 +20,14 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.showDialogFragment
-import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.launchCollectWithLifecycle
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
 
 class BookmarkFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_bookmark),
     BookmarkAdapter.Callback,
@@ -78,10 +77,8 @@ class BookmarkFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_bookmark
                 mLayoutManager.scrollToPositionWithOffset(scrollPos, 0)
             }
 
-
         }
     }
-
 
     override fun onClick(bookmark: Bookmark) {
         activity?.run {
