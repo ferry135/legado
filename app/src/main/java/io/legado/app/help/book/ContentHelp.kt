@@ -7,6 +7,22 @@ import kotlin.math.min
 @Suppress("SameParameterValue", "RegExpRedundantEscape")
 object ContentHelp {
 
+    // reSegment 高频正则预编译，避免每次重排重复编译（原始字符串内反斜杠无需转义）
+    private val RE_QUOT_ENTITY = """&quot;""".toRegex()
+    private val RE_COLON_QUOTE = """[:：]['"‘”“]+""".toRegex()
+    private val RE_QUOTE_GROUP = """["”“]+[\s]*["”“][\s"”“]*""".toRegex()
+    private val RE_INDENT = """[　\s]+""".toRegex()
+    private val RE_INDENT_CHAR = """[　\s]""".toRegex()
+    private val RE_QUOTE_PAIR = """["”“]+[\s]*["”“]+""".toRegex()
+    private val RE_QUOTE_PUNCT = """["”“]+(？。！?!~)["”“]+""".toRegex()
+    private val RE_QUOTE_PUNCT_CHAR = """["”“]+(？。！?!~)([^"”“])""".toRegex()
+    private val RE_SAYING_PERIOD = """([问说喊唱叫骂道着答])[.。]""".toRegex()
+    private val RE_BLANK_LINE = """\n(\s*)""".toRegex()
+    private val RE_LEADING_WS = """^\s+""".toRegex()
+    private val RE_COLON_QUOTE_2 = """[:：]["“”\s]+""".toRegex()
+    private val RE_LINE_QUOTE = """\n["“”]([^\n"“”]+)([,:，：]["”“])([^\n"“”]+)""".toRegex()
+    private val RE_QUOTE_GROUP_WS = """\s*["”“]+[\s]*["”“][\s"”“]*""".toRegex()
+
     /**
      * 段落重排算法入口。把整篇内容输入，连接错误的分段，再把每个段落调用其他方法重新切分
      *
@@ -18,10 +34,10 @@ object ContentHelp {
         var content1 = content
         val dict = makeDict(content1)
         var p = content1
-            .replace("&quot;".toRegex(), "“")
-            .replace("[:：]['\"‘”“]+".toRegex(), "：“")
-            .replace("[\"”“]+[\\s]*[\"”“][\\s\"”“]*".toRegex(), "”\n“")
-            .split("\n(\\s*)".toRegex()).toTypedArray()
+            .replace(RE_QUOT_ENTITY, "“")
+            .replace(RE_COLON_QUOTE, "：“")
+            .replace(RE_QUOTE_GROUP, "”\n“")
+            .split(RE_BLANK_LINE).toTypedArray()
 
         //初始化StringBuilder的长度,在原content的长度基础上做冗余
         var buffer = StringBuilder((content1.length * 1.15).toInt())
@@ -29,7 +45,7 @@ object ContentHelp {
         buffer.append(" ")
         if (chapterName.trim { it <= ' ' } != p[0].trim { it <= ' ' }) {
             // 去除段落内空格。unicode 3000 象形字间隔（中日韩符号和标点），不包含在\s内
-            buffer.append(p[0].replace("[\u3000\\s]+".toRegex(), ""))
+            buffer.append(p[0].replace(RE_INDENT, ""))
         }
 
         //如果原文存在分段错误，需要把段落重新黏合
@@ -37,20 +53,17 @@ object ContentHelp {
             if (match(MARK_SENTENCES_END, buffer[buffer.length - 1])) buffer.append("\n")
             // 段落开头以外的地方不应该有空格
             // 去除段落内空格。unicode 3000 象形字间隔（中日韩符号和标点），不包含在\s内
-            buffer.append(p[i].replace("[\u3000\\s]".toRegex(), ""))
+            buffer.append(p[i].replace(RE_INDENT_CHAR, ""))
         }
         //     预分段预处理
         //         ”“处理为”\n“。
         //         ”。“处理为”。\n“。不考虑“？”  “！”的情况。
         // ”。xxx处理为 ”。\n xxx
         p = buffer.toString()
-            .replace("[\"”“]+[\\s]*[\"”“]+".toRegex(), "”\n“")
-            .replace("[\"”“]+(？。！?!~)[\"”“]+".toRegex(), "”$1\n“")
-            .replace("[\"”“]+(？。！?!~)([^\"”“])".toRegex(), "”$1\n$2")
-            .replace(
-                "([问说喊唱叫骂道着答])[\\.。]".toRegex(),
-                "$1。\n"
-            )
+            .replace(RE_QUOTE_PAIR, "”\n“")
+            .replace(RE_QUOTE_PUNCT, "”$1\n“")
+            .replace(RE_QUOTE_PUNCT_CHAR, "”$1\n$2")
+            .replace(RE_SAYING_PERIOD, "$1。\n")
             .split("\n".toRegex()).toTypedArray()
         buffer = StringBuilder((content1.length * 1.15).toInt())
         for (s in p) {
@@ -59,11 +72,11 @@ object ContentHelp {
         }
         buffer = reduceLength(buffer)
         content1 = (buffer.toString() //         处理章节头部空格和换行
-            .replaceFirst("^\\s+".toRegex(), "")
-            .replace("\\s*[\"”“]+[\\s]*[\"”“][\\s\"”“]*".toRegex(), "”\n“")
-            .replace("[:：][”“\"\\s]+".toRegex(), "：“")
-            .replace("\n[\"“”]([^\n\"“”]+)([,:，：][\"”“])([^\n\"“”]+)".toRegex(), "\n$1：“$3")
-            .replace("\n(\\s*)".toRegex(), "\n"))
+            .replaceFirst(RE_LEADING_WS, "")
+            .replace(RE_QUOTE_GROUP_WS, "”\n“")
+            .replace(RE_COLON_QUOTE_2, "：“")
+            .replace(RE_LINE_QUOTE, "\n$1：“$3")
+            .replace(RE_BLANK_LINE, "\n"))
         return content1
     }
 

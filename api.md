@@ -4,6 +4,17 @@
 
 您需要先在设置中启用"Web 服务"。
 
+## 访问鉴权
+
+在 设置→其它设置→"Web 服务访问令牌" 配置令牌后，以下所有 Web 数据接口都需要携带令牌，三种方式任选其一：
+
+* URL 参数：`http://ip:port/getBookshelf?token=你的令牌`
+* 请求头：`Authorization: Bearer 你的令牌`
+* Cookie：`authToken=你的令牌`（浏览器用 `http://ip:port/?token=xxx` 打开一次即自动种下）
+
+未携带令牌的请求返回 `401 Unauthorized`。静态页面不受限制，但页面内的数据请求同样需要令牌。
+**未配置令牌时不做校验，但跨域网页客户端将无法访问（CORS 仅对持有效令牌的请求开放）。**
+
 ## 使用
 
 ### Web
@@ -166,6 +177,36 @@ URL = http://127.0.0.1:1234/cover?path=xxxxx
 Method = GET
 ```
 
+#### 刷新目录
+
+```
+GET /refreshToc?url={bookUrl}&reload={是否重新获取目录 0|1}
+```
+
+#### 获取 Web 排版配置
+
+```
+GET /getReadConfig
+```
+
+#### 保存 Web 排版配置
+
+```
+POST /saveReadConfig
+```
+
+#### 保存单个订阅源
+
+```
+POST /saveRssSource
+```
+
+#### 插入本地书籍
+
+```
+POST /addLocalBook
+```
+
 #### 获取正文图片
 
 ```
@@ -186,7 +227,7 @@ Method = POST
 ### [Content Provider](/app/src/main/java/io/legado/app/api/ReaderProvider.kt)
 
 
-* 需声明`io.legado.READ_WRITE`权限
+* 需声明`${包名}.permission.READER`权限（signature 级，仅同签名应用可授权）
 * `providerHost`为`包名.readerProvider`, 如`io.legado.app.release.readerProvider`,不同包的地址不同,防止冲突安装失败
 * 以下出现的`providerHost`请自行替换
 
