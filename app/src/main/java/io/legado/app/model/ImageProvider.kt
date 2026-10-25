@@ -265,8 +265,8 @@ object ImageProvider {
         val bitmap = getImage(book, src, width, height)
         bitmapLruCache.pin(bitmap)
         if (bitmap.isRecycled) {
-            // 极小概率：解码完成到 pin 之间被淘汰回收，重新获取
-            return getImageAndPin(book, src, width, height)
+            // 极小概率：解码完成到 pin 之间被淘汰回收，重试一次
+            bitmapLruCache.getAndPin(vFile.absolutePath)?.let { return it }
         }
         return bitmap
     }
