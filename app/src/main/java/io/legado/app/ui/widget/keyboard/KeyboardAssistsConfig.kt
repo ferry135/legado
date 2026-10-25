@@ -30,9 +30,9 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.setLayout
+import io.legado.app.utils.launchCollectWithLifecycle
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
-import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
@@ -83,7 +83,6 @@ class KeyboardAssistsConfig : BaseDialogFragment(R.layout.dialog_recycler_view),
             }.flowOn(IO).collect {
                 adapter.setItems(it)
             }
-
 
         }
     }

@@ -54,8 +54,8 @@ import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.startService
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.verificationField
-import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.launchCollectWithLifecycle
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
@@ -280,7 +280,6 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                 adapter.notifyDataSetChanged()
                 upMenu()
             }
-
 
         }
     }

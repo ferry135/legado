@@ -30,9 +30,9 @@ import io.legado.app.utils.applyTint
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.launchCollectWithLifecycle
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
-import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
@@ -83,7 +83,6 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
             }.flowOn(IO).conflate().collect {
                 adapter.setItems(it)
             }
-
 
         }
     }

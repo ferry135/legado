@@ -44,14 +44,13 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.transaction
+import io.legado.app.utils.launchCollectWithLifecycle
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
-import io.legado.app.utils.launchCollectWithLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
-
 
 class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_change_source),
     Toolbar.OnMenuItemClickListener,
@@ -245,7 +244,6 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
                 groups.addAll(it)
                 upGroupMenu()
             }
-
 
         }
     }

@@ -48,8 +48,8 @@ import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.transaction
-import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.launchCollectWithLifecycle
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -255,7 +255,6 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
                 upGroupMenu()
             }
 
-
         }
     }
 
@@ -367,7 +366,6 @@ class RssSourceActivity : VMBaseActivity<ActivityRssSourceBinding, RssSourceView
                 adapter.setItems(it, adapter.diffItemCallback)
                 delay(100)
             }
-
 
         }
     }

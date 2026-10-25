@@ -44,8 +44,8 @@ import io.legado.app.utils.observeEvent
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.transaction
-import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.launchCollectWithLifecycle
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.conflate
@@ -262,7 +262,6 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
                 groups.addAll(it)
                 upGroupMenu()
             }
-
 
         }
     }

@@ -42,8 +42,8 @@ import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.showHelp
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.toastOnUi
-import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.launchCollectWithLifecycle
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
@@ -128,7 +128,6 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
                 initSelectedName(tocRules)
                 adapter.setItems(tocRules, adapter.diffItemCallBack)
             }
-
 
         }
     }

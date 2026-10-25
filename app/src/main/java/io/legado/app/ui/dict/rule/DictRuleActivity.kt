@@ -38,8 +38,8 @@ import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.showHelp
 import io.legado.app.utils.splitNotBlank
 import io.legado.app.utils.toastOnUi
-import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.launchCollectWithLifecycle
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
@@ -117,7 +117,6 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.recyclerView)
     }
 
-
     private fun initSelectActionView() {
         binding.selectActionBar.setMainActionText(R.string.delete)
         binding.selectActionBar.inflateMenu(R.menu.dict_rule_sel)
@@ -132,7 +131,6 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
             }.flowOn(IO).collect {
                 adapter.setItems(it, adapter.diffItemCallBack)
             }
-
 
         }
     }

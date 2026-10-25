@@ -1,6 +1,5 @@
 package io.legado.app.ui.rss.favorites
 
-
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
@@ -20,8 +19,8 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.startActivity
-import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.launchCollectWithLifecycle
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
@@ -66,7 +65,6 @@ class RssFavoritesFragment() : VMBaseFragment<RssFavoritesViewModel>(R.layout.fr
             }.flowOn(IO).collect {
                 adapter.setItems(it)
             }
-
 
         }
     }

@@ -1,6 +1,5 @@
 package io.legado.app.ui.rss.article
 
-
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
@@ -26,8 +25,8 @@ import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.startActivity
-import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.launchCollectWithLifecycle
+import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -117,7 +116,6 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
             }.flowOn(IO).collect {
                 adapter.setItems(it)
             }
-
 
         }
     }
