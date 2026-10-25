@@ -151,7 +151,9 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
                 val fileDoc = FileDoc.fromUri(uri, true)
                 fileDoc.createFileIfNotExist(fileName, "crash")
                     .writeText(crashLog)
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                // 备份目录写入失败不能静默，否则用户以为已保存 crash log
+                AppLog.put("写入崩溃日志到备份目录失败", e)
             }
             kotlin.runCatching {
                 appCtx.externalCacheDir?.let { rootFile ->

@@ -256,8 +256,9 @@ object BookHelp {
             val msg = "${book.name} ${chapter?.title} 图片 $src 下载失败\n${e.localizedMessage}"
             AppLog.put(msg, e)
         } finally {
-            downloadImages.remove(src)
+            // 先解锁再移除：等锁线程拿到的应是仍在映射中的 Mutex
             mutex.unlock()
+            downloadImages.remove(src)
         }
     }
 
@@ -282,27 +283,6 @@ object BookHelp {
 
     fun getImageSuffix(src: String): String {
         return UrlUtil.getSuffix(src, "jpg")
-    }
-
-    @Throws(IOException::class, FileNotFoundException::class)
-    fun getEpubFile(book: Book): ZipFile {
-        val uri = book.getLocalUri()
-        if (uri.isContentScheme()) {
-            FileUtils.createFolderIfNotExist(downloadDir, cacheEpubFolderName)
-            val path = FileUtils.getPath(downloadDir, cacheEpubFolderName, book.originName)
-            val file = File(path)
-            val doc = DocumentFile.fromSingleUri(appCtx, uri)
-                ?: throw IOException("文件不存在")
-            if (!file.exists() || doc.lastModified() > book.latestChapterTime) {
-                LocalBook.getBookInputStream(book).use { inputStream ->
-                    FileOutputStream(file).use { outputStream ->
-                        inputStream.copyTo(outputStream)
-                    }
-                }
-            }
-            return ZipFile(file)
-        }
-        return ZipFile(uri.path)
     }
 
     /**

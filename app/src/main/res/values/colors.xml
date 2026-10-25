@@ -24,6 +24,7 @@
     <color name="day_bottom_nav">#FFFEFC</color>
     <color name="night_bottom_nav">#1B1917</color>
     <color name="divider_subtle">#0D000000</color>
+    <color name="scrim_50">#50000000</color>
     <color name="progress_track">#E5E2DE</color>
     <color name="legacy_bottom_day">#F1EFE9</color>
     <color name="legacy_bottom_night">#211F1C</color>
