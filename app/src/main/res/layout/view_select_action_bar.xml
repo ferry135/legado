@@ -8,9 +8,9 @@
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingLeft="16dp"
-    android:paddingTop="6dp"
-    android:paddingRight="8dp"
-    android:paddingBottom="6dp"
+    android:paddingTop="8dp"
+    android:paddingRight="12dp"
+    android:paddingBottom="8dp"
     tools:ignore="RtlHardcoded">
 
     <io.legado.app.lib.theme.view.ThemeCheckBox
@@ -18,8 +18,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:padding="5dp"
-        android:text="@string/select_all" />
+        android:padding="2dp"
+        android:text="@string/select_all"
+        android:textSize="13sp" />
 
     <io.legado.app.ui.widget.text.AccentStrokeTextView
         android:id="@+id/btn_revert_selection"
@@ -28,8 +29,12 @@
         android:layout_margin="5dp"
         android:gravity="center"
         android:minWidth="72dp"
-        android:padding="5dp"
+        android:paddingLeft="14dp"
+        android:paddingTop="6dp"
+        android:paddingRight="14dp"
+        android:paddingBottom="6dp"
         android:text="@string/revert_selection"
+        android:textSize="13sp"
         app:isBottomBackground="true" />
 
     <io.legado.app.ui.widget.text.AccentStrokeTextView
@@ -39,15 +44,19 @@
         android:layout_margin="5dp"
         android:gravity="center"
         android:minWidth="72dp"
-        android:padding="5dp"
+        android:paddingLeft="14dp"
+        android:paddingTop="6dp"
+        android:paddingRight="14dp"
+        android:paddingBottom="6dp"
         android:text="@string/app_name"
+        android:textSize="13sp"
         android:visibility="gone"
         app:isBottomBackground="true" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_menu_more"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/more_menu"
         android:padding="6dp"

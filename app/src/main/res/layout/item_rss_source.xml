@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- S5 订阅源行：勾选(含源名) + 启用开关 + 编辑 + 更多；行内边距 14/20，分割线由 VerticalDivider 提供 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -6,7 +7,10 @@
     android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="16dp">
+    android:paddingStart="20dp"
+    android:paddingTop="14dp"
+    android:paddingEnd="20dp"
+    android:paddingBottom="14dp">
 
     <io.legado.app.lib.theme.view.ThemeCheckBox
         android:id="@+id/cb_source"
@@ -15,7 +19,8 @@
         android:layout_gravity="center"
         android:layout_weight="1"
         android:singleLine="true"
-        android:textColor="@color/primaryText" />
+        android:textColor="@color/primaryText"
+        android:textSize="15sp" />
 
     <io.legado.app.lib.theme.view.ThemeSwitch
         android:id="@+id/swt_enabled"

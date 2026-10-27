@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 中性圆角标签（8dp）：surface2 底（02 kchip / 04 chips / 05 调试帮助 chip） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/surface_container_high" />
+    <corners android:radius="@dimen/corner_radius_sm" />
+</shape>

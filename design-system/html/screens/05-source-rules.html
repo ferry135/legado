@@ -1,0 +1,649 @@
+<!-- design-system: legado v2 -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>书源与文本规则 · legado v2</title><style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Noto Sans SC","Microsoft YaHei",sans-serif;background:#eae8e3;color:#3c3a35}
+
+/* ===== 页面框架（展示台） ===== */
+.page-head{max-width:1120px;margin:0 auto;padding:46px 26px 4px}
+.page-head h1{font-size:30px;font-weight:700;margin:0 0 8px;letter-spacing:.5px}
+.page-head .sub{font-size:14.5px;color:#6d6a62;line-height:1.7;max-width:760px}
+.nav{max-width:1120px;margin:0 auto;padding:18px 26px 6px;display:flex;flex-wrap:wrap;gap:10px}
+.nav a{background:#fff;border:1px solid rgba(0,0,0,.08);color:#3c3a35;border-radius:18px;padding:7px 16px;font-size:14px;text-decoration:none;font-weight:500}
+.nav a:hover{border-color:#ff6b2c;color:#ff6b2c}
+.nav a b{color:#ff6b2c;font-weight:600;margin-right:5px}
+main{max-width:1120px;margin:0 auto;padding:0 26px 30px}
+.scr{margin-top:58px}
+.scr-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.scr-head .no{font-size:13px;font-weight:700;color:#ff6b2c;background:#fff0e6;border-radius:12px;padding:3px 10px}
+.scr-head h2{font-size:22px;font-weight:700;margin:0}
+.scr-head .src{font-size:12px;color:#8a867c;font-family:ui-monospace,Consolas,monospace}
+.menunote{font-size:12.5px;color:#6d6a62;margin:0 2px 14px;line-height:1.8}
+.menunote b{color:#3c3a35;font-weight:600}
+.pair{display:flex;flex-wrap:wrap;gap:30px;align-items:flex-start}
+.ph{display:flex;flex-direction:column;width:412px;max-width:100%}
+.cap{font-size:12px;color:#8a867c;text-align:center;margin-top:9px;letter-spacing:1px}
+footer{max-width:1120px;margin:0 auto;padding:44px 26px 56px;color:#6d6a62;font-size:13px;line-height:2}
+footer h3{color:#3c3a35;font-size:15px;margin:0 0 6px}
+footer code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:5px;padding:1px 6px}
+
+/* ===== 手机壳 ===== */
+.phone{width:412px;max-width:100%;height:900px;border-radius:26px;border:1px solid var(--frame);overflow:hidden;position:relative;display:flex;flex-direction:column;background:var(--bg);color:var(--text);box-shadow:0 6px 24px rgba(60,55,45,.10)}
+.light{--bg:#faf9f7;--surface:#ffffff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--track:#e5e2de;--divider:rgba(0,0,0,.07);--frame:rgba(0,0,0,.12);--outline:#8b8878;--error:#ba1a1a;--success:#3b7a45;--link:#2f6db3}
+.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--track:#353331;--divider:rgba(255,255,255,.08);--frame:rgba(255,255,255,.14);--outline:#8f8b7f;--error:#ffb4ab;--success:#7fd891;--link:#7ab8e8}
+
+.status{height:36px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 20px 3px;font-size:14px;font-weight:600;flex:none}
+.status-right{display:flex;gap:10px;align-items:center;font-weight:500}
+
+/* blend 顶栏：与页面背景同色、无阴影、无分割 */
+.appbar{display:flex;align-items:center;padding:6px 6px 4px;min-height:58px;flex:none}
+.appbar .t{font-size:19px;font-weight:650;margin-left:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appbar .grow{flex:1}
+.icon-btn{width:42px;height:42px;border:0;background:transparent;border-radius:21px;display:grid;place-items:center;color:var(--text);cursor:pointer;flex:none}
+.icon-btn.more{font-size:24px;line-height:1;font-weight:700}
+.icon{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon.s{width:19px;height:19px}
+
+/* 搜索胶囊（TitleBar contentLayout=view_search） */
+.searchbar{display:flex;align-items:center;gap:10px;height:40px;border-radius:20px;background:var(--surface2);padding:0 16px;color:var(--secondary);font-size:15px;margin:4px 12px 10px;flex:none}
+.searchbar .icon{width:19px;height:19px;flex:none}
+.searchbar .sv{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.searchbar .sv.q{color:var(--text)}
+
+/* 列表 */
+.body{flex:1;min-height:0;overflow:hidden}
+.row{padding:12px 16px 12px 14px;display:flex;align-items:center;gap:4px}
+.row .grow{flex:1;min-width:0}
+.row-name{font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-name.off,.row.off .row-name{color:var(--secondary)}
+.grp{color:var(--secondary);font-weight:400}
+.row-ic{width:38px;height:38px;border-radius:19px;display:grid;place-items:center;color:var(--secondary);flex:none;position:relative;font-size:22px;line-height:1}
+.row-ic .dot{position:absolute;right:5px;top:5px;width:7px;height:7px;border-radius:50%;background:var(--success)}
+.divider{height:1px;background:var(--divider);margin-left:14px}
+
+/* 复选 / 开关 */
+.ck{width:20px;height:20px;border:2px solid var(--outline);border-radius:6px;flex:none;display:grid;place-items:center;color:#fff;margin-right:9px}
+.ck svg{width:13px;height:13px;stroke-width:3.2;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ck.on{background:var(--primary);border-color:var(--primary)}
+.sw{width:40px;height:24px;border-radius:12px;background:var(--track);flex:none;position:relative;margin:0 4px}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff}
+.sw.on{background:var(--primary)}
+.sw.on::after{left:18px}
+
+/* 底部批量操作栏（SelectActionBar） */
+.bottom-stack{flex:none}
+.selectbar{background:var(--surface2);border-top:1px solid var(--divider);padding:8px 12px 8px 16px;display:flex;align-items:center;gap:8px}
+.selectbar .lb{font-size:13.5px;color:var(--text);white-space:nowrap;margin-right:2px}
+.selectbar .grow{flex:1}
+.pill{border:1px solid var(--primary);color:var(--primary);border-radius:17px;padding:5px 15px;font-size:13.5px;flex:none;white-space:nowrap}
+.pill.fill{background:var(--primary);color:#fff}
+.pill.dis,.row-ic.dis,.ck.dis{opacity:.38}
+.hi{height:20px;background:var(--surface2);display:grid;place-items:center}
+.hi::after{content:"";width:104px;height:4px;border-radius:2px;background:var(--secondary);opacity:.55}
+
+/* 行内扩展：同源 host 行 / 校验进度行 */
+.row.col{flex-direction:column;align-items:stretch;gap:2px}
+.rowline{display:flex;align-items:center;gap:4px}
+.rowline .grow{flex:1;min-width:0}
+.host{color:var(--primary);font-size:13px;font-weight:600;padding:0 0 0 39px}
+.dbg{display:flex;align-items:center;gap:8px;padding-left:39px;margin-top:2px;font-size:12.5px;color:var(--secondary)}
+.mini-spin{width:15px;height:15px;border-radius:50%;border:2px solid var(--primary);border-top-color:transparent;animation:spin 1s linear infinite;flex:none}
+.spin-lg{width:30px;height:30px;border-radius:50%;border:3px solid var(--primary);border-top-color:transparent;animation:spin 1s linear infinite;margin:16px auto 4px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* 编辑页：类型行 / Tab / 输入域 / 键盘工具条 */
+.controls{display:flex;align-items:center;gap:14px;padding:6px 14px 8px;overflow:hidden;white-space:nowrap;flex:none}
+.spin-sel{display:inline-flex;align-items:center;gap:5px;font-size:14px;border-bottom:2px solid var(--primary);padding-bottom:2px}
+.spin-sel .icon{width:15px;height:15px}
+.ckc{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--text)}
+.ckc .ck{width:17px;height:17px;border-radius:5px;margin:0}
+.ckc .ck svg{width:11px;height:11px}
+.tabs{display:flex;gap:2px;padding:0 8px;border-bottom:1px solid var(--divider);overflow:hidden;flex:none}
+.tab{padding:9px 11px 7px;font-size:14px;color:var(--secondary);border-bottom:2.5px solid transparent;white-space:nowrap;flex:none}
+.tab.on{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
+.form{padding:12px 14px 0}
+.field{background:var(--surface2);border-radius:10px;padding:7px 14px 9px;margin-bottom:10px}
+.field .hint{font-size:11px;color:var(--secondary);margin-bottom:2px}
+.field .val{font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.field .val.mono{font-family:ui-monospace,Consolas,monospace;font-size:12.5px}
+.field.focus{box-shadow:inset 0 -2px 0 var(--primary)}
+.field.focus .val::after{content:"";display:inline-block;width:1.5px;height:15px;background:var(--primary);margin-left:1px;vertical-align:-2px;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.kbdrow{display:flex;gap:8px;padding:9px 12px;border-top:1px solid var(--divider);overflow:hidden;flex:none}
+.kchip{background:var(--surface2);border-radius:16px;padding:5px 13px;font-size:13px;font-family:ui-monospace,Consolas,monospace;color:var(--text);flex:none}
+.kchip.q{font-family:inherit;font-weight:700}
+
+/* 行内复选行（使用正则 / 作用范围） */
+.inline-cks{display:flex;align-items:center;gap:16px;padding:1px 2px 12px}
+.inline-cks .grow{flex:1}
+.help-ic{color:var(--secondary);display:grid;place-items:center}
+
+/* 调试帮助面板（聚焦搜索时展开） */
+.helppanel{background:var(--surface);border-radius:14px;margin:6px 12px 12px;padding:13px 14px 6px}
+.helppanel .hl{font-size:12.5px;color:var(--secondary);margin:2px 0 7px}
+.chip{display:inline-block;background:var(--surface2);border-radius:16px;padding:5px 13px;font-size:13px;color:var(--text);margin:0 8px 8px 0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:top}
+.chip.acc{color:var(--primary);font-weight:600}
+.log{padding:2px 18px;font-size:13px;color:var(--secondary);line-height:1.85;word-break:break-all}
+.log a{color:var(--link);text-decoration:none}
+.log .ok{color:var(--success)}
+
+/* 登录对话框（SourceLoginDialog） */
+.dim{position:absolute;inset:0;background:rgba(0,0,0,.52);display:flex;align-items:center;justify-content:center;padding:18px}
+.dialog{background:var(--surface);border-radius:16px;width:100%;overflow:hidden;display:flex;flex-direction:column;max-height:420px}
+.dlg-bar{background:var(--primary);color:#fff;display:flex;align-items:center;padding:10px 8px 10px 18px;flex:none}
+.dlg-bar .t{font-size:16px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dlg-bar .icon-btn{color:#fff;width:40px;height:40px}
+.dlg-bar .icon-btn.more{font-size:22px}
+.dlg-body{padding:14px 16px 16px;overflow:hidden}
+.dlg-body .field{margin-bottom:11px}
+.fillet{display:inline-flex;align-items:center;justify-content:center;background:var(--primary-soft);color:var(--primary);border-radius:18px;padding:8px 18px;font-size:13.5px;font-weight:500;margin-right:10px}
+</style></head>
+<body>
+
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m11 18-6-6 6-6"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+  <symbol id="i-sort" viewBox="0 0 24 24"><path d="M4 6h12M4 12h9M4 18h5"/></symbol>
+  <symbol id="i-groups" viewBox="0 0 24 24"><circle cx="8.5" cy="8.5" r="3"/><circle cx="16.8" cy="10.3" r="2.3"/><path d="M3.5 19c.4-3 2.4-5 5-5s4.6 2 5 5"/><path d="M14.6 14.5c2.3.4 3.9 2.1 4.3 4.5"/></symbol>
+  <symbol id="i-add" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></symbol>
+  <symbol id="i-bug" viewBox="0 0 24 24"><path d="M8 7h8v5a4 4 0 0 1-8 0Z"/><path d="M9 7a3 3 0 0 1 6 0"/><path d="M8 9H4m16 0h-4M8 13H4m16 0h-4M10 16.5 8 20m6-3.5 2 3.5"/></symbol>
+  <symbol id="i-scan" viewBox="0 0 24 24"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M4 12h16"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6M14 11v6"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.3 9a2.7 2.7 0 1 1 3.9 2.4c-.9.5-1.2 1-1.2 1.9"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-go" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></symbol>
+</svg>
+
+<header class="page-head">
+  <h1>书源与文本规则</h1>
+  <div class="sub">分组 05 / 08 —— 书源的导入、编辑、调试、登录，与替换净化、TXT 目录规则、字典规则等文本规则管理。所有功能块均逐一核对自现有布局与 Activity 代码；视觉令牌延续 novel_reader 参考稿（暖橙 #FF6B2C 主色、暖纸白/暖黑表面、7~8% 弱分割线、大圆角、无阴影、blend 顶栏）。</div>
+</header>
+<nav class="nav">
+  <a href="#s01"><b>01</b>书源管理</a>
+  <a href="#s02"><b>02</b>书源编辑</a>
+  <a href="#s03"><b>03</b>书源调试</a>
+  <a href="#s04"><b>04</b>书源登录</a>
+  <a href="#s05"><b>05</b>替换净化</a>
+  <a href="#s06"><b>06</b>替换编辑</a>
+  <a href="#s07"><b>07</b>TXT目录规则</a>
+  <a href="#s08"><b>08</b>字典规则</a>
+</nav>
+
+<main>
+
+<!-- ============ 01 书源管理 ============ -->
+<section class="scr" id="s01">
+  <div class="scr-head"><span class="no">01</span><h2>书源管理</h2><span class="src">BookSourceActivity · activity_book_source.xml · item_book_source.xml · view_select_action_bar.xml</span></div>
+  <p class="menunote"><b>顶栏：</b>搜索胶囊（支持书名关键字与特殊筛选：已启用 / 已停用 / 需要登录 / 未分组 / 启用发现 / 停用发现 / group:分组名）＋ 排序、分组两个常驻图标。<b>⋮ 菜单：</b>添加书源 / 本地导入 / 在线导入 / 二维码导入 / 显示重复书源（勾选） / 帮助；<b>排序子菜单：</b>降序（可勾选）、手动、自动（权重）、名称、URL、更新时间、响应时间、启用；<b>分组子菜单：</b>分组管理、已启用、已停用、需要登录、未分组、启用发现、停用发现、动态分组列表。<b>行内：</b>勾选批量、启用开关、编辑、⋮（置顶 / 置底 / 登录 / 搜索 / 调试 / 删除 / 启用发现）、绿色圆点＝启用发现、显示重复书源时露出 host 标签、校验时行尾进度＋消息。<b>批量栏：</b>全选(x/y)、反选、删除、⋮（启用选择 / 停用选择 / 启用发现 / 停用发现 / 置顶选择 / 置底选择 / 添加分组 / 移出分组 / 导出选中 / 分享选中 / 校验选中 / 间隔校验选中）。</p>
+  <div class="pair">
+  <div class="ph"><div class="phone light">
+    <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+    <div class="appbar">
+      <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+      <div class="t">书源</div><div class="grow"></div>
+      <button class="icon-btn"><svg class="icon"><use href="#i-sort"/></svg></button>
+      <button class="icon-btn"><svg class="icon"><use href="#i-groups"/></svg></button>
+      <button class="icon-btn more">⋮</button>
+    </div>
+    <div class="searchbar"><svg class="icon"><use href="#i-search"/></svg><span class="sv">搜索书源</span></div>
+    <div class="body">
+      <div class="row"><span class="ck"></span><div class="row-name grow">笔趣阁 <span class="grp">· 综合</span></div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮<span class="dot"></span></span></div>
+      <div class="divider"></div>
+      <div class="row col"><div class="host">qimao.com</div><div class="rowline"><span class="ck"></span><div class="row-name grow">七猫中文网 <span class="grp">· 付费</span></div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮<span class="dot"></span></span></div></div>
+      <div class="divider"></div>
+      <div class="row off"><span class="ck"></span><div class="row-name grow">纵横文学 <span class="grp">· 综合</span></div><span class="sw"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div>
+      <div class="divider"></div>
+      <div class="row"><span class="ck on"><svg><use href="#i-check"/></svg></span><div class="row-name grow">晋江文学城 <span class="grp">· 女频</span></div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div>
+      <div class="divider"></div>
+      <div class="row col"><div class="rowline"><span class="ck"></span><div class="row-name grow">海蚀书院 <span class="grp">· 听书</span></div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div><div class="dbg"><span>校验中 · 正在搜索：斗罗大陆</span><span class="mini-spin" style="margin-left:auto"></span></div></div>
+      <div class="divider"></div>
+      <div class="row"><span class="ck"></span><div class="row-name grow">笔趣阁镜像 <span class="grp">· 综合</span></div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮<span class="dot"></span></span></div>
+      <div class="divider"></div>
+      <div class="row"><span class="ck"></span><div class="row-name grow">起点中文网 <span class="grp">· 付费</span></div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div>
+    </div>
+    <div class="bottom-stack">
+      <div class="selectbar"><span class="ck"></span><span class="lb">全选(2/7)</span><span class="grow"></span><span class="pill">反选</span><span class="pill fill">删除</span><span class="row-ic">⋮</span></div>
+      <div class="hi"></div>
+    </div>
+  </div><div class="cap">浅色 · LIGHT</div></div>
+  <div class="ph"><div class="phone dark">
+    <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+    <div class="appbar">
+      <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+      <div class="t">书源</div><div class="grow"></div>
+      <button class="icon-btn"><svg class="icon"><use href="#i-sort"/></svg></button>
+      <button class="icon-btn"><svg class="icon"><use href="#i-groups"/></svg></button>
+      <button class="icon-btn more">⋮</button>
+    </div>
+    <div class="searchbar"><svg class="icon"><use href="#i-search"/></svg><span class="sv">搜索书源</span></div>
+    <div class="body">
+      <div class="row"><span class="ck"></span><div class="row-name grow">笔趣阁 <span class="grp">· 综合</span></div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮<span class="dot"></span></span></div>
+      <div class="divider"></div>
+      <div class="row col"><div class="host">qimao.com</div><div class="rowline"><span class="ck"></span><div class="row-name grow">七猫中文网 <span class="grp">· 付费</span></div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮<span class="dot"></span></span></div></div>
+      <div class="divider"></div>
+      <div class="row off"><span class="ck"></span><div class="row-name grow">纵横文学 <span class="grp">· 综合</span></div><span class="sw"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div>
+      <div class="divider"></div>
+      <div class="row"><span class="ck on"><svg><use href="#i-check"/></svg></span><div class="row-name grow">晋江文学城 <span class="grp">· 女频</span></div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div>
+      <div class="divider"></div>
+      <div class="row col"><div class="rowline"><span class="ck"></span><div class="row-name grow">海蚀书院 <span class="grp">· 听书</span></div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div><div class="dbg"><span>校验中 · 正在搜索：斗罗大陆</span><span class="mini-spin" style="margin-left:auto"></span></div></div>
+      <div class="divider"></div>
+      <div class="row"><span class="ck"></span><div class="row-name grow">笔趣阁镜像 <span class="grp">· 综合</span></div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮<span class="dot"></span></span></div>
+      <div class="divider"></div>
+      <div class="row"><span class="ck"></span><div class="row-name grow">起点中文网 <span class="grp">· 付费</span></div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div>
+    </div>
+    <div class="bottom-stack">
+      <div class="selectbar"><span class="ck"></span><span class="lb">全选(2/7)</span><span class="grow"></span><span class="pill">反选</span><span class="pill fill">删除</span><span class="row-ic">⋮</span></div>
+      <div class="hi"></div>
+    </div>
+  </div><div class="cap">深色 · DARK</div></div>
+  </div>
+</section>
+
+<!-- ============ 02 书源编辑 ============ -->
+<section class="scr" id="s02">
+  <div class="scr-head"><span class="no">02</span><h2>书源编辑</h2><span class="src">BookSourceEditActivity · activity_book_source_edit.xml · item_source_edit.xml</span></div>
+  <p class="menunote"><b>顶栏：</b>保存、调试书源两个常驻图标。<b>⋮ 菜单：</b>登录（配置了登录地址时显示） / 搜索 / 清除Cookie / 自动补全（可勾选） / 复制书源 / 粘贴书源 / 设置源变量 / 二维码导入 / 二维码分享 / 文本分享 / 帮助。<b>类型行：</b>类型选择（文本/音频/图片/文件）＋ 启用、发现、自动保存Cookie 复选框（段评复选框代码中默认隐藏）。<b>六个规则页签：</b>基本 / 搜索 / 发现 / 详情 / 目录 / 正文，每页为规则字段表单（基本信息页含 源URL、源名称、源分组、备注、登录地址、登录界面、登录检查JS、封面解码JS、书籍URL正则、请求头、变量说明、并发率、jsLib）。<b>键盘上方：</b>帮助❓与自定义按键辅助条（默认键位 @css: / &lt;js&gt; / {{}} / ## / && / %% 等）。</p>
+  <div class="pair">
+  <div class="ph"><div class="phone light">
+    <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+    <div class="appbar">
+      <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+      <div class="t">编辑书源</div><div class="grow"></div>
+      <button class="icon-btn"><svg class="icon"><use href="#i-save"/></svg></button>
+      <button class="icon-btn"><svg class="icon"><use href="#i-bug"/></svg></button>
+      <button class="icon-btn more">⋮</button>
+    </div>
+    <div class="controls">
+      <span class="spin-sel">类型：文本 <svg class="icon"><use href="#i-chev"/></svg></span>
+      <span class="ckc"><span class="ck on"><svg><use href="#i-check"/></svg></span>启用</span>
+      <span class="ckc"><span class="ck on"><svg><use href="#i-check"/></svg></span>发现</span>
+      <span class="ckc"><span class="ck on"><svg><use href="#i-check"/></svg></span>自动保存Cookie</span>
+    </div>
+    <div class="tabs"><span class="tab on">基本</span><span class="tab">搜索</span><span class="tab">发现</span><span class="tab">详情</span><span class="tab">目录</span><span class="tab">正文</span></div>
+    <div class="body"><div class="form">
+      <div class="field focus"><div class="hint">源URL(sourceUrl)</div><div class="val">https://www.xbiquge.la</div></div>
+      <div class="field"><div class="hint">源名称(sourceName)</div><div class="val">笔趣阁</div></div>
+      <div class="field"><div class="hint">源分组(sourceGroup)</div><div class="val">综合</div></div>
+      <div class="field"><div class="hint">备注(sourceComment)</div><div class="val">每日校验 · 已适配发现</div></div>
+      <div class="field"><div class="hint">登录地址(loginUrl)</div><div class="val mono">https://www.xbiquge.la/login.php</div></div>
+      <div class="field"><div class="hint">登录界面(loginUi)</div><div class="val mono">[{"name":"账号","type":"text"…</div></div>
+      <div class="field"><div class="hint">登录检查JS(loginCheckJs)</div><div class="val mono">if(!result.contains("已登录"))…</div></div>
+      <div class="field"><div class="hint">书籍URL正则(bookUrlPattern)</div><div class="val mono">.*xbiquge\.la/book/\d+.*</div></div>
+      <div class="field"><div class="hint">请求头(header)</div><div class="val mono">{"User-Agent":"Mozilla/5.0 …"}</div></div>
+    </div></div>
+    <div class="bottom-stack">
+      <div class="kbdrow"><span class="kchip q">❓</span><span class="kchip">@css:</span><span class="kchip">&lt;js&gt;</span><span class="kchip">{{}}</span><span class="kchip">##</span><span class="kchip">&amp;&amp;</span><span class="kchip">%%</span></div>
+      <div class="hi"></div>
+    </div>
+  </div><div class="cap">浅色 · LIGHT</div></div>
+  <div class="ph"><div class="phone dark">
+    <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+    <div class="appbar">
+      <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+      <div class="t">编辑书源</div><div class="grow"></div>
+      <button class="icon-btn"><svg class="icon"><use href="#i-save"/></svg></button>
+      <button class="icon-btn"><svg class="icon"><use href="#i-bug"/></svg></button>
+      <button class="icon-btn more">⋮</button>
+    </div>
+    <div class="controls">
+      <span class="spin-sel">类型：文本 <svg class="icon"><use href="#i-chev"/></svg></span>
+      <span class="ckc"><span class="ck on"><svg><use href="#i-check"/></svg></span>启用</span>
+      <span class="ckc"><span class="ck on"><svg><use href="#i-check"/></svg></span>发现</span>
+      <span class="ckc"><span class="ck on"><svg><use href="#i-check"/></svg></span>自动保存Cookie</span>
+    </div>
+    <div class="tabs"><span class="tab on">基本</span><span class="tab">搜索</span><span class="tab">发现</span><span class="tab">详情</span><span class="tab">目录</span><span class="tab">正文</span></div>
+    <div class="body"><div class="form">
+      <div class="field focus"><div class="hint">源URL(sourceUrl)</div><div class="val">https://www.xbiquge.la</div></div>
+      <div class="field"><div class="hint">源名称(sourceName)</div><div class="val">笔趣阁</div></div>
+      <div class="field"><div class="hint">源分组(sourceGroup)</div><div class="val">综合</div></div>
+      <div class="field"><div class="hint">备注(sourceComment)</div><div class="val">每日校验 · 已适配发现</div></div>
+      <div class="field"><div class="hint">登录地址(loginUrl)</div><div class="val mono">https://www.xbiquge.la/login.php</div></div>
+      <div class="field"><div class="hint">登录界面(loginUi)</div><div class="val mono">[{"name":"账号","type":"text"…</div></div>
+      <div class="field"><div class="hint">登录检查JS(loginCheckJs)</div><div class="val mono">if(!result.contains("已登录"))…</div></div>
+      <div class="field"><div class="hint">书籍URL正则(bookUrlPattern)</div><div class="val mono">.*xbiquge\.la/book/\d+.*</div></div>
+      <div class="field"><div class="hint">请求头(header)</div><div class="val mono">{"User-Agent":"Mozilla/5.0 …"}</div></div>
+    </div></div>
+    <div class="bottom-stack">
+      <div class="kbdrow"><span class="kchip q">❓</span><span class="kchip">@css:</span><span class="kchip">&lt;js&gt;</span><span class="kchip">{{}}</span><span class="kchip">##</span><span class="kchip">&amp;&amp;</span><span class="kchip">%%</span></div>
+      <div class="hi"></div>
+    </div>
+  </div><div class="cap">深色 · DARK</div></div>
+  </div>
+</section>
+
+<!-- ============ 03 书源调试 ============ -->
+<section class="scr" id="s03">
+  <div class="scr-head"><span class="no">03</span><h2>书源调试</h2><span class="src">BookSourceDebugActivity · activity_source_debug.xml · BookSourceDebugAdapter(item_log.xml)</span></div>
+  <p class="menunote"><b>顶栏：</b>搜索胶囊（默认展开并获得焦点，弹出下方用法帮助面板）＋ 扫码图标。<b>⋮ 菜单：</b>搜索源码 / 书籍源码 / 目录源码 / 正文源码 / 刷新发现 / 帮助。<b>帮助面板：</b>调试搜索（我的 / 系统示例键）、调试发现（发现名::URL，长按可选该书源全部发现分类）、调试详情页 / 目录页（前缀 ++）/ 正文页（前缀 --）示例，点击即填入搜索框。<b>正文区：</b>调试运行时顶部出现旋转加载圈，逐条输出可复制、自动识别链接的日志。</p>
+  <div class="pair">
+  <div class="ph"><div class="phone light">
+    <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+    <div class="appbar">
+      <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+      <div class="t">调试书源</div><div class="grow"></div>
+      <button class="icon-btn"><svg class="icon"><use href="#i-scan"/></svg></button>
+      <button class="icon-btn more">⋮</button>
+    </div>
+    <div class="searchbar"><svg class="icon"><use href="#i-search"/></svg><span class="sv q">我的</span><svg class="icon" style="color:var(--primary)"><use href="#i-go"/></svg></div>
+    <div class="spin-lg"></div>
+    <div class="body">
+      <div class="helppanel">
+        <div class="hl">调试搜索&gt;&gt;输入关键字，如：</div>
+        <span class="chip acc">我的</span><span class="chip">系统</span>
+        <div class="hl">调试发现&gt;&gt;输入发现URL，如：</div>
+        <span class="chip">玄幻::https://www.xbiquge.la/sort/1/</span>
+        <div class="hl">调试详情页&gt;&gt;输入详情页URL，如：</div>
+        <span class="chip">https://m.qidian.com/book/1015609210</span>
+        <div class="hl">调试目录页&gt;&gt;输入目录页URL，如：</div>
+        <span class="chip">++https://www.zhaishuyuan.com/read/30394</span>
+        <div class="hl">调试正文页&gt;&gt;输入正文页URL，如：</div>
+        <span class="chip">--https://www.zhaishuyuan.com/chapter/30394/20940996</span>
+      </div>
+      <div class="log">正在获取书源信息…<br>搜索URL：<a>https://www.xbiquge.la/search.php?q=我的</a><br>解析到 12 本小说<br><span class="ok">✓ 调试完成 · 耗时 1.8s</span></div>
+    </div>
+    <div class="bottom-stack"><div class="hi"></div></div>
+  </div><div class="cap">浅色 · LIGHT</div></div>
+  <div class="ph"><div class="phone dark">
+    <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+    <div class="appbar">
+      <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+      <div class="t">调试书源</div><div class="grow"></div>
+      <button class="icon-btn"><svg class="icon"><use href="#i-scan"/></svg></button>
+      <button class="icon-btn more">⋮</button>
+    </div>
+    <div class="searchbar"><svg class="icon"><use href="#i-search"/></svg><span class="sv q">我的</span><svg class="icon" style="color:var(--primary)"><use href="#i-go"/></svg></div>
+    <div class="spin-lg"></div>
+    <div class="body">
+      <div class="helppanel">
+        <div class="hl">调试搜索&gt;&gt;输入关键字，如：</div>
+        <span class="chip acc">我的</span><span class="chip">系统</span>
+        <div class="hl">调试发现&gt;&gt;输入发现URL，如：</div>
+        <span class="chip">玄幻::https://www.xbiquge.la/sort/1/</span>
+        <div class="hl">调试详情页&gt;&gt;输入详情页URL，如：</div>
+        <span class="chip">https://m.qidian.com/book/1015609210</span>
+        <div class="hl">调试目录页&gt;&gt;输入目录页URL，如：</div>
+        <span class="chip">++https://www.zhaishuyuan.com/read/30394</span>
+        <div class="hl">调试正文页&gt;&gt;输入正文页URL，如：</div>
+        <span class="chip">--https://www.zhaishuyuan.com/chapter/30394/20940996</span>
+      </div>
+      <div class="log">正在获取书源信息…<br>搜索URL：<a>https://www.xbiquge.la/search.php?q=我的</a><br>解析到 12 本小说<br><span class="ok">✓ 调试完成 · 耗时 1.8s</span></div>
+    </div>
+    <div class="bottom-stack"><div class="hi"></div></div>
+  </div><div class="cap">深色 · DARK</div></div>
+  </div>
+</section>
+
+<!-- ============ 04 书源登录 ============ -->
+<section class="scr" id="s04">
+  <div class="scr-head"><span class="no">04</span><h2>书源登录</h2><span class="src">SourceLoginActivity · dialog_login.xml · SourceLoginDialog / WebViewLoginFragment(fragment_web_view_login)</span></div>
+  <p class="menunote">书源配置了 loginUi 时弹出<b>登录表单对话框</b>（下图）：工具栏染主色，标题「登录＋书源名」，表单行由书源 loginUi JSON 定义（text / password / button 三种类型，按钮可执行 JS 动作或打开链接）；<b>✓ 菜单：</b>确定提交登录；<b>⋮ 菜单：</b>查看登录头 / 删除登录头 / 日志。未配置 loginUi 时回退为 <b>WebView 登录页</b>（标题「登录」＋网页＋顶部细进度条）。</p>
+  <div class="pair">
+  <div class="ph"><div class="phone light">
+    <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+    <div class="appbar"><div class="grow"></div></div>
+    <div class="body"></div>
+    <div class="dim">
+      <div class="dialog">
+        <div class="dlg-bar"><span class="t">登录笔趣阁</span><button class="icon-btn"><svg class="icon"><use href="#i-check"/></svg></button><button class="icon-btn more">⋮</button></div>
+        <div class="dlg-body">
+          <div class="field"><div class="hint">账号</div><div class="val">reader@legado.app</div></div>
+          <div class="field"><div class="hint">密码</div><div class="val">••••••••••</div></div>
+          <div><span class="fillet">登录</span><span class="fillet">免费注册</span></div>
+        </div>
+      </div>
+    </div>
+  </div><div class="cap">浅色 · LIGHT</div></div>
+  <div class="ph"><div class="phone dark">
+    <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+    <div class="appbar"><div class="grow"></div></div>
+    <div class="body"></div>
+    <div class="dim">
+      <div class="dialog">
+        <div class="dlg-bar"><span class="t">登录笔趣阁</span><button class="icon-btn"><svg class="icon"><use href="#i-check"/></svg></button><button class="icon-btn more">⋮</button></div>
+        <div class="dlg-body">
+          <div class="field"><div class="hint">账号</div><div class="val">reader@legado.app</div></div>
+          <div class="field"><div class="hint">密码</div><div class="val">••••••••••</div></div>
+          <div><span class="fillet">登录</span><span class="fillet">免费注册</span></div>
+        </div>
+      </div>
+    </div>
+  </div><div class="cap">深色 · DARK</div></div>
+  </div>
+</section>
+
+<!-- ============ 05 替换净化 ============ -->
+<section class="scr" id="s05">
+  <div class="scr-head"><span class="no">05</span><h2>替换净化</h2><span class="src">ReplaceRuleActivity · activity_replace_rule.xml · item_replace_rule.xml · view_select_action_bar.xml</span></div>
+  <p class="menunote"><b>顶栏：</b>搜索胶囊（提示词「替换净化-搜索」）＋ 分组常驻图标。<b>⋮ 菜单：</b>添加替换规则 / 本地导入 / 在线导入 / 二维码导入 / 帮助；<b>分组子菜单：</b>分组管理、未分组、动态分组列表（点击按 group:xxx 筛选）。<b>行内：</b>勾选批量、启用开关、编辑、⋮（置顶 / 置底 / 删除）。<b>批量栏：</b>全选(x/y)、反选、删除、⋮（启用选择 / 停用选择 / 置顶选择 / 置底选择 / 导出选中）。</p>
+  <div class="pair">
+  <div class="ph"><div class="phone light">
+    <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+    <div class="appbar">
+      <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+      <div class="t">替换净化</div><div class="grow"></div>
+      <button class="icon-btn"><svg class="icon"><use href="#i-groups"/></svg></button>
+      <button class="icon-btn more">⋮</button>
+    </div>
+    <div class="searchbar"><svg class="icon"><use href="#i-search"/></svg><span class="sv">替换净化-搜索</span></div>
+    <div class="body">
+      <div class="row"><span class="ck"></span><div class="row-name grow">章末网站水印 <span class="grp">· 净化</span></div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div>
+      <div class="divider"></div>
+      <div class="row"><span class="ck"></span><div class="row-name grow">仿系统广告词 <span class="grp">· 净化</span></div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div>
+      <div class="divider"></div>
+      <div class="row"><span class="ck on"><svg><use href="#i-check"/></svg></span><div class="row-name grow">去除推广段落 <span class="grp">· 起点</span></div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div>
+      <div class="divider"></div>
+      <div class="row off"><span class="ck"></span><div class="row-name grow">全角空格规范 <span class="grp">· 排版</span></div><span class="sw"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div>
+      <div class="divider"></div>
+      <div class="row"><span class="ck"></span><div class="row-name grow">常见错字修正</div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div>
+      <div class="divider"></div>
+      <div class="row"><span class="ck"></span><div class="row-name grow">敏感词屏蔽 <span class="grp">· 净化</span></div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div>
+    </div>
+    <div class="bottom-stack">
+      <div class="selectbar"><span class="ck"></span><span class="lb">全选(1/6)</span><span class="grow"></span><span class="pill">反选</span><span class="pill fill">删除</span><span class="row-ic">⋮</span></div>
+      <div class="hi"></div>
+    </div>
+  </div><div class="cap">浅色 · LIGHT</div></div>
+  <div class="ph"><div class="phone dark">
+    <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+    <div class="appbar">
+      <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+      <div class="t">替换净化</div><div class="grow"></div>
+      <button class="icon-btn"><svg class="icon"><use href="#i-groups"/></svg></button>
+      <button class="icon-btn more">⋮</button>
+    </div>
+    <div class="searchbar"><svg class="icon"><use href="#i-search"/></svg><span class="sv">替换净化-搜索</span></div>
+    <div class="body">
+      <div class="row"><span class="ck"></span><div class="row-name grow">章末网站水印 <span class="grp">· 净化</span></div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div>
+      <div class="divider"></div>
+      <div class="row"><span class="ck"></span><div class="row-name grow">仿系统广告词 <span class="grp">· 净化</span></div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div>
+      <div class="divider"></div>
+      <div class="row"><span class="ck on"><svg><use href="#i-check"/></svg></span><div class="row-name grow">去除推广段落 <span class="grp">· 起点</span></div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div>
+      <div class="divider"></div>
+      <div class="row off"><span class="ck"></span><div class="row-name grow">全角空格规范 <span class="grp">· 排版</span></div><span class="sw"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div>
+      <div class="divider"></div>
+      <div class="row"><span class="ck"></span><div class="row-name grow">常见错字修正</div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div>
+      <div class="divider"></div>
+      <div class="row"><span class="ck"></span><div class="row-name grow">敏感词屏蔽 <span class="grp">· 净化</span></div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div>
+    </div>
+    <div class="bottom-stack">
+      <div class="selectbar"><span class="ck"></span><span class="lb">全选(1/6)</span><span class="grow"></span><span class="pill">反选</span><span class="pill fill">删除</span><span class="row-ic">⋮</span></div>
+      <div class="hi"></div>
+    </div>
+  </div><div class="cap">深色 · DARK</div></div>
+  </div>
+</section>
+
+<!-- ============ 06 替换编辑 ============ -->
+<section class="scr" id="s06">
+  <div class="scr-head"><span class="no">06</span><h2>替换编辑</h2><span class="src">ReplaceEditActivity · activity_replace_edit.xml</span></div>
+  <p class="menunote"><b>顶栏：</b>保存常驻。<b>⋮ 菜单：</b>复制规则 / 粘贴规则。<b>表单：</b>规则名称、分组、替换规则（匹配式）、使用正则表达式复选框＋正则帮助❓（打开正则教程）、替换为、作用范围（作用于标题 / 作用于正文）、替换范围（选填书名或源URL，支持选择书架书籍）、排除范围、超时毫秒数。<b>键盘上方：</b>同书源编辑的按键辅助条（❓帮助可插入URL参数、正则教程等）。</p>
+  <div class="pair">
+  <div class="ph"><div class="phone light">
+    <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+    <div class="appbar">
+      <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+      <div class="t">替换规则编辑</div><div class="grow"></div>
+      <button class="icon-btn"><svg class="icon"><use href="#i-save"/></svg></button>
+      <button class="icon-btn more">⋮</button>
+    </div>
+    <div class="body"><div class="form">
+      <div class="field"><div class="hint">规则名称</div><div class="val">去除网站水印</div></div>
+      <div class="field"><div class="hint">分组</div><div class="val">净化</div></div>
+      <div class="field"><div class="hint">替换规则</div><div class="val mono">本站最新网址：.*</div></div>
+      <div class="inline-cks"><span class="ckc"><span class="ck on"><svg><use href="#i-check"/></svg></span>使用正则表达式</span><span class="grow"></span><span class="help-ic"><svg class="icon s"><use href="#i-help"/></svg></span></div>
+      <div class="field focus"><div class="hint">替换为</div><div class="val"></div></div>
+      <div class="inline-cks"><span class="ckc"><span class="ck on"><svg><use href="#i-check"/></svg></span>作用于标题</span><span class="ckc"><span class="ck on"><svg><use href="#i-check"/></svg></span>作用于正文</span></div>
+      <div class="field"><div class="hint">替换范围</div><div class="val" style="color:var(--secondary)">选填书名或者书源 URL</div></div>
+      <div class="field"><div class="hint">排除范围</div><div class="val" style="color:var(--secondary)">选填书名或者书源 URL</div></div>
+      <div class="field"><div class="hint">超时毫秒数</div><div class="val">20000</div></div>
+    </div></div>
+    <div class="bottom-stack">
+      <div class="kbdrow"><span class="kchip q">❓</span><span class="kchip">@css:</span><span class="kchip">&lt;js&gt;</span><span class="kchip">{{}}</span><span class="kchip">##</span><span class="kchip">&amp;&amp;</span><span class="kchip">%%</span></div>
+      <div class="hi"></div>
+    </div>
+  </div><div class="cap">浅色 · LIGHT</div></div>
+  <div class="ph"><div class="phone dark">
+    <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+    <div class="appbar">
+      <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+      <div class="t">替换规则编辑</div><div class="grow"></div>
+      <button class="icon-btn"><svg class="icon"><use href="#i-save"/></svg></button>
+      <button class="icon-btn more">⋮</button>
+    </div>
+    <div class="body"><div class="form">
+      <div class="field"><div class="hint">规则名称</div><div class="val">去除网站水印</div></div>
+      <div class="field"><div class="hint">分组</div><div class="val">净化</div></div>
+      <div class="field"><div class="hint">替换规则</div><div class="val mono">本站最新网址：.*</div></div>
+      <div class="inline-cks"><span class="ckc"><span class="ck on"><svg><use href="#i-check"/></svg></span>使用正则表达式</span><span class="grow"></span><span class="help-ic"><svg class="icon s"><use href="#i-help"/></svg></span></div>
+      <div class="field focus"><div class="hint">替换为</div><div class="val"></div></div>
+      <div class="inline-cks"><span class="ckc"><span class="ck on"><svg><use href="#i-check"/></svg></span>作用于标题</span><span class="ckc"><span class="ck on"><svg><use href="#i-check"/></svg></span>作用于正文</span></div>
+      <div class="field"><div class="hint">替换范围</div><div class="val" style="color:var(--secondary)">选填书名或者书源 URL</div></div>
+      <div class="field"><div class="hint">排除范围</div><div class="val" style="color:var(--secondary)">选填书名或者书源 URL</div></div>
+      <div class="field"><div class="hint">超时毫秒数</div><div class="val">20000</div></div>
+    </div></div>
+    <div class="bottom-stack">
+      <div class="kbdrow"><span class="kchip q">❓</span><span class="kchip">@css:</span><span class="kchip">&lt;js&gt;</span><span class="kchip">{{}}</span><span class="kchip">##</span><span class="kchip">&amp;&amp;</span><span class="kchip">%%</span></div>
+      <div class="hi"></div>
+    </div>
+  </div><div class="cap">深色 · DARK</div></div>
+  </div>
+</section>
+
+<!-- ============ 07 TXT目录规则 ============ -->
+<section class="scr" id="s07">
+  <div class="scr-head"><span class="no">07</span><h2>TXT目录规则</h2><span class="src">TxtTocRuleActivity · activity_txt_toc_rule.xml · item_txt_toc_rule.xml · TxtTocRuleEditDialog(dialog_toc_regex_edit.xml)</span></div>
+  <p class="menunote"><b>顶栏：</b>添加（＋）常驻。<b>⋮ 菜单：</b>本地导入 / 在线导入 / 二维码导入 / 导入内置规则 / 帮助。<b>行内：</b>勾选批量、启用开关、编辑、⋮（置顶 / 置底 / 删除），规则名下方以 12sp 辅助文字展示规则示例（内置规则示例取自 defaultData/txtTocRule.json）。<b>批量栏：</b>全选(x/y)、反选、删除、⋮（启用选择 / 停用选择 / 导出选中）。点添加或编辑弹出对话框：名称 / 正则 / 示例 三个输入项＋保存、复制规则、粘贴规则。</p>
+  <div class="pair">
+  <div class="ph"><div class="phone light">
+    <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+    <div class="appbar">
+      <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+      <div class="t">TXT目录规则</div><div class="grow"></div>
+      <button class="icon-btn"><svg class="icon"><use href="#i-add"/></svg></button>
+      <button class="icon-btn more">⋮</button>
+    </div>
+    <div class="body">
+      <div class="row col" style="padding-bottom:10px"><div class="rowline"><span class="ck on"><svg><use href="#i-check"/></svg></span><div class="row-name grow">目录(去空白)</div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div><div class="dbg" style="padding-left:47px">第一章 假装第一章前面有空白但我不要</div></div>
+      <div class="divider"></div>
+      <div class="row col" style="padding-bottom:10px"><div class="rowline"><span class="ck"></span><div class="row-name grow">目录</div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div><div class="dbg" style="padding-left:47px">第一章 标准的粤语就是这样</div></div>
+      <div class="divider"></div>
+      <div class="row col off" style="padding-bottom:10px"><div class="rowline"><span class="ck"></span><div class="row-name grow">目录(匹配简介)</div><span class="sw"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div><div class="dbg" style="padding-left:47px">简介 老夫诸葛村夫</div></div>
+      <div class="divider"></div>
+      <div class="row col" style="padding-bottom:10px"><div class="rowline"><span class="ck"></span><div class="row-name grow">数字(纯数字标题)</div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div><div class="dbg" style="padding-left:47px">12</div></div>
+      <div class="divider"></div>
+      <div class="row col" style="padding-bottom:10px"><div class="rowline"><span class="ck"></span><div class="row-name grow">大写数字(纯数字标题)</div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div><div class="dbg" style="padding-left:47px">一百七十</div></div>
+    </div>
+    <div class="bottom-stack">
+      <div class="selectbar"><span class="ck"></span><span class="lb">全选(1/12)</span><span class="grow"></span><span class="pill">反选</span><span class="pill fill">删除</span><span class="row-ic">⋮</span></div>
+      <div class="hi"></div>
+    </div>
+  </div><div class="cap">浅色 · LIGHT</div></div>
+  <div class="ph"><div class="phone dark">
+    <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+    <div class="appbar">
+      <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+      <div class="t">TXT目录规则</div><div class="grow"></div>
+      <button class="icon-btn"><svg class="icon"><use href="#i-add"/></svg></button>
+      <button class="icon-btn more">⋮</button>
+    </div>
+    <div class="body">
+      <div class="row col" style="padding-bottom:10px"><div class="rowline"><span class="ck on"><svg><use href="#i-check"/></svg></span><div class="row-name grow">目录(去空白)</div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div><div class="dbg" style="padding-left:47px">第一章 假装第一章前面有空白但我不要</div></div>
+      <div class="divider"></div>
+      <div class="row col" style="padding-bottom:10px"><div class="rowline"><span class="ck"></span><div class="row-name grow">目录</div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div><div class="dbg" style="padding-left:47px">第一章 标准的粤语就是这样</div></div>
+      <div class="divider"></div>
+      <div class="row col off" style="padding-bottom:10px"><div class="rowline"><span class="ck"></span><div class="row-name grow">目录(匹配简介)</div><span class="sw"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div><div class="dbg" style="padding-left:47px">简介 老夫诸葛村夫</div></div>
+      <div class="divider"></div>
+      <div class="row col" style="padding-bottom:10px"><div class="rowline"><span class="ck"></span><div class="row-name grow">数字(纯数字标题)</div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div><div class="dbg" style="padding-left:47px">12</div></div>
+      <div class="divider"></div>
+      <div class="row col" style="padding-bottom:10px"><div class="rowline"><span class="ck"></span><div class="row-name grow">大写数字(纯数字标题)</div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic">⋮</span></div><div class="dbg" style="padding-left:47px">一百七十</div></div>
+    </div>
+    <div class="bottom-stack">
+      <div class="selectbar"><span class="ck"></span><span class="lb">全选(1/12)</span><span class="grow"></span><span class="pill">反选</span><span class="pill fill">删除</span><span class="row-ic">⋮</span></div>
+      <div class="hi"></div>
+    </div>
+  </div><div class="cap">深色 · DARK</div></div>
+  </div>
+</section>
+
+<!-- ============ 08 字典规则 ============ -->
+<section class="scr" id="s08">
+  <div class="scr-head"><span class="no">08</span><h2>字典规则</h2><span class="src">DictRuleActivity · activity_dict_rule.xml · item_dict_rule.xml · DictRuleEditDialog(dialog_dict_rule_edit.xml)</span></div>
+  <p class="menunote">阅读时长按选词查词所用词典。<b>顶栏：</b>新建（＋）常驻。<b>⋮ 菜单：</b>本地导入 / 在线导入 / 二维码导入 / 导入内置规则 / 帮助。<b>行内：</b>勾选批量、启用开关、编辑、删除（此页为直接删除按钮，无行内溢出菜单；内置规则「百度汉语」「海词英文」取自 defaultData/dictRules.json）。<b>批量栏：</b>全选(x/y)、反选、删除、⋮（启用选择 / 停用选择 / 导出选中）。点新建或编辑弹出对话框：名称 / URL规则(urlRule，{{key}} 为选中文案) / 显示规则(showRule)＋保存、复制规则、粘贴规则。</p>
+  <div class="pair">
+  <div class="ph"><div class="phone light">
+    <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+    <div class="appbar">
+      <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+      <div class="t">字典规则</div><div class="grow"></div>
+      <button class="icon-btn"><svg class="icon"><use href="#i-add"/></svg></button>
+      <button class="icon-btn more">⋮</button>
+    </div>
+    <div class="body">
+      <div class="row"><span class="ck on"><svg><use href="#i-check"/></svg></span><div class="row-name grow">百度汉语</div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic"><svg class="icon s"><use href="#i-trash"/></svg></span></div>
+      <div class="divider"></div>
+      <div class="row"><span class="ck on"><svg><use href="#i-check"/></svg></span><div class="row-name grow">海词英文</div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic"><svg class="icon s"><use href="#i-trash"/></svg></span></div>
+      <div class="divider"></div>
+      <div class="row off"><span class="ck"></span><div class="row-name grow">汉典</div><span class="sw"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic"><svg class="icon s"><use href="#i-trash"/></svg></span></div>
+    </div>
+    <div class="bottom-stack">
+      <div class="selectbar"><span class="ck"></span><span class="lb">全选(2/3)</span><span class="grow"></span><span class="pill">反选</span><span class="pill fill">删除</span><span class="row-ic">⋮</span></div>
+      <div class="hi"></div>
+    </div>
+  </div><div class="cap">浅色 · LIGHT</div></div>
+  <div class="ph"><div class="phone dark">
+    <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+    <div class="appbar">
+      <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+      <div class="t">字典规则</div><div class="grow"></div>
+      <button class="icon-btn"><svg class="icon"><use href="#i-add"/></svg></button>
+      <button class="icon-btn more">⋮</button>
+    </div>
+    <div class="body">
+      <div class="row"><span class="ck on"><svg><use href="#i-check"/></svg></span><div class="row-name grow">百度汉语</div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic"><svg class="icon s"><use href="#i-trash"/></svg></span></div>
+      <div class="divider"></div>
+      <div class="row"><span class="ck on"><svg><use href="#i-check"/></svg></span><div class="row-name grow">海词英文</div><span class="sw on"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic"><svg class="icon s"><use href="#i-trash"/></svg></span></div>
+      <div class="divider"></div>
+      <div class="row off"><span class="ck"></span><div class="row-name grow">汉典</div><span class="sw"></span><span class="row-ic"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="row-ic"><svg class="icon s"><use href="#i-trash"/></svg></span></div>
+    </div>
+    <div class="bottom-stack">
+      <div class="selectbar"><span class="ck"></span><span class="lb">全选(2/3)</span><span class="grow"></span><span class="pill">反选</span><span class="pill fill">删除</span><span class="row-ic">⋮</span></div>
+      <div class="hi"></div>
+    </div>
+  </div><div class="cap">深色 · DARK</div></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <h3>功能来源核对清单（本组全部屏幕在代码中均存在，无剔除项）</h3>
+  书源管理 → <code>ui/book/source/manage/BookSourceActivity.kt</code>；书源编辑 → <code>ui/book/source/edit/BookSourceEditActivity.kt</code>；书源调试 → <code>ui/book/source/debug/BookSourceDebugActivity.kt</code>；书源登录 → <code>ui/login/SourceLoginActivity.kt</code>（表单对话框与 WebView 两种模式）；替换净化 → <code>ui/replace/ReplaceRuleActivity.kt</code>；替换编辑 → <code>ui/replace/edit/ReplaceEditActivity.kt</code>；TXT目录规则 → <code>ui/book/toc/rule/TxtTocRuleActivity.kt</code>；字典规则 → <code>ui/dict/rule/DictRuleActivity.kt</code>。内置默认数据取自 <code>assets/defaultData/</code>（txtTocRule.json / dictRules.json / keyboardAssists.json）。列表与示例数据为演示样例，功能结构均与代码一致。
+</footer>
+
+</body></html>

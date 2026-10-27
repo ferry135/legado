@@ -6,14 +6,20 @@
     android:background="@color/background"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:paddingLeft="8dp"
+    android:paddingTop="14dp"
+    android:paddingRight="8dp"
+    android:paddingBottom="14dp">
 
     <TextView
         android:id="@+id/tv_group"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="@color/secondaryText"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="15sp"
         tools:text="group" />
 
     <TextView
@@ -23,7 +29,8 @@
         android:background="?attr/selectableItemBackground"
         android:padding="8dp"
         android:text="@string/edit"
-        android:textColor="@color/secondaryText" />
+        android:textColor="@color/on_surface_variant"
+        android:textSize="12sp" />
 
     <io.legado.app.lib.theme.view.ThemeSwitch
         android:id="@+id/sw_show"

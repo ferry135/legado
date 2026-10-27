@@ -5,13 +5,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <!-- .tbar.big：28sp 粗体大标题（PageTitle） -->
     <io.legado.app.ui.widget.TitleBar
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:attachToActivity="false"
         app:themeMode="blend"
-        app:title="@string/my" />
+        app:title="@string/my"
+        app:titleTextAppearance="@style/TextAppearance.Legado.PageTitle" />
 
     <LinearLayout
         android:id="@+id/pre_fragment"

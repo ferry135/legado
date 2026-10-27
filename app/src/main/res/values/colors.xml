@@ -15,6 +15,23 @@
     <color name="on_primary_container">#004C64</color>
     <color name="scrim">#52000000</color>
 
+    //**设计稿 v2 补充令牌（design-system/html/screens 01-08，明暗成对）**//
+    <!-- primary-soft 底上的文字：亮色加深至 #B34A15 保 AA 对比（02 书籍详情 chip-soft），暗色用主色 -->
+    <color name="on_primary_soft">#B34A15</color>
+    <!-- 搜索胶囊聚焦描边 / 虚线提示框描边（04 主色 35%/45%） -->
+    <color name="primary_soft_line">#59FF6B2C</color>
+    <!-- 搜索结果灰底徽标（"广告"等，04） -->
+    <color name="badge_background">#60656D</color>
+    <!-- 链接色（书源调试日志 05） -->
+    <color name="link_color">#2F6DB3</color>
+    <!-- 阅读菜单亮度侧面板：surface2 93% 半透明（03） -->
+    <color name="read_panel">#EDEEECE9</color>
+    <!-- 对话框遮罩 ~50%（05/07/08，较 scrim 更深） -->
+    <color name="scrim_dialog">#80000000</color>
+    <!-- 书籍详情 hero 渐变（02，自上而下） -->
+    <color name="hero_gradient_start">#F7E8D9</color>
+    <color name="hero_gradient_end">#F0D2B9</color>
+
     //**程序化写主题用固定色（无日夜变体，applyTheme 按分支直接取值，避免随启动时 configuration 漂移）**//
     <color name="day_surface">#FAF9F7</color>
     <color name="day_surface_container">#FFFFFF</color>

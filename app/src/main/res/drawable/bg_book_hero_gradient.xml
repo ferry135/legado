@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 书籍详情 hero 背景：顶部暖色渐变（自上而下，明暗随 hero_gradient_* 自动切换）（02） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:angle="270"
+        android:startColor="@color/hero_gradient_start"
+        android:endColor="@color/hero_gradient_end" />
+</shape>

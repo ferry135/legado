@@ -8,17 +8,19 @@
 
     <TextView
         android:id="@+id/tv_seek_title"
-        android:layout_width="60dp"
+        android:layout_width="56dp"
         android:layout_height="wrap_content"
         android:singleLine="true"
         android:text="seek"
         android:textColor="@color/primaryText"
+        android:textSize="14sp"
         tools:ignore="HardcodedText" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_seek_reduce"
         android:layout_width="24dp"
         android:layout_height="24dp"
+        android:padding="2dp"
         android:contentDescription="@string/reduce"
         android:src="@drawable/ic_reduce"
         android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -36,6 +38,7 @@
         android:id="@+id/iv_seek_plus"
         android:layout_width="24dp"
         android:layout_height="24dp"
+        android:padding="2dp"
         android:contentDescription="@string/plus"
         android:src="@drawable/ic_add"
         android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -43,12 +46,13 @@
 
     <TextView
         android:id="@+id/tv_seek_value"
-        android:layout_width="60dp"
+        android:layout_width="48dp"
         android:layout_height="wrap_content"
         android:gravity="right"
         android:singleLine="true"
         android:text="0"
         android:textColor="@color/primaryText"
+        android:textSize="14sp"
         tools:ignore="HardcodedText,RtlHardcoded" />
 
 </LinearLayout>

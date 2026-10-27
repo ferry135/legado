@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="12dp"
+    android:padding="7dp"
     android:clickable="true"
     android:focusable="true"
     android:orientation="vertical">
@@ -25,8 +25,8 @@
         android:gravity="center"
         android:singleLine="true"
         android:text="@string/book_source"
-        android:textColor="@color/primaryText"
-        android:textSize="16sp"
+        android:textColor="@color/on_surface"
+        android:textSize="13sp"
         tools:ignore="RtlHardcoded,RtlSymmetry" />
 
 </LinearLayout>

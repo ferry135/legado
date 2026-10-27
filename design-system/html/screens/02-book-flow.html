@@ -1,0 +1,795 @@
+<!-- design-system: legado v2 -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>legado v2 · 02 书籍详情流程</title><style>
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#e9e6df;color:#20242b;padding:40px 28px 90px}
+/* ---------- spec sheet chrome ---------- */
+.pagehead{max-width:1420px;margin:0 auto 46px}
+.crumb{font-size:12px;letter-spacing:.08em;color:#8a8577;text-transform:uppercase;margin-bottom:10px}
+.pagehead h1{font-size:32px;margin:0 0 8px;font-weight:750}
+.lead{font-size:14px;color:#6d6a62;margin:0 0 18px;max-width:760px;line-height:1.7}
+.nav{display:flex;flex-wrap:wrap;gap:8px}
+.nav a{font-size:13px;text-decoration:none;color:#20242b;background:#fff;border:1px solid #dedacf;padding:7px 14px;border-radius:20px}
+.nav a b{color:#ff6b2c;margin-right:4px;font-weight:700}
+.screen{max-width:1420px;margin:0 auto 78px}
+.screen-head{display:flex;gap:14px;align-items:baseline;margin:0 2px 20px;flex-wrap:wrap}
+.screen-head .no{font-size:13px;font-weight:700;color:#ff6b2c;letter-spacing:.1em}
+.screen-head h2{font-size:23px;margin:0;font-weight:700}
+.screen-head .src{font-size:12px;color:#8a8577;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+.pair{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start}
+.feat{margin-top:16px;max-width:900px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.feat .lab{font-size:12px;color:#8a8577;margin-right:2px;font-weight:600}
+.feat .chip{font-size:12px;padding:4px 10px;border-radius:8px;background:#fff;border:1px solid #e2ded3;color:#5c584e}
+.feat .chip.hl{border-color:#f3c9ae;color:#c2551f;background:#fff5ee}
+.featnote{margin:10px 2px 0;font-size:12px;color:#8a8577;max-width:860px;line-height:1.7}
+/* ---------- phone shell ---------- */
+.phone{width:412px;min-width:412px;height:900px;flex:none;border-radius:26px;overflow:hidden;position:relative;display:flex;flex-direction:column;font-size:14px}
+.theme-light{--bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--feature:#fff1e8;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--track:#e5e2de;--divider:rgba(0,0,0,.07);background:var(--bg);color:var(--text);border:1px solid #d9d5cb}
+.theme-dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--feature:#2a1d15;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--track:#353331;--divider:rgba(255,255,255,.08);background:var(--bg);color:var(--text);border:1px solid #38352f}
+.status{height:34px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:14px;font-weight:600;flex:none}
+.status-right{display:flex;gap:10px;align-items:center}
+.appbar{height:62px;display:flex;align-items:center;gap:2px;padding:0 8px;flex:none}
+.appbar-title{font-size:19px;font-weight:650;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appbar-title small{display:block;font-size:12px;font-weight:500;color:var(--secondary);margin-top:1px}
+.actions{display:flex;gap:0;flex:none}
+.icon-btn{width:44px;height:44px;border:0;background:transparent;border-radius:22px;display:grid;place-items:center;color:inherit;cursor:pointer;flex:none;padding:0}
+.icon-btn.more{font-size:24px;line-height:1}
+.icon{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon.mini{width:17px;height:17px;flex:none}
+.icon.tiny{width:15px;height:15px;flex:none}
+.content{flex:1;min-height:0;display:flex;flex-direction:column;position:relative}
+.divider{height:1px;background:var(--divider);flex:none}
+/* shared bits */
+.chip-soft{font-size:12px;padding:4px 10px;border-radius:8px;background:var(--primary-soft);color:var(--primary);font-weight:600;flex:none}
+/* AA 修复：亮色下 #ff6b2c/#fff0e6 仅 2.55:1，加深至暖橙 #b34a15（4.83:1）；暗色 primary/#3a241b 为 5.10:1 不受影响 */
+.theme-light .chip-soft{color:#b34a15}
+.kchip{font-size:12px;padding:3px 10px;border-radius:8px;background:var(--surface2);color:var(--secondary);flex:none}
+.field{position:relative;border:1px solid var(--track);border-radius:12px;padding:15px 14px 7px;margin-top:12px}
+.field label{position:absolute;top:-7px;left:12px;background:var(--bg);padding:0 6px;font-size:11px;color:var(--secondary)}
+.field .v{font-size:14px;color:var(--text);min-height:18px;line-height:1.5}
+.obtn{font-size:13px;padding:7px 13px;border-radius:10px;border:1px solid var(--track);color:var(--text);background:transparent;font-weight:500;display:inline-flex;align-items:center;gap:6px}
+.loadbar{height:2px;overflow:hidden;flex:none}
+.loadbar>span{display:block;height:100%;width:55%;background:var(--primary);border-radius:2px;animation:ld 1.5s ease-in-out infinite}
+@keyframes ld{0%{transform:translateX(-110%)}55%{transform:translateX(70%)}100%{transform:translateX(230%)}}
+@media (prefers-reduced-motion:reduce){.loadbar>span{animation:none;width:100%}}
+/* cover placeholder (pure css, self-contained) */
+.cv{border-radius:10px;display:grid;place-items:center;position:relative;overflow:hidden;flex:none}
+.cv span{writing-mode:vertical-rl;font-size:13px;letter-spacing:2px;font-weight:600;color:rgba(255,255,255,.95);text-shadow:0 1px 4px rgba(0,0,0,.25)}
+.cv i{position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
+/* ---------- s1 book info ---------- */
+.hero{position:relative;padding-bottom:100px;flex:none}
+.theme-light .hero{background:linear-gradient(180deg,#f7e8d9 0%,#f0d2b9 100%)}
+.theme-dark .hero{background:linear-gradient(180deg,#33261c 0%,#221a14 100%)}
+.hero:before{content:"";position:absolute;inset:0;background:radial-gradient(150px 190px at 50% 24%,rgba(255,255,255,.5),transparent 72%)}
+.theme-dark .hero:before{background:radial-gradient(150px 190px at 50% 24%,rgba(255,140,80,.14),transparent 72%)}
+.cover{position:absolute;top:-96px;left:50%;transform:translateX(-50%);width:112px;height:160px;z-index:3;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.panel{background:var(--bg);border-radius:24px 24px 0 0;padding:76px 18px 14px;flex:1;min-height:0;position:relative;z-index:2}
+.bname{font-size:21px;font-weight:700;text-align:center;margin:0 0 10px}
+.kindrow{display:flex;gap:8px;justify-content:center;margin-bottom:12px}
+.meta{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--secondary);padding:5px 0}
+.meta .grow{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.intro{font-size:14px;line-height:1.75;color:var(--secondary);margin:12px 0 0}
+.hero .status,.hero .appbar{position:relative;z-index:1}
+.bbar{height:60px;background:var(--surface);border-top:1px solid var(--divider);display:flex;align-items:center;gap:10px;padding:8px 12px;flex:none}
+.bbar .ghost{flex:1;height:44px;border-radius:22px;display:grid;place-items:center;font-size:15px;color:var(--text);background:transparent;border:0;cursor:pointer}
+.bbar .fill{flex:1;height:44px;border-radius:22px;display:grid;place-items:center;font-size:15px;font-weight:600;background:var(--primary);color:#fff;border:0}
+/* ---------- s2 edit ---------- */
+.edit-top{display:flex;gap:14px;padding:16px 16px 4px}
+.edit-top .cv{width:90px;height:130px;box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.edit-fields{flex:1;min-width:0}
+.typerow{display:flex;align-items:center;gap:10px;padding:14px 16px 0;font-size:13px;color:var(--secondary)}
+.selchip{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text);padding:6px 12px;border-radius:10px;background:var(--surface2);font-weight:500}
+.orow{display:flex;gap:10px;flex-wrap:wrap;padding:14px 16px 2px}
+/* ---------- s3 toc ---------- */
+.tabs{display:flex;flex:1;justify-content:center;min-width:0}
+.tab{position:relative;height:62px;display:flex;align-items:center;padding:0 16px;font-size:16px;color:var(--secondary);font-weight:500;background:none;border:0}
+.tab.on{color:var(--text);font-weight:650}
+.tab.on:after{content:"";position:absolute;left:14px;right:14px;bottom:8px;height:3px;border-radius:2px;background:var(--primary)}
+.vol{padding:9px 16px;background:var(--surface2);font-size:13px;font-weight:600;color:var(--text)}
+.ch{padding:11px 16px;display:flex;align-items:center;gap:10px}
+.ch .t{flex:1;min-width:0}
+.ch .n{font-size:15px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch .s{font-size:12px;color:var(--secondary);margin-top:3px;display:flex;gap:12px}
+.ch.dur .n{color:var(--primary);font-weight:600}
+.ch .ic{width:20px;height:20px;color:var(--secondary);flex:none}
+.chapbar{height:36px;display:flex;align-items:center;background:var(--surface);border-top:1px solid var(--divider);padding:0 8px;flex:none}
+.chapbar .info{flex:1;font-size:12px;color:var(--text);padding:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chapbar .icon-btn{width:36px;height:36px;border-radius:18px}
+.bmk{padding:13px 16px;border-bottom:1px solid var(--divider)}
+.bmk .c{font-size:15px;font-weight:600;color:var(--text)}
+.bmk .q{font-size:12px;color:var(--secondary);margin-top:5px;line-height:1.6}
+.bmk .note{font-size:12px;color:var(--text);margin-top:5px;display:flex;gap:6px;align-items:flex-start}
+.bmk .note:before{content:"✎";font-size:11px;color:var(--primary);line-height:1.7}
+/* ---------- s4/s5 change source ---------- */
+.srcitem{padding:11px 14px 11px 8px;display:flex;gap:8px;border-bottom:1px solid var(--divider);align-items:center}
+.srcitem.cur{background:var(--primary-soft)}
+.scorecol{display:flex;flex-direction:column;gap:3px;justify-content:center;padding:0 5px;color:var(--secondary);flex:none}
+.si{flex:1;min-width:0}
+.si .l1{display:flex;align-items:baseline;gap:8px}
+.si .name{font-size:15px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
+.si .au{font-size:12px;color:var(--secondary);flex:none;max-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.si .d{font-size:12px;color:var(--secondary);margin-top:4px;display:flex;gap:12px;white-space:nowrap;overflow:hidden}
+.ck{width:22px;height:22px;color:var(--primary);flex:none}
+.footbar{height:36px;display:flex;align-items:center;background:var(--surface);border-top:1px solid var(--divider);padding:0 8px;flex:none}
+.footbar .info{flex:1;font-size:12px;color:var(--text);padding:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.footbar .icon-btn{width:36px;height:36px;border-radius:18px}
+.tocsheet{position:absolute;left:0;right:0;bottom:0;height:58%;background:var(--surface);border-radius:16px 16px 0 0;border-top:1px solid var(--divider);display:flex;flex-direction:column;z-index:5}
+.grip{height:38px;display:grid;place-items:center;color:var(--secondary);flex:none}
+/* ---------- s6 change cover ---------- */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:18px 16px;align-content:start;flex:1;overflow:hidden}
+.ccell .cv{height:100px}
+.ccell .s{font-size:13px;color:var(--text);text-align:center;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+</style></head>
+<body>
+
+<header class="pagehead">
+  <div class="crumb">design-system / legado v2 · 暖橙 #FF6B2C · Material 3 · warm paper</div>
+  <h1>02 · 书籍详情流程</h1>
+  <p class="lead">覆盖书籍信息的查看与编辑、目录与书签、章节级与整书换源、封面换源六个屏幕。所有功能块、菜单项与操作均取自现存布局与代码（见各屏幕下的来源注记），未虚构、未遗漏；溢出菜单与长按菜单以「功能覆盖」清单逐项落位。</p>
+  <nav class="nav">
+    <a href="#s1"><b>①</b>书籍信息</a>
+    <a href="#s2"><b>②</b>书籍信息编辑</a>
+    <a href="#s3"><b>③</b>目录 · 书签</a>
+    <a href="#s4"><b>④</b>章节换源</a>
+    <a href="#s5"><b>⑤</b>书籍换源</a>
+    <a href="#s6"><b>⑥</b>换封面</a>
+  </nav>
+</header>
+
+<!-- ============ 01 书籍信息 ============ -->
+<section class="screen" id="s1">
+  <div class="screen-head"><span class="no">01</span><h2>书籍信息</h2><span class="src">activity_book_info.xml · BookInfoActivity.kt · menu/book_info.xml</span></div>
+  <div class="pair">
+
+    <figure class="phone theme-light" style="margin:0">
+      <div class="content">
+        <div class="hero">
+          <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+          <div class="appbar">
+            <button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+            <div class="appbar-title">书籍信息</div>
+            <div class="actions">
+              <button class="icon-btn" aria-label="编辑"><svg class="icon" viewBox="0 0 24 24"><path d="M4 20h4L19.5 8.5a2.1 2.1 0 0 0-3-3L5 17v3z"/><path d="m13.5 6.5 4 4"/></svg></button>
+              <button class="icon-btn" aria-label="分享"><svg class="icon" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="m8.4 10.7 7.2-4.4M8.4 13.3l7.2 4.4"/></svg></button>
+              <button class="icon-btn more" aria-label="更多">⋮</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="cover cv" style="background:linear-gradient(160deg,#d98a5f,#8f4f33)"><span>国民法医</span><i></i></div>
+          <h1 class="bname">国民法医</h1>
+          <div class="kindrow"><span class="kchip">都市</span><span class="kchip">生活</span><span class="kchip">轻小说</span></div>
+          <div class="meta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="grow">志鸟村</span></div>
+          <div class="meta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 2.6 4 5.6 4 9s-1.2 6.4-4 9c-2.8-2.6-4-5.6-4-9s1.2-6.4 4-9z"/></svg><span class="grow">来源：必看小说网</span><span class="chip-soft">换源</span></div>
+          <div class="meta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg><span class="grow">最近：第十七章 · 十七叔</span></div>
+          <div class="meta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="grow">分组：追更</span><span class="chip-soft">设置分组</span></div>
+          <div class="meta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h10"/></svg><span class="grow">目录：共 812 章</span><span class="chip-soft">查看目录</span></div>
+          <p class="intro">　　新书《国民法医》！遗体还没进解剖室，案发现场上，他总能从尸骸的只言片语中听出真相。以尸为友，以证为剑——且看小法医如何一步步走到法医之巅。更新稳定，欢迎追读收藏。</p>
+        </div>
+      </div>
+      <div class="bbar"><button class="ghost">删除书籍</button><button class="fill">阅读</button></div>
+    </figure>
+
+    <figure class="phone theme-dark" style="margin:0">
+      <div class="content">
+        <div class="hero">
+          <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+          <div class="appbar">
+            <button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+            <div class="appbar-title">书籍信息</div>
+            <div class="actions">
+              <button class="icon-btn" aria-label="编辑"><svg class="icon" viewBox="0 0 24 24"><path d="M4 20h4L19.5 8.5a2.1 2.1 0 0 0-3-3L5 17v3z"/><path d="m13.5 6.5 4 4"/></svg></button>
+              <button class="icon-btn" aria-label="分享"><svg class="icon" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="m8.4 10.7 7.2-4.4M8.4 13.3l7.2 4.4"/></svg></button>
+              <button class="icon-btn more" aria-label="更多">⋮</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="cover cv" style="background:linear-gradient(160deg,#d98a5f,#8f4f33)"><span>国民法医</span><i></i></div>
+          <h1 class="bname">国民法医</h1>
+          <div class="kindrow"><span class="kchip">都市</span><span class="kchip">生活</span><span class="kchip">轻小说</span></div>
+          <div class="meta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="grow">志鸟村</span></div>
+          <div class="meta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 2.6 4 5.6 4 9s-1.2 6.4-4 9c-2.8-2.6-4-5.6-4-9s1.2-6.4 4-9z"/></svg><span class="grow">来源：必看小说网</span><span class="chip-soft">换源</span></div>
+          <div class="meta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg><span class="grow">最近：第十七章 · 十七叔</span></div>
+          <div class="meta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="grow">分组：追更</span><span class="chip-soft">设置分组</span></div>
+          <div class="meta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h10"/></svg><span class="grow">目录：共 812 章</span><span class="chip-soft">查看目录</span></div>
+          <p class="intro">　　新书《国民法医》！遗体还没进解剖室，案发现场上，他总能从尸骸的只言片语中听出真相。以尸为友，以证为剑——且看小法医如何一步步走到法医之巅。更新稳定，欢迎追读收藏。</p>
+        </div>
+      </div>
+      <div class="bbar"><button class="ghost">删除书籍</button><button class="fill">阅读</button></div>
+    </figure>
+
+  </div>
+  <div class="feat">
+    <span class="lab">页面</span>
+    <span class="chip hl">下拉刷新</span><span class="chip hl">封面模糊背景 + 圆弧承接（ArcView）</span><span class="chip hl">分类标签 LabelsBar</span><span class="chip hl">换源 / 设置分组 / 查看目录 快捷钮</span><span class="chip hl">简介可滚动可选中</span><span class="chip hl">未入架时左钮切换为「放入书架」</span>
+  </div>
+  <div class="feat">
+    <span class="lab">⋮ 菜单</span>
+    <span class="chip">编辑</span><span class="chip">分享</span><span class="chip">上传到远端</span><span class="chip">刷新</span><span class="chip">登录</span><span class="chip">置顶</span><span class="chip">设置书源变量</span><span class="chip">设置书籍变量</span><span class="chip">复制书籍链接</span><span class="chip">复制目录链接</span><span class="chip">允许更新 ✓</span><span class="chip">拆分超长章节 ✓</span><span class="chip">删除提醒 ✓</span><span class="chip">清除缓存</span><span class="chip">日志</span>
+  </div>
+  <p class="featnote">底栏左钮对应 tv_shelf（在架「删除书籍」/ 不在架「放入书架」），右钮对应 tv_read（固定「阅读」，无换文案逻辑）；顶栏 ⋮ 各项均可勾选或跳转，与 menu_book_info 逐项对应。</p>
+</section>
+
+<!-- ============ 02 书籍信息编辑 ============ -->
+<section class="screen" id="s2">
+  <div class="screen-head"><span class="no">02</span><h2>书籍信息编辑</h2><span class="src">activity_book_info_edit.xml · BookInfoEditActivity.kt · menu/book_info_edit.xml</span></div>
+  <div class="pair">
+
+    <figure class="phone theme-light" style="margin:0">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="appbar">
+        <button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+        <div class="appbar-title">书籍信息编辑</div>
+        <div class="actions"><button class="icon-btn" aria-label="保存"><svg class="icon" viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z"/><path d="M8 3v5h7V3M8 21v-7h8v7"/></svg></button></div>
+      </div>
+      <div class="divider"></div>
+      <div class="edit-top">
+        <div class="cv" style="background:linear-gradient(160deg,#d98a5f,#8f4f33)"><span>国民法医</span><i></i></div>
+        <div class="edit-fields">
+          <div class="field" style="margin-top:2px"><label>书名</label><div class="v">国民法医</div></div>
+          <div class="field"><label>作者</label><div class="v">志鸟村</div></div>
+        </div>
+      </div>
+      <div class="typerow">类型：<span class="selchip">Text <svg class="icon tiny" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span></div>
+      <div style="padding:0 16px">
+        <div class="field"><label>封面地址</label><div class="v">https://img.bikan.net/files/article/image/88/88123s.jpg</div></div>
+      </div>
+      <div class="orow">
+        <button class="obtn"><svg class="icon tiny" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="15" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m5 19 5.5-5.5L15 18l2.5-2.5L21 19"/></svg>选择本地图片</button>
+        <button class="obtn"><svg class="icon tiny" viewBox="0 0 24 24"><path d="M7 17V7M4 10l3-3 3 3M17 7v10M14 14l3 3 3-3"/></svg>封面换源</button>
+        <button class="obtn"><svg class="icon tiny" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4h-4"/></svg>刷新封面</button>
+      </div>
+      <div style="padding:0 16px">
+        <div class="field" style="padding-bottom:20px"><label>内容简介</label><div class="v">　　新书《国民法医》！遗体还没进解剖室，案发现场上，他总能从尸骸的只言片语中听出真相。以尸为友，以证为剑——且看小法医如何一步步走到法医之巅。</div></div>
+      </div>
+    </figure>
+
+    <figure class="phone theme-dark" style="margin:0">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="appbar">
+        <button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+        <div class="appbar-title">书籍信息编辑</div>
+        <div class="actions"><button class="icon-btn" aria-label="保存"><svg class="icon" viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z"/><path d="M8 3v5h7V3M8 21v-7h8v7"/></svg></button></div>
+      </div>
+      <div class="divider"></div>
+      <div class="edit-top">
+        <div class="cv" style="background:linear-gradient(160deg,#d98a5f,#8f4f33)"><span>国民法医</span><i></i></div>
+        <div class="edit-fields">
+          <div class="field" style="margin-top:2px"><label>书名</label><div class="v">国民法医</div></div>
+          <div class="field"><label>作者</label><div class="v">志鸟村</div></div>
+        </div>
+      </div>
+      <div class="typerow">类型：<span class="selchip">Text <svg class="icon tiny" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span></div>
+      <div style="padding:0 16px">
+        <div class="field"><label>封面地址</label><div class="v">https://img.bikan.net/files/article/image/88/88123s.jpg</div></div>
+      </div>
+      <div class="orow">
+        <button class="obtn"><svg class="icon tiny" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="15" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m5 19 5.5-5.5L15 18l2.5-2.5L21 19"/></svg>选择本地图片</button>
+        <button class="obtn"><svg class="icon tiny" viewBox="0 0 24 24"><path d="M7 17V7M4 10l3-3 3 3M17 7v10M14 14l3 3 3-3"/></svg>封面换源</button>
+        <button class="obtn"><svg class="icon tiny" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4h-4"/></svg>刷新封面</button>
+      </div>
+      <div style="padding:0 16px">
+        <div class="field" style="padding-bottom:20px"><label>内容简介</label><div class="v">　　新书《国民法医》！遗体还没进解剖室，案发现场上，他总能从尸骸的只言片语中听出真相。以尸为友，以证为剑——且看小法医如何一步步走到法医之巅。</div></div>
+      </div>
+    </figure>
+
+  </div>
+  <div class="feat">
+    <span class="lab">功能</span>
+    <span class="chip hl">封面点击可换</span><span class="chip hl">类型 Spinner（Text / Audio / Image / File）</span><span class="chip hl">选择本地图片</span><span class="chip hl">封面换源 → 打开⑥换封面</span><span class="chip hl">刷新封面</span><span class="chip hl">封面地址</span><span class="chip hl">内容简介</span>
+    <span class="lab" style="margin-left:6px">顶栏</span><span class="chip">保存（menu_save）</span>
+  </div>
+  <p class="featnote">封面地址为 TextInputLayout 输入项；三个描边按钮对应 tv_select_cover / tv_change_cover / tv_refresh_cover，其中「封面换源」拉起 ChangeCoverDialog。</p>
+</section>
+
+<!-- ============ 03 目录 · 书签 ============ -->
+<section class="screen" id="s3">
+  <div class="screen-head"><span class="no">03</span><h2>目录 · 书签</h2><span class="src">activity_chapter_list.xml(TocActivity) · fragment_chapter_list.xml · fragment_bookmark.xml · item_chapter_list.xml · item_bookmark.xml · menu/book_toc.xml</span></div>
+  <div class="pair">
+
+    <!-- 目录 tab · light -->
+    <figure class="phone theme-light" style="margin:0">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="appbar">
+        <button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+        <div class="tabs"><button class="tab on">目录</button><button class="tab">书签</button></div>
+        <div class="actions">
+          <button class="icon-btn" aria-label="搜索"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+          <button class="icon-btn more" aria-label="更多">⋮</button>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="content">
+        <div class="vol">第一卷 初入行业</div>
+        <div class="ch"><div class="t"><div class="n">第一章 案发现场</div><div class="s"><span>3.2千字</span><span>今天 09:12</span></div></div><svg class="icon ic" viewBox="0 0 24 24"><path d="M7 18a4 4 0 1 1 .9-7.9A5.5 5.5 0 0 1 18.4 9.4 3.8 3.8 0 0 1 17.5 18z"/></svg></div>
+        <div class="ch"><svg class="icon ic" viewBox="0 0 24 24" style="align-self:flex-start;margin-top:2px"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><div class="t"><div class="n">第二章 十七叔的茶馆</div><div class="s"><span>2.8千字 · VIP</span><span>今天 09:12</span></div></div><svg class="icon ic" viewBox="0 0 24 24"><path d="M7 18a4 4 0 1 1 .9-7.9A5.5 5.5 0 0 1 18.4 9.4 3.8 3.8 0 0 1 17.5 18z"/></svg></div>
+        <div class="ch"><div class="t"><div class="n">第三章 第一次解剖</div><div class="s"><span>3.5千字</span><span>昨天 21:40</span></div></div></div>
+        <div class="ch"><div class="t"><div class="n">第四章 无名指骨</div></div></div>
+        <div class="ch dur"><div class="t"><div class="n">第十七章 · 十七叔</div></div><svg class="icon ic" viewBox="0 0 24 24" style="color:var(--primary)"><path d="m5 12 5 5 9-10"/></svg></div>
+        <div class="ch"><div class="t"><div class="n">第十八章 老友来访</div></div><svg class="icon ic" viewBox="0 0 24 24"><path d="M7 18a4 4 0 1 1 .9-7.9A5.5 5.5 0 0 1 18.4 9.4 3.8 3.8 0 0 1 17.5 18z"/></svg></div>
+        <div class="ch"><div class="t"><div class="n">第二十一章 线索断了</div></div></div>
+      </div>
+      <div class="chapbar">
+        <span class="info">第十七章 · 十七叔(17/812)</span>
+        <button class="icon-btn" aria-label="到顶部"><svg class="icon" viewBox="0 0 24 24"><path d="m6 14 6-6 6 6"/></svg></button>
+        <button class="icon-btn" aria-label="到底部"><svg class="icon" viewBox="0 0 24 24"><path d="m6 10 6 6 6-6"/></svg></button>
+      </div>
+    </figure>
+
+    <!-- 目录 tab · dark -->
+    <figure class="phone theme-dark" style="margin:0">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="appbar">
+        <button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+        <div class="tabs"><button class="tab on">目录</button><button class="tab">书签</button></div>
+        <div class="actions">
+          <button class="icon-btn" aria-label="搜索"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+          <button class="icon-btn more" aria-label="更多">⋮</button>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="content">
+        <div class="vol">第一卷 初入行业</div>
+        <div class="ch"><div class="t"><div class="n">第一章 案发现场</div><div class="s"><span>3.2千字</span><span>今天 09:12</span></div></div><svg class="icon ic" viewBox="0 0 24 24"><path d="M7 18a4 4 0 1 1 .9-7.9A5.5 5.5 0 0 1 18.4 9.4 3.8 3.8 0 0 1 17.5 18z"/></svg></div>
+        <div class="ch"><svg class="icon ic" viewBox="0 0 24 24" style="align-self:flex-start;margin-top:2px"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><div class="t"><div class="n">第二章 十七叔的茶馆</div><div class="s"><span>2.8千字 · VIP</span><span>今天 09:12</span></div></div><svg class="icon ic" viewBox="0 0 24 24"><path d="M7 18a4 4 0 1 1 .9-7.9A5.5 5.5 0 0 1 18.4 9.4 3.8 3.8 0 0 1 17.5 18z"/></svg></div>
+        <div class="ch"><div class="t"><div class="n">第三章 第一次解剖</div><div class="s"><span>3.5千字</span><span>昨天 21:40</span></div></div></div>
+        <div class="ch"><div class="t"><div class="n">第四章 无名指骨</div></div></div>
+        <div class="ch dur"><div class="t"><div class="n">第十七章 · 十七叔</div></div><svg class="icon ic" viewBox="0 0 24 24" style="color:var(--primary)"><path d="m5 12 5 5 9-10"/></svg></div>
+        <div class="ch"><div class="t"><div class="n">第十八章 老友来访</div></div><svg class="icon ic" viewBox="0 0 24 24"><path d="M7 18a4 4 0 1 1 .9-7.9A5.5 5.5 0 0 1 18.4 9.4 3.8 3.8 0 0 1 17.5 18z"/></svg></div>
+        <div class="ch"><div class="t"><div class="n">第二十一章 线索断了</div></div></div>
+      </div>
+      <div class="chapbar">
+        <span class="info">第十七章 · 十七叔(17/812)</span>
+        <button class="icon-btn" aria-label="到顶部"><svg class="icon" viewBox="0 0 24 24"><path d="m6 14 6-6 6 6"/></svg></button>
+        <button class="icon-btn" aria-label="到底部"><svg class="icon" viewBox="0 0 24 24"><path d="m6 10 6 6 6-6"/></svg></button>
+      </div>
+    </figure>
+
+    <!-- 书签 tab · light -->
+    <figure class="phone theme-light" style="margin:0">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="appbar">
+        <button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+        <div class="tabs"><button class="tab">目录</button><button class="tab on">书签</button></div>
+        <div class="actions">
+          <button class="icon-btn" aria-label="搜索"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+          <button class="icon-btn more" aria-label="更多">⋮</button>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="content">
+        <div class="bmk">
+          <div class="c">第三章 第一次解剖</div>
+          <div class="q">「解剖刀落下的那一刻，整个房间安静得能听见福尔马林的滴答声。」</div>
+          <div class="note">这里的时间线存疑，后面要回来核对。</div>
+        </div>
+        <div class="bmk">
+          <div class="c">第九章 尸斑会说谎</div>
+          <div class="q">「死亡时间比口供早了整整四个小时。」</div>
+          <div class="note">关键伏笔：监控被人为关闭。</div>
+        </div>
+        <div class="bmk">
+          <div class="c">第十七章 · 十七叔</div>
+          <div class="q">「十七叔把茶碗转了半圈，笑而不语。」</div>
+        </div>
+        <div class="bmk">
+          <div class="c">第十二章 深夜来电</div>
+          <div class="q">「电话那头只有电流的杂音，还有一声极轻的叹息。」</div>
+          <div class="note">疑点：来电号码是停机号。</div>
+        </div>
+      </div>
+    </figure>
+
+  </div>
+  <div class="feat">
+    <span class="lab">页面</span>
+    <span class="chip hl">顶栏内 Tab（目录 / 书签）</span><span class="chip hl">章节搜索</span><span class="chip hl">卷名分组底色</span><span class="chip hl">当前章高亮 + ✓</span><span class="chip hl">未缓存 ☁</span><span class="chip hl">VIP 🔒</span><span class="chip hl">字数 / 更新时间 tag</span><span class="chip hl">底栏当前章(17/812) + 到顶/到底（仅目录 Tab）</span>
+  </div>
+  <div class="feat">
+    <span class="lab">⋮ 菜单</span>
+    <span class="chip">反转目录</span><span class="chip">使用替换 ✓</span><span class="chip">加载字数 ✓</span><span class="chip">TXT 目录规则（仅 TXT 书）</span><span class="chip">拆分超长章节 ✓（仅 TXT 书）</span><span class="chip">日志</span>
+  </div>
+  <div class="feat">
+    <span class="lab">书签 Tab</span>
+    <span class="chip hl">章节名 / 原文 / 笔记 三段展示</span><span class="chip hl">点击跳转阅读</span><span class="chip hl">长按编辑 / 删除（BookmarkDialog）</span>
+    <span class="lab" style="margin-left:6px">⋮</span><span class="chip">导出</span><span class="chip">导出(MD)</span>
+  </div>
+  <p class="featnote">目录页为 TocActivity 的「目录」Tab（ChapterListFragment，FastScrollRecyclerView 快滑），书签 Tab 为 BookmarkFragment；两组菜单项随所在 Tab 切换显示，与 menu_book_toc 的三个 group 一致。</p>
+</section>
+
+<!-- ============ 04 章节换源 ============ -->
+<section class="screen" id="s4">
+  <div class="screen-head"><span class="no">04</span><h2>章节换源</h2><span class="src">dialog_chapter_change_source.xml · ChangeChapterSourceDialog.kt · ChangeChapterSourceAdapter / ChangeChapterTocAdapter · menu/change_source.xml</span></div>
+  <div class="pair">
+
+    <figure class="phone theme-light" style="margin:0">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="appbar">
+        <button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+        <div class="appbar-title">第十七章 · 十七叔</div>
+        <div class="actions">
+          <button class="icon-btn" aria-label="筛选"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+          <button class="icon-btn" aria-label="停止"><svg class="icon" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.5" fill="currentColor" stroke="none"/></svg></button>
+          <button class="icon-btn more" aria-label="更多">⋮</button>
+        </div>
+      </div>
+      <div class="loadbar"><span></span></div>
+      <div class="content">
+        <div class="srcitem cur">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24" style="color:var(--primary)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">必看小说网</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百二十一章 · 结案</span></div>
+            <div class="d"><span>本章 3.2千字</span><span>响应 286ms</span></div>
+          </div>
+          <svg class="icon ck" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg>
+        </div>
+        <div class="srcitem">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">笔趣书阁</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百二十一章 · 结案</span></div>
+            <div class="d"><span>本章 3.4千字</span><span>响应 342ms</span></div>
+          </div>
+        </div>
+        <div class="srcitem">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24" style="color:var(--primary)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg);display:none"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">起点中文网</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百二十二章 · 尾声</span></div>
+            <div class="d"><span>本章 3.2千字</span><span>响应 512ms</span></div>
+          </div>
+        </div>
+        <div class="srcitem">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24" style="display:none"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg);color:#c2551f"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">书荒部落</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百一十九章 · 停更</span></div>
+            <div class="d"><span>响应 1.2s</span></div>
+          </div>
+        </div>
+        <div class="srcitem">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">纵横中文</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百二十一章 · 结案</span></div>
+            <div class="d"><span>响应 405ms</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="footbar">
+        <span class="info">必看小说网</span>
+        <button class="icon-btn" aria-label="回顶部"><svg class="icon" viewBox="0 0 24 24"><path d="m6 14 6-6 6 6"/></svg></button>
+        <button class="icon-btn" aria-label="到底部"><svg class="icon" viewBox="0 0 24 24"><path d="m6 10 6 6 6-6"/></svg></button>
+      </div>
+    </figure>
+
+    <figure class="phone theme-dark" style="margin:0">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="appbar">
+        <button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+        <div class="appbar-title">第十七章 · 十七叔</div>
+        <div class="actions">
+          <button class="icon-btn" aria-label="筛选"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+          <button class="icon-btn" aria-label="停止"><svg class="icon" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.5" fill="currentColor" stroke="none"/></svg></button>
+          <button class="icon-btn more" aria-label="更多">⋮</button>
+        </div>
+      </div>
+      <div class="loadbar"><span></span></div>
+      <div class="content">
+        <div class="srcitem cur">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24" style="color:var(--primary)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">必看小说网</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百二十一章 · 结案</span></div>
+            <div class="d"><span>本章 3.2千字</span><span>响应 286ms</span></div>
+          </div>
+          <svg class="icon ck" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg>
+        </div>
+        <div class="srcitem">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">笔趣书阁</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百二十一章 · 结案</span></div>
+            <div class="d"><span>本章 3.4千字</span><span>响应 342ms</span></div>
+          </div>
+        </div>
+        <div class="srcitem">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24" style="color:var(--primary)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg);display:none"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">起点中文网</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百二十二章 · 尾声</span></div>
+            <div class="d"><span>本章 3.2千字</span><span>响应 512ms</span></div>
+          </div>
+        </div>
+        <div class="srcitem">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24" style="display:none"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg);color:#c2551f"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">书荒部落</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百一十九章 · 停更</span></div>
+            <div class="d"><span>响应 1.2s</span></div>
+          </div>
+        </div>
+        <div class="srcitem">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">纵横中文</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百二十一章 · 结案</span></div>
+            <div class="d"><span>响应 405ms</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="footbar">
+        <span class="info">必看小说网</span>
+        <button class="icon-btn" aria-label="回顶部"><svg class="icon" viewBox="0 0 24 24"><path d="m6 14 6-6 6 6"/></svg></button>
+        <button class="icon-btn" aria-label="到底部"><svg class="icon" viewBox="0 0 24 24"><path d="m6 10 6 6 6-6"/></svg></button>
+      </div>
+    </figure>
+
+    <!-- 目录面板态 · light -->
+    <figure class="phone theme-light" style="margin:0">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="appbar">
+        <button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+        <div class="appbar-title">第十七章 · 十七叔</div>
+        <div class="actions">
+          <button class="icon-btn" aria-label="筛选"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+          <button class="icon-btn" aria-label="停止"><svg class="icon" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.5" fill="currentColor" stroke="none"/></svg></button>
+          <button class="icon-btn more" aria-label="更多">⋮</button>
+        </div>
+      </div>
+      <div class="loadbar"><span></span></div>
+      <div class="content">
+        <div class="srcitem">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">笔趣书阁</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百二十一章 · 结案</span></div>
+          </div>
+        </div>
+        <div class="tocsheet">
+          <div class="grip"><svg class="icon" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div>
+          <div class="divider"></div>
+          <div style="flex:1;overflow:hidden">
+            <div class="ch"><div class="t"><div class="n">第十四章 旧档案</div></div></div>
+            <div class="ch"><div class="t"><div class="n">第十五章 线人</div></div></div>
+            <div class="ch"><div class="t"><div class="n">第十六章 停尸房之夜</div></div></div>
+            <div class="ch dur"><div class="t"><div class="n">第十七章 · 十七叔</div></div><svg class="icon ic" viewBox="0 0 24 24" style="color:var(--primary)"><path d="m5 12 5 5 9-10"/></svg></div>
+            <div class="ch"><div class="t"><div class="n">第十八章 老友来访</div></div></div>
+            <div class="ch"><div class="t"><div class="n">第十九章 第二具尸体</div></div></div>
+            <div class="ch"><div class="t"><div class="n">第二十章 雨夜追凶</div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="footbar">
+        <span class="info">必看小说网</span>
+        <button class="icon-btn" aria-label="回顶部"><svg class="icon" viewBox="0 0 24 24"><path d="m6 14 6-6 6 6"/></svg></button>
+        <button class="icon-btn" aria-label="到底部"><svg class="icon" viewBox="0 0 24 24"><path d="m6 10 6 6 6-6"/></svg></button>
+      </div>
+    </figure>
+
+  </div>
+  <div class="feat">
+    <span class="lab">页面</span>
+    <span class="chip hl">顶栏标题 = 当前章节名</span><span class="chip hl">筛选搜索</span><span class="chip hl">搜索中进度条（停止 ⇄ 刷新）</span><span class="chip hl">结果项：来源 / 作者 / 最新章节 / 本章字数 / 响应时间 / ✓当前源</span><span class="chip hl">赞 / 踩 评分（iv_good / iv_bad）</span><span class="chip hl">点击结果 → 底部目录面板选章替换</span><span class="chip hl">底栏原来源名点击定位</span>
+  </div>
+  <div class="feat">
+    <span class="lab">长按结果</span>
+    <span class="chip">置顶</span><span class="chip">置底</span><span class="chip">编辑源</span><span class="chip">禁用源</span><span class="chip">删除源</span>
+  </div>
+  <div class="feat">
+    <span class="lab">⋮ 菜单</span>
+    <span class="chip">书源管理</span><span class="chip">刷新列表</span><span class="chip">校验作者 ✓</span><span class="chip">加载字数 ✓</span><span class="chip">加载详情页 ✓</span><span class="chip">加载目录 ✓</span><span class="chip">分组 ›（全部书源 / 启用分组单选）</span><span class="chip">关闭</span>
+  </div>
+  <p class="featnote">第三个壳展示点击结果后的目录面板（cl_toc）：顶部下拉手柄收起，列表复用目录章节样式，当前章高亮；选中某一章即抓取正文并替换当前章节。原 iv_good / iv_bad 赞踩重新映射为主色（赞）/ 警示色 #C2551F（踩），激活任一枚即隐藏另一枚（与 ChangeChapterSourceAdapter 一致）。</p>
+</section>
+
+<!-- ============ 05 书籍换源 ============ -->
+<section class="screen" id="s5">
+  <div class="screen-head"><span class="no">05</span><h2>书籍换源</h2><span class="src">dialog_book_change_source.xml · ChangeBookSourceDialog.kt · ChangeBookSourceAdapter.kt · menu/change_source.xml</span></div>
+  <div class="pair">
+
+    <figure class="phone theme-light" style="margin:0">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="appbar">
+        <button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+        <div class="appbar-title">国民法医<small>志鸟村</small></div>
+        <div class="actions">
+          <button class="icon-btn" aria-label="筛选"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+          <button class="icon-btn" aria-label="停止"><svg class="icon" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.5" fill="currentColor" stroke="none"/></svg></button>
+          <button class="icon-btn more" aria-label="更多">⋮</button>
+        </div>
+      </div>
+      <div class="loadbar"><span></span></div>
+      <div class="content">
+        <div class="srcitem cur">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24" style="color:var(--primary)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">必看小说网</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百二十一章 · 结案</span></div>
+            <div class="d"><span>响应 286ms</span></div>
+          </div>
+          <svg class="icon ck" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg>
+        </div>
+        <div class="srcitem">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">笔趣书阁</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百二十一章 · 结案</span></div>
+            <div class="d"><span>响应 342ms</span></div>
+          </div>
+        </div>
+        <div class="srcitem">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24" style="color:var(--primary)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg);display:none"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">起点中文网</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百二十二章 · 尾声</span></div>
+            <div class="d"><span>响应 512ms</span></div>
+          </div>
+        </div>
+        <div class="srcitem">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24" style="display:none"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg);color:#c2551f"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">书荒部落</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百一十九章 · 停更</span></div>
+            <div class="d"><span>响应 1.2s</span></div>
+          </div>
+        </div>
+        <div class="srcitem">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">纵横中文</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百二十一章 · 结案</span></div>
+            <div class="d"><span>响应 405ms</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="footbar">
+        <span class="info">必看小说网</span>
+        <button class="icon-btn" aria-label="回顶部"><svg class="icon" viewBox="0 0 24 24"><path d="m6 14 6-6 6 6"/></svg></button>
+        <button class="icon-btn" aria-label="到底部"><svg class="icon" viewBox="0 0 24 24"><path d="m6 10 6 6 6-6"/></svg></button>
+      </div>
+    </figure>
+
+    <figure class="phone theme-dark" style="margin:0">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="appbar">
+        <button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+        <div class="appbar-title">国民法医<small>志鸟村</small></div>
+        <div class="actions">
+          <button class="icon-btn" aria-label="筛选"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+          <button class="icon-btn" aria-label="停止"><svg class="icon" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.5" fill="currentColor" stroke="none"/></svg></button>
+          <button class="icon-btn more" aria-label="更多">⋮</button>
+        </div>
+      </div>
+      <div class="loadbar"><span></span></div>
+      <div class="content">
+        <div class="srcitem cur">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24" style="color:var(--primary)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">必看小说网</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百二十一章 · 结案</span></div>
+            <div class="d"><span>响应 286ms</span></div>
+          </div>
+          <svg class="icon ck" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg>
+        </div>
+        <div class="srcitem">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">笔趣书阁</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百二十一章 · 结案</span></div>
+            <div class="d"><span>响应 342ms</span></div>
+          </div>
+        </div>
+        <div class="srcitem">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24" style="color:var(--primary)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg);display:none"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">起点中文网</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百二十二章 · 尾声</span></div>
+            <div class="d"><span>响应 512ms</span></div>
+          </div>
+        </div>
+        <div class="srcitem">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24" style="display:none"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg);color:#c2551f"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">书荒部落</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百一十九章 · 停更</span></div>
+            <div class="d"><span>响应 1.2s</span></div>
+          </div>
+        </div>
+        <div class="srcitem">
+          <div class="scorecol"><svg class="icon" viewBox="0 0 24 24"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg><svg class="icon" viewBox="0 0 24 24" style="transform:rotate(180deg)"><path d="M7 10v11M7 11l3.6-7.2A2.3 2.3 0 0 1 13 6.4L12 11h6a2 2 0 0 1 2 2.4l-1.1 4.6A2 2 0 0 1 17 19.5H7"/></svg></div>
+          <div class="si">
+            <div class="l1"><span class="name">纵横中文</span><span class="au">志鸟村</span></div>
+            <div class="d"><span>最新：第五百二十一章 · 结案</span></div>
+            <div class="d"><span>响应 405ms</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="footbar">
+        <span class="info">必看小说网</span>
+        <button class="icon-btn" aria-label="回顶部"><svg class="icon" viewBox="0 0 24 24"><path d="m6 14 6-6 6 6"/></svg></button>
+        <button class="icon-btn" aria-label="到底部"><svg class="icon" viewBox="0 0 24 24"><path d="m6 10 6 6 6-6"/></svg></button>
+      </div>
+    </figure>
+
+  </div>
+  <div class="feat">
+    <span class="lab">页面</span>
+    <span class="chip hl">顶栏 书名 + 作者副标题</span><span class="chip hl">与章节换源同一套筛选 / 进度 / 结果项结构</span><span class="chip hl">点击结果直接换源（类型不同弹确认）</span><span class="chip hl">底栏原来源定位</span>
+  </div>
+  <div class="feat">
+    <span class="lab">长按结果</span>
+    <span class="chip">置顶</span><span class="chip">置底</span><span class="chip">编辑源</span><span class="chip">禁用源</span><span class="chip">删除源</span>
+    <span class="lab" style="margin-left:6px">⋮ 菜单</span>
+    <span class="chip">书源管理</span><span class="chip">刷新列表</span><span class="chip">校验作者 ✓</span><span class="chip">加载字数 ✓</span><span class="chip">加载详情页 ✓</span><span class="chip">加载目录 ✓</span><span class="chip">分组 ›</span><span class="chip">关闭</span>
+  </div>
+</section>
+
+<!-- ============ 06 换封面 ============ -->
+<section class="screen" id="s6">
+  <div class="screen-head"><span class="no">06</span><h2>换封面</h2><span class="src">dialog_change_cover.xml · ChangeCoverDialog.kt · item_cover.xml · menu/change_cover.xml</span></div>
+  <div class="pair">
+
+    <figure class="phone theme-light" style="margin:0">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="appbar">
+        <div class="appbar-title" style="padding-left:12px">封面换源</div>
+        <div class="actions">
+          <button class="icon-btn" aria-label="停止"><svg class="icon" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.5" fill="currentColor" stroke="none"/></svg></button>
+        </div>
+      </div>
+      <div class="loadbar"><span></span></div>
+      <div class="content">
+        <div class="grid">
+          <div class="ccell"><div class="cv" style="background:linear-gradient(160deg,#d98a5f,#8f4f33)"><span>国民法医</span><i></i></div><div class="s">必看小说网</div></div>
+          <div class="ccell"><div class="cv" style="background:linear-gradient(160deg,#7f9c8a,#46604f)"><span>国民法医</span><i></i></div><div class="s">笔趣书阁</div></div>
+          <div class="ccell"><div class="cv" style="background:linear-gradient(160deg,#d9b45f,#9c7a2e)"><span>国民法医</span><i></i></div><div class="s">起点中文网</div></div>
+          <div class="ccell"><div class="cv" style="background:linear-gradient(160deg,#6f8fa8,#3f5a74)"><span>国民法医</span><i></i></div><div class="s">纵横中文</div></div>
+          <div class="ccell"><div class="cv" style="background:linear-gradient(160deg,#c98bb0,#8a4f70)"><span>国民法医</span><i></i></div><div class="s">书荒部落</div></div>
+          <div class="ccell"><div class="cv" style="background:linear-gradient(160deg,#a8674f,#6e3a2a)"><span>国民法医</span><i></i></div><div class="s">得奇小说</div></div>
+          <div class="ccell"><div class="cv" style="background:linear-gradient(160deg,#8a9b6a,#55663d)"><span>国民法医</span><i></i></div><div class="s">obook 阅读网</div></div>
+          <div class="ccell"><div class="cv" style="background:linear-gradient(160deg,#b09a78,#7d6a4a)"><span>国民法医</span><i></i></div><div class="s">咖啡文学</div></div>
+          <div class="ccell"><div class="cv" style="background:linear-gradient(160deg,#c4704f,#8f4429)"><span>国民法医</span><i></i></div><div class="s">青柠小说</div></div>
+        </div>
+      </div>
+    </figure>
+
+    <figure class="phone theme-dark" style="margin:0">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="appbar">
+        <div class="appbar-title" style="padding-left:12px">封面换源</div>
+        <div class="actions">
+          <button class="icon-btn" aria-label="停止"><svg class="icon" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.5" fill="currentColor" stroke="none"/></svg></button>
+        </div>
+      </div>
+      <div class="loadbar"><span></span></div>
+      <div class="content">
+        <div class="grid">
+          <div class="ccell"><div class="cv" style="background:linear-gradient(160deg,#d98a5f,#8f4f33)"><span>国民法医</span><i></i></div><div class="s">必看小说网</div></div>
+          <div class="ccell"><div class="cv" style="background:linear-gradient(160deg,#7f9c8a,#46604f)"><span>国民法医</span><i></i></div><div class="s">笔趣书阁</div></div>
+          <div class="ccell"><div class="cv" style="background:linear-gradient(160deg,#d9b45f,#9c7a2e)"><span>国民法医</span><i></i></div><div class="s">起点中文网</div></div>
+          <div class="ccell"><div class="cv" style="background:linear-gradient(160deg,#6f8fa8,#3f5a74)"><span>国民法医</span><i></i></div><div class="s">纵横中文</div></div>
+          <div class="ccell"><div class="cv" style="background:linear-gradient(160deg,#c98bb0,#8a4f70)"><span>国民法医</span><i></i></div><div class="s">书荒部落</div></div>
+          <div class="ccell"><div class="cv" style="background:linear-gradient(160deg,#a8674f,#6e3a2a)"><span>国民法医</span><i></i></div><div class="s">得奇小说</div></div>
+        </div>
+      </div>
+    </figure>
+
+  </div>
+  <div class="feat">
+    <span class="lab">功能</span>
+    <span class="chip hl">3 列封面候选网格（书源名居中展示）</span><span class="chip hl">点击候选即换封面</span><span class="chip hl">搜索中进度条</span>
+    <span class="lab" style="margin-left:6px">顶栏</span><span class="chip">停止 ⇄ 刷新（menu_start_stop）</span>
+  </div>
+  <p class="featnote">ChangeCoverDialog 为全屏对话框（无返回键位，返回手势关闭）；顶栏标题固定「封面换源」，菜单仅有开始/停止搜索一项，网格为 GridLayoutManager 3 列。网格候选项的数量随搜索结果增长，示例仅展示部分。</p>
+</section>
+
+<footer style="max-width:1420px;margin:0 auto;padding-top:8px;border-top:1px solid #d5d1c6">
+  <p style="font-size:12px;color:#8a8577;line-height:1.8">流程关系：书籍信息① →「编辑」→ 书籍信息编辑②（保存回写）；① →「查看目录」→ 目录·书签③；①/② →「换源 / 封面换源」→ 章节换源④ / 书籍换源⑤ / 换封面⑥。换源对话框共用 item_change_source 与 menu/change_source，仅标题结构不同。</p>
+</footer>
+
+</body></html>

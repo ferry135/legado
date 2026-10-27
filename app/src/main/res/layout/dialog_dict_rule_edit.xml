@@ -10,16 +10,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/shape_card_view"
+        android:background="@drawable/bg_card"
         android:orientation="vertical"
         tools:ignore="UselessParent">
 
+        <!-- .dlg-bar：运行时染 primaryColor，无阴影 -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/tool_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/background_menu"
-            android:elevation="5dp"
+            android:elevation="0dp"
             android:theme="?attr/actionBarStyle"
             app:displayHomeAsUp="false"
             app:fitStatusBar="false"
@@ -30,7 +31,10 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="6dp"
+            android:paddingTop="14dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp"
             android:overScrollMode="ifContentScrolls">
 
             <LinearLayout
@@ -41,7 +45,16 @@
                 <io.legado.app.ui.widget.text.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/name">
+                    android:layout_marginBottom="11dp"
+                    android:hint="@string/name"
+                    app:boxBackgroundMode="filled"
+                    app:boxBackgroundColor="@color/surface_container_high"
+                    app:boxCornerRadiusTopStart="10dp"
+                    app:boxCornerRadiusTopEnd="10dp"
+                    app:boxCornerRadiusBottomStart="10dp"
+                    app:boxCornerRadiusBottomEnd="10dp"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="2dp">
 
                     <io.legado.app.lib.theme.view.ThemeEditText
                         android:id="@+id/tv_rule_name"
@@ -54,7 +67,16 @@
                 <io.legado.app.ui.widget.text.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/url_rule">
+                    android:layout_marginBottom="11dp"
+                    android:hint="@string/url_rule"
+                    app:boxBackgroundMode="filled"
+                    app:boxBackgroundColor="@color/surface_container_high"
+                    app:boxCornerRadiusTopStart="10dp"
+                    app:boxCornerRadiusTopEnd="10dp"
+                    app:boxCornerRadiusBottomStart="10dp"
+                    app:boxCornerRadiusBottomEnd="10dp"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="2dp">
 
                     <io.legado.app.lib.theme.view.ThemeEditText
                         android:id="@+id/tv_url_rule"
@@ -67,7 +89,16 @@
                 <io.legado.app.ui.widget.text.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/show_rule">
+                    android:layout_marginBottom="11dp"
+                    android:hint="@string/show_rule"
+                    app:boxBackgroundMode="filled"
+                    app:boxBackgroundColor="@color/surface_container_high"
+                    app:boxCornerRadiusTopStart="10dp"
+                    app:boxCornerRadiusTopEnd="10dp"
+                    app:boxCornerRadiusBottomStart="10dp"
+                    app:boxCornerRadiusBottomEnd="10dp"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="2dp">
 
                     <io.legado.app.lib.theme.view.ThemeEditText
                         android:id="@+id/tv_show_rule"

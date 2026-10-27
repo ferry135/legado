@@ -13,7 +13,8 @@
         app:attachToActivity="false"
         app:layout_constraintTop_toTopOf="parent"
         app:themeMode="blend"
-        app:title="@string/bookshelf" />
+        app:title="@string/bookshelf"
+        app:titleTextAppearance="@style/TextAppearance.Legado.PageTitle" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refresh_layout"

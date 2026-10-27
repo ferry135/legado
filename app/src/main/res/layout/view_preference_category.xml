@@ -11,16 +11,37 @@
         android:layout_width="match_parent"
         android:layout_height="8dp" />
 
-    <TextView
-        android:id="@+id/preference_title"
-        android:paddingTop="16dp"
-        android:paddingBottom="8dp"
-        android:background="@drawable/bg_prefs_color"
-        android:paddingLeft="16dp"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/accent"
-        tools:ignore="RtlHardcoded,RtlSymmetry" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_prefs_color"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingTop="13dp"
+        android:paddingBottom="5dp"
+        tools:ignore="RtlSymmetry">
+
+        <TextView
+            android:id="@+id/preference_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="11.5sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.12"
+            android:textColor="@color/accent"
+            tools:ignore="RtlHardcoded" />
+
+        <!-- .pcat::after：分组标题右侧延伸的细分线 -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:background="@color/outline_variant" />
+
+    </LinearLayout>
 
     <View
         android:id="@+id/preference_divider_below"

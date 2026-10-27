@@ -9,7 +9,7 @@
     android:baselineAligned="false">
 
     <FrameLayout
-        android:layout_width="60dp"
+        android:layout_width="52dp"
         android:layout_height="match_parent">
         <!--选择是否添加文件-->
         <io.legado.app.lib.theme.view.ThemeCheckBox
@@ -28,7 +28,7 @@
             android:scaleType="center"
             android:visibility="invisible"
             android:src="@drawable/ic_folder"
-            app:tint="@color/primaryText" />
+            app:tint="@color/primary" />
     </FrameLayout>
 
     <LinearLayout
@@ -44,8 +44,11 @@
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:fontFamily="sans-serif-medium"
             android:singleLine="true"
+            android:ellipsize="end"
             android:text="@string/app_name"
+            android:textColor="@color/on_surface"
             android:textSize="16sp"
             android:gravity="center_vertical"
             tools:ignore="NestedWeights" />
@@ -62,10 +65,14 @@
                 android:id="@+id/tv_tag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="15dp"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
+                android:layout_marginRight="14dp"
+                android:paddingStart="7dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="7dp"
+                android:paddingBottom="2dp"
                 android:text="TXT"
+                android:textSize="11sp"
+                android:textStyle="bold"
                 android:maxLines="1"
                 android:maxWidth="50dp"
                 app:radius="8dp"
@@ -75,7 +82,9 @@
                 android:id="@+id/tv_size"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="15dp"
+                android:layout_marginRight="14dp"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="12sp"
                 tools:ignore="RtlHardcoded"
                 tools:text="324kb" />
 
@@ -83,6 +92,8 @@
                 android:id="@+id/tv_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="12sp"
                 tools:text="2017-05-22" />
         </LinearLayout>
 

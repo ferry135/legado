@@ -15,6 +15,7 @@
         app:title="@string/rss_source_edit" 
         app:themeMode="blend" />
 
+    <!-- .checks-row：启用 / 单 URL / CookieJar，padding 12px 20px 4px、间距 20px -->
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,7 +26,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingHorizontal="8dp"
+            android:paddingStart="20dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="4dp"
             tools:ignore="VisualLintBounds">
 
             <io.legado.app.lib.theme.view.ThemeCheckBox
@@ -40,6 +44,7 @@
                 android:id="@+id/cb_single_url"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
                 android:checked="false"
                 android:text="@string/single_url"
                 tools:ignore="TouchTargetSizeCheck" />
@@ -48,6 +53,7 @@
                 android:id="@+id/cb_is_enable_cookie"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
                 android:checked="true"
                 android:text="@string/auto_save_cookie"
                 tools:ignore="TouchTargetSizeCheck" />
@@ -56,12 +62,13 @@
 
     </HorizontalScrollView>
 
+    <!-- .tabs-row（border-bottom:0）：融入式扁平 Tab，无阴影 -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
+        android:layout_height="40dp"
         android:background="@color/background"
-        android:elevation="3dp"
+        app:tabIndicatorHeight="3dp"
         tools:ignore="SpeakableTextPresentCheck" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -69,6 +76,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
+        android:paddingStart="20dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="10dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_source_edit" />
 

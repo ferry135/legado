@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 听书播放顶部胶囊：白色 16% 玻璃底、胶囊形（08-system.html s13 .pill） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#29FFFFFF" />
+    <corners android:radius="999dp" />
+</shape>

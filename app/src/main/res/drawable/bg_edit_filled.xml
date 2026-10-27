@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 填充式输入域：surface2 底 + 10dp 圆角（05 书源编辑 field） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/surface_container_high" />
+    <corners android:radius="10dp" />
+</shape>

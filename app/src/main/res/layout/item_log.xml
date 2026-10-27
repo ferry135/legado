@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- .log：13sp 辅助色、行距 1.85、链接 link_color（05）；水平边距由 activity_source_debug 的 RecyclerView padding 提供 -->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/text_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingTop="2dp"
+    android:paddingBottom="2dp"
+    android:textColor="@color/on_surface_variant"
+    android:textColorLink="@color/link_color"
     android:textIsSelectable="true"
+    android:textSize="13sp"
+    android:lineSpacingExtra="3dp"
     android:autoLink="web" />

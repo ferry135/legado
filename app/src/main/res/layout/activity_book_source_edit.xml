@@ -24,7 +24,10 @@
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingHorizontal="8dp"
+            android:paddingTop="6dp"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="8dp"
             tools:ignore="VisualLintBounds">
 
             <TextView
@@ -75,13 +78,19 @@
 
     </HorizontalScrollView>
 
+    <!-- .tabs：blend 同底、无阴影，底部 1px 弱分割线 -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="36dp"
         android:background="@color/background"
-        android:elevation="3dp"
+        android:elevation="0dp"
         tools:ignore="SpeakableTextPresentCheck" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_subtle" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"

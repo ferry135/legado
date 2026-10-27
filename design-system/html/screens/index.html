@@ -1,0 +1,284 @@
+<!-- design-system: legado v2 -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>legado 全新界面设计 v2 · 总导览</title><style>
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#ece9e2;color:#26231d}
+/* ---------- 页头 ---------- */
+.page-head{position:sticky;top:0;z-index:60;background:rgba(236,233,226,.94);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,.08);padding:20px 24px 16px}
+.ph-in{max-width:1240px;margin:0 auto}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.18em;color:#ff6b2c;text-transform:uppercase}
+.page-head h1{margin:4px 0 6px;font-size:26px;letter-spacing:.02em}
+.page-head h1 .en{font-size:12.5px;color:#6d6a62;font-weight:600;letter-spacing:.14em;margin-left:10px}
+.ph-sub{margin:0;font-size:13.5px;color:#6d6a62;line-height:1.7}
+/* ---------- 设计令牌速查 ---------- */
+.tokens{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.tk{display:inline-flex;align-items:center;gap:9px;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:7px 12px 7px 9px}
+.tk .sw{width:26px;height:26px;border-radius:8px;flex:none;border:1px solid rgba(0,0,0,.12)}
+.tk .pair-sw{display:flex;gap:3px;flex:none}
+.tk .pair-sw i{width:26px;height:26px;border-radius:8px 0 0 8px;border:1px solid rgba(0,0,0,.12);border-right:0;display:block}
+.tk .pair-sw i+i{border-radius:0 8px 8px 0;border-left:1px solid rgba(0,0,0,.12);border-right:1px solid rgba(0,0,0,.12)}
+.tk .pair-sw i.tri{border-radius:0;border-left:0}
+.tk .rad{display:flex;gap:4px;flex:none;align-items:center}
+.tk .rad i{width:22px;height:22px;background:#fff1e6;border:1.5px solid #ff6b2c;display:block}
+.tk .dv{width:40px;flex:none;display:flex;flex-direction:column;gap:4px}
+.tk .dv i{display:block;height:9px;border-radius:2px;position:relative;overflow:hidden}
+.tk .dv i:after{content:"";position:absolute;left:0;right:0;top:4px;height:1px}
+.tk .dv .l{background:#fff;border:1px solid rgba(0,0,0,.1)}
+.tk .dv .l:after{background:rgba(0,0,0,.09)}
+.tk .dv .d{background:#141312}
+.tk .dv .d:after{background:rgba(255,255,255,.1)}
+.tk b{font-size:13px;font-weight:700}
+.tk code{font-family:ui-monospace,Consolas,monospace;font-size:11px;background:rgba(0,0,0,.055);padding:1px 6px;border-radius:5px;color:#8a4a20;white-space:nowrap}
+.tk small{font-size:11.5px;color:#6d6a62;display:block;margin-top:1px}
+/* ---------- 分组导航 ---------- */
+.gnav{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.gnav a{text-decoration:none;font-size:13px;font-weight:600;color:#4a463c;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:999px;padding:5px 14px;transition:color .15s,border-color .15s}
+.gnav a:hover{color:#ff6b2c;border-color:#ff6b2c}
+.gnav a b{color:#ff6b2c;margin-right:5px}
+/* ---------- 主体 ---------- */
+main{max-width:1240px;margin:0 auto;padding:14px 24px 80px}
+.grp{margin-top:56px}
+.grp-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.grp-no{font-size:14px;font-weight:800;color:#ff6b2c;letter-spacing:.1em}
+.grp-head h2{margin:0;font-size:23px}
+.grp-src{font-size:12px;color:#6d6a62;font-family:ui-monospace,Consolas,monospace}
+.grp-desc{margin:8px 0 0;font-size:13.5px;color:#4a463c;line-height:1.8;max-width:880px}
+/* 屏幕清单 */
+.slist{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 0}
+.slist .lab{font-size:12px;font-weight:600;color:#6d6a62;align-self:center;margin-right:2px;letter-spacing:.06em}
+.slist a{font-size:12.5px;font-weight:500;color:#4a463c;text-decoration:none;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px;padding:4px 10px;transition:color .15s,border-color .15s}
+.slist a:hover{color:#b34a15;border-color:#f3c9ae;background:#fff5ee}
+.slist a i{font-style:normal;color:#ff6b2c;font-weight:700;margin-right:4px;font-size:11px}
+/* ---------- 预览卡 ---------- */
+.pv-wrap{margin-top:16px;max-width:920px}
+a.pv{display:block;position:relative;height:380px;border-radius:18px;overflow:hidden;border:1px solid rgba(0,0,0,.1);background:#faf9f7;text-decoration:none;box-shadow:0 1px 0 rgba(0,0,0,.03)}
+a.pv:hover{border-color:rgba(255,107,44,.55)}
+.pv iframe{width:1440px;border:0;display:block;transform-origin:0 0;pointer-events:none;transform:scale(.63)}
+.pv .veil{position:absolute;left:0;right:0;bottom:0;height:88px;background:linear-gradient(180deg,rgba(236,233,226,0),rgba(236,233,226,.92));pointer-events:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 16px 12px}
+.pv .open{font-size:12.5px;font-weight:700;color:#b34a15;background:#fff;border:1px solid #f3c9ae;border-radius:999px;padding:5px 12px;transition:background .15s,color .15s}
+a.pv:hover .open{background:#ff6b2c;border-color:#ff6b2c;color:#fff}
+.pv .hint{font-size:11.5px;color:#8a8577}
+/* ---------- 页脚 ---------- */
+footer{max-width:1240px;margin:0 auto;padding:0 24px 60px}
+footer .ft{border-top:1px solid rgba(0,0,0,.1);padding-top:18px;font-size:12.5px;color:#6d6a62;line-height:2}
+footer .ft b{color:#26231d}
+@media (max-width:720px){
+  .page-head{padding:16px 16px 14px}main{padding:10px 16px 60px}footer{padding:0 16px 48px}
+  a.pv{height:300px}
+}
+</style></head>
+<body>
+
+<header class="page-head">
+  <div class="ph-in">
+    <div class="eyebrow">Legado UI Design · v2</div>
+    <h1>legado 全新界面设计 v2<span class="en">DESIGN OVERVIEW</span></h1>
+    <p class="ph-sub">暖橙主色 · 暖纸白 / 暖黑表面 · 弱分割线 · 大圆角 · 无阴影 blend 顶栏 · Material 3 —— 共 8 组设计稿、61 屏（按各稿分区计）。点击任意预览或屏幕名，可在新窗口打开原稿。</p>
+    <div class="tokens">
+      <span class="tk"><i class="sw" style="background:#ff6b2c"></i><span><b>主色</b> <code>#FF6B2C</code><small>暖橙 · Tab 激活 / 主按钮 / 徽标</small></span></span>
+      <span class="tk"><span class="pair-sw"><i style="background:#faf9f7"></i><i style="background:#ffffff"></i><i class="tri" style="background:#eeece9"></i></span><span><b>表面 · 暖纸白</b> <code>#FAF9F7 / #FFFFFF / #EEECE9</code><small>亮色 背景 / 卡面 / 次级面</small></span></span>
+      <span class="tk"><span class="pair-sw"><i style="background:#141312"></i><i style="background:#1d1b19"></i><i class="tri" style="background:#242220"></i></span><span><b>表面 · 暖黑</b> <code>#141312 / #1D1B19 / #242220</code><small>暗色 背景 / 卡面 / 次级面</small></span></span>
+      <span class="tk"><span class="rad"><i style="border-radius:10px" title="面板 20dp"></i><i style="border-radius:8px" title="弹层 16dp"></i><i style="border-radius:6px" title="卡片 12dp"></i></span><span><b>圆角</b> <code>20 / 16 / 12</code><small>面板 20 · 弹层 16 · 卡片 12（dp）</small></span></span>
+      <span class="tk"><span class="dv"><i class="l"></i><i class="d"></i></span><span><b>分割线</b> <code>7% / 8%</code><small>rgba(0,0,0,.07) · rgba(255,255,255,.08)</small></span></span>
+    </div>
+    <nav class="gnav">
+      <a href="#g01"><b>01</b>主框架与书架</a>
+      <a href="#g02"><b>02</b>书籍详情流程</a>
+      <a href="#g03"><b>03</b>阅读器</a>
+      <a href="#g04"><b>04</b>搜索与发现</a>
+      <a href="#g05"><b>05</b>书源与文本规则</a>
+      <a href="#g06"><b>06</b>订阅 RSS</a>
+      <a href="#g07"><b>07</b>管理与导入</a>
+      <a href="#g08"><b>08</b>系统与播放</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ 01 主框架与书架 ============ -->
+<section class="grp" id="g01">
+  <div class="grp-head"><span class="grp-no">01</span><h2>主框架与书架</h2><span class="grp-src">01-framework.html</span></div>
+  <p class="grp-desc">启动欢迎页、底部导航容器（书架 / 发现 / 订阅 / 我的）与书架三种布局：标签模式、网格模式、文件夹模式。</p>
+  <div class="slist"><span class="lab">屏幕清单</span>
+    <a href="01-framework.html#s1" target="_blank" rel="noopener"><i>1</i>启动欢迎页</a>
+    <a href="01-framework.html#s2" target="_blank" rel="noopener"><i>2</i>底部导航容器</a>
+    <a href="01-framework.html#s3" target="_blank" rel="noopener"><i>3</i>书架 · 标签模式</a>
+    <a href="01-framework.html#s4" target="_blank" rel="noopener"><i>4</i>书架 · 网格模式</a>
+    <a href="01-framework.html#s5" target="_blank" rel="noopener"><i>5</i>书架 · 文件夹模式</a>
+  </div>
+  <div class="pv-wrap"><a class="pv" href="01-framework.html" target="_blank" rel="noopener" aria-label="在新窗口打开 01 主框架与书架原稿">
+    <iframe src="01-framework.html" title="01 主框架与书架 预览" loading="lazy" tabindex="-1"></iframe>
+    <span class="veil"><span class="hint">缩放预览 · 完整稿含明暗双主题与设计注记</span><span class="open">在新窗口打开原稿 ↗</span></span>
+  </a></div>
+</section>
+
+<!-- ============ 02 书籍详情流程 ============ -->
+<section class="grp" id="g02">
+  <div class="grp-head"><span class="grp-no">02</span><h2>书籍详情流程</h2><span class="grp-src">02-book-flow.html</span></div>
+  <p class="grp-desc">书籍信息的查看与编辑、目录与书签、章节级与整书换源、封面换源六个屏幕；流程：书籍信息① → 编辑② / 查看目录③ / 换源④⑤ / 换封面⑥。</p>
+  <div class="slist"><span class="lab">屏幕清单</span>
+    <a href="02-book-flow.html#s1" target="_blank" rel="noopener"><i>1</i>书籍信息</a>
+    <a href="02-book-flow.html#s2" target="_blank" rel="noopener"><i>2</i>书籍信息编辑</a>
+    <a href="02-book-flow.html#s3" target="_blank" rel="noopener"><i>3</i>目录 · 书签</a>
+    <a href="02-book-flow.html#s4" target="_blank" rel="noopener"><i>4</i>章节换源</a>
+    <a href="02-book-flow.html#s5" target="_blank" rel="noopener"><i>5</i>书籍换源</a>
+    <a href="02-book-flow.html#s6" target="_blank" rel="noopener"><i>6</i>换封面</a>
+  </div>
+  <div class="pv-wrap"><a class="pv" href="02-book-flow.html" target="_blank" rel="noopener" aria-label="在新窗口打开 02 书籍详情流程原稿">
+    <iframe src="02-book-flow.html" title="02 书籍详情流程 预览" loading="lazy" tabindex="-1"></iframe>
+    <span class="veil"><span class="hint">缩放预览 · 完整稿含明暗双主题与设计注记</span><span class="open">在新窗口打开原稿 ↗</span></span>
+  </a></div>
+</section>
+
+<!-- ============ 03 阅读器 ============ -->
+<section class="grp" id="g03">
+  <div class="grp-head"><span class="grp-no">03</span><h2>阅读器</h2><span class="grp-src">03-reader.html</span></div>
+  <p class="grp-desc">阅读正文与全部阅读内菜单 / 面板，共 8 屏、明暗并排：阅读菜单、亮度、章节跳转、界面与更多设置、朗读、自动翻页。</p>
+  <div class="slist"><span class="lab">屏幕清单</span>
+    <a href="03-reader.html#reading" target="_blank" rel="noopener"><i>1</i>阅读正文</a>
+    <a href="03-reader.html#menu" target="_blank" rel="noopener"><i>2</i>阅读菜单（顶部+底部）</a>
+    <a href="03-reader.html#brightness" target="_blank" rel="noopener"><i>3</i>亮度面板</a>
+    <a href="03-reader.html#jump" target="_blank" rel="noopener"><i>4</i>章节跳转</a>
+    <a href="03-reader.html#style" target="_blank" rel="noopener"><i>5</i>界面设置（字体/间距/背景）</a>
+    <a href="03-reader.html#more" target="_blank" rel="noopener"><i>6</i>更多设置</a>
+    <a href="03-reader.html#aloud" target="_blank" rel="noopener"><i>7</i>朗读面板</a>
+    <a href="03-reader.html#auto" target="_blank" rel="noopener"><i>8</i>自动翻页</a>
+  </div>
+  <div class="pv-wrap"><a class="pv" href="03-reader.html" target="_blank" rel="noopener" aria-label="在新窗口打开 03 阅读器原稿">
+    <iframe src="03-reader.html" title="03 阅读器 预览" loading="lazy" tabindex="-1"></iframe>
+    <span class="veil"><span class="hint">缩放预览 · 完整稿含明暗双主题与设计注记</span><span class="open">在新窗口打开原稿 ↗</span></span>
+  </a></div>
+</section>
+
+<!-- ============ 04 搜索与发现 ============ -->
+<section class="grp" id="g04">
+  <div class="grp-head"><span class="grp-no">04</span><h2>搜索与发现</h2><span class="grp-src">04-search-explore.html</span></div>
+  <p class="grp-desc">书籍搜索（历史 + 多书源聚合结果）、全书全文搜索、发现页与发现详情；blend 顶栏 + 搜索胶囊 + 弱分割线。</p>
+  <div class="slist"><span class="lab">屏幕清单</span>
+    <a href="04-search-explore.html#s1" target="_blank" rel="noopener"><i>1</i>书籍搜索</a>
+    <a href="04-search-explore.html#s2" target="_blank" rel="noopener"><i>2</i>搜索内容（全文搜索）</a>
+    <a href="04-search-explore.html#s3" target="_blank" rel="noopener"><i>3</i>发现页</a>
+    <a href="04-search-explore.html#s4" target="_blank" rel="noopener"><i>4</i>发现详情</a>
+  </div>
+  <div class="pv-wrap"><a class="pv" href="04-search-explore.html" target="_blank" rel="noopener" aria-label="在新窗口打开 04 搜索与发现原稿">
+    <iframe src="04-search-explore.html" title="04 搜索与发现 预览" loading="lazy" tabindex="-1"></iframe>
+    <span class="veil"><span class="hint">缩放预览 · 完整稿含明暗双主题与设计注记</span><span class="open">在新窗口打开原稿 ↗</span></span>
+  </a></div>
+</section>
+
+<!-- ============ 05 书源与文本规则 ============ -->
+<section class="grp" id="g05">
+  <div class="grp-head"><span class="grp-no">05</span><h2>书源与文本规则</h2><span class="grp-src">05-source-rules.html</span></div>
+  <p class="grp-desc">书源的导入、编辑、调试、登录，与替换净化、TXT 目录规则、字典规则等文本规则管理。</p>
+  <div class="slist"><span class="lab">屏幕清单</span>
+    <a href="05-source-rules.html#s01" target="_blank" rel="noopener"><i>1</i>书源管理</a>
+    <a href="05-source-rules.html#s02" target="_blank" rel="noopener"><i>2</i>书源编辑</a>
+    <a href="05-source-rules.html#s03" target="_blank" rel="noopener"><i>3</i>书源调试</a>
+    <a href="05-source-rules.html#s04" target="_blank" rel="noopener"><i>4</i>书源登录</a>
+    <a href="05-source-rules.html#s05" target="_blank" rel="noopener"><i>5</i>替换净化</a>
+    <a href="05-source-rules.html#s06" target="_blank" rel="noopener"><i>6</i>替换编辑</a>
+    <a href="05-source-rules.html#s07" target="_blank" rel="noopener"><i>7</i>TXT 目录规则</a>
+    <a href="05-source-rules.html#s08" target="_blank" rel="noopener"><i>8</i>字典规则</a>
+  </div>
+  <div class="pv-wrap"><a class="pv" href="05-source-rules.html" target="_blank" rel="noopener" aria-label="在新窗口打开 05 书源与文本规则原稿">
+    <iframe src="05-source-rules.html" title="05 书源与文本规则 预览" loading="lazy" tabindex="-1"></iframe>
+    <span class="veil"><span class="hint">缩放预览 · 完整稿含明暗双主题与设计注记</span><span class="open">在新窗口打开原稿 ↗</span></span>
+  </a></div>
+</section>
+
+<!-- ============ 06 订阅 RSS ============ -->
+<section class="grp" id="g06">
+  <div class="grp-head"><span class="grp-no">06</span><h2>订阅 RSS</h2><span class="grp-src">06-rss.html</span></div>
+  <p class="grp-desc">订阅主页、RSS 分类、RSS 收藏、RSS 阅读，与订阅源管理、编辑、调试及规则订阅。</p>
+  <div class="slist"><span class="lab">屏幕清单</span>
+    <a href="06-rss.html#s1" target="_blank" rel="noopener"><i>1</i>订阅主页</a>
+    <a href="06-rss.html#s2" target="_blank" rel="noopener"><i>2</i>RSS 分类</a>
+    <a href="06-rss.html#s3" target="_blank" rel="noopener"><i>3</i>RSS 收藏</a>
+    <a href="06-rss.html#s4" target="_blank" rel="noopener"><i>4</i>RSS 阅读</a>
+    <a href="06-rss.html#s5" target="_blank" rel="noopener"><i>5</i>订阅源管理</a>
+    <a href="06-rss.html#s6" target="_blank" rel="noopener"><i>6</i>订阅源编辑</a>
+    <a href="06-rss.html#s7" target="_blank" rel="noopener"><i>7</i>订阅源调试</a>
+    <a href="06-rss.html#s8" target="_blank" rel="noopener"><i>8</i>规则订阅</a>
+  </div>
+  <div class="pv-wrap"><a class="pv" href="06-rss.html" target="_blank" rel="noopener" aria-label="在新窗口打开 06 订阅 RSS 原稿">
+    <iframe src="06-rss.html" title="06 订阅 RSS 预览" loading="lazy" tabindex="-1"></iframe>
+    <span class="veil"><span class="hint">缩放预览 · 完整稿含明暗双主题与设计注记</span><span class="open">在新窗口打开原稿 ↗</span></span>
+  </a></div>
+</section>
+
+<!-- ============ 07 管理与导入 ============ -->
+<section class="grp" id="g07">
+  <div class="grp-head"><span class="grp-no">07</span><h2>管理与导入</h2><span class="grp-src">07-manage.html</span></div>
+  <p class="grp-desc">书架整理、分组管理、本地 / 远程导入、文件管理、添加网址、验证码与缓存导出。</p>
+  <div class="slist"><span class="lab">屏幕清单</span>
+    <a href="07-manage.html#m1" target="_blank" rel="noopener"><i>1</i>书架整理</a>
+    <a href="07-manage.html#m2" target="_blank" rel="noopener"><i>2</i>分组管理</a>
+    <a href="07-manage.html#m3" target="_blank" rel="noopener"><i>3</i>本地导入</a>
+    <a href="07-manage.html#m4" target="_blank" rel="noopener"><i>4</i>远程导入</a>
+    <a href="07-manage.html#m5" target="_blank" rel="noopener"><i>5</i>文件管理</a>
+    <a href="07-manage.html#m6" target="_blank" rel="noopener"><i>6</i>添加网址</a>
+    <a href="07-manage.html#m7" target="_blank" rel="noopener"><i>7</i>验证码</a>
+    <a href="07-manage.html#m8" target="_blank" rel="noopener"><i>8</i>缓存导出</a>
+  </div>
+  <div class="pv-wrap"><a class="pv" href="07-manage.html" target="_blank" rel="noopener" aria-label="在新窗口打开 07 管理与导入原稿">
+    <iframe src="07-manage.html" title="07 管理与导入 预览" loading="lazy" tabindex="-1"></iframe>
+    <span class="veil"><span class="hint">缩放预览 · 完整稿含明暗双主题与设计注记</span><span class="open">在新窗口打开原稿 ↗</span></span>
+  </a></div>
+</section>
+
+<!-- ============ 08 系统与播放 ============ -->
+<section class="grp" id="g08">
+  <div class="grp-head"><span class="grp-no">08</span><h2>系统与播放</h2><span class="grp-src">08-system.html</span></div>
+  <p class="grp-desc">「我的」页与系统设置（其它 / 主题 / 备份 / 封面 / 欢迎页样式）、关于与帮助文档、Web 服务说明、扫码、听书播放与漫画阅读。</p>
+  <div class="slist"><span class="lab">屏幕清单</span>
+    <a href="08-system.html#s1" target="_blank" rel="noopener"><i>1</i>我的</a>
+    <a href="08-system.html#s2" target="_blank" rel="noopener"><i>2</i>设置 · 其它（上）</a>
+    <a href="08-system.html#s3" target="_blank" rel="noopener"><i>3</i>设置 · 其它（续）</a>
+    <a href="08-system.html#s4" target="_blank" rel="noopener"><i>4</i>设置 · 其它（尾）</a>
+    <a href="08-system.html#s5" target="_blank" rel="noopener"><i>5</i>设置 · 主题（上）</a>
+    <a href="08-system.html#s5b" target="_blank" rel="noopener"><i>6</i>设置 · 主题（下 · 夜间）</a>
+    <a href="08-system.html#s7" target="_blank" rel="noopener"><i>7</i>设置 · 备份与恢复</a>
+    <a href="08-system.html#s8" target="_blank" rel="noopener"><i>8</i>设置 · 封面设置</a>
+    <a href="08-system.html#s9" target="_blank" rel="noopener"><i>9</i>设置 · 启动界面样式</a>
+    <a href="08-system.html#s10" target="_blank" rel="noopener"><i>10</i>关于</a>
+    <a href="08-system.html#s11" target="_blank" rel="noopener"><i>11</i>Web 服务说明</a>
+    <a href="08-system.html#s12" target="_blank" rel="noopener"><i>12</i>扫码</a>
+    <a href="08-system.html#s13" target="_blank" rel="noopener"><i>13</i>听书播放</a>
+    <a href="08-system.html#s14" target="_blank" rel="noopener"><i>14</i>漫画阅读</a>
+  </div>
+  <div class="pv-wrap"><a class="pv" href="08-system.html" target="_blank" rel="noopener" aria-label="在新窗口打开 08 系统与播放原稿">
+    <iframe src="08-system.html" title="08 系统与播放 预览" loading="lazy" tabindex="-1"></iframe>
+    <span class="veil"><span class="hint">缩放预览 · 完整稿含明暗双主题与设计注记</span><span class="open">在新窗口打开原稿 ↗</span></span>
+  </a></div>
+</section>
+
+</main>
+
+<footer>
+  <div class="ft">
+    <b>legado 全新界面设计 v2</b> · 8 组设计稿 · 61 屏（按各稿分区计）· 单文件自包含，无外部依赖。<br>
+    视觉令牌：主色 <b>#FF6B2C</b>；亮色表面 <b>#FAF9F7 / #FFFFFF / #EEECE9</b>，暗色表面 <b>#141312 / #1D1B19 / #242220</b>；圆角 <b>面板 20 / 弹层 16 / 卡片 12</b>；分割线 <b>rgba(0,0,0,.07) / rgba(255,255,255,.08)</b>；无阴影、blend 顶栏、Material 3。
+  </div>
+</footer>
+
+<script>
+(function(){
+  var LOGICAL_W=1440;
+  function fit(){
+    document.querySelectorAll('a.pv').forEach(function(pv){
+      var f=pv.querySelector('iframe');
+      if(!f)return;
+      var s=pv.clientWidth/LOGICAL_W;
+      f.style.transform='scale('+s+')';
+      f.style.height=Math.ceil(pv.clientHeight/s)+'px';
+    });
+  }
+  window.addEventListener('resize',fit);
+  window.addEventListener('load',fit);
+  fit();
+})();
+</script>
+</body></html>

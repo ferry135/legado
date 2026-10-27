@@ -27,13 +27,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <!-- .madd：11.5sp 次级色章节名/地址 -->
             <TextView
                 android:id="@+id/tv_chapter_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
+                android:paddingLeft="16dp"
                 android:paddingRight="10dp"
                 android:singleLine="true"
+                android:textSize="11.5sp"
+                android:textColor="@color/on_surface_variant"
                 android:visibility="gone"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@+id/tv_source_action"
@@ -44,15 +47,18 @@
                 android:id="@+id/tv_chapter_url"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
+                android:paddingLeft="16dp"
                 android:paddingRight="10dp"
                 android:singleLine="true"
+                android:textSize="11.5sp"
+                android:textColor="@color/on_surface_variant"
                 android:visibility="gone"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@+id/tv_source_action"
                 app:layout_constraintTop_toBottomOf="@+id/tv_chapter_name"
                 tools:visibility="visible" />
 
+            <!-- .srcchip：11.5sp 粗体胶囊（AccentBgTextView 运行时主色底） -->
             <io.legado.app.ui.widget.text.AccentBgTextView
                 android:id="@+id/tv_source_action"
                 android:layout_width="wrap_content"
@@ -60,8 +66,10 @@
                 android:layout_margin="1dp"
                 android:gravity="center"
                 android:maxWidth="120dp"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textSize="11.5sp"
+                android:textStyle="bold"
                 android:text="@string/book_source"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_chapter_url"
                 app:layout_constraintRight_toRightOf="parent"
@@ -85,25 +93,26 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginLeft="14dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginRight="14dp"
             android:layout_marginBottom="10dp"
             android:importantForAccessibility="no"
             android:orientation="horizontal">
 
-            <TextView
+            <!-- .lnk：13.5sp 主色章节跳转（AccentTextView 运行时着色） -->
+            <io.legado.app.ui.widget.text.AccentTextView
                 android:id="@+id/tv_pre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:fontFamily="sans-serif-medium"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:text="@string/previous_chapter"
-                android:textColor="@color/primaryText"
-                android:textSize="14sp"
+                android:textSize="13.5sp"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <io.legado.app.lib.theme.view.ThemeSeekBar
@@ -113,18 +122,18 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1" />
 
-            <TextView
+            <io.legado.app.ui.widget.text.AccentTextView
                 android:id="@+id/tv_next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:fontFamily="sans-serif-medium"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:text="@string/next_chapter"
-                android:textColor="@color/primaryText"
-                android:textSize="14sp"
+                android:textSize="13.5sp"
                 tools:ignore="TouchTargetSizeCheck" />
         </LinearLayout>
     </LinearLayout>

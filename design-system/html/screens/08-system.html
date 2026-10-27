@@ -1,0 +1,955 @@
+<!-- design-system: legado v2 -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Legado v2 · 08 系统与播放</title><style>
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#efece6;color:#26231d;display:flex;flex-direction:column;align-items:center}
+.page{width:min(100%,912px);padding:0 16px 96px}
+/* ---------- 页头 ---------- */
+.page-head{position:sticky;top:0;z-index:60;background:rgba(239,236,230,.94);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,.08);margin:0 -16px;padding:16px 20px 14px}
+.page-head h1{margin:0;font-size:22px;letter-spacing:.02em}
+.page-head .en{font-size:12.5px;color:#6d6a62;font-weight:600;letter-spacing:.14em;margin-left:10px}
+.pnav{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.pnav a{text-decoration:none;font-size:13px;font-weight:600;color:#4a463c;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:999px;padding:5px 14px}
+.pnav a:hover{color:#ff6b2c;border-color:#ff6b2c}
+.pnav a.cut{color:#a1543a;background:#fff4ec;border-color:#f0c9ae}
+/* ---------- 分区 ---------- */
+.scr{margin-top:60px}
+.scr-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.scr-no{font-size:13px;font-weight:800;color:#ff6b2c;letter-spacing:.1em}
+.scr-head h2{margin:0;font-size:24px}
+.src{font-size:12px;color:#6d6a62;font-family:ui-monospace,Consolas,monospace}
+.pair{display:flex;flex-wrap:wrap;gap:28px;margin-top:18px}
+figure.dev{margin:0}
+figcaption{text-align:center;font-size:13px;font-weight:600;color:#6d6a62;margin-top:10px}
+.notes{max-width:880px;margin:20px 0 0;padding:14px 18px;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:14px;font-size:13px;line-height:2;color:#3a372f}
+.notes b{color:#1d1b16}
+.notes code{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;background:rgba(0,0,0,.055);padding:1px 6px;border-radius:5px;color:#8a4a20;white-space:nowrap}
+.notice{max-width:880px;margin:18px 0 0;padding:14px 18px;background:#fff4ec;border:1px solid #f0c9ae;border-radius:14px;font-size:13px;line-height:2;color:#5c4331}
+.notice b{color:#a1543a}
+.notice code{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;background:rgba(0,0,0,.055);padding:1px 6px;border-radius:5px;color:#a1543a;white-space:nowrap}
+/* ---------- 手机壳与令牌（对齐 novel_reader_light/dark.html） ---------- */
+.phone{width:412px;height:900px;border-radius:30px;border:1px solid rgba(0,0,0,.2);position:relative;overflow:hidden;flex:none;
+--bg:#faf9f7;--surface:#ffffff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--track:#e5e2de;--divider:rgba(0,0,0,.07);--indicator:#8d939c;
+background:var(--bg);color:var(--text)}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--track:#353331;--divider:rgba(255,255,255,.08);--indicator:#777}
+.phone.inv{--text:#ffffff;--secondary:rgba(255,255,255,.75);--divider:rgba(255,255,255,.14)}
+.status{height:36px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 22px 4px;font-size:13.5px;font-weight:600;position:relative;z-index:40}
+.sright{display:flex;gap:7px;align-items:center}
+.main{position:absolute;inset:36px 0 0 0;display:flex;flex-direction:column}
+/* ---------- 顶栏（TitleBar blend：与页面同色、无边框无阴影） ---------- */
+.tbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 10px 0 8px;flex:none}
+.tbar.big{padding:0 12px 0 20px}
+.tbar .t{font-size:28px;font-weight:700}
+.tbar .st{font-size:19px;font-weight:700}
+.tbar .sub{font-size:11.5px;color:var(--secondary);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.actions{display:flex}
+.icon-btn{width:44px;height:44px;border:0;background:transparent;border-radius:22px;display:grid;place-items:center;color:var(--text);cursor:pointer;padding:0}
+.icon{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon.f{fill:currentColor;stroke:none}
+.txtact{border:0;background:transparent;color:var(--text);font-size:14.5px;font-weight:600;padding:0 14px;height:44px;cursor:pointer}
+/* ---------- 偏好列表（view_preference） ---------- */
+.plist{flex:1;overflow:hidden;padding-bottom:8px}
+.pcat{display:flex;align-items:center;gap:10px;padding:13px 24px 5px;font-size:11.5px;font-weight:700;letter-spacing:.12em;color:var(--secondary)}
+#s1 .pcat{padding:9px 24px 3px}
+.pcat::after{content:"";flex:1;height:1px;background:var(--divider)}
+.prow{display:flex;align-items:center;gap:14px;padding:0 24px;min-height:48px}
+.prow .ic{flex:none;width:21px;height:21px;color:var(--secondary)}
+.pbody{flex:1;min-width:0}
+.pt{font-size:14.5px;font-weight:600;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ps{font-size:11.5px;color:var(--secondary);line-height:1.4;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pend{flex:none;display:flex;align-items:center;gap:7px;color:var(--secondary)}
+.pval{font-size:12.5px;color:var(--secondary);white-space:nowrap}
+.chip{width:17px;height:17px;border-radius:6px;border:1px solid var(--divider);flex:none}
+.caret{width:14px;height:14px;stroke:currentColor;opacity:.55}
+.lchip{width:22px;height:22px;border-radius:7px;background:linear-gradient(135deg,#ff8a50,#ff6b2c);flex:none;display:grid;place-items:center;color:#fff}
+.cov{width:30px;height:42px;border-radius:5px;flex:none;display:grid;place-items:center;color:rgba(255,255,255,.9);font-size:8px;letter-spacing:1px;font-weight:700}
+.sw{flex:none;width:38px;height:22px;border-radius:11px;background:var(--track);position:relative}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.18);transition:.2s}
+.sw.on{background:var(--primary)}
+.sw.on::after{left:19px}
+.pdiv{display:block;height:1px;background:var(--divider);margin-left:24px}
+/* ---------- 底部导航（main_bnv） ---------- */
+.bnv{flex:none;height:80px;display:grid;grid-template-columns:repeat(4,1fr);align-items:center;padding:5px 8px 12px;background:var(--surface2);position:relative;z-index:30}
+.bnav{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;height:58px;border-radius:17px;font-size:11.5px;font-weight:500;color:var(--secondary)}
+.bnav .icon{width:23px;height:23px}
+.bnav.active{color:var(--primary);background:var(--primary-soft);font-weight:700}
+.hi{position:absolute;left:50%;bottom:5px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--indicator);z-index:31}
+/* ---------- 扫码 ---------- */
+.full{position:absolute;inset:0;background:#0b0a09}
+.cam{position:absolute;inset:0;background:
+radial-gradient(140% 90% at 20% 8%,rgba(120,108,92,.32),transparent 55%),
+radial-gradient(120% 80% at 85% 20%,rgba(94,84,74,.28),transparent 50%),
+radial-gradient(150% 110% at 50% 110%,#171512 30%,transparent 70%),#141210}
+.mask{position:absolute;inset:0}
+.mask i{position:absolute;background:rgba(0,0,0,.42)}
+.mt{left:0;right:0;top:0;height:292px}.mb{left:0;right:0;bottom:0;top:592px}
+.ml{left:0;width:66px;top:292px;bottom:308px}.mr{right:0;width:66px;top:292px;bottom:308px}
+.frame{position:absolute;left:66px;right:66px;top:292px;height:300px}
+.frame b{position:absolute;width:26px;height:26px;border:3px solid #fff;border-radius:2px}
+.frame b.tl{left:0;top:0;border-right:0;border-bottom:0;border-radius:8px 0 0 0}
+.frame b.tr{right:0;top:0;border-left:0;border-bottom:0;border-radius:0 8px 0 0}
+.frame b.bl{left:0;bottom:0;border-right:0;border-top:0;border-radius:0 0 0 8px}
+.frame b.br{right:0;bottom:0;border-left:0;border-top:0;border-radius:0 0 8px 0}
+.laser{position:absolute;left:8px;right:8px;top:24px;height:2px;border-radius:2px;background:var(--primary);box-shadow:0 0 8px rgba(255,107,44,.8);animation:scan 2.6s ease-in-out infinite alternate}
+@keyframes scan{from{top:16px}to{top:282px}}
+.scanhint{position:absolute;left:0;right:0;top:622px;text-align:center;font-size:12.5px;color:rgba(255,255,255,.6)}
+/* ---------- 听书播放 ---------- */
+.player{position:absolute;inset:0;background:
+radial-gradient(120% 80% at 30% 0%,rgba(255,128,66,.4),transparent 55%),
+radial-gradient(130% 90% at 75% 30%,rgba(150,84,48,.38),transparent 60%),
+radial-gradient(160% 120% at 50% 115%,rgba(38,22,12,.92),transparent 72%),#1a120c}
+.scrim{position:absolute;inset:0;background:rgba(12,8,5,.42)}
+.covcircle{width:240px;height:240px;border-radius:50%;margin:26px auto 0;border:2.5px solid var(--primary);overflow:hidden;position:relative;background:linear-gradient(150deg,#7a4423,#3c2a1a 60%,#57351c);display:grid;place-items:center;color:rgba(255,255,255,.85)}
+.covcircle .icon{width:56px;height:56px;stroke-width:1.4}
+.subt{text-align:center;font-size:14.5px;color:rgba(255,255,255,.92);margin-top:22px;padding:0 32px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.progrow{display:flex;align-items:center;gap:12px;padding:0 26px;margin-top:16px;font-size:12px;color:rgba(255,255,255,.8)}
+.seek{flex:1;height:4px;border-radius:3px;background:rgba(255,255,255,.22);position:relative}
+.seek i{position:absolute;left:0;top:0;bottom:0;width:11%;border-radius:3px;background:var(--primary)}
+.seek b{position:absolute;left:11%;top:50%;transform:translate(-50%,-50%);width:13px;height:13px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.pills{position:absolute;top:104px;left:0;right:0;display:flex;justify-content:space-between;padding:0 16px}
+.pill{font-size:12.5px;color:#fff;background:rgba(255,255,255,.16);border-radius:999px;padding:4px 11px;display:flex;gap:5px;align-items:center}
+.pill .icon{width:14px;height:14px}
+.ctrls{position:absolute;left:0;right:0;bottom:44px;display:flex;align-items:center;justify-content:space-between;padding:0 18px}
+.cbtn{width:48px;height:48px;border:0;background:rgba(255,255,255,.13);border-radius:50%;display:grid;place-items:center;color:#fff;cursor:pointer}
+.cbtn .icon{width:21px;height:21px}
+.fab{width:72px;height:72px;border:0;border-radius:50%;background:#fff;color:#211f1c;display:grid;place-items:center;cursor:pointer;position:relative}
+.fab .icon{width:30px;height:30px}
+.ring{position:absolute;inset:-1px;border-radius:50%;border:3px solid transparent;border-top-color:var(--primary);border-right-color:var(--primary);animation:rot 1s linear infinite}
+@keyframes rot{to{transform:rotate(1turn)}}
+/* ---------- 漫画阅读 ---------- */
+.manga{position:absolute;inset:0;background:#101010;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+.mpanel{flex:none;width:100%;position:relative;overflow:hidden}
+.mp1{height:300px;background:linear-gradient(160deg,#d9d4cc,#a9a49a)}
+.mp2{height:236px;background:linear-gradient(200deg,#b8b3aa,#7e7970)}
+.mp3{height:210px;background:linear-gradient(145deg,#c8c3ba,#8f8a81)}
+.mpanel::after{content:"";position:absolute;inset:0;background:radial-gradient(90px 60px at 30% 30%,rgba(255,255,255,.5),transparent 70%),radial-gradient(140px 90px at 75% 70%,rgba(60,55,50,.28),transparent 75%)}
+.mfloat{position:absolute;left:0;right:0;bottom:34px;text-align:center;font-size:11.5px;color:rgba(255,255,255,.85);text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.mmenu{position:absolute;inset:36px 0 0 0;display:flex;flex-direction:column;justify-content:space-between}
+.mdim{position:absolute;inset:0;background:rgba(10,9,8,.5)}
+.mbar{position:relative;background:var(--surface2)}
+.mbar .t{font-size:17px;font-weight:700}
+.madd{display:flex;align-items:center;gap:8px;padding:0 16px 8px;font-size:11.5px;color:var(--secondary)}
+.srcchip{margin-left:auto;background:var(--primary-soft);color:var(--primary);font-size:11.5px;font-weight:700;border-radius:8px;padding:4px 10px}
+.mbot{position:relative;background:var(--surface2);padding:10px 14px 14px;display:flex;align-items:center;gap:12px}
+.mbot .lnk{font-size:13.5px;font-weight:600;color:var(--primary);flex:none}
+.mbot .pct{font-size:11.5px;color:var(--secondary);flex:none;min-width:64px;text-align:right}
+/* ---------- 帮助文档对话框（TextDialog） ---------- */
+.ghost{position:absolute;inset:36px 0 0 0;opacity:.5}
+.dim{position:absolute;inset:0;background:rgba(15,12,9,.5);z-index:2}
+.dlg{position:absolute;left:12px;right:12px;top:48px;bottom:34px;background:var(--surface);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;z-index:3}
+.dlgbar{height:56px;flex:none;background:var(--primary);color:#211f1c;display:flex;align-items:center;justify-content:space-between;padding:0 8px 0 20px}
+.dlgbar .t{font-size:17.5px;font-weight:700}
+.dlgbar .icon-btn{color:#211f1c}
+.dlgbody{flex:1;overflow:hidden;padding:16px 20px 0;font-size:13px;line-height:1.95;color:var(--secondary);position:relative}
+.dlgbody h1{font-size:19px;color:var(--text);margin:0 0 10px}
+.dlgbody h2{font-size:15px;color:var(--text);margin:14px 0 6px}
+.dlgbody h3{font-size:13.5px;color:var(--text);margin:10px 0 4px}
+.fade{position:absolute;left:0;right:0;bottom:0;height:56px;background:linear-gradient(transparent,var(--surface))}
+.scrl{position:absolute;right:6px;top:20px;bottom:70px;width:3px;border-radius:2px;background:var(--track)}
+.scrl i{position:absolute;left:0;top:0;width:3px;height:74px;border-radius:2px;background:var(--secondary);opacity:.5}
+/* ---------- 剔除说明/特殊标注 ---------- */
+.tagcut{display:inline-block;font-size:11px;font-weight:700;color:#a1543a;background:#ffe9d8;border:1px solid #f0c9ae;border-radius:6px;padding:1px 8px;vertical-align:3px;margin-left:8px}
+</style></head>
+<body>
+<div class="page">
+
+<header class="page-head">
+  <h1>Legado v2 · 系统与播放<span class="en">08 SYSTEM &amp; PLAYBACK</span></h1>
+  <nav class="pnav">
+    <a href="#s1">01 我的</a><a href="#s2">02 设置·其它 上</a><a href="#s3">03 设置·其它 续</a><a href="#s4">04 设置·其它 尾</a><a href="#s5">05 设置·主题 上</a><a href="#s5b">06 设置·主题 下</a><a href="#s7">07 设置·备份</a><a href="#s8">08 设置·封面</a><a href="#s9">09 设置·欢迎</a><a href="#s10">10 关于</a><a href="#s11">11 Web服务说明</a><a href="#s12">12 扫码</a><a href="#s13">13 听书播放</a><a href="#s14">14 漫画阅读</a><a href="#cut" class="cut">✕ 捐赠（剔除）</a>
+  </nav>
+</header>
+
+<div class="notice" id="cut">
+  <b>剔除说明：捐赠页不在本组产出内。</b>清单中的「捐赠」经查证已不存在于代码：<code>git show --stat 8ea9c9c7b</code>（“去除捐赠和加群”，2023-07）删除了 <code>DonateActivity.kt / DonateFragment.kt / xml/donate.xml</code> 及「我的」页捐赠入口；当前 <code>app/src/main/AndroidManifest.xml</code> 无 DonateActivity 注册，全代码 <code>grep -rli donate app/src/main/java</code> 无结果。「我的」页与关于页均无捐赠入口（<code>pref_main.xml</code>、<code>about.xml</code>）。仅存在孤儿布局 <code>activity_donate.xml</code>（标题「捐赠」+ 副标题「您的支持是我更新的动力」+ 空 Fragment 容器），无任何类引用，属待清理资源，故不为其出视觉稿。
+</div>
+
+<!-- ============ 01 我的 ============ -->
+<section class="scr" id="s1">
+  <div class="scr-head"><span class="scr-no">01</span><h2>我的</h2><span class="src">fragment_my_config.xml · MyFragment.kt · pref_main.xml · menu/main_bnv.xml</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="main">
+        <div class="tbar big"><div class="t">我的</div><div class="actions">
+          <button class="icon-btn" aria-label="帮助"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.5 2.5 0 1 1 3.3 2.36c-.7.26-.9.74-.9 1.44v.3M12 16.5h.01"/></svg></button>
+        </div></div>
+        <div class="plist">
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="5.5" rx="7.5" ry="2.8"/><path d="M4.5 5.5v13c0 1.55 3.36 2.8 7.5 2.8s7.5-1.25 7.5-2.8v-13M4.5 12c0 1.55 3.36 2.8 7.5 2.8s7.5-1.25 7.5-2.8"/></svg><div class="pbody"><div class="pt">书源管理</div><div class="ps">新建、导入、编辑或管理书源</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h12M8 12h12M8 18h12"/><path d="M4 6h.01M4 12h.01M4 18h.01" stroke-width="2.6"/></svg><div class="pbody"><div class="pt">TXT 目录规则</div><div class="ps">配置 TXT 目录规则</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 4-4 4 4 4M3 8h14M17 20l4-4-4-4M21 16H7"/></svg><div class="pbody"><div class="pt">替换净化</div><div class="ps">配置替换净化规则</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h9M7.5 3v2M10 5c-.6 3.4-2.9 6.1-6 7.7M5.2 9.3c1.3 2.5 3.6 4.1 5.8 4.9M12.5 21l4-9 4 9M13.8 17.8h5.4"/></svg><div class="pbody"><div class="pt">字典规则</div><div class="ps">配置字典规则</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M12 3a9 9 0 0 1 0 18" fill="currentColor" stroke="none" opacity=".28"/></svg><div class="pbody"><div class="pt">主题模式</div><div class="ps">选择主题模式</div></div><div class="pend"><span class="pval">跟随系统</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.6 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.6-3.8-9S9.5 5.5 12 3z"/></svg><div class="pbody"><div class="pt">Web 服务</div><div class="ps">http://192.168.5.66:1122</div></div><div class="pend"><i class="sw on"></i></div></div>
+          <div class="pcat">设置</div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 19a4 4 0 0 1-.56-7.96 6.5 6.5 0 0 1 12.62-1.6A4.25 4.25 0 0 1 17.5 19z"/></svg><div class="pbody"><div class="pt">备份与恢复</div><div class="ps">WebDav 设置/导入旧版本数据</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 1 9-9c0 2.2-1.6 3.2-3.2 3.2H16a2 2 0 0 0-2 2c0 .6.3 1 .6 1.5.3.4.4.8.4 1.3 0 1.1-1.3 2-3 2z"/><circle cx="7.8" cy="10.5" r=".9" fill="currentColor" stroke="none"/><circle cx="12" cy="7.8" r=".9" fill="currentColor" stroke="none"/><circle cx="16.2" cy="10.5" r=".9" fill="currentColor" stroke="none"/></svg><div class="pbody"><div class="pt">主题设置</div><div class="ps">与界面/颜色相关的一些设置</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h9M17 7h3M15 5v4M4 12h3M11 12h9M9 10v4M4 17h9M17 17h3M15 15v4"/></svg><div class="pbody"><div class="pt">其它设置</div><div class="ps">与功能相关的一些设置</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="pcat">其它</div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12v17l-6-3-6 3z"/><path d="M12 8v6M9 11h6"/></svg><div class="pbody"><div class="pt">书签</div><div class="ps">所有书签</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><div class="pbody"><div class="pt">阅读记录</div><div class="ps">阅读时间记录</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><div class="pbody"><div class="pt">文件管理</div><div class="ps">管理私有文件夹的文件</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M12 11.5V17" stroke-width="2.4"/></svg><div class="pbody"><div class="pt">关于</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-4M10 17l5-5-5-5M15 12H3"/></svg><div class="pbody"><div class="pt">退出</div></div></div>
+        </div>
+        <nav class="bnv">
+          <div class="bnav"><svg class="icon" viewBox="0 0 24 24"><path d="M5 4h6v16H5zM13 4h6v16h-6z"/></svg><span>书架</span></div>
+          <div class="bnav"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-5 5 1.5-3.5 3.5-1.5"/></svg><span>发现</span></div>
+          <div class="bnav"><svg class="icon" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-3-6 3z"/></svg><span>订阅</span></div>
+          <div class="bnav active"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span>我的</span></div>
+          <i class="hi"></i>
+        </nav>
+      </div>
+    </div><figcaption>浅色 Light</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="main">
+        <div class="tbar big"><div class="t">我的</div><div class="actions">
+          <button class="icon-btn" aria-label="帮助"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.5 2.5 0 1 1 3.3 2.36c-.7.26-.9.74-.9 1.44v.3M12 16.5h.01"/></svg></button>
+        </div></div>
+        <div class="plist">
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="5.5" rx="7.5" ry="2.8"/><path d="M4.5 5.5v13c0 1.55 3.36 2.8 7.5 2.8s7.5-1.25 7.5-2.8v-13M4.5 12c0 1.55 3.36 2.8 7.5 2.8s7.5-1.25 7.5-2.8"/></svg><div class="pbody"><div class="pt">书源管理</div><div class="ps">新建、导入、编辑或管理书源</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h12M8 12h12M8 18h12"/><path d="M4 6h.01M4 12h.01M4 18h.01" stroke-width="2.6"/></svg><div class="pbody"><div class="pt">TXT 目录规则</div><div class="ps">配置 TXT 目录规则</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 4-4 4 4 4M3 8h14M17 20l4-4-4-4M21 16H7"/></svg><div class="pbody"><div class="pt">替换净化</div><div class="ps">配置替换净化规则</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h9M7.5 3v2M10 5c-.6 3.4-2.9 6.1-6 7.7M5.2 9.3c1.3 2.5 3.6 4.1 5.8 4.9M12.5 21l4-9 4 9M13.8 17.8h5.4"/></svg><div class="pbody"><div class="pt">字典规则</div><div class="ps">配置字典规则</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M12 3a9 9 0 0 1 0 18" fill="currentColor" stroke="none" opacity=".28"/></svg><div class="pbody"><div class="pt">主题模式</div><div class="ps">选择主题模式</div></div><div class="pend"><span class="pval">跟随系统</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.6 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.6-3.8-9S9.5 5.5 12 3z"/></svg><div class="pbody"><div class="pt">Web 服务</div><div class="ps">http://192.168.5.66:1122</div></div><div class="pend"><i class="sw on"></i></div></div>
+          <div class="pcat">设置</div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 19a4 4 0 0 1-.56-7.96 6.5 6.5 0 0 1 12.62-1.6A4.25 4.25 0 0 1 17.5 19z"/></svg><div class="pbody"><div class="pt">备份与恢复</div><div class="ps">WebDav 设置/导入旧版本数据</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 1 9-9c0 2.2-1.6 3.2-3.2 3.2H16a2 2 0 0 0-2 2c0 .6.3 1 .6 1.5.3.4.4.8.4 1.3 0 1.1-1.3 2-3 2z"/><circle cx="7.8" cy="10.5" r=".9" fill="currentColor" stroke="none"/><circle cx="12" cy="7.8" r=".9" fill="currentColor" stroke="none"/><circle cx="16.2" cy="10.5" r=".9" fill="currentColor" stroke="none"/></svg><div class="pbody"><div class="pt">主题设置</div><div class="ps">与界面/颜色相关的一些设置</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h9M17 7h3M15 5v4M4 12h3M11 12h9M9 10v4M4 17h9M17 17h3M15 15v4"/></svg><div class="pbody"><div class="pt">其它设置</div><div class="ps">与功能相关的一些设置</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="pcat">其它</div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12v17l-6-3-6 3z"/><path d="M12 8v6M9 11h6"/></svg><div class="pbody"><div class="pt">书签</div><div class="ps">所有书签</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><div class="pbody"><div class="pt">阅读记录</div><div class="ps">阅读时间记录</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><div class="pbody"><div class="pt">文件管理</div><div class="ps">管理私有文件夹的文件</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M12 11.5V17" stroke-width="2.4"/></svg><div class="pbody"><div class="pt">关于</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-4M10 17l5-5-5-5M15 12H3"/></svg><div class="pbody"><div class="pt">退出</div></div></div>
+        </div>
+        <nav class="bnv">
+          <div class="bnav"><svg class="icon" viewBox="0 0 24 24"><path d="M5 4h6v16H5zM13 4h6v16h-6z"/></svg><span>书架</span></div>
+          <div class="bnav"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-5 5 1.5-3.5 3.5-1.5"/></svg><span>发现</span></div>
+          <div class="bnav"><svg class="icon" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-3-6 3z"/></svg><span>订阅</span></div>
+          <div class="bnav active"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span>我的</span></div>
+          <i class="hi"></i>
+        </nav>
+      </div>
+    </div><figcaption>深色 Dark</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>布局结构</b>：blend 顶栏（无分割无阴影）+ 偏好列表 + 4 Tab 底部导航 <code>fragment_my_config.xml:8-20</code>、<code>menu/main_bnv.xml</code>；顶栏右侧仅「帮助」一项（menu_help）<code>menu/main_my.xml</code>。</li>
+    <li><b>列表条目与分组</b>全部来自 <code>pref_main.xml</code>：工具组（书源管理/TXT 目录规则/替换净化/字典规则）+ 主题模式（NameListPreference，跟随系统/亮色主题/暗色主题/E-Ink，<code>values-zh/arrays.xml:21-26</code>）+ Web 服务开关；「设置」组（备份与恢复/主题设置/其它设置）与「其它」组（书签/阅读记录/文件管理/关于/退出）。</li>
+    <li><b>Web 服务开关</b>：开启后 summary 显示局域网地址（运行态样本 http://192.168.5.66:1122），长按弹出「复制地址 / 浏览器打开」<code>MyFragment.kt:81-104</code>；对应服务为 WebService 前台服务。</li>
+    <li><b>点击跳转</b>：<code>MyFragment.kt:145-170</code>（书源管理→BookSourceActivity 等；三个设置项→ConfigActivity 携带 configTag：OTHER_CONFIG/BACKUP_CONFIG/THEME_CONFIG）；帮助按钮 showHelp("appHelp") <code>MyFragment.kt:70</code>。</li>
+    <li><b>设计处理</b>：条目图标 21px 描边次级色、行高 48dp（满足 48dp 触控目标）、主标题 14.5sp on_surface、说明 11.5sp on_surface_variant；本页列表分割线为透明（<code>pref_main.xml:4</code>），条目间仅靠留白与分组标题区隔；无阴影、无卡片堆叠。</li>
+  </ul>
+</section>
+
+<!-- ============ 02 设置·其它 上 ============ -->
+<section class="scr" id="s2">
+  <div class="scr-head"><span class="scr-no">02</span><h2>设置 · 其它设置（上）</h2><span class="src">activity_config.xml · OtherConfigFragment.kt · pref_config_other.xml:1-99</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">其它设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.6 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.6-3.8-9S9.5 5.5 12 3z"/></svg><div class="pbody"><div class="pt">语言</div></div><div class="pend"><span class="pval">跟随系统</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="pcat">主界面</div>
+          <div class="prow"><div class="pbody"><div class="pt">自动刷新</div><div class="ps">打开软件时自动更新书籍</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">自动跳转最近阅读</div><div class="ps">默认打开书架</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示发现</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示订阅</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">默认主页</div></div><div class="pend"><span class="pval">书架</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="pcat">其它设置</div>
+          <div class="prow"><div class="pbody"><div class="pt">设置本地密码</div><div class="ps">本地密码用来对备份的敏感信息加密和解密，如需在不同设备之间同步，本地密码需一致</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">用户代理</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">WebService唤醒锁</div><div class="ps">开启web服务的时候启用唤醒锁，有些手机开启唤醒锁会被杀后台</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">书籍保存位置</div><div class="ps">从其它应用打开的书籍保存位置</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">源编辑框最大行数</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">校验设置</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">直链上传规则</div><div class="ps">用于导出书源书单时生成直链 URL</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">Cronet</div><div class="ps">使用 Cronet 网络组件</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">抗锯齿</div><div class="ps">绘制图片时抗锯齿</div></div><i class="sw"></i></div>
+        </div>
+        <i class="hi"></i>
+      </div>
+    </div><figcaption>浅色 Light · 列表首屏（可滚动，尾部截断）</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">其它设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.6 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.6-3.8-9S9.5 5.5 12 3z"/></svg><div class="pbody"><div class="pt">语言</div></div><div class="pend"><span class="pval">跟随系统</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="pcat">主界面</div>
+          <div class="prow"><div class="pbody"><div class="pt">自动刷新</div><div class="ps">打开软件时自动更新书籍</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">自动跳转最近阅读</div><div class="ps">默认打开书架</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示发现</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示订阅</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">默认主页</div></div><div class="pend"><span class="pval">书架</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="pcat">其它设置</div>
+          <div class="prow"><div class="pbody"><div class="pt">设置本地密码</div><div class="ps">本地密码用来对备份的敏感信息加密和解密，如需在不同设备之间同步，本地密码需一致</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">用户代理</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">WebService唤醒锁</div><div class="ps">开启web服务的时候启用唤醒锁，有些手机开启唤醒锁会被杀后台</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">书籍保存位置</div><div class="ps">从其它应用打开的书籍保存位置</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">源编辑框最大行数</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">校验设置</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">直链上传规则</div><div class="ps">用于导出书源书单时生成直链 URL</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">Cronet</div><div class="ps">使用 Cronet 网络组件</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">抗锯齿</div><div class="ps">绘制图片时抗锯齿</div></div><i class="sw"></i></div>
+        </div>
+        <i class="hi"></i>
+      </div>
+    </div><figcaption>深色 Dark · 列表首屏（可滚动，尾部截断）</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>容器</b>：ConfigActivity 为单 Fragment 容器，按 configTag 装载 5 个偏好页（OTHER/THEME/BACKUP/COVER/WELCOME），无 Tab <code>ConfigActivity.kt:18-26</code>；TitleBar blend <code>activity_config.xml</code>。</li>
+    <li><b>条目来源</b>：<code>pref_config_other.xml:5-105</code>（语言 + 主界面组 + 其它设置组前 9 项），标题/说明文案全部取自 values-zh。</li>
+    <li><b>交互</b>：语言/默认主页为 NameListPreference（列表弹层）；设置本地密码、用户代理、直链上传规则、校验设置、源编辑框最大行数、书籍保存位置为弹窗/文档选择（<code>OtherConfigFragment.kt:92-150,260-281,346</code>）。</li>
+  </ul>
+</section>
+
+<!-- ============ 03 设置·其它 续 ============ -->
+<section class="scr" id="s3">
+  <div class="scr-head"><span class="scr-no">03</span><h2>设置 · 其它设置（续）</h2><span class="src">pref_config_other.xml:101-192</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">其它设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">图片绘制缓存</div><div class="ps">当前最大缓存 96 MB</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">漫画保留数量</div><div class="ps">保留已读章节数量 3</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">预下载</div><div class="ps">预先下载 3 章正文</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">默认启用替换净化</div><div class="ps">新加入书架的书是否启用替换净化</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">全程响应耳机按键</div><div class="ps">即使退出软件也响应耳机按键</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">耳机按键启动朗读</div><div class="ps">通过耳机按键来启动朗读</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">忽略音频焦点</div><div class="ps">允许与其他应用同时播放音频</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">自动清除过期搜索数据</div><div class="ps">超过一天的搜索数据</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">返回时提示放入书架</div><div class="ps">阅读未放入书架的书籍在返回时提示放入书架</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">检查更新查找版本</div><div class="ps">检查更新时查找其他签名版本</div></div><div class="pend"><span class="pval">当前</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">漫画浏览</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">Web 端口</div><div class="ps">当前端口 1122</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">Web 服务访问令牌</div><div class="ps">配置后局域网访问需携带令牌，用 http://ip:port/?token=xxx 打开一次即可；留空则不校验</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">清理缓存</div><div class="ps">清除已下载书籍和字体缓存</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">清除 WebView 数据</div><div class="ps">清除内置浏览器所有数据</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+        </div>
+        <i class="hi"></i>
+      </div>
+    </div><figcaption>浅色 Light · 列表滚动态</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">其它设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">图片绘制缓存</div><div class="ps">当前最大缓存 96 MB</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">漫画保留数量</div><div class="ps">保留已读章节数量 3</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">预下载</div><div class="ps">预先下载 3 章正文</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">默认启用替换净化</div><div class="ps">新加入书架的书是否启用替换净化</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">全程响应耳机按键</div><div class="ps">即使退出软件也响应耳机按键</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">耳机按键启动朗读</div><div class="ps">通过耳机按键来启动朗读</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">忽略音频焦点</div><div class="ps">允许与其他应用同时播放音频</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">自动清除过期搜索数据</div><div class="ps">超过一天的搜索数据</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">返回时提示放入书架</div><div class="ps">阅读未放入书架的书籍在返回时提示放入书架</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">检查更新查找版本</div><div class="ps">检查更新时查找其他签名版本</div></div><div class="pend"><span class="pval">当前</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">漫画浏览</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">Web 端口</div><div class="ps">当前端口 1122</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">Web 服务访问令牌</div><div class="ps">配置后局域网访问需携带令牌，用 http://ip:port/?token=xxx 打开一次即可；留空则不校验</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">清理缓存</div><div class="ps">清除已下载书籍和字体缓存</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">清除 WebView 数据</div><div class="ps">清除内置浏览器所有数据</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+        </div>
+        <i class="hi"></i>
+      </div>
+    </div><figcaption>深色 Dark · 列表滚动态</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>条目来源</b>：<code>pref_config_other.xml:107-198</code>（图片绘制缓存…清除 WebView 数据），数值类 summary 为运行时样本（缓存 96MB / 保留 3 章 / 预下载 3 章 / 端口 1122）。</li>
+    <li><b>动作项</b>：清理缓存、清除 WebView 数据、压缩数据库点击后均弹确认框 <code>OtherConfigFragment.kt:296-325</code>；Web 端口为数字选择弹窗、令牌为文本弹窗（<code>:117,260</code>）。</li>
+    <li>检查更新查找版本=NameListPreference（当前/正式版/测试版/测试A版，<code>values/arrays.xml:156-161</code>）。</li>
+  </ul>
+</section>
+
+<!-- ============ 04 设置·其它 尾 ============ -->
+<section class="scr" id="s4">
+  <div class="scr-head"><span class="scr-no">04</span><h2>设置 · 其它设置（尾）</h2><span class="src">pref_config_other.xml:200-230 · OtherConfigFragment.kt:296-325</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">其它设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">压缩数据库</div><div class="ps">减小数据库文件的大小</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">更新和搜索线程数（太多会卡顿）</div><div class="ps">当前线程数 32</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">文字操作显示搜索</div><div class="ps">长按文字在操作菜单中显示阅读·搜索</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">记录日志</div><div class="ps">记录调试日志</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">记录堆转储</div></div><i class="sw"></i></div>
+          <div class="pdiv" style="margin-left:24px;margin-top:10px"></div>
+          <div style="padding:18px 24px;font-size:12px;color:var(--secondary);line-height:1.9">列表到底 —— 「其它设置」共 35 项，本页为最后 5 项；开启记录日志后可在「关于 → 保存日志」导出。</div>
+        </div>
+        <i class="hi"></i>
+      </div>
+    </div><figcaption>浅色 Light</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">其它设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">压缩数据库</div><div class="ps">减小数据库文件的大小</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">更新和搜索线程数（太多会卡顿）</div><div class="ps">当前线程数 32</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">文字操作显示搜索</div><div class="ps">长按文字在操作菜单中显示阅读·搜索</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">记录日志</div><div class="ps">记录调试日志</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">记录堆转储</div></div><i class="sw"></i></div>
+          <div class="pdiv" style="margin-left:24px;margin-top:10px"></div>
+          <div style="padding:18px 24px;font-size:12px;color:var(--secondary);line-height:1.9">列表到底 —— 「其它设置」共 35 项，本页为最后 5 项；开启记录日志后可在「关于 → 保存日志」导出。</div>
+        </div>
+        <i class="hi"></i>
+      </div>
+    </div><figcaption>深色 Dark</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>条目来源</b>：<code>pref_config_other.xml:200-230</code>（shrinkDatabase / threadCount / process_text / recordLog / recordHeapDump）。</li>
+    <li>「文字操作显示搜索」summary 取 <code>add_to_text_context_menu_s</code>（添加到系统文字选择菜单语境，样本按 zh 文案展示）；记录日志切换实时生效 <code>MyFragment.kt:141</code>。</li>
+    <li>压缩数据库确认弹窗 <code>OtherConfigFragment.kt:310</code>；线程数 NumberPickerDialog <code>:106</code>。</li>
+  </ul>
+</section>
+
+<!-- ============ 05 设置·主题 ============ -->
+<section class="scr" id="s5">
+  <div class="scr-head"><span class="scr-no">05</span><h2>设置 · 主题设置（上）</h2><span class="src">ThemeConfigFragment.kt · pref_config_theme.xml:1-116</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">主题设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><i class="lchip"><svg class="icon" style="width:13px;height:13px" viewBox="0 0 24 24"><path d="M12 5.5C10.4 4 8.2 3.2 5.5 3.2c-1 0-1.9.1-2.5.3v14.6c.6-.2 1.5-.3 2.5-.3 2.7 0 4.9.8 6.5 2.3 1.6-1.5 3.8-2.3 6.5-2.3 1 0 1.9.1 2.5.3V3.5c-.6-.2-1.5-.3-2.5-.3-2.7 0-4.9.8-6.5 2.3Z" fill="none" stroke="currentColor" stroke-width="2"/></svg></i><div class="pbody"><div class="pt">切换图标</div><div class="ps">切换软件显示在桌面的图标</div></div><div class="pend"><span class="pval">默认</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">启动界面样式</div><div class="ps">启动界面图片和是否显示文字等</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">沉浸式状态栏</div><div class="ps">状态栏颜色透明</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">沉浸式导航栏</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">导航栏阴影</div><div class="ps">当前阴影大小（elevation）：2</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">字体大小</div><div class="ps">当前字体大小：1.0</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">封面设置</div><div class="ps">通用封面规则及默认封面样式</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">主题列表</div><div class="ps">使用、保存、导入或分享主题</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="pcat">白天</div>
+          <div class="prow"><div class="pbody"><div class="pt">主色调</div><div class="ps">白天，主色调</div></div><div class="pend"><i class="chip" style="background:#ff6b2c"></i><span class="pval">#FF6B2C</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">强调色</div><div class="ps">白天，强调色</div></div><div class="pend"><i class="chip" style="background:#e85d2a"></i><span class="pval">#E85D2A</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">背景色</div><div class="ps">白天，背景色</div></div><div class="pend"><i class="chip" style="background:#faf9f6"></i><span class="pval">#FAF9F6</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">底部操作栏颜色</div><div class="ps">白天，底栏色</div></div><div class="pend"><i class="chip" style="background:#eeece9"></i><span class="pval">#EEECE9</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">背景图片</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">保存主题配置</div><div class="ps">保存白天主题配置以供调用和分享</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+        </div>
+        <i class="hi"></i>
+      </div>
+    </div><figcaption>浅色 Light</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">主题设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><i class="lchip"><svg class="icon" style="width:13px;height:13px" viewBox="0 0 24 24"><path d="M12 5.5C10.4 4 8.2 3.2 5.5 3.2c-1 0-1.9.1-2.5.3v14.6c.6-.2 1.5-.3 2.5-.3 2.7 0 4.9.8 6.5 2.3 1.6-1.5 3.8-2.3 6.5-2.3 1 0 1.9.1 2.5.3V3.5c-.6-.2-1.5-.3-2.5-.3-2.7 0-4.9.8-6.5 2.3Z" fill="none" stroke="currentColor" stroke-width="2"/></svg></i><div class="pbody"><div class="pt">切换图标</div><div class="ps">切换软件显示在桌面的图标</div></div><div class="pend"><span class="pval">默认</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">启动界面样式</div><div class="ps">启动界面图片和是否显示文字等</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">沉浸式状态栏</div><div class="ps">状态栏颜色透明</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">沉浸式导航栏</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">导航栏阴影</div><div class="ps">当前阴影大小（elevation）：2</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">字体大小</div><div class="ps">当前字体大小：1.0</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">封面设置</div><div class="ps">通用封面规则及默认封面样式</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">主题列表</div><div class="ps">使用、保存、导入或分享主题</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="pcat">白天</div>
+          <div class="prow"><div class="pbody"><div class="pt">主色调</div><div class="ps">白天，主色调</div></div><div class="pend"><i class="chip" style="background:#ff6b2c"></i><span class="pval">#FF6B2C</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">强调色</div><div class="ps">白天，强调色</div></div><div class="pend"><i class="chip" style="background:#e85d2a"></i><span class="pval">#E85D2A</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">背景色</div><div class="ps">白天，背景色</div></div><div class="pend"><i class="chip" style="background:#faf9f6"></i><span class="pval">#FAF9F6</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">底部操作栏颜色</div><div class="ps">白天，底栏色</div></div><div class="pend"><i class="chip" style="background:#eeece9"></i><span class="pval">#EEECE9</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">背景图片</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">保存主题配置</div><div class="ps">保存白天主题配置以供调用和分享</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+        </div>
+        <i class="hi"></i>
+      </div>
+    </div><figcaption>深色 Dark</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>条目来源</b>：<code>pref_config_theme.xml:1-116</code>（切换图标 / 启动界面样式 / 沉浸式状态栏 / 沉浸式导航栏 / 导航栏阴影 / 字体大小 / 封面设置 / 主题列表 / 白天颜色组 6 项）；夜间组 6 项见 06 节。</li>
+    <li><b>换肤机制</b>：主色调/强调色/背景色/底栏色为 ColorPreference 取色器；运行时可换肤（ThemeStore），此处色板展示本分支默认暖橙体系（白天 #FF6B2C 系 / 夜间暖黑表面）<code>DECISIONS.md</code> 决策 1、3。</li>
+    <li><b>白天/夜间背景过亮过暗校验</b>：保存主题时校验并 toast 提示 <code>ThemeConfigFragment.kt:86-96</code>；背景图片可选图或「背景图片模糊」处理 <code>:242-246,271</code>。</li>
+    <li><b>切换图标</b>为 IconListPreference（Launcher 1-6 别名变体）<code>pref_config_theme.xml:5-13</code>；封面设置跳转 COVER_CONFIG 页；主题列表弹 ThemeListDialog（使用/保存/导入/分享）<code>:216</code>。</li>
+  </ul>
+</section>
+
+<!-- ============ 06 设置·主题 下 ============ -->
+<section class="scr" id="s5b">
+  <div class="scr-head"><span class="scr-no">06</span><h2>设置 · 主题设置（下 · 夜间）</h2><span class="src">pref_config_theme.xml:118-170</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">主题设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="pcat">夜间</div>
+          <div class="prow"><div class="pbody"><div class="pt">主色调</div><div class="ps">夜间，主色调</div></div><div class="pend"><i class="chip" style="background:#ff6b2c"></i><span class="pval">#FF6B2C</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">强调色</div><div class="ps">夜间，强调色</div></div><div class="pend"><i class="chip" style="background:#c9571f"></i><span class="pval">#C9571F</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">背景色</div><div class="ps">夜间，背景色</div></div><div class="pend"><i class="chip" style="background:#151412"></i><span class="pval">#151412</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">底部操作栏颜色</div><div class="ps">夜间，底栏色</div></div><div class="pend"><i class="chip" style="background:#211f1c"></i><span class="pval">#211F1C</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">背景图片</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">保存主题配置</div><div class="ps">保存夜间主题配置以供调用和分享</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+        </div>
+        <i class="hi"></i>
+      </div>
+    </div><figcaption>浅色 Light</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">主题设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="pcat">夜间</div>
+          <div class="prow"><div class="pbody"><div class="pt">主色调</div><div class="ps">夜间，主色调</div></div><div class="pend"><i class="chip" style="background:#ff6b2c"></i><span class="pval">#FF6B2C</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">强调色</div><div class="ps">夜间，强调色</div></div><div class="pend"><i class="chip" style="background:#c9571f"></i><span class="pval">#C9571F</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">背景色</div><div class="ps">夜间，背景色</div></div><div class="pend"><i class="chip" style="background:#151412"></i><span class="pval">#151412</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">底部操作栏颜色</div><div class="ps">夜间，底栏色</div></div><div class="pend"><i class="chip" style="background:#211f1c"></i><span class="pval">#211F1C</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">背景图片</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">保存主题配置</div><div class="ps">保存夜间主题配置以供调用和分享</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+        </div>
+        <i class="hi"></i>
+      </div>
+    </div><figcaption>深色 Dark</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>条目来源</b>：<code>pref_config_theme.xml:118-170</code> 夜间分类全部 6 项（主色调 / 强调色 / 背景色 / 底部操作栏颜色 / 背景图片 / 保存主题配置），与「上」页的白天分类一一对应。</li>
+    <li>夜间色板为本分支默认暖橙体系的夜间映射：主色 #FF6B2C 保持、表面改暖黑层级（#151412 / #211F1C），色值随运行时换肤可变。</li>
+    <li>背景图片可分别设置夜间用图并支持「背景图片模糊」；保存主题配置生成可导入/分享的主题 JSON（ThemeListDialog）<code>ThemeConfigFragment.kt:216</code>。</li>
+  </ul>
+</section>
+
+<!-- ============ 07 设置·备份 ============ -->
+<section class="scr" id="s7">
+  <div class="scr-head"><span class="scr-no">07</span><h2>设置 · 备份与恢复</h2><span class="src">BackupConfigFragment.kt · pref_config_backup.xml</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">备份与恢复</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="pcat">WebDav 设置</div>
+          <div class="prow"><div class="pbody"><div class="pt">WebDav 服务器地址</div><div class="ps">输入你的服务器地址</div></div><div class="pend"><span class="pval">dav.jianguoyun.com</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">WebDav 账号</div><div class="ps">输入你的 WebDav 账号</div></div><div class="pend"><span class="pval">reader@legado.app</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">WebDav 密码</div><div class="ps">输入你的 WebDav 授权密码</div></div><div class="pend"><span class="pval">••••••••</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">子文件夹</div></div><div class="pend"><span class="pval">legado</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">设备名称</div></div><div class="pend"><span class="pval">Pixel 8</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">同步阅读进度</div><div class="ps">进入退出阅读界面时同步阅读进度</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">同步增强</div><div class="ps">重新进入页面（息屏、后台返回等）或者网络变为可用时同步云端进度</div></div><i class="sw"></i></div>
+          <div class="pcat">备份与恢复</div>
+          <div class="prow"><div class="pbody"><div class="pt">备份路径</div><div class="ps">请选择备份路径</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow" style="min-height:58px"><i class="lchip" style="border-radius:8px"><svg class="icon" style="width:13px;height:13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 16V5M12 5 8 9M12 5l4 4M5 19h14"/></svg></i><div class="pbody"><div class="pt">备份</div><div class="ps">本地和 WebDav 一起备份</div></div></div>
+          <div class="prow" style="min-height:58px"><i class="lchip" style="border-radius:8px"><svg class="icon" style="width:13px;height:13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v11M12 16l4-4M12 16l-4-4M5 19h14"/></svg></i><div class="pbody"><div class="pt">恢复</div><div class="ps">优先从 WebDav 恢复，长按从本地恢复</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">恢复忽略列表</div><div class="ps">恢复时忽略一些内容不恢复，方便不同手机配置不同</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">导入旧版数据</div><div class="ps">选择旧版备份文件夹</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">仅保留最新备份</div></div><i class="sw on"></i></div>
+        </div>
+        <i class="hi"></i>
+      </div>
+    </div><figcaption>浅色 Light</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">备份与恢复</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="pcat">WebDav 设置</div>
+          <div class="prow"><div class="pbody"><div class="pt">WebDav 服务器地址</div><div class="ps">输入你的服务器地址</div></div><div class="pend"><span class="pval">dav.jianguoyun.com</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">WebDav 账号</div><div class="ps">输入你的 WebDav 账号</div></div><div class="pend"><span class="pval">reader@legado.app</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">WebDav 密码</div><div class="ps">输入你的 WebDav 授权密码</div></div><div class="pend"><span class="pval">••••••••</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">子文件夹</div></div><div class="pend"><span class="pval">legado</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">设备名称</div></div><div class="pend"><span class="pval">Pixel 8</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">同步阅读进度</div><div class="ps">进入退出阅读界面时同步阅读进度</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">同步增强</div><div class="ps">重新进入页面（息屏、后台返回等）或者网络变为可用时同步云端进度</div></div><i class="sw"></i></div>
+          <div class="pcat">备份与恢复</div>
+          <div class="prow"><div class="pbody"><div class="pt">备份路径</div><div class="ps">请选择备份路径</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow" style="min-height:58px"><i class="lchip" style="border-radius:8px"><svg class="icon" style="width:13px;height:13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 16V5M12 5 8 9M12 5l4 4M5 19h14"/></svg></i><div class="pbody"><div class="pt">备份</div><div class="ps">本地和 WebDav 一起备份</div></div></div>
+          <div class="prow" style="min-height:58px"><i class="lchip" style="border-radius:8px"><svg class="icon" style="width:13px;height:13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v11M12 16l4-4M12 16l-4-4M5 19h14"/></svg></i><div class="pbody"><div class="pt">恢复</div><div class="ps">优先从 WebDav 恢复，长按从本地恢复</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">恢复忽略列表</div><div class="ps">恢复时忽略一些内容不恢复，方便不同手机配置不同</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">导入旧版数据</div><div class="ps">选择旧版备份文件夹</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">仅保留最新备份</div></div><i class="sw on"></i></div>
+        </div>
+        <i class="hi"></i>
+      </div>
+    </div><figcaption>深色 Dark</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>条目来源</b>：<code>pref_config_backup.xml</code> 全部 13 项，两组分类标题取自 strings（WebDav 设置 / 备份与恢复）。</li>
+    <li><b>WebDav 凭据</b>为 EditTextPreference 弹窗输入；同步增强依赖「同步阅读进度」开关（dependency）<code>pref_config_backup.xml:53-61</code>。账号/地址等值为样本数据。</li>
+    <li><b>备份/恢复动作</b>：备份=本地+WebDav 同时（备份成功 toast <code>BackupConfigFragment.kt:290</code>）；恢复优先 WebDav、长按从本地恢复（本地需选择恢复文件 <code>:332-386</code>）；恢复前有「恢复忽略」与确认弹窗 <code>:247</code>。</li>
+    <li>主界面检测到云端有更新备份时会弹「恢复」确认（backupSync <code>MainActivity.kt:305-318</code>）。</li>
+  </ul>
+</section>
+
+<!-- ============ 08 设置·封面 ============ -->
+<section class="scr" id="s8">
+  <div class="scr-head"><span class="scr-no">08</span><h2>设置 · 封面设置</h2><span class="src">CoverConfigFragment.kt · pref_config_cover.xml</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">封面设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">仅 WiFi</div><div class="ps">仅在 WiFi 下加载网络封面</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">封面规则</div><div class="ps">进入详情页时使用封面规则重新获取封面</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">总是使用默认封面</div><div class="ps">总是显示默认封面（不显示网络封面）</div></div><i class="sw"></i></div>
+          <div class="pcat">白天</div>
+          <div class="prow"><div class="pbody"><div class="pt">默认封面</div></div><div class="pend"><i class="cov" style="background:linear-gradient(160deg,#ffb185,#ff6b2c 70%,#e85d2a)">阅</i><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示书名</div><div class="ps">封面上显示书名</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示作者</div><div class="ps">封面上显示作者</div></div><i class="sw on"></i></div>
+          <div class="pcat">夜间</div>
+          <div class="prow"><div class="pbody"><div class="pt">默认封面</div></div><div class="pend"><i class="cov" style="background:linear-gradient(160deg,#5a3a28,#33231a 70%,#241a12)">阅</i><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示书名</div><div class="ps">封面上显示书名</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示作者</div><div class="ps">封面上显示作者</div></div><i class="sw on"></i></div>
+        </div>
+        <i class="hi"></i>
+      </div>
+    </div><figcaption>浅色 Light</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">封面设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">仅 WiFi</div><div class="ps">仅在 WiFi 下加载网络封面</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">封面规则</div><div class="ps">进入详情页时使用封面规则重新获取封面</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">总是使用默认封面</div><div class="ps">总是显示默认封面（不显示网络封面）</div></div><i class="sw"></i></div>
+          <div class="pcat">白天</div>
+          <div class="prow"><div class="pbody"><div class="pt">默认封面</div></div><div class="pend"><i class="cov" style="background:linear-gradient(160deg,#ffb185,#ff6b2c 70%,#e85d2a)">阅</i><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示书名</div><div class="ps">封面上显示书名</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示作者</div><div class="ps">封面上显示作者</div></div><i class="sw on"></i></div>
+          <div class="pcat">夜间</div>
+          <div class="prow"><div class="pbody"><div class="pt">默认封面</div></div><div class="pend"><i class="cov" style="background:linear-gradient(160deg,#5a3a28,#33231a 70%,#241a12)">阅</i><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示书名</div><div class="ps">封面上显示书名</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示作者</div><div class="ps">封面上显示作者</div></div><i class="sw on"></i></div>
+        </div>
+        <i class="hi"></i>
+      </div>
+    </div><figcaption>深色 Dark</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>条目来源</b>：<code>pref_config_cover.xml</code> 全部 9 项；默认封面为白色系（白天）与暖黑系（夜间）样本色块，点击可「删除 / 选择图片」<code>CoverConfigFragment.kt:94-133</code>。</li>
+    <li>封面规则跳转 CoverRuleConfigDialog（通用封面规则编辑）；「总是使用默认封面」开启后详情页与书架不再加载网络封面。</li>
+    <li>右侧 30×42 缩略为设计稿对默认封面（显示书名/作者叠加效果）的示意，非新增控件。</li>
+  </ul>
+</section>
+
+<!-- ============ 09 设置·欢迎 ============ -->
+<section class="scr" id="s9">
+  <div class="scr-head"><span class="scr-no">09</span><h2>设置 · 启动界面样式</h2><span class="src">WelcomeConfigFragment.kt · pref_config_welcome.xml</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">启动界面样式</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">自定义欢迎页</div><div class="ps">是否使用自定义欢迎页</div></div><i class="sw"></i></div>
+          <div class="pcat">白天</div>
+          <div class="prow"><div class="pbody"><div class="pt">背景图片</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示文字</div><div class="ps">阅读|享受美好时光</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示图标</div><div class="ps">显示默认书籍图标</div></div><i class="sw on"></i></div>
+          <div class="pcat">夜间</div>
+          <div class="prow"><div class="pbody"><div class="pt">背景图片</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示文字</div><div class="ps">阅读|享受美好时光</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示图标</div><div class="ps">显示默认书籍图标</div></div><i class="sw on"></i></div>
+          <div class="pdiv" style="margin-left:24px;margin-top:10px"></div>
+          <div style="padding:18px 24px;font-size:12px;color:var(--secondary);line-height:1.9">自定义欢迎页开启后，启动界面按白天/夜间分别使用所选背景图；文字与默认书籍图标可分别控制显隐（实际效果见 01-framework.html「启动欢迎页」）。</div>
+        </div>
+        <i class="hi"></i>
+      </div>
+    </div><figcaption>浅色 Light</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">启动界面样式</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">自定义欢迎页</div><div class="ps">是否使用自定义欢迎页</div></div><i class="sw"></i></div>
+          <div class="pcat">白天</div>
+          <div class="prow"><div class="pbody"><div class="pt">背景图片</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示文字</div><div class="ps">阅读|享受美好时光</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示图标</div><div class="ps">显示默认书籍图标</div></div><i class="sw on"></i></div>
+          <div class="pcat">夜间</div>
+          <div class="prow"><div class="pbody"><div class="pt">背景图片</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示文字</div><div class="ps">阅读|享受美好时光</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示图标</div><div class="ps">显示默认书籍图标</div></div><i class="sw on"></i></div>
+          <div class="pdiv" style="margin-left:24px;margin-top:10px"></div>
+          <div style="padding:18px 24px;font-size:12px;color:var(--secondary);line-height:1.9">自定义欢迎页开启后，启动界面按白天/夜间分别使用所选背景图；文字与默认书籍图标可分别控制显隐（实际效果见 01-framework.html「启动欢迎页」）。</div>
+        </div>
+        <i class="hi"></i>
+      </div>
+    </div><figcaption>深色 Dark</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>条目来源</b>：<code>pref_config_welcome.xml</code> 全部 7 项（custom_welcome 总开关 + 白天/夜间两组：背景图片 / 显示文字 / 显示图标）。</li>
+    <li>「显示文字」summary 即欢迎语 <code>welcome_text=阅读|享受美好时光</code>（values-zh/strings.xml:981）；背景图片点击弹「删除 / 选择图片」<code>WelcomeConfigFragment.kt:74-93</code>。</li>
+    <li>该页从「主题设置 → 启动界面样式」进入（pref_config_theme.xml:15-18 的 welcomeStyle 项）。</li>
+  </ul>
+</section>
+
+<!-- ============ 10 关于 ============ -->
+<section class="scr" id="s10">
+  <div class="scr-head"><span class="scr-no">10</span><h2>关于</h2><span class="src">activity_about.xml · AboutActivity.kt · AboutFragment.kt · xml/about.xml</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">关于</div><div class="actions">
+          <button class="icon-btn" aria-label="分享"><svg class="icon" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="m8.2 10.9 7.6-4.8M8.2 13.1l7.6 4.8"/></svg></button>
+          <button class="icon-btn" aria-label="评分"><svg class="icon" viewBox="0 0 24 24" stroke-linejoin="round"><path d="m12 3.6 2.5 5.2 5.7.8-4.1 4 1 5.7-5.1-2.7-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/></svg></button>
+        </div></div>
+        <div class="plist">
+          <div style="margin:4px 14px 8px;background:var(--surface);border:1px solid var(--divider);border-radius:14px;padding:16px 16px 14px">
+            <div style="font-size:19px;font-weight:800;margin-bottom:6px">阅读</div>
+            <div style="font-size:12.5px;line-height:1.9;color:var(--secondary)">　　这是一款使用 Kotlin 全新开发的开源的阅读软件，<span style="color:var(--primary);font-weight:700">欢迎您的加入</span>。</div>
+          </div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3.3 2.5-5.4 5.5-5.4s5.5 2.1 5.5 5.4"/><circle cx="17" cy="9" r="2.6"/><path d="M15.5 14.9c2.8.2 5 2.1 5 5.1"/></svg><div class="pbody"><div class="pt">开发人员</div><div class="ps">gedoor、Invinciblelee 和 Xwite 等，详情请在 GitHub 中查看</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg><div class="pbody"><div class="pt">更新日志</div><div class="ps">版本 3.24.082712</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><div class="pbody"><div class="pt">检查更新</div></div></div>
+          <div class="pcat">其它</div>
+          <div class="prow"><div class="pbody"><div class="pt">崩溃日志</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">保存日志</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">创建堆转储</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">用户隐私与协议</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">开源许可</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">免责声明</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+        </div>
+        <i class="hi"></i>
+      </div>
+    </div><figcaption>浅色 Light</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">关于</div><div class="actions">
+          <button class="icon-btn" aria-label="分享"><svg class="icon" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="m8.2 10.9 7.6-4.8M8.2 13.1l7.6 4.8"/></svg></button>
+          <button class="icon-btn" aria-label="评分"><svg class="icon" viewBox="0 0 24 24" stroke-linejoin="round"><path d="m12 3.6 2.5 5.2 5.7.8-4.1 4 1 5.7-5.1-2.7-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/></svg></button>
+        </div></div>
+        <div class="plist">
+          <div style="margin:4px 14px 8px;background:var(--surface);border:1px solid var(--divider);border-radius:14px;padding:16px 16px 14px">
+            <div style="font-size:19px;font-weight:800;margin-bottom:6px">阅读</div>
+            <div style="font-size:12.5px;line-height:1.9;color:var(--secondary)">　　这是一款使用 Kotlin 全新开发的开源的阅读软件，<span style="color:var(--primary);font-weight:700">欢迎您的加入</span>。</div>
+          </div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3.3 2.5-5.4 5.5-5.4s5.5 2.1 5.5 5.4"/><circle cx="17" cy="9" r="2.6"/><path d="M15.5 14.9c2.8.2 5 2.1 5 5.1"/></svg><div class="pbody"><div class="pt">开发人员</div><div class="ps">gedoor、Invinciblelee 和 Xwite 等，详情请在 GitHub 中查看</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg><div class="pbody"><div class="pt">更新日志</div><div class="ps">版本 3.24.082712</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><div class="pbody"><div class="pt">检查更新</div></div></div>
+          <div class="pcat">其它</div>
+          <div class="prow"><div class="pbody"><div class="pt">崩溃日志</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">保存日志</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">创建堆转储</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">用户隐私与协议</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">开源许可</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">免责声明</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+        </div>
+        <i class="hi"></i>
+      </div>
+    </div><figcaption>深色 Dark</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>头部卡片</b>：应用名 + about_description（「这是一款使用 Kotlin 全新开发的开源的阅读软件…」，accent 高亮 span 为既有行为 <code>AboutActivity.kt:31-43</code>），blend 顶栏内嵌卡片 <code>activity_about.xml:17-41</code>。</li>
+    <li><b>顶栏动作</b>：分享（app_share_description）、评分（跳转应用市场）<code>AboutActivity.kt:46-60</code>。</li>
+    <li><b>条目来源</b>：<code>xml/about.xml</code> 全部 9 项；更新日志 summary 动态显示版本号 <code>AboutFragment.kt:47-48</code>；更新日志/隐私/许可/免责声明以 TextDialog(MD) 展示 assets 内 md 文件，检测更新走 GitHub Release <code>:56-103</code>。</li>
+    <li>保存日志/创建堆转储需先设置备份路径并开启「其它设置」中的记录开关（<code>AboutFragment.kt:124-165</code>，未开启时 toast 引导）。</li>
+  </ul>
+</section>
+
+<!-- ============ 11 Web 服务说明（帮助文档） ============ -->
+<section class="scr" id="s11">
+  <div class="scr-head"><span class="scr-no">11</span><h2>帮助文档 · Web 服务说明</h2><span class="src">TextDialog.kt · assets/web/help/md/appHelp.md · 入口 MyFragment.kt:70 / MainActivity.kt:241-247</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="ghost" style="opacity:.35">
+        <div style="height:64px;display:flex;align-items:center;padding:0 20px;font-size:28px;font-weight:700;color:#20242b">我的</div>
+        <div class="prow"><div class="pbody"><div class="pt" style="color:#20242b">书源管理</div></div></div>
+        <div class="prow"><div class="pbody"><div class="pt" style="color:#20242b">TXT 目录规则</div></div></div>
+        <div class="prow"><div class="pbody"><div class="pt" style="color:#20242b">替换净化</div></div></div>
+      </div>
+      <div class="dim"></div>
+      <div class="dlg">
+        <div class="dlgbar"><div class="t">帮助</div><button class="icon-btn" aria-label="关闭"><svg class="icon" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+        <div class="dlgbody">
+          <i class="scrl"><b style="position:absolute;left:0;top:0;width:3px;height:74px;border-radius:2px;background:#60656d;opacity:.5;display:block"></b></i>
+          <h1>帮助文档</h1>
+          <p>【温馨提醒】<i>本帮助可以在「<b style="color:#8a4a20">我的</b>」——右上角帮助按钮再次打开，更新前一定要做好备份，以免数据丢失！</i></p>
+          <h2>新人必读</h2>
+          <h3>1. 为什么第一次安装好之后什么东西都没有？</h3>
+          <p>阅读只是一个转码工具，不提供内容。</p>
+          <h3>2. 正文出现缺字漏字、内容缺失或排版错乱等情况，如何处理？</h3>
+          <p>有可能是净化规则出现问题，先关闭替换净化并刷新，再观察是否正常。如果正常说明净化规则存在误杀，如果关闭后仍然出现相关问题，请点击源链接查看原文与正文是否相同，如果不同，再进行反馈。</p>
+          <h3>3. 漫画源看书显示乱码，如何解决？</h3>
+          <p>【异次元】和【阅读】是两个不同的软件，<b style="color:#8a4a20">两个软件的源并不通用</b>，请导入【阅读】的支持的漫画源！</p>
+          <h2>书源相关</h2>
+          <h3>1. 如何导入本地书源文件？</h3>
+          <p>以导入 QQ 接收到的书源文件为例：下载群文件里的书源文件；打开【阅读】软件；点击「<b style="color:#8a4a20">我的</b>」——「<b style="color:#8a4a20">书源管理</b>」；点击右上角选择「<b style="color:#8a4a20">本地导入</b>」…</p>
+          <div class="fade"></div>
+        </div>
+      </div>
+      <i class="hi" style="z-index:4"></i>
+    </div><figcaption>浅色 Light · TextDialog(MD) 模态</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><i class="sr"></i></div>
+      <div class="ghost" style="opacity:.35">
+        <div style="height:64px;display:flex;align-items:center;padding:0 20px;font-size:28px;font-weight:700;color:#f3f0eb">我的</div>
+        <div class="prow"><div class="pbody"><div class="pt" style="color:#f3f0eb">书源管理</div></div></div>
+        <div class="prow"><div class="pbody"><div class="pt" style="color:#f3f0eb">TXT 目录规则</div></div></div>
+        <div class="prow"><div class="pbody"><div class="pt" style="color:#f3f0eb">替换净化</div></div></div>
+      </div>
+      <div class="dim" style="background:rgba(0,0,0,.62)"></div>
+      <div class="dlg">
+        <div class="dlgbar"><div class="t">帮助</div><button class="icon-btn" aria-label="关闭"><svg class="icon" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+        <div class="dlgbody">
+          <i class="scrl"><b style="position:absolute;left:0;top:0;width:3px;height:74px;border-radius:2px;background:#b4b0aa;opacity:.5;display:block"></b></i>
+          <h1>帮助文档</h1>
+          <p>【温馨提醒】<i>本帮助可以在「<b style="color:#ff9d6b">我的</b>」——右上角帮助按钮再次打开，更新前一定要做好备份，以免数据丢失！</i></p>
+          <h2>新人必读</h2>
+          <h3>1. 为什么第一次安装好之后什么东西都没有？</h3>
+          <p>阅读只是一个转码工具，不提供内容。</p>
+          <h3>2. 正文出现缺字漏字、内容缺失或排版错乱等情况，如何处理？</h3>
+          <p>有可能是净化规则出现问题，先关闭替换净化并刷新，再观察是否正常。如果正常说明净化规则存在误杀，如果关闭后仍然出现相关问题，请点击源链接查看原文与正文是否相同，如果不同，再进行反馈。</p>
+          <h3>3. 漫画源看书显示乱码，如何解决？</h3>
+          <p>【异次元】和【阅读】是两个不同的软件，<b style="color:#ff9d6b">两个软件的源并不通用</b>，请导入【阅读】的支持的漫画源！</p>
+          <h2>书源相关</h2>
+          <h3>1. 如何导入本地书源文件？</h3>
+          <p>以导入 QQ 接收到的书源文件为例：下载群文件里的书源文件；打开【阅读】软件；点击「<b style="color:#ff9d6b">我的</b>」——「<b style="color:#ff9d6b">书源管理</b>」；点击右上角选择「<b style="color:#ff9d6b">本地导入</b>」…</p>
+          <div class="fade"></div>
+        </div>
+      </div>
+      <i class="hi" style="z-index:4"></i>
+    </div><figcaption>深色 Dark · TextDialog(MD) 模态</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>形态定位</b>：App 内没有独立的「Web 服务说明」页面；帮助内容以全屏对话框呈现（宽 MATCH_PARENT、高 0.9 屏）<code>TextDialog.kt:55-64</code>，工具栏着 primaryColor、右上关闭 <code>:61-70</code>、正文 Markwon 渲染 Markdown <code>:73-101</code>。</li>
+    <li><b>入口</b>：「我的」右上角帮助按钮（showHelp("appHelp") <code>MyFragment.kt:70</code>）与首次启动引导 <code>MainActivity.kt:241-247</code>；内容为 <code>assets/web/help/md/appHelp.md</code>，本稿正文为该文件原文节选。</li>
+    <li>同一 TextDialog 也承载更新日志 / 隐私政策 / 许可 / 免责声明（见 10 关于）与版本更新弹窗；长内容超 32KB 截断提示 <code>TextDialog.kt:92-95</code>。</li>
+    <li>Web 服务本身的开关在「我的 → Web 服务」，开启后浏览器访问 <code>http://ip:1122</code> 即为 Web 端阅读界面（assets/web/index.html），其帮助页 assets/web/help/index.html 由 HttpServer 直接下发，App 内不展示。</li>
+  </ul>
+</section>
+
+<!-- ============ 12 扫码 ============ -->
+<section class="scr" id="s12">
+  <div class="scr-head"><span class="scr-no">12</span><h2>扫描二维码</h2><span class="src">activity_qrcode_capture.xml · QrCodeActivity.kt · QrCodeFragment.kt · menu/qr_code_scan.xml</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone inv"><div class="full">
+      <div class="cam"></div>
+      <div class="mask"><i class="mt"></i><i class="mb"></i><i class="ml"></i><i class="mr"></i></div>
+      <div class="frame"><b class="tl"></b><b class="tr"></b><b class="bl"></b><b class="br"></b><span class="laser"></span></div>
+      <div class="scanhint">对准二维码，自动识别</div>
+      <div style="position:relative;z-index:40">
+        <div class="status" style="color:#fff"><span>9:41</span><i class="sr"></i></div>
+        <div class="tbar" style="background:rgba(10,9,8,.35);backdrop-filter:blur(6px)"><button class="icon-btn" style="color:#fff" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st" style="color:#fff">扫描二维码</div><button class="txtact" style="color:#fff">图库</button></div>
+      </div>
+      <i class="hi" style="--indicator:rgba(255,255,255,.75)"></i>
+    </div></div><figcaption>浅色 / 深色 · 相机取景为全屏深色</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>结构</b>：blend 顶栏（标题「扫描二维码」）+ 全屏相机预览 Fragment <code>activity_qrcode_capture.xml:8-18</code>；扫码区为 zxing 库默认遮罩（识别区比例 0.8、仅 QR 码格式）<code>QrCodeFragment.kt:13-26</code>，扫描线动画为本稿对取景框的示意强化。</li>
+    <li><b>顶栏动作</b>：「图库」——从相册选图解析二维码 <code>QrCodeActivity.kt:42-47</code>（SelectImageContract + QRCodeUtils.parseCodeResult）。</li>
+    <li><b>结果回调</b>：识别成功 setResult 返回调用方（如 WebDav 配置、书源导入）并 finish <code>QrCodeActivity.kt:49-54</code>。</li>
+    <li>底部提示「对准二维码，自动识别」为取景辅助示意文案；浅色/深色主题下相机页一致，仅顶栏遮罩随状态栏内容反转。</li>
+  </ul>
+</section>
+
+<!-- ============ 13 听书播放 ============ -->
+<section class="scr" id="s13">
+  <div class="scr-head"><span class="scr-no">13</span><h2>听书播放</h2><span class="src">activity_audio_play.xml · AudioPlayActivity.kt · menu/audio_play.xml</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone inv"><div class="player">
+      <div class="scrim"></div>
+      <div style="position:relative;z-index:40">
+        <div class="status" style="color:#fff"><span>9:41</span><i class="sr"></i></div>
+        <div class="tbar" style="background:transparent"><button class="icon-btn" style="color:#fff" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st" style="color:#fff;flex:1;text-align:center">斗罗大陆</div><div class="actions">
+          <button class="icon-btn" style="color:#fff" aria-label="换源"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h13m0 0-3-3m3 3-3 3M20 17H7m0 0 3-3m-3 3 3 3"/></svg></button>
+          <button class="icon-btn" style="color:#fff" aria-label="更多"><svg class="icon f" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+        </div></div>
+      </div>
+      <div class="pills">
+        <span class="pill"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.5 1.5M9 2h6"/></svg>30m</span>
+        <span class="pill">1.2X</span>
+      </div>
+      <div class="covcircle"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>
+      <div class="subt">第一百二十四章 · 龙神辉光</div>
+      <div class="progrow"><span>03:24</span><div class="seek"><i></i><b></b></div><span>45:00</span></div>
+      <div class="ctrls">
+        <button class="cbtn" aria-label="定时"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.5 1.5M9 2h6"/></svg></button>
+        <button class="cbtn" aria-label="减速"><svg class="icon f" viewBox="0 0 24 24"><path d="M11 12l8-5v10zM3 12l8-5v10z"/></svg></button>
+        <button class="cbtn" aria-label="上一个"><svg class="icon f" viewBox="0 0 24 24"><path d="M6 5v14M20 5l-11 7 11 7z"/></svg></button>
+        <button class="fab" aria-label="播放暂停"><svg class="icon f" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+        <button class="cbtn" aria-label="下一个"><svg class="icon f" viewBox="0 0 24 24"><path d="M18 5v14M4 5l11 7-11 7z"/></svg></button>
+        <button class="cbtn" aria-label="加速"><svg class="icon f" viewBox="0 0 24 24"><path d="M13 12 5 7v10zM21 12l-8-5v10z"/></svg></button>
+        <button class="cbtn" aria-label="目录"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h2M4 12h2M4 18h2M9 6h11M9 12h11M9 18h11"/></svg></button>
+      </div>
+      <i class="hi" style="--indicator:rgba(255,255,255,.75)"></i>
+    </div></div><figcaption>浅色 / 深色 · 毛玻璃封面背景为同一视觉</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>背景</b>：封面模糊大图 + 50% scrim <code>activity_audio_play.xml:11-22</code>、<code>AudioPlayActivity.kt:196-201</code>；TitleBar 透明（dark 模式），标题=书名 <code>:93-96</code>。</li>
+    <li><b>顶部胶囊</b>：左「定时 30m」（TimerSliderPopup 弹出，>0 时显示）、右「1.2X」倍速（快退/快进按钮 ±0.1 调节 <code>:178-183,291-296</code>）。</li>
+    <li><b>控制排布与 1:1 对应</b>：定时 | 快退(速度−) | 上一个(上一章) | 白色 FAB 播放/暂停（点击切换、长按停止、缓冲时外圈进度环）| 下一个 | 快进(速度+) | 目录（跳转目录页）<code>activity_audio_play.xml:120-251</code>、<code>AudioPlayActivity.kt:141-188</code>。</li>
+    <li><b>顶栏菜单</b>：换源（图标常显）+ 更多内含 登录 / 拷贝播放 URL / 编辑书源 / 音频服务唤醒锁(勾选) / 日志 <code>menu/audio_play.xml</code>。</li>
+    <li><b>退出拦截</b>：未入书架的书在返回时弹「加入书架」确认（受「返回时提示放入书架」开关控制）<code>AudioPlayActivity.kt:228-238</code>。</li>
+    <li>深浅主题共用同一播放器视觉：暗色 scrim 上白字白控件，不随日夜间切换而异（代码中即为恒定暗色布局）。</li>
+  </ul>
+</section>
+
+<!-- ============ 14 漫画阅读 ============ -->
+<section class="scr" id="s14">
+  <div class="scr-head"><span class="scr-no">14</span><h2>漫画阅读</h2><span class="src">activity_manga.xml · view_manga_menu.xml · ReadMangaActivity.kt · menu/book_manga.xml</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone dark">
+      <div class="status" style="color:#fff"><span>9:41</span><i class="sr"></i></div>
+      <div class="manga" style="top:36px;position:absolute">
+        <div class="mpanel mp1"></div>
+        <div class="mpanel mp2"></div>
+        <div class="mpanel mp3"></div>
+      </div>
+      <div class="mfloat">第12话 哪都通 · 34/182 · 12.4%</div>
+      <div class="mmenu">
+        <div class="mdim"></div>
+        <div class="mbar" style="z-index:2">
+          <div class="tbar" style="height:58px"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="t" style="flex:1">一人之下</div><div class="actions">
+            <button class="icon-btn" aria-label="换源"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h13m0 0-3-3m3 3-3 3M20 17H7m0 0 3-3m-3 3 3 3"/></svg></button>
+            <button class="icon-btn" aria-label="刷新"><svg class="icon" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v4h-4"/></svg></button>
+            <button class="icon-btn" aria-label="目录"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h2M4 12h2M4 18h2M9 6h11M9 12h11M9 18h11"/></svg></button>
+            <button class="icon-btn" aria-label="更多"><svg class="icon f" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+          </div></div>
+          <div class="madd"><span>第12话 哪都通</span><span style="opacity:.8">manga.example.com/…</span><span class="srcchip">书源</span></div>
+        </div>
+        <div class="mbot" style="z-index:2">
+          <span class="lnk">上一章</span>
+          <div class="seek" style="flex:1"><i style="width:12.4%"></i><b style="left:12.4%"></b></div>
+          <span class="pct">34 / 182</span>
+          <span class="lnk">下一章</span>
+        </div>
+      </div>
+      <i class="hi" style="--indicator:rgba(255,255,255,.75)"></i>
+    </div><figcaption>深色 Dark · 菜单展开态（点击页面呼出）</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status" style="color:#fff"><span>9:41</span><i class="sr"></i></div>
+      <div class="manga" style="top:36px;position:absolute">
+        <div class="mpanel mp2" style="height:200px"></div>
+        <div class="mpanel mp3" style="height:280px"></div>
+        <div class="mpanel mp1" style="height:240px"></div>
+      </div>
+      <div class="mfloat">第12话 哪都通 · 35/182 · 12.9%</div>
+      <i class="hi" style="--indicator:rgba(255,255,255,.75)"></i>
+    </div><figcaption>深色 Dark · 沉浸阅读态（页脚信息条）</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>结构</b>：Webtoon 竖排画布（WebtoonFrame + WebtoonRecyclerView，可捏合缩放）+ 底部信息条 + 菜单层 <code>activity_manga.xml:8-36</code>；画布灰阶块为占位示意，非真实内容。</li>
+    <li><b>菜单展开态</b>（点页面呼出/自动隐藏）：顶栏=书名标题 + 章节名/章节地址 + 「书源」胶囊（showReadTitleBarAddition 时显示 <code>MangaMenu.kt:110-112</code>）+ 换源/刷新/目录图标 <code>menu/book_manga.xml</code>；底栏=上一章 / 章节内进度条 / 页码 / 下一章 <code>view_manga_menu.xml:85-130</code>；背景为 bottomBackground 暖黑面板，无阴影。</li>
+    <li><b>「⋮」溢出菜单（14 项，真实标题）</b>：预下载（预下载%s页）/ 禁用漫画缩放 / 禁用点击翻页 / 开启自动翻页 / 开启滚动 / 翻页速度 / 水平滚动 / 页脚配置 / 滤镜 / 隐藏漫画列表标题 / 墨水屏 / 墨水屏设置 / 开启图片灰色 / 禁用水平切换动画 等，勾选态即时生效 <code>ReadMangaActivity.kt:472-613</code>。</li>
+    <li><b>页脚信息条</b>：内容与对齐由「页脚配置」决定（章节/页数/总进度，靠左/居中），墨水屏/灰色等模式互斥切换 <code>ReadMangaActivity.kt:296-344</code>；进度同步受 WebDav「同步增强」控制 <code>:351-357</code>。</li>
+    <li>漫画功能入口受「其它设置 → 漫画浏览」开关控制（show_manga_ui）；加载失败页显示错误信息 + 「重新加载」<code>activity_manga.xml:71-93</code>。</li>
+  </ul>
+</section>
+
+</div>
+<script>
+const SR='<span>5G</span><svg width="17" height="12" viewBox="0 0 17 12"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg>';
+document.querySelectorAll('.sr').forEach(n=>{const s=document.createElement('span');s.className='sright';s.innerHTML=SR;n.replaceWith(s)});
+document.querySelectorAll('section:not(#s1) .plist').forEach(list=>{
+  list.querySelectorAll('.prow').forEach(r=>{
+    if(r.nextElementSibling&&r.nextElementSibling.classList.contains('prow')){
+      const d=document.createElement('i');d.className='pdiv';r.after(d);
+    }
+  });
+});
+</script>
+</body></html>

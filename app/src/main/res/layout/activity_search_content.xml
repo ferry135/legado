@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 搜索内容（04 屏2）：blend 顶栏 + 搜索胶囊，2dp 进度条，FastScroll 结果列表，surface2 底部信息条（36dp、无阴影） -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -33,12 +34,11 @@
         android:id="@+id/ll_search_base_info"
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        android:background="@color/background"
-        android:elevation="5dp"
+        android:background="@color/surface_container_high"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
@@ -52,12 +52,8 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:singleLine="true"
-            android:textColor="@color/primaryText"
+            android:textColor="@color/on_surface"
             android:textSize="12sp" />
-
-        <Space
-            android:layout_width="20dp"
-            android:layout_height="1dp" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_search_content_top"
@@ -67,7 +63,7 @@
             android:contentDescription="@string/go_to_top"
             android:src="@drawable/ic_arrow_drop_up"
             android:tooltipText="@string/go_to_top"
-            app:tint="@color/primaryText"
+            app:tint="@color/on_surface"
             tools:ignore="UnusedAttribute" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -78,7 +74,7 @@
             android:contentDescription="@string/go_to_bottom"
             android:src="@drawable/ic_arrow_drop_down"
             android:tooltipText="@string/go_to_bottom"
-            app:tint="@color/primaryText"
+            app:tint="@color/on_surface"
             tools:ignore="UnusedAttribute" />
     </LinearLayout>
 
@@ -86,7 +82,8 @@
         android:id="@+id/fb_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="22dp"
         android:src="@drawable/ic_stop_black_24dp"
         android:visibility="invisible"
         android:contentDescription="@string/stop"

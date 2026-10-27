@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/shape_card_view"
+        android:background="@drawable/bg_card"
         android:orientation="vertical"
         tools:ignore="UselessParent">
 
@@ -36,16 +36,25 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
+                <!-- .field：surface2 填充底、10dp 圆角、聚焦 2dp 主色下划线 -->
                 <io.legado.app.ui.widget.text.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="3dp">
+                    android:layout_marginBottom="10dp"
+                    android:hint="@string/title"
+                    app:boxBackgroundMode="filled"
+                    app:boxBackgroundColor="@color/surface_container_high"
+                    app:boxCornerRadiusTopStart="10dp"
+                    app:boxCornerRadiusTopEnd="10dp"
+                    app:boxCornerRadiusBottomStart="10dp"
+                    app:boxCornerRadiusBottomEnd="10dp"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="2dp">
 
                     <io.legado.app.lib.theme.view.ThemeEditText
                         android:id="@+id/edit_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/title"
                         tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
                 </io.legado.app.ui.widget.text.TextInputLayout>
@@ -53,13 +62,21 @@
                 <io.legado.app.ui.widget.text.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="3dp">
+                    android:layout_marginBottom="10dp"
+                    android:hint="@string/group_name"
+                    app:boxBackgroundMode="filled"
+                    app:boxBackgroundColor="@color/surface_container_high"
+                    app:boxCornerRadiusTopStart="10dp"
+                    app:boxCornerRadiusTopEnd="10dp"
+                    app:boxCornerRadiusBottomStart="10dp"
+                    app:boxCornerRadiusBottomEnd="10dp"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="2dp">
 
                     <io.legado.app.lib.theme.view.ThemeEditText
                         android:id="@+id/edit_group"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/group_name"
                         tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
                 </io.legado.app.ui.widget.text.TextInputLayout>

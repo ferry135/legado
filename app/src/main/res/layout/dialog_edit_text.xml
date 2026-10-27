@@ -4,13 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:overScrollMode="ifContentScrolls"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp">
+    android:paddingLeft="22dp"
+    android:paddingRight="22dp">
 
     <io.legado.app.ui.widget.text.AutoCompleteTextView
         android:id="@+id/edit_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_edit_filled"
+        android:minHeight="44dp"
+        android:paddingLeft="14dp"
+        android:paddingTop="13dp"
+        android:paddingRight="14dp"
+        android:paddingBottom="13dp"
+        android:textColor="@color/on_surface"
+        android:textSize="14sp"
         tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
 </androidx.core.widget.NestedScrollView>

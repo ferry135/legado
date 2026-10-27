@@ -11,16 +11,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/shape_card_view"
+        android:background="@drawable/bg_card"
         android:orientation="vertical"
         tools:ignore="UselessParent">
 
+        <!-- .dlg-bar：运行时染 primaryColor，无阴影 -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/tool_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/background_menu"
-            android:elevation="5dp"
+            android:elevation="0dp"
             android:theme="?attr/actionBarStyle"
             app:title="@string/login"
             app:displayHomeAsUp="false"
@@ -31,6 +32,9 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp"
             android:overScrollMode="ifContentScrolls">
 
             <com.google.android.flexbox.FlexboxLayout

@@ -10,34 +10,56 @@
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="@string/book_info_edit" 
+        app:title="@string/book_info_edit"
         app:themeMode="blend" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/divider_subtle" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="5dp">
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="4dp">
 
-        <io.legado.app.ui.widget.image.CoverImageView
-            android:id="@+id/iv_cover"
-            android:layout_width="90dp"
-            android:layout_height="130dp"
-            android:contentDescription="@string/img_cover"
-            android:scaleType="centerCrop"
-            android:src="@drawable/image_cover_default" />
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="4dp">
+
+            <io.legado.app.ui.widget.image.CoverImageView
+                android:id="@+id/iv_cover"
+                android:layout_width="90dp"
+                android:layout_height="130dp"
+                android:contentDescription="@string/img_cover"
+                android:scaleType="centerCrop"
+                android:src="@drawable/image_cover_default" />
+
+        </androidx.cardview.widget.CardView>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="5dp">
+            android:layout_marginStart="14dp">
 
             <io.legado.app.ui.widget.text.TextInputLayout
                 android:id="@+id/til_book_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/book_name">
+                android:hint="@string/book_name"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxStrokeColor="@color/progress_track">
 
                 <io.legado.app.lib.theme.view.ThemeEditText
                     android:id="@+id/tie_book_name"
@@ -50,7 +72,14 @@
                 android:id="@+id/til_book_author"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/author">
+                android:layout_marginTop="12dp"
+                android:hint="@string/author"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxStrokeColor="@color/progress_track">
 
                 <io.legado.app.lib.theme.view.ThemeEditText
                     android:id="@+id/tie_book_author"
@@ -69,20 +98,27 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_gravity="center_vertical">
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="16dp"
+                android:paddingTop="14dp"
+                android:paddingRight="16dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/book_type"
-                    android:layout_marginLeft="12dp"
+                    android:textColor="@color/on_surface_variant"
+                    android:textSize="13sp"
+                    android:layout_marginLeft="0dp"
                     android:layout_marginRight="3dp"
+                    android:gravity="center_vertical"
                     tools:ignore="RtlHardcoded" />
 
                 <androidx.appcompat.widget.AppCompatSpinner
@@ -98,8 +134,16 @@
                 android:id="@+id/til_cover_url"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:hint="@string/cover_path">
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginRight="16dp"
+                android:hint="@string/cover_path"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxStrokeColor="@color/progress_track">
 
                 <io.legado.app.lib.theme.view.ThemeEditText
                     android:id="@+id/tie_cover_url"
@@ -111,23 +155,34 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp">
+                android:paddingStart="16dp"
+                android:paddingTop="14dp"
+                android:paddingEnd="16dp">
 
                 <io.legado.app.ui.widget.text.StrokeTextView
                     android:id="@+id/tv_select_cover"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:text="@string/select_local_image" />
+                    android:paddingLeft="13dp"
+                    android:paddingTop="7dp"
+                    android:paddingRight="13dp"
+                    android:paddingBottom="7dp"
+                    android:text="@string/select_local_image"
+                    android:textSize="13sp"
+                    app:radius="10dp" />
 
                 <io.legado.app.ui.widget.text.StrokeTextView
                     android:id="@+id/tv_change_cover"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:padding="5dp"
+                    android:paddingLeft="13dp"
+                    android:paddingTop="7dp"
+                    android:paddingRight="13dp"
+                    android:paddingBottom="7dp"
                     android:text="@string/change_cover_source"
+                    android:textSize="13sp"
+                    app:radius="10dp"
                     tools:ignore="RtlHardcoded" />
 
                 <io.legado.app.ui.widget.text.StrokeTextView
@@ -135,8 +190,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:padding="5dp"
+                    android:paddingLeft="13dp"
+                    android:paddingTop="7dp"
+                    android:paddingRight="13dp"
+                    android:paddingBottom="7dp"
                     android:text="@string/refresh_cover"
+                    android:textSize="13sp"
+                    app:radius="10dp"
                     tools:ignore="RtlHardcoded" />
 
             </LinearLayout>
@@ -145,8 +205,16 @@
                 android:id="@+id/til_book_jj"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:hint="@string/book_intro">
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginRight="16dp"
+                android:hint="@string/book_intro"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxStrokeColor="@color/progress_track">
 
                 <io.legado.app.lib.theme.view.ThemeEditText
                     android:id="@+id/tie_book_intro"

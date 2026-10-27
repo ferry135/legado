@@ -13,27 +13,34 @@
         app:themeMode="blend"
         app:title="@string/bookshelf" />
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingStart="16dp"
-        android:paddingTop="4dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="20dp">
+        android:paddingStart="20dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="14dp">
 
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:background="@drawable/bg_tab_capsule">
+            android:background="@drawable/bg_tab_capsule"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintWidth_max="272dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tv_sort"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
+            <!-- 01 设计稿：选中 Tab 为与胶囊齐平的 48dp 全高圆角胶囊（999dp=全圆角）；
+                 bg_badge_accent solid 即主色，即使 tabIndicatorColor 未对其 tint 也呈现正确颜色 -->
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:background="@android:color/transparent"
-                app:tabIndicator="@drawable/bg_tab_indicator_pill_inset"
+                app:tabIndicator="@drawable/bg_badge_accent"
                 app:tabIndicatorColor="@color/accent"
                 app:tabIndicatorGravity="center"
                 app:tabIndicatorHeight="48dp"
@@ -46,11 +53,6 @@
                 app:tabTextAppearance="@style/TextAppearance.Legado.Tab"
                 app:tabTextColor="@color/on_surface_variant" />
         </FrameLayout>
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/tv_sort"
@@ -65,9 +67,12 @@
             android:textColor="@color/on_surface_variant"
             android:textSize="15sp"
             app:drawableEndCompat="@drawable/ic_arrow_drop_down"
-            app:drawableTint="@color/on_surface_variant" />
+            app:drawableTint="@color/on_surface_variant"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager_bookshelf"

@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <!-- .appbar.main-title：28sp 粗体大标题（PageTitle），blend 同色顶栏、无分割线 -->
     <io.legado.app.ui.widget.TitleBar
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
@@ -14,12 +15,19 @@
         app:contentLayout="@layout/view_search"
         app:layout_constraintTop_toTopOf="parent"
         app:themeMode="blend"
-        app:title="@string/rss" />
+        app:title="@string/rss"
+        app:titleTextAppearance="@style/TextAppearance.Legado.PageTitle" />
 
+    <!-- .grid：padding 10px 14px 24px，行距 22px 由 item 底距提供 -->
     <io.legado.app.ui.widget.recycler.RecyclerViewAtPager2
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingStart="14dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="24dp"
         app:layout_constraintTop_toBottomOf="@id/title_bar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"

@@ -5,12 +5,12 @@
     android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background_menu"
+    android:background="@drawable/bg_read_sheet_top"
     android:orientation="vertical"
     android:paddingLeft="16dp"
-    android:paddingTop="6dp"
+    android:paddingTop="14dp"
     android:paddingRight="16dp"
-    android:paddingBottom="6dp">
+    android:paddingBottom="18dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -41,10 +41,11 @@
 
         <ImageView
             android:id="@+id/iv_play_prev"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:padding="9dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/prev_sentence"
             android:src="@drawable/ic_skip_previous"
@@ -54,10 +55,11 @@
 
         <ImageView
             android:id="@+id/iv_play_pause"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:padding="9dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/audio_play"
             android:src="@drawable/ic_play_24dp"
@@ -67,10 +69,11 @@
 
         <ImageView
             android:id="@+id/iv_stop"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:padding="9dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/stop"
             android:src="@drawable/ic_stop_black_24dp"
@@ -80,10 +83,11 @@
 
         <ImageView
             android:id="@+id/iv_play_next"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:padding="9dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/next_sentence"
             android:src="@drawable/ic_skip_next"
@@ -114,6 +118,13 @@
 
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="12dp"
+        android:background="@color/divider_subtle" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -123,8 +134,9 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_timer"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:padding="9dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/set_timer"
             android:src="@drawable/ic_time_add_24dp"
@@ -144,8 +156,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:paddingHorizontal="6dp"
             android:text="@string/timer_m"
-            android:textColor="@color/primaryText" />
+            android:textColor="@color/primaryText"
+            android:textSize="14sp" />
 
     </LinearLayout>
 
@@ -177,8 +191,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:paddingHorizontal="3dp"
-                android:textColor="@color/primaryText"
-                android:textSize="14sp" />
+                android:textColor="@color/primary"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
             <Space
                 android:layout_width="0dp"
@@ -207,8 +222,9 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_tts_speech_reduce"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:padding="9dp"
                 android:contentDescription="@string/tts_speech_reduce"
                 android:src="@drawable/ic_reduce"
                 android:tint="@color/primaryText"
@@ -224,8 +240,9 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_tts_speech_add"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:padding="9dp"
                 android:contentDescription="@string/tts_speech_add"
                 android:src="@drawable/ic_add"
                 android:tint="@color/primaryText"
@@ -236,17 +253,23 @@
 
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="12dp"
+        android:background="@color/divider_subtle" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:baselineAligned="false"
         android:orientation="horizontal">
 
         <!--目录按钮-->
         <LinearLayout
             android:id="@+id/ll_catalog"
-            android:layout_width="60dp"
+            android:layout_width="64dp"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:clickable="true"
@@ -262,7 +285,7 @@
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/chapter_list"
-                android:maxHeight="20dp"
+                android:maxHeight="22dp"
                 android:src="@drawable/ic_toc"
                 app:tint="@color/primaryText"
                 tools:ignore="NestedWeights" />
@@ -272,7 +295,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="4dp"
                 android:ellipsize="middle"
                 android:singleLine="true"
                 android:text="@string/chapter_list"
@@ -287,7 +310,7 @@
         <!--调节按钮-->
         <LinearLayout
             android:id="@+id/ll_main_menu"
-            android:layout_width="60dp"
+            android:layout_width="64dp"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:clickable="true"
@@ -304,7 +327,7 @@
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/main_menu"
-                android:maxHeight="20dp"
+                android:maxHeight="22dp"
                 android:src="@drawable/ic_menu"
                 app:tint="@color/primaryText"
                 tools:ignore="NestedWeights" />
@@ -314,7 +337,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="4dp"
                 android:ellipsize="middle"
                 android:singleLine="true"
                 android:text="@string/main_menu"
@@ -329,7 +352,7 @@
         <!--界面按钮-->
         <LinearLayout
             android:id="@+id/ll_to_backstage"
-            android:layout_width="60dp"
+            android:layout_width="64dp"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:clickable="true"
@@ -345,7 +368,7 @@
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/to_backstage"
-                android:maxHeight="20dp"
+                android:maxHeight="22dp"
                 android:src="@drawable/ic_visibility_off"
                 app:tint="@color/primaryText"
                 tools:ignore="NestedWeights" />
@@ -355,7 +378,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="4dp"
                 android:ellipsize="middle"
                 android:singleLine="true"
                 android:text="@string/to_backstage"
@@ -370,7 +393,7 @@
         <!--设置按钮-->
         <LinearLayout
             android:id="@+id/ll_setting"
-            android:layout_width="60dp"
+            android:layout_width="64dp"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:clickable="true"
@@ -386,7 +409,7 @@
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/aloud_config"
-                android:maxHeight="20dp"
+                android:maxHeight="22dp"
                 android:src="@drawable/ic_settings"
                 app:tint="@color/primaryText"
                 tools:ignore="NestedWeights" />
@@ -396,7 +419,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="4dp"
                 android:ellipsize="middle"
                 android:singleLine="true"
                 android:text="@string/setting"

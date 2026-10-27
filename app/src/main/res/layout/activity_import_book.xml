@@ -20,11 +20,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/background"
-        android:elevation="1dp"
+        android:elevation="0dp"
         android:gravity="center_vertical"
         android:minHeight="36dp"
         android:orientation="horizontal"
-        android:padding="8dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="7dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="7dp"
         app:layout_constraintTop_toBottomOf="@id/titleBar">
 
         <TextView
@@ -35,7 +38,8 @@
             android:focusable="true"
             android:gravity="center_vertical"
             android:singleLine="true"
-            android:textColor="@color/secondaryText"
+            android:ellipsize="start"
+            android:textColor="@color/on_surface_variant"
             android:textSize="13sp"
             tools:text="/" />
 
@@ -44,22 +48,32 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="4dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:gravity="center"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
+            android:paddingLeft="14dp"
+            android:paddingTop="6dp"
+            android:paddingRight="14dp"
+            android:paddingBottom="6dp"
             android:text="@string/go_back"
-            android:textFontWeight="800"
-            android:textSize="14sp"
-            app:cornerRadius="5dp"
+            android:textFontWeight="650"
+            android:textSize="13sp"
+            app:cornerRadius="9dp"
             tools:ignore="UnusedAttribute" />
     </LinearLayout>
+
+    <View
+        android:id="@+id/path_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bg_divider_line"
+        app:layout_constraintTop_toBottomOf="@id/lay_top" />
 
     <io.legado.app.ui.widget.anima.RefreshProgressBar
         android:id="@+id/refresh_progress_bar"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        app:layout_constraintTop_toBottomOf="@id/lay_top" />
+        app:layout_constraintTop_toBottomOf="@id/path_divider" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -83,8 +97,8 @@
             android:gravity="center"
             android:text="@string/empty"
             android:textColor="@color/on_surface_variant"
-        android:textSize="14sp"
-        android:visibility="gone"
+            android:textSize="14sp"
+            android:visibility="gone"
             tools:text="TextView" />
 
     </FrameLayout>
