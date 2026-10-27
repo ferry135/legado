@@ -9,5 +9,6 @@
     app:tabBackground="@android:color/transparent"
     app:tabRippleColor="@android:color/transparent"
     app:tabIndicatorColor="@color/accent"
+    app:tabIndicatorHeight="3dp"
     app:tabSelectedTextColor="@color/on_surface"
     app:tabTextColor="@color/on_surface_variant" />

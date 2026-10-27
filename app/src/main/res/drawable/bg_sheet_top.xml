@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 底部弹层：顶部 16dp 圆角（02 目录浮层 / 07 验证码 / BaseDialogFragment 16dp 圆角样式） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/surface_container" />
+    <corners
+        android:topLeftRadius="@dimen/corner_radius_lg"
+        android:topRightRadius="@dimen/corner_radius_lg" />
+</shape>

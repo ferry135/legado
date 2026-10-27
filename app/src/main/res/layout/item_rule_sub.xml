@@ -1,46 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- S8 规则订阅行：名称(16sp 粗体) + 类型徽章同行，URL 12sp 中间省略，编辑 + 更多；
+     行内边距 13/20，底部分割线 1dp -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="12dp">
+    android:paddingStart="20dp"
+    android:paddingTop="13dp"
+    android:paddingEnd="20dp"
+    android:paddingBottom="13dp">
 
     <TextView
         android:id="@+id/tv_name"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="3dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textSize="16sp"
+        android:textStyle="bold"
         android:textColor="@color/primaryText"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toStartOf="@id/tv_type"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/iv_edit"
         tools:text="name" />
 
-    <io.legado.app.ui.widget.text.AccentBgTextView
+    <!-- .badge：primary-soft 底 + on_primary_soft 文字，8dp 圆角 -->
+    <TextView
         android:id="@+id/tv_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="3dp"
-        android:textSize="12sp"
-        app:radius="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/tv_name"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/bg_chip_accent_soft"
+        android:paddingStart="8dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="2dp"
+        android:textColor="@color/on_primary_soft"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_name"
+        app:layout_constraintEnd_toStartOf="@id/iv_edit"
+        app:layout_constraintStart_toEndOf="@id/tv_name"
+        app:layout_constraintTop_toTopOf="@id/tv_name"
         tools:text="type" />
 
     <TextView
         android:id="@+id/tv_url"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="3dp"
+        android:layout_marginTop="5dp"
         android:textSize="12sp"
         android:textColor="@color/secondaryText"
         android:ellipsize="middle"
         android:singleLine="true"
+        app:layout_constraintEnd_toStartOf="@id/iv_edit"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_name"
-        app:layout_constraintLeft_toRightOf="@+id/tv_type"
-        app:layout_constraintRight_toLeftOf="@+id/iv_edit"
         tools:text="url" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -53,9 +71,9 @@
         android:padding="6dp"
         android:src="@drawable/ic_edit"
         android:tint="@color/primaryText"
-        app:layout_constraintRight_toLeftOf="@id/iv_menu_more"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/iv_menu_more"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_menu_more"
@@ -66,9 +84,17 @@
         android:src="@drawable/ic_more_vert"
         android:tint="@color/primaryText"
         android:contentDescription="@string/more_menu"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="RtlHardcoded" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/bg_divider_line"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

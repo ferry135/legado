@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- .field：surface2 填充底、10dp 圆角、聚焦 2dp 主色下划线、下距 10px（05 书源编辑 / 06 订阅源编辑共用） -->
 <io.legado.app.ui.widget.text.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/textInputLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="3dp">
+    android:layout_marginBottom="10dp"
+    app:boxBackgroundMode="filled"
+    app:boxBackgroundColor="@color/surface_container_high"
+    app:boxCornerRadiusTopStart="10dp"
+    app:boxCornerRadiusTopEnd="10dp"
+    app:boxCornerRadiusBottomStart="10dp"
+    app:boxCornerRadiusBottomEnd="10dp"
+    app:boxStrokeWidth="0dp"
+    app:boxStrokeWidthFocused="2dp">
 
     <io.legado.app.ui.widget.code.CodeView
         android:id="@+id/editText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
+        android:textSize="14sp"
         tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
 </io.legado.app.ui.widget.text.TextInputLayout>

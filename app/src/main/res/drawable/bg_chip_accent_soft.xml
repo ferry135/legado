@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 主色柔光圆角标签（8dp）：primary-soft 底，文字用 on_primary_soft（亮）/ primary（暗） -->
+<!-- 用于 02 chip-soft、04 chip.k、06 规则徽标、07 chiptag、08 srcchip -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/bnv_item_indicator" />
+    <corners android:radius="@dimen/corner_radius_sm" />
+</shape>

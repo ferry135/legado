@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background_menu"
+    android:background="@drawable/bg_read_sheet_top"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:paddingTop="6dp"
-    android:paddingBottom="6dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="18dp"
     android:orientation="vertical">
 
     <LinearLayout
@@ -32,12 +32,16 @@
                 android:layout_weight="1"
                 android:text="@string/auto_page_speed"
                 android:textColor="@color/primaryText"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_read_speed"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
@@ -53,6 +57,14 @@
 
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="4dp"
+        android:background="@color/divider_subtle" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -63,8 +75,8 @@
         <!--目录按钮-->
         <LinearLayout
             android:id="@+id/ll_catalog"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="64dp"
+            android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:contentDescription="@string/chapter_list"
@@ -75,8 +87,9 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_catalog"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:maxHeight="22dp"
                 android:contentDescription="@string/chapter_list"
                 android:src="@drawable/ic_toc"
                 app:tint="@color/primaryText"
@@ -101,8 +114,8 @@
         <!--调节按钮-->
         <LinearLayout
             android:id="@+id/ll_main_menu"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="64dp"
+            android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:contentDescription="@string/read_aloud"
@@ -113,8 +126,9 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_main_menu"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:maxHeight="22dp"
                 android:contentDescription="@string/main_menu"
                 android:src="@drawable/ic_menu"
                 app:tint="@color/primaryText"
@@ -139,8 +153,8 @@
         <!--界面按钮-->
         <LinearLayout
             android:id="@+id/ll_auto_page_stop"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="64dp"
+            android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:contentDescription="@string/stop"
@@ -151,8 +165,9 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_auto_page_stop"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:maxHeight="22dp"
                 android:contentDescription="@string/stop"
                 android:src="@drawable/ic_auto_page_stop"
                 app:tint="@color/primaryText"
@@ -177,8 +192,8 @@
         <!--设置按钮-->
         <LinearLayout
             android:id="@+id/ll_setting"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="64dp"
+            android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:contentDescription="@string/setting"
@@ -189,8 +204,9 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_setting"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:maxHeight="22dp"
                 android:contentDescription="@string/aloud_config"
                 android:src="@drawable/ic_settings"
                 app:tint="@color/primaryText"

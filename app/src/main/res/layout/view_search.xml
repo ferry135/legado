@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 搜索胶囊（04）：40dp 高、全圆角胶囊、surface2 填充，blend 顶栏内垂直边距 8dp -->
 <io.legado.app.ui.widget.SearchView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/search_view"
         android:theme="@style/ThemeOverlay.Legado.Search"
         android:background="@drawable/bg_searchview"
+        android:backgroundTint="@color/surface_container_high"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:imeOptions="actionSearch"
         android:focusable="false"
         app:searchIcon="@null"

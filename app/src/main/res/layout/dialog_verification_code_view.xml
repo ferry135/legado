@@ -4,14 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:background="@drawable/bg_sheet_top"
+    android:orientation="vertical"
+    android:paddingBottom="18dp">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background_menu"
-        android:elevation="5dp"
+        android:background="@android:color/transparent"
+        android:elevation="0dp"
         android:theme="?attr/actionBarStyle"
         app:popupTheme="@style/AppTheme.PopupOverlay"
         app:title="@string/input_verification_code"
@@ -21,14 +23,24 @@
         android:id="@+id/verification_code_image_view"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:layout_marginLeft="14dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="14dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/bg_edit_filled"
+        android:paddingLeft="10dp"
+        android:paddingTop="6dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="6dp"
         android:scaleType="fitCenter"
         tools:ignore="UnusedAttribute" />
 
     <io.legado.app.ui.widget.text.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="14dp"
         android:layout_marginTop="8dp"
+        android:layout_marginRight="14dp"
         android:padding="3dp">
 
         <io.legado.app.lib.theme.view.ThemeEditText

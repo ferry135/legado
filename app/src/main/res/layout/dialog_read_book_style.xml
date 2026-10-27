@@ -5,7 +5,7 @@
     android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background"
+    android:background="@drawable/bg_read_sheet_top"
     android:orientation="vertical">
 
     <LinearLayout
@@ -21,13 +21,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingLeft="6dp"
-            android:paddingTop="4dp"
-            android:paddingRight="6dp"
-            android:paddingBottom="4dp"
-            android:textSize="14sp"
+            android:paddingLeft="11dp"
+            android:paddingTop="6dp"
+            android:paddingRight="11dp"
+            android:paddingBottom="6dp"
+            android:textSize="13sp"
             app:isBottomBackground="true"
-            app:radius="3dp" />
+            app:radius="8dp" />
 
         <Space
             android:layout_width="0dp"
@@ -39,14 +39,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingLeft="6dp"
-            android:paddingTop="4dp"
-            android:paddingRight="6dp"
-            android:paddingBottom="4dp"
+            android:paddingLeft="11dp"
+            android:paddingTop="6dp"
+            android:paddingRight="11dp"
+            android:paddingBottom="6dp"
             android:text="@string/text_font"
-            android:textSize="14sp"
+            android:textSize="13sp"
             app:isBottomBackground="true"
-            app:radius="3dp" />
+            app:radius="8dp" />
 
         <Space
             android:layout_width="0dp"
@@ -58,14 +58,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingLeft="6dp"
-            android:paddingTop="4dp"
-            android:paddingRight="6dp"
-            android:paddingBottom="4dp"
+            android:paddingLeft="11dp"
+            android:paddingTop="6dp"
+            android:paddingRight="11dp"
+            android:paddingBottom="6dp"
             android:text="@string/text_indent"
-            android:textSize="14sp"
+            android:textSize="13sp"
             app:isBottomBackground="true"
-            app:radius="3dp" />
+            app:radius="8dp" />
 
         <Space
             android:layout_width="0dp"
@@ -77,13 +77,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingLeft="6dp"
-            android:paddingTop="4dp"
-            android:paddingRight="6dp"
-            android:paddingBottom="4dp"
-            android:textSize="14sp"
+            android:paddingLeft="11dp"
+            android:paddingTop="6dp"
+            android:paddingRight="11dp"
+            android:paddingBottom="6dp"
+            android:textSize="13sp"
             app:isBottomBackground="true"
-            app:radius="3dp" />
+            app:radius="8dp" />
 
         <Space
             android:layout_width="0dp"
@@ -95,14 +95,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingLeft="6dp"
-            android:paddingTop="4dp"
-            android:paddingRight="6dp"
-            android:paddingBottom="4dp"
+            android:paddingLeft="11dp"
+            android:paddingTop="6dp"
+            android:paddingRight="11dp"
+            android:paddingBottom="6dp"
             android:text="@string/padding"
-            android:textSize="14sp"
+            android:textSize="13sp"
             app:isBottomBackground="true"
-            app:radius="3dp" />
+            app:radius="8dp" />
 
         <Space
             android:layout_width="0dp"
@@ -114,14 +114,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingLeft="6dp"
-            android:paddingTop="4dp"
-            android:paddingRight="6dp"
-            android:paddingBottom="4dp"
+            android:paddingLeft="11dp"
+            android:paddingTop="6dp"
+            android:paddingRight="11dp"
+            android:paddingBottom="6dp"
             android:text="@string/information"
-            android:textSize="14sp"
+            android:textSize="13sp"
             app:isBottomBackground="true"
-            app:radius="3dp" />
+            app:radius="8dp" />
 
     </LinearLayout>
 
@@ -165,17 +165,17 @@
     <View
         android:id="@+id/vw_bg_fg"
         android:layout_width="match_parent"
-        android:layout_height="0.8dp"
+        android:layout_height="1dp"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginVertical="8dp"
-        android:background="@color/btn_bg_press" />
+        android:layout_marginVertical="12dp"
+        android:background="@color/divider_subtle" />
 
     <TextView
         android:id="@+id/tv_page_anim"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="8dp"
         android:alpha="0.75"
         android:text="@string/page_anim"
         android:textSize="12sp" />
@@ -184,7 +184,7 @@
         android:id="@+id/rg_page_anim"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="11dp"
+        android:layout_marginHorizontal="12dp"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -196,7 +196,10 @@
             android:layout_weight="1"
             android:button="@null"
             android:gravity="center"
-            android:padding="5dp"
+            android:paddingLeft="4dp"
+            android:paddingTop="9dp"
+            android:paddingRight="4dp"
+            android:paddingBottom="9dp"
             android:singleLine="true"
             android:text="@string/page_anim_cover"
             app:isBottomBackground="true" />
@@ -209,7 +212,10 @@
             android:layout_weight="1"
             android:button="@null"
             android:gravity="center"
-            android:padding="5dp"
+            android:paddingLeft="4dp"
+            android:paddingTop="9dp"
+            android:paddingRight="4dp"
+            android:paddingBottom="9dp"
             android:singleLine="true"
             android:text="@string/page_anim_slide"
             app:isBottomBackground="true" />
@@ -222,7 +228,10 @@
             android:layout_weight="1"
             android:button="@null"
             android:gravity="center"
-            android:padding="5dp"
+            android:paddingLeft="4dp"
+            android:paddingTop="9dp"
+            android:paddingRight="4dp"
+            android:paddingBottom="9dp"
             android:singleLine="true"
             android:text="@string/page_anim_simulation"
             app:isBottomBackground="true" />
@@ -235,7 +244,10 @@
             android:layout_weight="1"
             android:button="@null"
             android:gravity="center"
-            android:padding="5dp"
+            android:paddingLeft="4dp"
+            android:paddingTop="9dp"
+            android:paddingRight="4dp"
+            android:paddingBottom="9dp"
             android:singleLine="true"
             android:text="@string/page_anim_scroll"
             app:isBottomBackground="true" />
@@ -248,7 +260,10 @@
             android:layout_weight="1"
             android:button="@null"
             android:gravity="center"
-            android:padding="5dp"
+            android:paddingLeft="4dp"
+            android:paddingTop="9dp"
+            android:paddingRight="4dp"
+            android:paddingBottom="9dp"
             android:singleLine="true"
             android:text="@string/page_anim_none"
             app:isBottomBackground="true" />
@@ -258,10 +273,10 @@
     <View
         android:id="@+id/vw_bg_fg1"
         android:layout_width="match_parent"
-        android:layout_height="0.8dp"
+        android:layout_height="1dp"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginVertical="8dp"
-        android:background="@color/btn_bg_press" />
+        android:layout_marginVertical="12dp"
+        android:background="@color/divider_subtle" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -273,7 +288,7 @@
             android:id="@+id/tv_bg_ts"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="18dp"
             android:layout_weight="1"
             android:alpha="0.75"
             android:text="@string/text_bg_style"
@@ -283,14 +298,15 @@
             android:id="@+id/tv_share_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/share_layout" />
+            android:text="@string/share_layout"
+            android:textSize="13sp" />
 
         <io.legado.app.ui.widget.checkbox.SmoothCheckBox
             android:id="@+id/cb_share_layout"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginStart="6dp"
-            android:layout_marginEnd="16dp" />
+            android:layout_marginEnd="18dp" />
 
     </LinearLayout>
 
@@ -302,7 +318,7 @@
         android:layout_marginBottom="16dp"
         android:clipToPadding="false"
         android:orientation="horizontal"
-        android:paddingHorizontal="12dp"
+        android:paddingHorizontal="16dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tool:listitem="@layout/item_read_style" />
 

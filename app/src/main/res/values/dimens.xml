@@ -10,6 +10,9 @@
     <dimen name="corner_radius_sm">8dp</dimen>
     <dimen name="corner_radius_md">12dp</dimen>
     <dimen name="corner_radius_lg">16dp</dimen>
+    <!--设计稿 v2 补充：阅读菜单面板/底部导航 20dp；书籍详情面板、胶囊 Tabs 24dp-->
+    <dimen name="corner_radius_xl">20dp</dimen>
+    <dimen name="corner_radius_xxl">24dp</dimen>
     <dimen name="spacing_xs">4dp</dimen>
     <dimen name="spacing_sm">8dp</dimen>
     <dimen name="spacing_md">12dp</dimen>

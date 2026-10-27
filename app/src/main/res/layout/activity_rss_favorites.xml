@@ -13,16 +13,24 @@
         app:themeMode="blend"
         app:title="@string/favorites" />
 
+    <!-- .tabs-row：收藏分组 Tab，主色 3dp 下划线指示器 -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:tabIndicatorHeight="3dp"
         app:tabMode="scrollable" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bg_divider_line" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         tools:ignore="SpeakableTextPresentCheck" />
 
 </LinearLayout>

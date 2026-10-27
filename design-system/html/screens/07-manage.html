@@ -1,0 +1,873 @@
+<!doctype html>
+<!-- design-system: legado v2 -->
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>legado v2 · 07 管理与导入</title><style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Noto Sans SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;background:#eae7e0;color:#3a3833}
+.wrap{max-width:1180px;margin:0 auto;padding:52px 24px 110px;display:flex;flex-direction:column;gap:60px;align-items:center}
+/* ---------- 页头 ---------- */
+.page-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:16px}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.14em;color:#a8623c}
+.h1{font-size:34px;font-weight:750;line-height:1.2;margin:0}
+.h1 small{font-size:15px;font-weight:600;color:#60656d;margin-left:12px}
+.desc{font-size:14px;line-height:1.8;color:#60656d;margin:0;max-width:760px}
+.nav{display:flex;flex-wrap:wrap;gap:10px}
+.nav a{text-decoration:none;font-size:13px;font-weight:600;color:#5a574e;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:999px;padding:9px 16px;transition:.15s}
+.nav a:hover{background:#ff6b2c;color:#fff;border-color:#ff6b2c}
+.nav a b{font-weight:750;color:inherit;opacity:.55;margin-right:6px}
+/* ---------- 屏幕区 ---------- */
+.screen{width:100%;display:flex;flex-direction:column;align-items:center;gap:24px;scroll-margin-top:20px}
+.screen-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:10px}
+.st-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.st-num{font-size:13px;font-weight:750;color:#ff6b2c;letter-spacing:.08em}
+.st-title{font-size:24px;font-weight:750;margin:0}
+.st-src{font-size:12px;color:#60656d}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{font-size:12px;color:#6d6a62;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:7px;padding:5px 10px}
+.pairs{display:flex;gap:30px;flex-wrap:wrap;justify-content:center}
+.pair{display:flex;flex-direction:column;gap:10px;align-items:center}
+.theme-tag{font-size:12px;font-weight:700;color:#60656d;letter-spacing:.1em}
+/* ---------- 手机壳 ---------- */
+.phone{width:412px;height:900px;border-radius:30px;position:relative;overflow:hidden;background:var(--bg);color:var(--text);border:1px solid rgba(0,0,0,.09);flex:none}
+.phone.light{--bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--feature:#fff1e8;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--on-primary:#fff;--track:#e5e2de;--divider:rgba(0,0,0,.07);--field:rgba(0,0,0,.06);--menu:#fff;--error:#ba1a1a;--ok:#3b7a45}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--feature:#2b1d15;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--on-primary:#fff;--track:#353331;--divider:rgba(255,255,255,.08);--field:rgba(255,255,255,.08);--menu:#2a2824;--error:#ffb4ab;--ok:#7fd891}
+.status{height:34px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:14px;font-weight:600}
+.status-right{display:flex;gap:10px;align-items:center}
+.hi{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--text);opacity:.4;z-index:30}
+/* ---------- 顶栏（blend） ---------- */
+.tbar{padding:4px 8px 0}
+.trow{display:flex;align-items:center;gap:2px;min-height:50px}
+.tb-title{font-size:18px;font-weight:650;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-sub{font-size:12px;color:var(--secondary);margin-top:2px}
+.tcol{flex:1;min-width:0}
+.icon-btn{width:44px;height:44px;border:0;background:transparent;border-radius:22px;display:grid;place-items:center;cursor:pointer;color:var(--text)}
+.icon{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon.f{fill:currentColor;stroke:none}
+.icon.s{width:20px;height:20px}
+.icon-btn.sm{width:40px;height:40px}
+/* 搜索药丸（view_search：圆角 35、10% 透明底） */
+.searchwrap{padding:2px 8px 12px}
+.searchfield{height:40px;border-radius:20px;background:var(--field);display:flex;align-items:center;gap:10px;padding:0 16px;color:var(--secondary);font-size:14px}
+.searchfield .icon{width:19px;height:19px;flex:none}
+/* ---------- 分割线与列表 ---------- */
+.vd{height:1px;background:var(--divider);margin-left:10px}
+.vr{height:1px;background:var(--divider)}
+/* 文件行（item_import_book：60dp） */
+.frow{display:flex;align-items:center;padding:8px 6px;min-height:60px}
+.lead{width:52px;display:grid;place-items:center;flex:none;color:var(--text)}
+.frow .n{font-size:16px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.frow .brief{display:flex;align-items:center;gap:14px;margin-top:5px;font-size:12px;color:var(--secondary)}
+.chiptag{font-size:11px;font-weight:700;color:var(--primary);background:var(--primary-soft);border-radius:8px;padding:2px 7px;letter-spacing:.04em}
+/* 书架整理行（item_arrange_book） */
+.brow{display:flex;align-items:center;gap:12px;padding:12px 6px}
+.binfo{flex:1;min-width:0}
+.l1{display:flex;align-items:center;gap:10px}
+.bname{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bauthor{font-size:12px;color:var(--secondary);flex:none;max-width:88px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.l2{display:flex;align-items:center;gap:6px;margin-top:7px;font-size:12px;color:var(--secondary)}
+.l2 .sp{flex:1}
+.tbtn{border:0;background:transparent;color:var(--secondary);font-size:12px;padding:6px 8px;border-radius:8px;cursor:pointer;font-family:inherit}
+.l2 .meta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* 缓存行（item_download） */
+.crow{display:flex;align-items:flex-start;gap:8px;padding:14px 6px}
+.cinfo{flex:1;min-width:0}
+.crow .cname{font-size:15px;font-weight:600}
+.crow .cauthor{font-size:12px;color:var(--secondary);margin-top:4px}
+.crow .cstate{font-size:12px;color:var(--secondary);margin-top:4px}
+.cacts{display:flex;align-items:center;gap:2px;margin-top:2px}
+.play{width:38px;height:38px;border:0;background:transparent;border-radius:19px;display:grid;place-items:center;color:var(--text);cursor:pointer}
+.expbtn{border:0;background:transparent;color:var(--text);font-size:13px;padding:10px 8px;border-radius:8px;cursor:pointer;font-family:inherit}
+.pg{height:4px;border-radius:3px;background:var(--track);overflow:hidden;margin-top:9px}
+.pg>span{display:block;height:100%;border-radius:3px;background:var(--primary)}
+.emsg{font-size:12px;color:var(--secondary);margin-top:8px}
+/* 分组管理行（item_book_group_manage） */
+.grow{display:flex;align-items:center;gap:8px;padding:14px 8px}
+.grow .gname{flex:1;min-width:0;font-size:15px;color:var(--secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* 开关 */
+.sw{width:40px;height:24px;border-radius:12px;background:var(--track);position:relative;flex:none}
+.sw::after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.sw.on{background:var(--primary)}.sw.on::after{left:19px}
+/* 复选框 */
+.cb{width:22px;height:22px;flex:none;display:grid;place-items:center;border-radius:6px;border:2px solid var(--secondary);color:transparent;background:transparent}
+.cb svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cb.on{background:var(--primary);border-color:var(--primary);color:#fff}
+/* 路径条（lay_top） */
+.pathbar{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-bottom:1px solid var(--divider)}
+.pathbar .p{flex:1;min-width:0;font-size:13px;color:var(--secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ghost{border:1px solid var(--track);background:transparent;color:var(--text);border-radius:9px;padding:6px 14px;font-size:13px;font-weight:650;cursor:pointer;font-family:inherit;flex:none}
+.ghost.n{color:var(--secondary);border-color:var(--divider)}
+.ghost.pri{border-color:var(--primary);color:var(--primary)}
+.soft{border:0;background:var(--primary-soft);color:var(--primary);border-radius:9px;padding:8px 15px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex:none}
+/* 扫描进度线（RefreshProgressBar 2dp） */
+.scanline{height:2px;background:var(--track)}
+.scanline>span{display:block;height:100%;width:36%;background:var(--primary)}
+/* 选择操作栏（view_select_action_bar） */
+.selectbar{position:absolute;left:0;right:0;bottom:0;background:var(--surface2);border-top:1px solid var(--divider);display:flex;align-items:center;gap:6px;padding:9px 12px 22px;z-index:8}
+.selectbar .all{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:600;flex:1;min-width:0}
+.selectbar .all .cnt{color:var(--secondary);font-weight:500}
+/* 弹出菜单（PopupMenu → 12dp 圆角、无阴影描边） */
+.menu{position:absolute;background:var(--menu);border:1px solid var(--divider);border-radius:12px;padding:6px;min-width:190px;z-index:12}
+.menu .mi{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:9px;font-size:14px;color:var(--text);white-space:nowrap}
+.menu .mi .icon{width:19px;height:19px;color:var(--secondary)}
+.menu .mi.danger{color:var(--error)}
+.menu .mi.ck{justify-content:space-between;gap:16px}
+.menu .ckc{color:var(--primary)}
+/* 对话框 */
+.dim{position:absolute;inset:0;background:rgba(0,0,0,.46);z-index:5}
+.card{position:absolute;background:var(--surface);border-radius:16px;z-index:9;overflow:hidden;border:1px solid var(--divider)}
+.card .head{padding:18px 22px 8px;font-size:17px;font-weight:650}
+.card .body{padding:12px 22px 8px}
+.input{border:1px solid var(--track);border-radius:12px;padding:13px 14px;font-size:14px;color:var(--secondary)}
+.card .foot{display:flex;justify-content:flex-end;gap:4px;padding:12px 14px 16px}
+.txtbtn{border:0;background:transparent;font-size:14px;font-weight:650;color:var(--secondary);padding:10px 14px;border-radius:10px;cursor:pointer;font-family:inherit}
+.txtbtn.pri{color:var(--primary)}
+.card label{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--secondary);padding:10px 0 2px}
+/* 底部弹层（验证码：宽 100%） */
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:16px 16px 0 0;z-index:9;border-top:1px solid var(--divider);overflow:hidden}
+.sheet .st{display:flex;align-items:center;padding:6px 8px 4px}
+.sheet .st .tcol{padding-left:6px}
+.cap{margin:8px 14px 4px;border-radius:12px;background:var(--surface2);display:grid;place-items:center;height:100px}
+.capin{padding:6px 14px 4px}
+.lab{font-size:12px;color:var(--secondary);margin:6px 2px 4px}
+.capin .input{width:100%;color:var(--text)}
+/* 添加网址对话框背景书架 */
+.bs{position:absolute;inset:0;padding:6px 16px;z-index:1}
+.bs .bsh{font-size:29px;font-weight:650;margin:14px 4px 18px}
+.bs .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.cv{height:150px;border-radius:10px;display:flex;align-items:flex-end;padding:10px;font-size:13px;font-weight:700;color:rgba(255,255,255,.92)}
+/* 空态 */
+.empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--secondary);font-size:14px;text-align:center;padding:0 40px;z-index:2}
+/* 注释 */
+.notes{width:100%;max-width:1080px;font-size:12.5px;line-height:1.9;color:#60656d;border-top:1px dashed rgba(0,0,0,.12);padding-top:12px}
+.notes code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px}
+.foot{font-size:12px;color:#60656d;text-align:center;line-height:2}
+</style></head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+<symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></symbol>
+<symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 8a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"/><path d="M14 3v4h4"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-3-6 3z"/></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z"/></symbol>
+<symbol id="i-stop" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2"/></symbol>
+<symbol id="i-sort" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M7 12h10"/><path d="M10 17h4"/></symbol>
+<symbol id="i-tag" viewBox="0 0 24 24"><path d="M12.6 3H4v8.6l8.7 8.7a1.6 1.6 0 0 0 2.3 0l6.3-6.3a1.6 1.6 0 0 0 0-2.3z"/><circle cx="8.2" cy="7.2" r="1.4"/></symbol>
+<symbol id="i-group" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3 2.8-5 5.5-5s4.9 2 5.5 5"/><circle cx="16.5" cy="9" r="2.6"/><path d="M16.2 14.2c2.3.3 4 2 4.5 4.8"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19.5 8.5a2.12 2.12 0 0 0-3-3L5 17z"/><path d="m13.5 6.5 3 3"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="m7 7 1 13h8l1-13"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 2.8V11c0 4.6-3 8.2-7 10-4-1.8-7-5.4-7-10V5.8z"/></symbol>
+<symbol id="i-server" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="7" rx="2"/><rect x="4" y="13" width="16" height="7" rx="2"/><path d="M8 7.5h.01"/><path d="M8 16.5h.01"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.4 9.4a2.6 2.6 0 1 1 3.6 2.4c-.8.35-1 .95-1 1.8"/><path d="M12 17h.01"/></symbol>
+<symbol id="i-log" viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"/><path d="M14 3v4h4"/><path d="M9 12h6"/><path d="M9 16h4"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.6 3.8 5.6 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></symbol>
+<symbol id="i-scan" viewBox="0 0 24 24"><path d="M4 8V6a2 2 0 0 1 2-2h2"/><path d="M16 4h2a2 2 0 0 1 2 2v2"/><path d="M20 16v2a2 2 0 0 1-2 2h-2"/><path d="M8 20H6a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+<symbol id="i-swap" viewBox="0 0 24 24"><path d="M8 3 4 7l4 4"/><path d="M4 7h12a4 4 0 0 1 4 4v1"/><path d="m16 21 4-4-4-4"/><path d="M20 17H8a4 4 0 0 1-4-4v-1"/></symbol>
+</defs></svg>
+
+<div class="wrap">
+
+<header class="page-head">
+  <div class="kicker">LEGADO V2 · DESIGN SCREENS</div>
+  <h1 class="h1">管理与导入<small>07 · Manage &amp; Import · 8 屏 · 浅色 / 深色</small></h1>
+  <p class="desc">覆盖书架整理、分组管理、本地导入、远程导入、文件管理、添加网址、验证码、缓存导出。所有功能块、控件与菜单项均取自现有布局与 Activity 代码（见每屏下方来源注释），视觉令牌与 <b>novel_reader_light.html</b> 一致：主色 #FF6B2C、暖纸白/暖黑表面、8% 弱分割线、大圆角、无阴影、blend 顶栏。</p>
+  <nav class="nav">
+    <a href="#m1"><b>01</b>书架整理</a><a href="#m2"><b>02</b>分组管理</a><a href="#m3"><b>03</b>本地导入</a><a href="#m4"><b>04</b>远程导入</a><a href="#m5"><b>05</b>文件管理</a><a href="#m6"><b>06</b>添加网址</a><a href="#m7"><b>07</b>验证码</a><a href="#m8"><b>08</b>缓存导出</a>
+  </nav>
+</header>
+
+<!-- ================= 01 书架整理 ================= -->
+<section class="screen" id="m1">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">01</span><h2 class="st-title">书架整理</h2><span class="st-src">BookshelfManageActivity · activity_arrange_book.xml · item_arrange_book.xml · menu/bookshelf_manage.xml · menu/bookshelf_menage_sel.xml</span></div>
+    <div class="chips"><span>筛选搜索</span><span>分组子菜单</span><span>导出所有书的书源</span><span>点击书名打开详情</span><span>滑选 / 拖拽排序</span><span>行内 分组 / 删除</span><span>全选（n/m）</span><span>反选</span><span>移入分组</span><span>允许/禁止更新</span><span>加入分组</span><span>批量换源</span><span>清理缓存</span><span>选中所选区间</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：常规态 -->
+    <div class="pair"><div class="theme-tag">浅色</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="tbar">
+        <div class="trow">
+          <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+          <div class="tb-title">书架管理</div>
+          <button class="icon-btn" title="分组"><svg class="icon"><use href="#i-tag"/></svg></button>
+          <button class="icon-btn" title="更多菜单"><svg class="icon"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="searchwrap"><div class="searchfield"><svg class="icon"><use href="#i-search"/></svg>筛选 • 全部</div></div>
+      </div>
+      <div style="padding:0 10px">
+        <div class="brow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span>
+          <div class="binfo"><div class="l1"><span class="bname">国民法医</span><span class="bauthor">志鸟村</span></div>
+          <div class="l2"><span class="meta">起点</span><span class="meta">追更</span><span class="sp"></span><button class="tbtn">分组</button><button class="tbtn">删除</button></div></div></div>
+        <div class="vr"></div>
+        <div class="brow"><span class="cb"></span>
+          <div class="binfo"><div class="l1"><span class="bname">大奉打更人</span><span class="bauthor">卖报小郎君</span></div>
+          <div class="l2"><span class="meta">番茄</span><span class="meta">未分组</span><span class="sp"></span><button class="tbtn">分组</button><button class="tbtn">删除</button></div></div></div>
+        <div class="vr"></div>
+        <div class="brow"><span class="cb"></span>
+          <div class="binfo"><div class="l1"><span class="bname">深空彼岸</span><span class="bauthor">辰东</span></div>
+          <div class="l2"><span class="meta">起点</span><span class="meta">养肥</span><span class="sp"></span><button class="tbtn">分组</button><button class="tbtn">删除</button></div></div></div>
+        <div class="vr"></div>
+        <div class="brow"><span class="cb"></span>
+          <div class="binfo"><div class="l1"><span class="bname">十日终焉</span><span class="bauthor">杀虫队队员</span></div>
+          <div class="l2"><span class="meta">番茄</span><span class="meta">完结</span><span class="sp"></span><button class="tbtn">分组</button><button class="tbtn">删除</button></div></div></div>
+        <div class="vr"></div>
+        <div class="brow"><span class="cb"></span>
+          <div class="binfo"><div class="l1"><span class="bname">道诡异仙</span><span class="bauthor">狐尾的笔</span></div>
+          <div class="l2"><span class="meta">纵横</span><span class="meta">未分组</span><span class="sp"></span><button class="tbtn">分组</button><button class="tbtn">删除</button></div></div></div>
+        <div class="vr"></div>
+        <div class="brow"><span class="cb"></span>
+          <div class="binfo"><div class="l1"><span class="bname">诡秘之主</span><span class="bauthor">爱潜水的乌贼</span></div>
+          <div class="l2"><span class="meta">起点</span><span class="meta">完结</span><span class="sp"></span><button class="tbtn">分组</button><button class="tbtn">删除</button></div></div></div>
+      </div>
+      <div class="selectbar">
+        <span class="all"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span>全选<span class="cnt">（1/6）</span></span>
+        <button class="ghost n">反选</button>
+        <button class="soft">移入分组</button>
+        <button class="icon-btn sm"><svg class="icon"><use href="#i-more"/></svg></button>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：批量菜单展开态 -->
+    <div class="pair"><div class="theme-tag">深色 · 批量菜单</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="tbar">
+        <div class="trow">
+          <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+          <div class="tb-title">书架管理</div>
+          <button class="icon-btn" title="分组"><svg class="icon"><use href="#i-tag"/></svg></button>
+          <button class="icon-btn" title="更多菜单"><svg class="icon"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="searchwrap"><div class="searchfield"><svg class="icon"><use href="#i-search"/></svg>筛选 • 追更</div></div>
+      </div>
+      <div style="padding:0 10px">
+        <div class="brow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span>
+          <div class="binfo"><div class="l1"><span class="bname">国民法医</span><span class="bauthor">志鸟村</span></div>
+          <div class="l2"><span class="meta">起点</span><span class="meta">追更</span><span class="sp"></span><button class="tbtn">分组</button><button class="tbtn">删除</button></div></div></div>
+        <div class="vr"></div>
+        <div class="brow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span>
+          <div class="binfo"><div class="l1"><span class="bname">深空彼岸</span><span class="bauthor">辰东</span></div>
+          <div class="l2"><span class="meta">起点</span><span class="meta">追更</span><span class="sp"></span><button class="tbtn">分组</button><button class="tbtn">删除</button></div></div></div>
+        <div class="vr"></div>
+        <div class="brow"><span class="cb"></span>
+          <div class="binfo"><div class="l1"><span class="bname">夜的命名术</span><span class="bauthor">会说话的肘子</span></div>
+          <div class="l2"><span class="meta">起点</span><span class="meta">追更</span><span class="sp"></span><button class="tbtn">分组</button><button class="tbtn">删除</button></div></div></div>
+      </div>
+      <div class="menu" style="right:14px;bottom:104px">
+        <div class="mi">删除</div>
+        <div class="vd"></div>
+        <div class="mi">允许更新</div>
+        <div class="mi">禁止更新</div>
+        <div class="mi">加入分组</div>
+        <div class="mi">批量换源</div>
+        <div class="mi">清理缓存</div>
+        <div class="mi">选中所选区间</div>
+      </div>
+      <div class="selectbar">
+        <span class="all"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span>全选<span class="cnt">（2/3）</span></span>
+        <button class="ghost n">反选</button>
+        <button class="soft">移入分组</button>
+        <button class="icon-btn sm" style="color:var(--primary)"><svg class="icon"><use href="#i-more"/></svg></button>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <p class="notes">来源：<code>ui/book/manage/BookshelfManageActivity.kt:152-155</code>（菜单）<code>:212-220</code>（选择栏主按钮=移入分组）<code>:320-335</code>（批量菜单七项）；行内「分组/删除」来自 <code>item_arrange_book.xml:63-96</code>；顶栏搜索提示「筛选 • 分组名」来自 <code>:178</code>；长按删除带「删除源文件」复选框（<code>:346-363</code>）。菜单为 PopupMenu 悬浮层，此处展开以记录全部批量操作。</p>
+</section>
+
+<!-- ================= 02 分组管理 ================= -->
+<section class="screen" id="m2">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">02</span><h2 class="st-title">分组管理</h2><span class="st-src">GroupManageDialog · dialog_recycler_view.xml · item_book_group_manage.xml · menu/book_group_manage.xml</span></div>
+    <div class="chips"><span>添加分组（上限 64）</span><span>编辑</span><span>显示开关</span><span>拖拽排序</span><span>确定</span></div>
+  </div>
+  <div class="pairs">
+    <div class="pair"><div class="theme-tag">浅色</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim" style="background:rgba(0,0,0,.38)"></div>
+      <div class="card" style="left:18px;right:18px;top:70px;bottom:64px">
+        <div class="trow" style="padding:4px 8px">
+          <div class="tcol"><div class="tb-title">分组管理</div></div>
+          <button class="icon-btn" title="添加分组"><svg class="icon"><use href="#i-plus"/></svg></button>
+        </div>
+        <div style="padding:2px 10px">
+          <div class="grow"><span class="gname">全部(全部)</span><span class="sw on"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">本地(本地)</span><span class="sw"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">音频(音频)</span><span class="sw on"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">追更</span><button class="tbtn">编辑</button><span class="sw on"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">养肥</span><button class="tbtn">编辑</button><span class="sw on"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">完结</span><button class="tbtn">编辑</button><span class="sw"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">网络未分组(网络未分组)</span><span class="sw on"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">本地未分组(本地未分组)</span><span class="sw"></span></div>
+        </div>
+        <div style="position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:flex-end;padding:6px 18px 14px;border-top:1px solid var(--divider)">
+          <button class="txtbtn pri">确定</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <div class="pair"><div class="theme-tag">深色</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim" style="background:rgba(0,0,0,.38)"></div>
+      <div class="card" style="left:18px;right:18px;top:70px;bottom:64px">
+        <div class="trow" style="padding:4px 8px">
+          <div class="tcol"><div class="tb-title">分组管理</div></div>
+          <button class="icon-btn" title="添加分组"><svg class="icon"><use href="#i-plus"/></svg></button>
+        </div>
+        <div style="padding:2px 10px">
+          <div class="grow"><span class="gname">全部(全部)</span><span class="sw on"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">本地(本地)</span><span class="sw"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">音频(音频)</span><span class="sw on"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">追更</span><button class="tbtn">编辑</button><span class="sw on"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">养肥</span><button class="tbtn">编辑</button><span class="sw on"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">完结</span><button class="tbtn">编辑</button><span class="sw"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">网络未分组(网络未分组)</span><span class="sw on"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">本地未分组(本地未分组)</span><span class="sw"></span></div>
+        </div>
+        <div style="position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:flex-end;padding:6px 18px 14px;border-top:1px solid var(--divider)">
+          <button class="txtbtn pri">确定</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <p class="notes">来源：<code>ui/book/group/GroupManageDialog.kt:57-77</code>（工具栏标题/添加入口/拖拽排序/确定按钮）<code>:96-105</code>（添加分组，上限 64）；行内「编辑 + 显示开关」来自 <code>item_book_group_manage.xml</code>；内置分组名与后缀来自 <code>BookGroup.getManageName()</code>（全部/本地/音频/网络未分组/本地未分组…）。对话框占屏约 90%（<code>setLayout(0.9f, 0.9f)</code>）。「编辑」打开编辑分组对话框（分组名称/排序/允许下拉刷新/删除），不在本组 8 屏范围内。</p>
+</section>
+
+<!-- ================= 03 本地导入 ================= -->
+<section class="screen" id="m3">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">03</span><h2 class="st-title">本地导入</h2><span class="st-src">ImportBookActivity · activity_import_book.xml · item_import_book.xml · menu/import_book.xml · menu/import_book_sel.xml</span></div>
+    <div class="chips"><span>筛选搜索</span><span>选择文件夹</span><span>排序（名称/大小/时间）</span><span>智能扫描</span><span>导入文件名 JS</span><span>路径 / 上级</span><span>文件夹 / 已在书架</span><span>格式 / 大小 / 日期</span><span>全选 / 反选</span><span>放入书架</span><span>删除</span><span>空态引导</span></div>
+  </div>
+  <div class="pairs">
+    <div class="pair"><div class="theme-tag">浅色</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="tbar">
+        <div class="trow">
+          <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+          <div class="tb-title"></div>
+          <button class="icon-btn" title="选择文件夹"><svg class="icon"><use href="#i-folder"/></svg></button>
+          <button class="icon-btn" title="排序"><svg class="icon"><use href="#i-sort"/></svg></button>
+          <button class="icon-btn" title="更多菜单"><svg class="icon"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="searchwrap"><div class="searchfield"><svg class="icon"><use href="#i-search"/></svg>筛选 • 本地书籍</div></div>
+      </div>
+      <div class="pathbar"><span class="p">Novels/</span><button class="ghost n">上级</button></div>
+      <div class="scanline"><span></span></div>
+      <div style="padding:0 10px">
+        <div class="frow"><span class="lead"><svg class="icon" style="color:var(--primary)"><use href="#i-folder"/></svg></span><div style="min-width:0"><div class="n">未分类整理</div></div></div>
+        <div class="vd"></div>
+        <div class="frow"><span class="lead"><span class="cb"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span></span>
+          <div style="min-width:0"><div class="n">大奉打更人.txt</div><div class="brief"><span class="chiptag">TXT</span><span>12.4 MB</span><span>2026-08-11</span></div></div></div>
+        <div class="vd"></div>
+        <div class="frow"><span class="lead"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span></span>
+          <div style="min-width:0"><div class="n">深空彼岸.epub</div><div class="brief"><span class="chiptag">EPUB</span><span>5.1 MB</span><span>2026-09-02</span></div></div></div>
+        <div class="vd"></div>
+        <div class="frow"><span class="lead"><svg class="icon" style="color:var(--primary)"><use href="#i-book"/></svg></span>
+          <div style="min-width:0"><div class="n">国民法医.txt</div><div class="brief"><span class="chiptag">TXT</span><span>8.7 MB</span><span>2026-07-19</span></div></div></div>
+        <div class="vd"></div>
+        <div class="frow"><span class="lead"><span class="cb"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span></span>
+          <div style="min-width:0"><div class="n">十日终焉.txt</div><div class="brief"><span class="chiptag">TXT</span><span>4.3 MB</span><span>2026-10-08</span></div></div></div>
+        <div class="vd"></div>
+        <div class="frow"><span class="lead"><span class="cb"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span></span>
+          <div style="min-width:0"><div class="n">诡秘之主全集.zip</div><div class="brief"><span class="chiptag">ZIP</span><span>36.8 MB</span><span>2026-05-27</span></div></div></div>
+      </div>
+      <div class="selectbar">
+        <span class="all"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span>全选<span class="cnt">（1/3）</span></span>
+        <button class="ghost n">反选</button>
+        <button class="soft">放入书架</button>
+        <button class="icon-btn sm"><svg class="icon"><use href="#i-more"/></svg></button>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <div class="pair"><div class="theme-tag">深色 · 排序菜单</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="tbar">
+        <div class="trow">
+          <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+          <div class="tb-title"></div>
+          <button class="icon-btn" title="选择文件夹"><svg class="icon"><use href="#i-folder"/></svg></button>
+          <button class="icon-btn" title="排序" style="color:var(--primary)"><svg class="icon"><use href="#i-sort"/></svg></button>
+          <button class="icon-btn" title="更多菜单"><svg class="icon"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="searchwrap"><div class="searchfield"><svg class="icon"><use href="#i-search"/></svg>筛选 • 本地书籍</div></div>
+      </div>
+      <div class="pathbar"><span class="p">Novels/未分类整理/</span><button class="ghost n">上级</button></div>
+      <div style="padding:0 10px">
+        <div class="frow"><span class="lead"><span class="cb"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span></span>
+          <div style="min-width:0"><div class="n">道诡异仙.txt</div><div class="brief"><span class="chiptag">TXT</span><span>9.9 MB</span><span>2026-03-14</span></div></div></div>
+        <div class="vd"></div>
+        <div class="frow"><span class="lead"><span class="cb"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span></span>
+          <div style="min-width:0"><div class="n">夜的命名术.epub</div><div class="brief"><span class="chiptag">EPUB</span><span>3.6 MB</span><span>2026-06-30</span></div></div></div>
+      </div>
+      <div class="menu" style="right:60px;top:150px;min-width:170px">
+        <div class="mi ck">名称排序<span class="ckc"><svg class="icon s"><use href="#i-check"/></svg></span></div>
+        <div class="mi ck">大小排序</div>
+        <div class="mi ck">时间排序</div>
+      </div>
+      <div class="selectbar">
+        <span class="all"><span class="cb"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span>全选</span>
+        <button class="ghost n">反选</button>
+        <button class="soft">放入书架</button>
+        <button class="icon-btn sm"><svg class="icon"><use href="#i-more"/></svg></button>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <p class="notes">来源：<code>ui/book/import/local/ImportBookActivity.kt:90-99</code>（选择文件夹/排序/智能扫描/导入文件名）<code>:130-140</code>（主按钮=放入书架、菜单=删除）<code>:223-244</code>（路径条与上级）；行结构（复选框/文件夹图标/已在书架图标 + 文件名 + 格式标签/大小/日期）来自 <code>item_import_book.xml</code> 与 <code>ImportBookAdapter.kt:31-60</code>；空态文案「点击右上角文件夹图标，选择文件夹」；扫描进度线为 <code>RefreshProgressBar</code>（activity_import_book.xml:58）。点已在书架的文件直接开始阅读（<code>:304-317</code>）；压缩包内点选导入（BaseImportBookActivity.kt:106-133）。</p>
+</section>
+
+<!-- ================= 04 远程导入 ================= -->
+<section class="screen" id="m4">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">04</span><h2 class="st-title">远程导入</h2><span class="st-src">RemoteBookActivity · activity_import_book.xml · item_import_book.xml · menu/book_remote.xml</span></div>
+    <div class="chips"><span>筛选搜索</span><span>刷新</span><span>排序（名称/更新时间）</span><span>服务器配置 WebDAV</span><span>帮助</span><span>日志</span><span>路径 / 上级</span><span>全选 / 反选</span><span>放入书架</span></div>
+  </div>
+  <div class="pairs">
+    <div class="pair"><div class="theme-tag">浅色</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="tbar">
+        <div class="trow">
+          <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+          <div class="tb-title"></div>
+          <button class="icon-btn" title="刷新"><svg class="icon"><use href="#i-refresh"/></svg></button>
+          <button class="icon-btn" title="排序"><svg class="icon"><use href="#i-sort"/></svg></button>
+          <button class="icon-btn" title="更多菜单"><svg class="icon"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="searchwrap"><div class="searchfield"><svg class="icon"><use href="#i-search"/></svg>筛选 • 远程书籍</div></div>
+      </div>
+      <div class="pathbar"><span class="p">books/</span><button class="ghost n">上级</button></div>
+      <div class="scanline"><span></span></div>
+      <div style="padding:0 10px">
+        <div class="frow"><span class="lead"><svg class="icon" style="color:var(--primary)"><use href="#i-folder"/></svg></span><div style="min-width:0"><div class="n">网文备份</div></div></div>
+        <div class="vd"></div>
+        <div class="frow"><span class="lead"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span></span>
+          <div style="min-width:0"><div class="n">大奉打更人.txt</div><div class="brief"><span class="chiptag">TXT</span><span>12.4 MB</span><span>2026-08-11</span></div></div></div>
+        <div class="vd"></div>
+        <div class="frow"><span class="lead"><span class="cb"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span></span>
+          <div style="min-width:0"><div class="n">深空彼岸.epub</div><div class="brief"><span class="chiptag">EPUB</span><span>5.1 MB</span><span>2026-09-02</span></div></div></div>
+        <div class="vd"></div>
+        <div class="frow"><span class="lead"><span class="cb"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span></span>
+          <div style="min-width:0"><div class="n">十日终焉.epub</div><div class="brief"><span class="chiptag">EPUB</span><span>4.0 MB</span><span>2026-09-28</span></div></div></div>
+        <div class="vd"></div>
+        <div class="frow"><span class="lead"><svg class="icon" style="color:var(--primary)"><use href="#i-book"/></svg></span>
+          <div style="min-width:0"><div class="n">国民法医.txt</div><div class="brief"><span class="chiptag">TXT</span><span>8.7 MB</span><span>2026-07-19</span></div></div></div>
+      </div>
+      <div class="selectbar">
+        <span class="all"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span>全选<span class="cnt">（1/3）</span></span>
+        <button class="ghost n">反选</button>
+        <button class="soft">放入书架</button>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <div class="pair"><div class="theme-tag">深色 · 顶栏菜单</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="tbar">
+        <div class="trow">
+          <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+          <div class="tb-title"></div>
+          <button class="icon-btn" title="刷新"><svg class="icon"><use href="#i-refresh"/></svg></button>
+          <button class="icon-btn" title="排序"><svg class="icon"><use href="#i-sort"/></svg></button>
+          <button class="icon-btn" title="更多菜单" style="color:var(--primary)"><svg class="icon"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="searchwrap"><div class="searchfield"><svg class="icon"><use href="#i-search"/></svg>筛选 • 远程书籍</div></div>
+      </div>
+      <div class="pathbar"><span class="p">books/网文备份/</span><button class="ghost n">上级</button></div>
+      <div style="padding:0 10px">
+        <div class="frow"><span class="lead"><span class="cb"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span></span>
+          <div style="min-width:0"><div class="n">诡秘之主.epub</div><div class="brief"><span class="chiptag">EPUB</span><span>9.2 MB</span><span>2026-04-18</span></div></div></div>
+        <div class="vd"></div>
+        <div class="frow"><span class="lead"><span class="cb"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span></span>
+          <div style="min-width:0"><div class="n">道诡异仙.txt</div><div class="brief"><span class="chiptag">TXT</span><span>9.9 MB</span><span>2026-03-14</span></div></div></div>
+      </div>
+      <div class="menu" style="right:12px;top:150px;min-width:172px">
+        <div class="mi"><svg class="icon"><use href="#i-server"/></svg>服务器配置</div>
+        <div class="mi"><svg class="icon"><use href="#i-help"/></svg>帮助</div>
+        <div class="mi"><svg class="icon"><use href="#i-log"/></svg>日志</div>
+      </div>
+      <div class="selectbar">
+        <span class="all"><span class="cb"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span>全选</span>
+        <button class="ghost n">反选</button>
+        <button class="soft">放入书架</button>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <p class="notes">来源：<code>ui/book/import/remote/RemoteBookActivity.kt:109-119</code>（刷新/排序/服务器配置/帮助/日志）<code>:82-91</code>（主按钮=放入书架、无批量更多菜单）<code>:171-189</code>（books/ 路径与上级、加载进度线）；排序子菜单为「名称排序 / 更新时间排序」（menu/book_remote.xml）；服务器配置指向 WebDAV 服务器列表（ServersDialog）。行结构与本地导入共用 item_import_book.xml。</p>
+</section>
+
+<!-- ================= 05 文件管理 ================= -->
+<section class="screen" id="m5">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">05</span><h2 class="st-title">文件管理</h2><span class="st-src">FileManageActivity · activity_file_manage.xml · item_file.xml · item_path_picker.xml · menu/file_long_click.xml</span></div>
+    <div class="chips"><span>筛选搜索</span><span>面包屑路径</span><span>上级(..)</span><span>点按打开文件</span><span>长按删除</span></div>
+  </div>
+  <div class="pairs">
+    <div class="pair"><div class="theme-tag">浅色</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="tbar">
+        <div class="trow">
+          <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+          <div class="tb-title"></div>
+          <button class="icon-btn" title="更多菜单"><svg class="icon"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="searchwrap"><div class="searchfield"><svg class="icon"><use href="#i-search"/></svg>筛选 • 文件管理</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:2px;height:32px;padding:0 12px;background:var(--surface);border-bottom:1px solid var(--divider);font-size:12px;color:var(--secondary);overflow:hidden;white-space:nowrap">
+        <span>root</span><svg class="icon" style="width:14px;height:14px;flex:none"><use href="#i-chev"/></svg><span>files</span><svg class="icon" style="width:14px;height:14px;flex:none"><use href="#i-chev"/></svg><span style="color:var(--text);font-weight:600">fonts</span>
+      </div>
+      <div style="padding:0 10px">
+        <div class="frow" style="min-height:52px"><span class="lead"><svg class="icon s"><use href="#i-up"/></svg></span><div class="n">..</div></div>
+        <div class="vd"></div>
+        <div class="frow" style="min-height:52px"><span class="lead"><svg class="icon s" style="color:var(--primary)"><use href="#i-folder"/></svg></span><div class="n">cache</div></div>
+        <div class="vd"></div>
+        <div class="frow" style="min-height:52px"><span class="lead"><svg class="icon s" style="color:var(--primary)"><use href="#i-folder"/></svg></span><div class="n">exports</div></div>
+        <div class="vd"></div>
+        <div class="frow" style="min-height:52px"><span class="lead"><svg class="icon s"><use href="#i-file"/></svg></span><div class="n">bookshelf.json</div></div>
+        <div class="vd"></div>
+        <div class="frow" style="min-height:52px"><span class="lead"><svg class="icon s"><use href="#i-file"/></svg></span><div class="n">my.zip</div></div>
+        <div class="vd"></div>
+        <div class="frow" style="min-height:52px"><span class="lead"><svg class="icon s"><use href="#i-file"/></svg></span><div class="n">debug.log</div></div>
+        <div class="vd"></div>
+        <div class="frow" style="min-height:52px"><span class="lead"><svg class="icon s"><use href="#i-file"/></svg></span><div class="n">novel_cover.png</div></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <div class="pair"><div class="theme-tag">深色 · 长按菜单</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="tbar">
+        <div class="trow">
+          <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+          <div class="tb-title"></div>
+          <button class="icon-btn" title="更多菜单"><svg class="icon"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="searchwrap"><div class="searchfield"><svg class="icon"><use href="#i-search"/></svg>筛选 • 文件管理</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:2px;height:32px;padding:0 12px;background:var(--surface);border-bottom:1px solid var(--divider);font-size:12px;color:var(--secondary);overflow:hidden;white-space:nowrap">
+        <span>root</span><svg class="icon" style="width:14px;height:14px;flex:none"><use href="#i-chev"/></svg><span style="color:var(--text);font-weight:600">files</span>
+      </div>
+      <div style="padding:0 10px">
+        <div class="frow" style="min-height:52px"><span class="lead"><svg class="icon s"><use href="#i-up"/></svg></span><div class="n">..</div></div>
+        <div class="vd"></div>
+        <div class="frow" style="min-height:52px"><span class="lead"><svg class="icon s" style="color:var(--primary)"><use href="#i-folder"/></svg></span><div class="n">cache</div></div>
+        <div class="vd"></div>
+        <div class="frow" style="min-height:52px"><span class="lead"><svg class="icon s"><use href="#i-file"/></svg></span><div class="n">bookshelf.json</div></div>
+        <div class="vd"></div>
+        <div class="frow" style="min-height:52px;background:var(--field)"><span class="lead"><svg class="icon s"><use href="#i-file"/></svg></span><div class="n">my.zip</div></div>
+        <div class="vd"></div>
+        <div class="frow" style="min-height:52px"><span class="lead"><svg class="icon s"><use href="#i-file"/></svg></span><div class="n">debug.log</div></div>
+      </div>
+      <div class="menu" style="right:24px;top:388px;min-width:140px">
+        <div class="mi"><svg class="icon"><use href="#i-trash"/></svg>删除</div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <p class="notes">来源：<code>ui/file/FileManageActivity.kt:36-53</code>（标题搜索「筛选 • 文件管理」）<code>:44-49</code>（横向面包屑 rv_path，root 开头）<code>:173-198</code>（.. 上级/文件夹进入/文件用 FileProvider 打开）<code>:200-219</code>（长按弹删除菜单）。文件行 = 图标 24dp + 名称（item_file.xml）。</p>
+</section>
+
+<!-- ================= 06 添加网址 ================= -->
+<section class="screen" id="m6">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">06</span><h2 class="st-title">添加网址</h2><span class="st-src">BaseBookshelfFragment.showAddBookByUrlAlert · dialog_edit_text.xml · menu/main_bookshelf.xml(menu_add_url)</span></div>
+    <div class="chips"><span>URL 输入</span><span>取消 / 确定</span><span>添加中…(n) 等待框</span><span>书架入口菜单</span></div>
+  </div>
+  <div class="pairs">
+    <div class="pair"><div class="theme-tag">浅色</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="bs">
+        <div class="bsh">书架</div>
+        <div class="grid">
+          <div class="cv" style="background:linear-gradient(160deg,#c96f4a,#8f3f2c)">国民法医</div>
+          <div class="cv" style="background:linear-gradient(160deg,#5b7a9d,#31465c)">大奉打更人</div>
+          <div class="cv" style="background:linear-gradient(160deg,#7a9d5b,#466031)">深空彼岸</div>
+          <div class="cv" style="background:linear-gradient(160deg,#a58a4a,#6b5628)">诡秘之主</div>
+          <div class="cv" style="background:linear-gradient(160deg,#8a5ba0,#4f315c)">十日终焉</div>
+          <div class="cv" style="background:linear-gradient(160deg,#4a9d97,#2b5c58)">道诡异仙</div>
+        </div>
+      </div>
+      <div class="dim"></div>
+      <div class="card" style="left:30px;right:30px;top:300px">
+        <div class="head">添加书籍网址</div>
+        <div class="body">
+          <div class="input">url</div>
+        </div>
+        <div class="foot">
+          <button class="txtbtn">取消</button>
+          <button class="txtbtn pri">确定</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <div class="pair"><div class="theme-tag">深色 · 添加中</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="bs">
+        <div class="bsh">书架</div>
+        <div class="grid">
+          <div class="cv" style="background:linear-gradient(160deg,#c96f4a,#8f3f2c)">国民法医</div>
+          <div class="cv" style="background:linear-gradient(160deg,#5b7a9d,#31465c)">大奉打更人</div>
+          <div class="cv" style="background:linear-gradient(160deg,#7a9d5b,#466031)">深空彼岸</div>
+          <div class="cv" style="background:linear-gradient(160deg,#a58a4a,#6b5628)">诡秘之主</div>
+          <div class="cv" style="background:linear-gradient(160deg,#8a5ba0,#4f315c)">十日终焉</div>
+          <div class="cv" style="background:linear-gradient(160deg,#4a9d97,#2b5c58)">道诡异仙</div>
+        </div>
+      </div>
+      <div class="dim" style="background:rgba(0,0,0,.52)"></div>
+      <div class="card" style="left:30px;right:30px;top:330px;text-align:center;padding:10px 0 6px">
+        <div style="width:34px;height:34px;border:3px solid var(--track);border-top-color:var(--primary);border-radius:50%;margin:10px auto 12px;animation:spin 1s linear infinite"></div>
+        <div style="font-size:14px;padding-bottom:14px">添加中... (12)</div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <p class="notes">来源：<code>ui/main/bookshelf/BaseBookshelfFragment.kt:147-162</code>（标题「添加书籍网址」、输入框 hint=url、取消/确定）；菜单入口「添加网址」在书架右上更多菜单（menu/main_bookshelf.xml menu_add_url）；确定后弹出等待框「添加中... (n)」（<code>:136-144</code>，WaitDialog）。两个主题分别展示输入态与等待态。</p>
+  <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+</section>
+
+<!-- ================= 07 验证码 ================= -->
+<section class="screen" id="m7">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">07</span><h2 class="st-title">验证码</h2><span class="st-src">VerificationCodeDialog · dialog_verification_code_view.xml · menu/verification_code.xml</span></div>
+    <div class="chips"><span>验证码图（点击放大）</span><span>书源副标题</span><span>输入验证码</span><span>确定</span><span>禁用源</span><span>删除源</span></div>
+  </div>
+  <div class="pairs">
+    <div class="pair"><div class="theme-tag">浅色</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim" style="background:rgba(0,0,0,.38)"></div>
+      <div class="sheet">
+        <div class="st">
+          <div class="tcol"><div class="tb-title">输入验证码</div><div class="tb-sub">笔趣阁</div></div>
+          <button class="icon-btn" title="确定"><svg class="icon" style="color:var(--primary)"><use href="#i-check"/></svg></button>
+          <button class="icon-btn" title="更多菜单"><svg class="icon"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="cap">
+          <svg width="240" height="66" viewBox="0 0 240 66" style="display:block">
+            <rect width="240" height="66" fill="none"/>
+            <path d="M6 34c26-16 34 12 58 4s30-24 54-16 26 26 50 18 32-18 60-10" stroke="#a9a59b" stroke-width="2" fill="none"/>
+            <path d="M4 52c30 8 44-14 70-8s34 18 58 10 30-20 52-12 34 10 48 4" stroke="#c9c5bb" stroke-width="1.6" fill="none"/>
+            <text x="120" y="45" text-anchor="middle" font-family="system-ui" font-size="34" font-weight="700" font-style="italic" fill="#5a574e" letter-spacing="10" transform="rotate(-4 120 40)">7C4K</text>
+            <circle cx="60" cy="22" r="2.4" fill="#8b8878"/><circle cx="176" cy="46" r="2.4" fill="#8b8878"/>
+          </svg>
+        </div>
+        <div class="capin">
+          <div class="lab">验证码</div>
+          <div class="input">7C4</div>
+        </div>
+        <div style="height:18px"></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <div class="pair"><div class="theme-tag">深色 · 源操作菜单</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim" style="background:rgba(0,0,0,.38)"></div>
+      <div class="sheet">
+        <div class="st">
+          <div class="tcol"><div class="tb-title">输入验证码</div><div class="tb-sub">笔趣阁</div></div>
+          <button class="icon-btn" title="确定"><svg class="icon" style="color:var(--primary)"><use href="#i-check"/></svg></button>
+          <button class="icon-btn" title="更多菜单" style="color:var(--primary)"><svg class="icon"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="cap">
+          <svg width="240" height="66" viewBox="0 0 240 66" style="display:block">
+            <rect width="240" height="66" fill="none"/>
+            <path d="M6 34c26-16 34 12 58 4s30-24 54-16 26 26 50 18 32-18 60-10" stroke="#565349" stroke-width="2" fill="none"/>
+            <path d="M4 52c30 8 44-14 70-8s34 18 58 10 30-20 52-12 34 10 48 4" stroke="#45423a" stroke-width="1.6" fill="none"/>
+            <text x="120" y="45" text-anchor="middle" font-family="system-ui" font-size="34" font-weight="700" font-style="italic" fill="#c9c5bb" letter-spacing="10" transform="rotate(-4 120 40)">7C4K</text>
+            <circle cx="60" cy="22" r="2.4" fill="#6d6a62"/><circle cx="176" cy="46" r="2.4" fill="#6d6a62"/>
+          </svg>
+        </div>
+        <div class="capin">
+          <div class="lab">验证码</div>
+          <div class="input"></div>
+        </div>
+        <div style="height:18px"></div>
+      </div>
+      <div class="menu" style="right:34px;bottom:210px;min-width:150px">
+        <div class="mi"><svg class="icon"><use href="#i-shield"/></svg>禁用源</div>
+        <div class="mi danger"><svg class="icon"><use href="#i-trash"/></svg>删除源</div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <p class="notes">来源：<code>ui/association/VerificationCodeDialog.kt:65-77</code>（工具栏标题「输入验证码」+ 书源名副标题 + 图片点击放大 PhotoDialog）<code>:121-146</code>（菜单：确定 / 禁用源 / 删除源，删除源有确认弹窗）；布局（验证码图 100dp 全宽 + TextInputLayout hint=验证码）来自 <code>dialog_verification_code_view.xml</code>。对话框宽度 100%（<code>setLayout(1f, WRAP_CONTENT)</code>），故呈现为底部弹层。验证码图为示意 SVG。</p>
+</section>
+
+<!-- ================= 08 缓存导出 ================= -->
+<section class="screen" id="m8">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">08</span><h2 class="st-title">缓存导出</h2><span class="st-src">CacheActivity · activity_cache_book.xml · item_download.xml · menu/book_cache.xml · menu/book_cache_download.xml</span></div>
+    <div class="chips"><span>开始/停止缓存（长按：之后章节 / 全部章节）</span><span>分组切换</span><span>导出所有</span><span>替换净化</span><span>自定义Epub导出章节</span><span>导出到WebDav</span><span>TXT不导出章节名</span><span>TXT导出图片</span><span>多线程导出</span><span>导出文件夹</span><span>导出文件名</span><span>导出格式</span><span>导出编码</span><span>日志</span><span>单书 缓存开关 / 导出</span><span>导出进度</span></div>
+  </div>
+  <div class="pairs">
+    <div class="pair"><div class="theme-tag">浅色</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="tbar">
+        <div class="trow">
+          <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+          <div class="tcol"><div class="tb-title">离线缓存</div><div class="tb-sub">全部</div></div>
+          <button class="icon-btn" title="停止"><svg class="icon f" style="width:20px"><use href="#i-stop"/></svg></button>
+          <button class="icon-btn" title="分组"><svg class="icon"><use href="#i-tag"/></svg></button>
+          <button class="icon-btn" title="更多菜单"><svg class="icon"><use href="#i-more"/></svg></button>
+        </div>
+      </div>
+      <div style="padding:0 12px">
+        <div class="crow">
+          <div class="cinfo">
+            <div class="cname">大奉打更人</div>
+            <div class="cauthor">作者：卖报小郎君</div>
+            <div class="cstate">已下载 128/946</div>
+            <div class="pg"><span style="width:14%"></span></div>
+          </div>
+          <div class="cacts">
+            <button class="play"><svg class="icon f s"><use href="#i-stop"/></svg></button>
+            <button class="expbtn">导出</button>
+          </div>
+        </div>
+        <div class="vr"></div>
+        <div class="crow">
+          <div class="cinfo">
+            <div class="cname">国民法医</div>
+            <div class="cauthor">作者：志鸟村</div>
+            <div class="cstate">已下载 862/1023</div>
+            <div class="emsg">导出成功：国民法医.txt</div>
+          </div>
+          <div class="cacts">
+            <button class="play"><svg class="icon f s"><use href="#i-play"/></svg></button>
+            <button class="expbtn">导出</button>
+          </div>
+        </div>
+        <div class="vr"></div>
+        <div class="crow">
+          <div class="cinfo">
+            <div class="cname">深空彼岸</div>
+            <div class="cauthor">作者：辰东</div>
+            <div class="cstate">已下载 534/1560</div>
+          </div>
+          <div class="cacts">
+            <button class="play"><svg class="icon f s"><use href="#i-play"/></svg></button>
+            <button class="expbtn">导出</button>
+          </div>
+        </div>
+        <div class="vr"></div>
+        <div class="crow">
+          <div class="cinfo">
+            <div class="cname">夜的命名术</div>
+            <div class="cauthor">作者：会说话的肘子</div>
+            <div class="cstate">本地书籍</div>
+          </div>
+          <div class="cacts"><button class="expbtn">导出</button></div>
+        </div>
+        <div class="vr"></div>
+        <div class="crow">
+          <div class="cinfo">
+            <div class="cname">十日终焉</div>
+            <div class="cauthor">作者：杀虫队队员</div>
+            <div class="cstate">加载中…</div>
+            <div class="pg"><span style="width:62%"></span></div>
+          </div>
+          <div class="cacts">
+            <button class="play"><svg class="icon f s"><use href="#i-play"/></svg></button>
+            <button class="expbtn">导出</button>
+          </div>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <div class="pair"><div class="theme-tag">深色 · 导出配置菜单</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="tbar">
+        <div class="trow">
+          <button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button>
+          <div class="tcol"><div class="tb-title">离线缓存</div><div class="tb-sub">全部</div></div>
+          <button class="icon-btn" title="下载"><svg class="icon f" style="width:20px"><use href="#i-play"/></svg></button>
+          <button class="icon-btn" title="分组"><svg class="icon"><use href="#i-tag"/></svg></button>
+          <button class="icon-btn" title="更多菜单" style="color:var(--primary)"><svg class="icon"><use href="#i-more"/></svg></button>
+        </div>
+      </div>
+      <div style="padding:0 12px">
+        <div class="crow">
+          <div class="cinfo">
+            <div class="cname">大奉打更人</div>
+            <div class="cauthor">作者：卖报小郎君</div>
+            <div class="cstate">已下载 128/946</div>
+          </div>
+          <div class="cacts">
+            <button class="play"><svg class="icon f s"><use href="#i-play"/></svg></button>
+            <button class="expbtn">导出</button>
+          </div>
+        </div>
+        <div class="vr"></div>
+        <div class="crow">
+          <div class="cinfo">
+            <div class="cname">深空彼岸</div>
+            <div class="cauthor">作者：辰东</div>
+            <div class="cstate">已下载 534/1560</div>
+          </div>
+          <div class="cacts">
+            <button class="play"><svg class="icon f s"><use href="#i-play"/></svg></button>
+            <button class="expbtn">导出</button>
+          </div>
+        </div>
+      </div>
+      <div class="menu" style="right:10px;top:96px;min-width:214px;max-height:760px;overflow:hidden">
+        <div class="mi">导出所有</div>
+        <div class="vd"></div>
+        <div class="mi ck">替换净化<span class="ckc"><svg class="icon s"><use href="#i-check"/></svg></span></div>
+        <div class="mi">自定义Epub导出章节</div>
+        <div class="mi ck">导出到 WebDav</div>
+        <div class="mi ck">TXT 不导出章节名</div>
+        <div class="mi ck">TXT 导出图片</div>
+        <div class="mi ck">多线程导出</div>
+        <div class="mi">导出文件夹</div>
+        <div class="mi">导出文件名</div>
+        <div class="mi">导出格式（txt）</div>
+        <div class="mi">导出编码（UTF-8）</div>
+        <div class="mi">日志</div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <p class="notes">来源：<code>ui/book/cache/CacheActivity.kt</code> — 标题「离线缓存」+ 分组副标题（<code>:115-126</code>）；菜单「下载（长按：下载之后章节/下载全部章节）、分组、导出所有、替换净化、自定义Epub导出章节、导出到WebDav、TXT不导出章节名、TXT导出图片、多线程导出、导出文件夹、导出文件名、导出格式、导出编码、日志」（menu/book_cache.xml + <code>:128-229</code>）；运行中标题按钮切换为停止（<code>:305-318</code>）；行内播放/停止 + 导出（item_download.xml，CacheAdapter.kt:85-115）；导出消息与进度条（upExportInfo，CacheAdapter.kt:118-137）；本地书籍行不显示缓存按钮（<code>:102-104</code>）。「自定义Epub导出章节」打开选择导出章节对话框（全本/自定义 + 每卷大小 + 范围 + 文件名 JS），不在本组 8 屏范围。</p>
+</section>
+
+<div class="foot">legado v2 · 07 管理与导入 · 视觉令牌与 design-system/html/novel_reader_light.html 一致<br>主色 #FF6B2C · 暖纸白 #FAF9F6 / 暖黑 #151412 · 8% 弱分割线 · 12/16dp 圆角 · 无阴影 · 触控目标 ≥ 48dp</div>
+</div>
+</body></html>

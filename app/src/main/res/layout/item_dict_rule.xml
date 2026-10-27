@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 词典规则行：勾选/名称/开关/编辑/删除（05 字典规则，行内直接删除无溢出菜单） -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
+    android:paddingStart="14dp"
+    android:paddingEnd="16dp">
 
     <io.legado.app.lib.theme.view.ThemeCheckBox
         android:id="@+id/cb_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:textColor="@color/on_surface"
+        android:textSize="15sp"
         tools:ignore="RtlSymmetry" />
 
     <io.legado.app.lib.theme.view.ThemeSwitch
@@ -25,23 +31,23 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_edit"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
         android:layout_gravity="center"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/edit"
-        android:padding="6dp"
+        android:padding="8dp"
         android:src="@drawable/ic_edit"
-        android:tint="@color/primaryText" />
+        android:tint="@color/on_surface_variant" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_delete"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:padding="6dp"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:padding="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_outline_delete"
-        android:tint="@color/primaryText"
+        android:tint="@color/on_surface_variant"
         android:contentDescription="@string/delete"
         tools:ignore="RtlHardcoded" />
 

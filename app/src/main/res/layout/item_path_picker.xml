@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
+    android:background="?attr/selectableItemBackgroundBorderless"
     android:clickable="true"
     android:focusable="true">
 
@@ -11,12 +13,18 @@
         android:id="@+id/text_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="center_vertical" />
+        android:gravity="center_vertical"
+        android:singleLine="true"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="12sp" />
 
     <ImageView
         android:id="@+id/image_view"
-        android:layout_width="20dp"
+        android:layout_width="14dp"
         android:layout_height="match_parent"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        app:tint="@color/on_surface_variant"
         tools:ignore="ContentDescription" />
 
 </LinearLayout>

@@ -1,0 +1,762 @@
+<!-- design-system: legado v2 -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>legado v2 · 订阅 RSS — 视觉稿</title><style>
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#f3f1ed;color:#1d1b16;-webkit-font-smoothing:antialiased}
+/* ---------- 文档框架 ---------- */
+.doc-head{max-width:1180px;margin:0 auto;padding:44px 24px 10px}
+.doc-head h1{font-size:34px;font-weight:750;margin:0 0 10px;letter-spacing:.5px}
+.doc-head p{margin:0;font-size:14.5px;line-height:1.8;color:#6d6a62;max-width:860px}
+.doc-nav{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px;padding:12px 24px;max-width:1180px;margin:0 auto;background:rgba(243,241,237,.92);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,.06)}
+.doc-nav a{font-size:13.5px;font-weight:600;color:#6d6a62;text-decoration:none;background:#fff;border:1px solid #e4e1d8;border-radius:999px;padding:6px 14px}
+.doc-nav a:hover{color:#ff6b2c;border-color:#ffc9ad}
+.wrap{max-width:1180px;margin:0 auto;padding:8px 24px 96px}
+.screen{margin-top:56px}
+.screen-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.screen-head h2{font-size:22px;font-weight:750;margin:0}
+.screen-head .src{font-size:12.5px;color:#8b8878;font-family:ui-monospace,Consolas,monospace}
+.screen-desc{margin:0 0 18px;font-size:13.5px;line-height:1.7;color:#6d6a62;max-width:860px}
+.pair{display:flex;gap:34px;flex-wrap:wrap}
+figure{margin:0}
+figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin-top:12px;letter-spacing:2px}
+.notes{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 0;padding:0;list-style:none;max-width:900px}
+.note{font-size:12.5px;line-height:1.6;color:#6d6a62;background:#fff;border:1px solid #e4e1d8;border-radius:999px;padding:4px 12px}
+.note b{color:#1d1b16;font-weight:650}
+/* ---------- 手机壳 ---------- */
+.phone{width:412px;height:900px;border-radius:30px;border:1px solid rgba(0,0,0,.10);overflow:hidden;position:relative;display:flex;flex-direction:column;flex:none}
+.phone.light{--bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--surface3:#f4f2ee;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--track:#e5e2de;--divider:rgba(0,0,0,.07);--field:#f1efe9;--error:#ba1a1a;--success:#3b7a45;--chip:rgba(0,0,0,.05);--home:#69717b;background:var(--bg);color:var(--text)}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--surface3:#2a2925;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--track:#353331;--divider:rgba(255,255,255,.08);--field:#242220;--error:#ffb4ab;--success:#7fd891;--chip:rgba(255,255,255,.08);--home:#f3f0eb;background:var(--bg);color:var(--text)}
+.status{height:34px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:14px;font-weight:600}
+.status-right{display:flex;gap:10px;align-items:center}
+/* blend 顶栏：无底色、无阴影、无分割线 */
+.appbar{flex:none;display:flex;align-items:center;gap:2px;padding:2px 8px 0;min-height:56px}
+.appbar.main-title{min-height:62px}
+.appbar h1{font-size:18px;font-weight:650;margin:0;padding:0 4px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appbar.main-title h1{font-size:28px;font-weight:650}
+.icon-btn{width:42px;height:42px;border:0;background:transparent;border-radius:21px;display:grid;place-items:center;color:var(--secondary);flex:none}
+.icon{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon.f{fill:currentColor;stroke:none}
+.icon.sm{width:19px;height:19px}
+.body{flex:1;min-height:0;display:flex;flex-direction:column;position:relative;overflow:hidden}
+/* 搜索胶囊（view_search：40dp、圆角 35、10% 叠加底） */
+.search-pill{display:flex;align-items:center;gap:10px;height:40px;margin:8px 16px 10px;padding:0 14px;border-radius:20px;background:var(--chip);color:var(--secondary);font-size:15px;flex:none}
+.search-pill .grow{flex:1}
+/* 弹出菜单（Popup menu：surface 容器 + 弱描边 + 12dp 圆角，无阴影） */
+.menu{position:absolute;z-index:9;min-width:172px;background:var(--surface);border:1px solid var(--divider);border-radius:12px;padding:6px}
+.menu button{display:flex;align-items:center;gap:12px;width:100%;border:0;background:transparent;text-align:left;font-size:14.5px;color:var(--text);padding:11px 14px;border-radius:9px;font-family:inherit}
+.menu button:hover{background:var(--chip)}
+.menu button.danger{color:var(--error)}
+.menu .m-sep{height:1px;background:var(--divider);margin:5px 8px}
+.menu .m-label{font-size:12px;color:var(--secondary);padding:8px 14px 2px}
+.menu .m-sub{padding-left:34px}
+.menu button .ok{margin-left:auto;color:var(--primary)}
+/* 标签页（TabLayout：可滚动、主色下划线指示器） */
+.tabs-row{display:flex;gap:24px;padding:0 20px;border-bottom:1px solid var(--divider);flex:none;overflow:hidden}
+.tab{border:0;background:transparent;font-family:inherit;font-size:15px;font-weight:600;color:var(--secondary);padding:12px 2px 11px;position:relative;white-space:nowrap}
+.tab.on{color:var(--primary)}
+.tab.on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:3px 3px 0 0;background:var(--primary)}
+/* 文章列表（item_rss_article：左标题+时间，右 110×68 图） */
+.art-list{flex:1;min-height:0;overflow:hidden;padding:2px 20px}
+.art{display:flex;gap:14px;padding:15px 0;border-bottom:1px solid var(--divider)}
+.art .txt{flex:1;min-width:0}
+.art .t{font-size:16px;font-weight:650;line-height:1.42;margin:0 0 9px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.art .d{font-size:12px;color:var(--secondary);font-style:italic}
+.art .img{width:110px;height:68px;border-radius:9px;flex:none;object-fit:cover}
+.ph-img{width:110px;height:68px;border-radius:9px;flex:none;position:relative;overflow:hidden;display:grid;place-items:center;color:rgba(255,255,255,.75)}
+.ph-img>svg.fill{position:absolute;inset:0;width:100%;height:100%;opacity:.55}
+.load-more{display:flex;align-items:center;justify-content:center;gap:8px;padding:16px 0 20px;color:var(--secondary);font-size:13.5px}
+.spinner{width:15px;height:15px;border-radius:50%;border:2px solid var(--track);border-top-color:var(--primary);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* 底部导航（主页面） */
+.bottom{flex:none;display:grid;grid-template-columns:repeat(4,1fr);align-items:center;padding:5px 10px 9px;border-top:1px solid var(--divider);background:var(--surface)}
+.nav{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;height:62px;border-radius:20px;font-size:13.5px;color:var(--secondary)}
+.nav.on{width:70px;justify-self:center;background:var(--primary-soft);color:var(--primary)}
+.navicon{width:24px;height:24px}
+.home-indicator{position:absolute;left:50%;bottom:5px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--home)}
+/* ---------- S1 订阅网格 ---------- */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);padding:10px 14px 24px;row-gap:22px}
+.cell{display:flex;flex-direction:column;align-items:center;gap:9px;min-width:0}
+.tile{width:56px;height:56px;border-radius:14px;display:grid;place-items:center;font-weight:750;font-size:21px;letter-spacing:0}
+.cell .nm{font-size:13px;color:var(--secondary);line-height:1.35;text-align:center;max-width:86px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tile.pri{background:var(--primary);color:#fff}
+.tl1{background:#fff1e8;color:#e2531a}.tl2{background:#e5f6f0;color:#0a9a72}.tl3{background:#eaf7ee;color:#1f8a4c}.tl4{background:#e8f7fb;color:#0e93ad}
+.tl5{background:#eef0ff;color:#4c5ae0}.tl6{background:#e9efff;color:#3a5fc0}.tl7{background:#e8f0ff;color:#1f5bd6}.tl8{background:#fff7dd;color:#a8842c}
+.tl9{background:#fdeef3;color:#d6336c}.tl10{background:#eef3f6;color:#4a6572}.tl11{background:#efeafd;color:#6a4ac0}.tl12{background:#f0f7e6;color:#5a8a1f}
+.dark .tl1{background:#3a221a;color:#ff9a63}.dark .tl2{background:#0d3a33;color:#52d2ae}.dark .tl3{background:#14301f;color:#6fd091}.dark .tl4{background:#0e3742;color:#58c8e0}
+.dark .tl5{background:#1d2247;color:#97a2ff}.dark .tl6{background:#1b2647;color:#8ba3e8}.dark .tl7{background:#14274d;color:#7fa6f2}.dark .tl8{background:#33290f;color:#d9b95c}
+.dark .tl9{background:#3b1d27;color:#f08bab}.dark .tl10{background:#1e2c33;color:#8fb3c4}.dark .tl11{background:#241f3d;color:#b3a0f2}.dark .tl12{background:#232f14;color:#a8d063}
+/* ---------- 开关 / 复选框（ThemeSwitch / ThemeCheckBox） ---------- */
+.sw{width:40px;height:22px;border-radius:11px;background:var(--track);position:relative;flex:none}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.18)}
+.sw.on{background:var(--primary)}
+.sw.on::after{left:20px}
+.cb{width:19px;height:19px;border-radius:5.5px;border:2px solid var(--secondary);flex:none;display:grid;place-items:center;color:#fff}
+.cb.on{background:var(--primary);border-color:var(--primary)}
+.cb svg{width:12px;height:12px;stroke-width:3.2}
+/* ---------- S5 源管理行 / 选择栏 / 快滚 ---------- */
+.src-row{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--divider)}
+.src-row .nm{flex:1;min-width:0;font-size:15px;font-weight:550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.src-row .op{color:var(--secondary);display:grid;place-items:center;width:34px;height:34px;flex:none}
+.fastscroll{position:absolute;right:3px;top:34%;width:4px;height:52px;border-radius:3px;background:var(--primary);opacity:.45}
+.selbar{flex:none;display:flex;align-items:center;gap:10px;height:58px;padding:0 12px;background:var(--surface2);border-top:1px solid var(--divider)}
+.selbar .all{display:flex;align-items:center;gap:7px;font-size:14px}
+.pill{border-radius:17px;font-size:13.5px;font-weight:600;padding:7px 14px;font-family:inherit;border:1px solid var(--primary);background:transparent;color:var(--primary)}
+.pill.fill{background:var(--primary);color:#fff;border-color:var(--primary)}
+/* ---------- S6 编辑表单（TextInputLayout filled） ---------- */
+.checks-row{display:flex;gap:20px;padding:12px 20px 4px;flex:none;overflow:hidden}
+.checks-row label{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--text);white-space:nowrap}
+.field{background:var(--field);border-radius:14px 14px 4px 4px;padding:7px 15px 9px;margin:0 20px 10px}
+.field .lb{font-size:11.5px;color:var(--secondary);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.field .vl{font-size:14.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:20px}
+.field .vl.empty{color:var(--secondary)}
+.fade-out{position:absolute;left:0;right:0;bottom:0;height:64px;background:linear-gradient(transparent,var(--bg));pointer-events:none}
+/* ---------- S7 调试日志 ---------- */
+.dbg-spin{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:30px;height:30px;border-radius:50%;border:3px solid var(--track);border-top-color:var(--primary);animation:spin .9s linear infinite}
+.log{flex:1;min-height:0;overflow:hidden;padding:52px 20px 20px;font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:12.8px;line-height:1.5}
+.log .ln{display:flex;gap:12px;padding:7px 2px;border-bottom:1px solid var(--divider)}
+.log .tm{color:var(--secondary);flex:none}
+.log .msg{flex:1;min-width:0;overflow-wrap:break-word}
+.log .ok{color:var(--success)}.log .err{color:var(--error)}.log .hl{color:var(--primary)}
+/* ---------- S8 规则订阅行 ---------- */
+.rule-row{display:flex;align-items:center;gap:10px;padding:13px 20px;border-bottom:1px solid var(--divider)}
+.rule-row .info{flex:1;min-width:0}
+.rule-row .nm{font-size:16px;font-weight:650;margin:0 0 5px;display:flex;align-items:center;gap:8px}
+.badge{font-size:11.5px;font-weight:600;color:var(--primary);background:var(--primary-soft);border-radius:8px;padding:2px 8px;flex:none}
+.rule-row .url{font-size:12px;color:var(--secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+/* ---------- S4 阅读页 ---------- */
+.prog{height:2px;background:transparent;margin:-1px 0 0}
+.prog span{display:block;height:100%;width:62%;background:var(--primary);border-radius:2px}
+.article{flex:1;min-height:0;overflow:hidden;padding:18px 24px 0}
+.article h2{font-size:22px;font-weight:750;line-height:1.4;margin:0 0 10px}
+.article .meta{font-size:13px;color:var(--secondary);margin:0 0 16px}
+.article p{font-size:15px;line-height:1.95;margin:0 0 15px}
+.article .hero{height:172px;border-radius:12px;margin:0 0 16px;position:relative;overflow:hidden;background:linear-gradient(135deg,#ffb27a,#ff6b2c 52%,#d94f14)}
+.article .hero svg{position:absolute;inset:0;width:100%;height:100%}
+.article blockquote{margin:0 0 15px;padding:12px 16px;border-left:3px solid var(--primary);background:var(--primary-soft);border-radius:0 10px 10px 0;font-size:14px;line-height:1.8;color:var(--secondary)}
+.article .tags{display:flex;gap:8px;margin:2px 0 16px}
+.article .tags span{font-size:12px;color:var(--primary);background:var(--primary-soft);border-radius:999px;padding:4px 11px}
+.article .end{display:flex;align-items:center;gap:10px;color:var(--secondary);font-size:12.5px}
+.article .end::before,.article .end::after{content:"";height:1px;background:var(--divider);flex:1}
+</style></head>
+<body>
+
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9z"/></symbol>
+<symbol id="i-groups" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.2 3.4-5 6.5-5s5.7 1.8 6.5 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14.6c2.4.3 4.3 1.9 5 4.4"/></symbol>
+<symbol id="i-set" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+<symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="5.2" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="18.8" r="1.8"/></symbol>
+<symbol id="i-add" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M17.3 3.7a2.4 2.4 0 0 1 3.4 3.4L8 19.8 3.5 21l1.2-4.5z"/></symbol>
+<symbol id="i-bug" viewBox="0 0 24 24"><rect x="8" y="8" width="8" height="12" rx="4"/><path d="M9.5 5.5a2.5 2.5 0 0 1 5 0V8"/><path d="M8 12H4M8 16H5.5M16 12h4M16 16h2.5M12 20v1.5"/></symbol>
+<symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><path d="m8.2 10.8 7.6-4.1M8.2 13.2l7.6 4.1"/></symbol>
+<symbol id="i-vol" viewBox="0 0 24 24"><path d="M11.5 5 7 9H3.5v6H7l4.5 4z"/><path d="M15.5 8.7a4.7 4.7 0 0 1 0 6.6M18.4 6a8.5 8.5 0 0 1 0 12"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20.4 9A8.4 8.4 0 1 0 21 13"/><path d="M21 4v5.5h-5.5"/></symbol>
+<symbol id="i-del" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V4.5h6V7"/><path d="m6 7 1 13.5h10L18 7"/><path d="M10 11v6M14 11v6"/></symbol>
+<symbol id="i-top" viewBox="0 0 24 24"><path d="M12 19V6"/><path d="m6 12 6-6 6 6"/></symbol>
+<symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m6 6 12 12"/></symbol>
+<symbol id="i-qr" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2.5v2.5H14zM20 17.5V20h-2.5M17 14h3M14 19.5V20"/></symbol>
+<symbol id="i-import" viewBox="0 0 24 24"><path d="M12 3.5V14"/><path d="m7.5 9.5 4.5 4.5 4.5-4.5"/><path d="M4.5 19.5h15"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.2a2.5 2.5 0 1 1 3.6 2.4c-.8.4-1.2 1-1.2 1.9"/><path d="M12 16.8h.01"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7"/></symbol>
+<symbol id="i-book2" viewBox="0 0 24 24"><path d="M5 4h6v16H5zM13 4h6v16h-6z"/></symbol>
+<symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-5 5 1.5-3.5 3.5-1.5"/></symbol>
+<symbol id="i-rssnav" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-3-6 3z"/><path d="M12 8v6M9 11h6"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></symbol>
+<symbol id="i-legado" viewBox="0 0 24 24"><path d="M12 6c-1.8-1.4-4.2-2-6.5-2v14c2.3 0 4.7.6 6.5 2 1.8-1.4 4.2-2 6.5-2V4c-2.3 0-4.7.6-6.5 2z"/><path d="M12 6v14"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14.5 14.5 0 0 1 0 18M12 3a14.5 14.5 0 0 0 0 18"/></symbol>
+<symbol id="i-mtn" viewBox="0 0 400 172" preserveAspectRatio="none"><path d="M0 172V96l70-52 62 44 58-62 76 58 60-38 74 52v74z" fill="rgba(255,255,255,.22)"/><circle cx="318" cy="42" r="20" fill="rgba(255,255,255,.5)"/></symbol>
+</svg>
+
+<header class="doc-head">
+<h1>订阅 RSS · 视觉稿</h1>
+<p>legado v2 界面改造 — 第 06 组。令牌沿用 <b>design-system/legado/MASTER.md</b>：主色 #FF6B2C、暖纸白/暖黑表面、8% 弱分割线、大圆角、无阴影、blend 顶栏；呈现方式与组件语言延续 <b>novel_reader_light/dark.html</b>。全部屏幕均按现有布局与 Activity 逐一核对：fragment_rss / activity_rss_articles / activity_rss_favorites / activity_rss_read / activity_rss_source / activity_rss_source_edit / activity_source_debug / activity_rule_sub。</p>
+</header>
+<nav class="doc-nav">
+<a href="#s1">1 订阅主页</a><a href="#s2">2 RSS 分类</a><a href="#s3">3 RSS 收藏</a><a href="#s4">4 RSS 阅读</a><a href="#s5">5 订阅源管理</a><a href="#s6">6 订阅源编辑</a><a href="#s7">7 订阅源调试</a><a href="#s8">8 规则订阅</a>
+</nav>
+
+<main class="wrap">
+
+<!-- ============ S1 订阅主页 ============ -->
+<section class="screen" id="s1">
+<div class="screen-head"><h2>01 · 订阅主页</h2><span class="src">fragment_rss.xml · ui/main/rss/RssFragment.kt</span></div>
+<p class="screen-desc">主界面「订阅」Tab：blend 顶栏 = 标题「订阅」+ 菜单（收藏 / 分组 / 设置），下方为搜索胶囊（支持 group:分组名 过滤），正文为 4 列订阅源网格（图标 56dp 圆角 14 + 名称两行），首位固定「规则订阅」入口；底部导航当前 Tab 高亮。长按任一源弹出：置顶 / 编辑 / 禁用源 / 删除。</p>
+<div class="pair">
+<figure><div class="phone light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar main-title"><h1>订阅</h1>
+<button class="icon-btn" aria-label="收藏"><svg class="icon"><use href="#i-star"/></svg></button>
+<button class="icon-btn" aria-label="分组"><svg class="icon"><use href="#i-groups"/></svg></button>
+<button class="icon-btn" aria-label="设置"><svg class="icon"><use href="#i-set"/></svg></button></div>
+<div class="search-pill"><svg class="icon sm"><use href="#i-search"/></svg><span class="grow">搜索订阅源，支持 group:科技</span></div>
+<div class="body"><div class="grid">
+<div class="cell"><span class="tile pri"><svg class="icon" style="stroke-width:1.8"><use href="#i-legado"/></svg></span><span class="nm">规则订阅</span></div>
+<div class="cell"><span class="tile tl1">派</span><span class="nm">少数派</span></div>
+<div class="cell"><span class="tile tl2">范</span><span class="nm">爱范儿</span></div>
+<div class="cell"><span class="tile tl3">阮</span><span class="nm">阮一峰的网络日志</span></div>
+<div class="cell"><span class="tile tl4">酷</span><span class="nm">酷安</span></div>
+<div class="cell"><span class="tile tl5">掘</span><span class="nm">掘金</span></div>
+<div class="cell"><span class="tile tl6">知</span><span class="nm">知乎日报</span></div>
+<div class="cell"><span class="tile tl7">氪</span><span class="nm">36氪</span></div>
+<div class="cell"><span class="tile tl8">S</span><span class="nm">Solidot</span></div>
+<div class="cell"><span class="tile tl9">极</span><span class="nm">极客公园</span></div>
+<div class="cell"><span class="tile tl10">异</span><span class="nm">异视异色</span></div>
+<div class="cell"><span class="tile tl11">界</span><span class="nm">界面新闻</span></div>
+<div class="cell"><span class="tile tl12">阅</span><span class="nm">阅读派</span></div>
+<div class="cell"><span class="tile tl10">众</span><span class="nm">小众软件</span></div>
+<div class="cell"><span class="tile tl9">虎</span><span class="nm">虎嗅</span></div>
+<div class="cell"><span class="tile tl5">I</span><span class="nm">IT之家</span></div>
+
+</div>
+<div class="menu" style="left:14px;top:468px">
+<button><svg class="icon sm"><use href="#i-top"/></svg>置顶</button>
+<button><svg class="icon sm"><use href="#i-edit"/></svg>编辑</button>
+<button><svg class="icon sm"><use href="#i-ban"/></svg>禁用源</button>
+<button class="danger"><svg class="icon sm"><use href="#i-del"/></svg>删除</button></div>
+</div>
+<nav class="bottom">
+<div class="nav"><svg class="icon navicon"><use href="#i-book2"/></svg><span>书架</span></div>
+<div class="nav"><svg class="icon navicon"><use href="#i-compass"/></svg><span>发现</span></div>
+<div class="nav on"><svg class="icon navicon"><use href="#i-rssnav"/></svg><span>订阅</span></div>
+<div class="nav"><svg class="icon navicon"><use href="#i-user"/></svg><span>我的</span></div>
+</nav>
+<div class="home-indicator"></div>
+</div><figcaption>浅色</figcaption></figure>
+<figure><div class="phone dark">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar main-title"><h1>订阅</h1>
+<button class="icon-btn" aria-label="收藏"><svg class="icon"><use href="#i-star"/></svg></button>
+<button class="icon-btn" aria-label="分组"><svg class="icon"><use href="#i-groups"/></svg></button>
+<button class="icon-btn" aria-label="设置"><svg class="icon"><use href="#i-set"/></svg></button></div>
+<div class="search-pill"><svg class="icon sm"><use href="#i-search"/></svg><span class="grow">搜索订阅源，支持 group:科技</span></div>
+<div class="body"><div class="grid">
+<div class="cell"><span class="tile pri"><svg class="icon" style="stroke-width:1.8"><use href="#i-legado"/></svg></span><span class="nm">规则订阅</span></div>
+<div class="cell"><span class="tile tl1">派</span><span class="nm">少数派</span></div>
+<div class="cell"><span class="tile tl2">范</span><span class="nm">爱范儿</span></div>
+<div class="cell"><span class="tile tl3">阮</span><span class="nm">阮一峰的网络日志</span></div>
+<div class="cell"><span class="tile tl4">酷</span><span class="nm">酷安</span></div>
+<div class="cell"><span class="tile tl5">掘</span><span class="nm">掘金</span></div>
+<div class="cell"><span class="tile tl6">知</span><span class="nm">知乎日报</span></div>
+<div class="cell"><span class="tile tl7">氪</span><span class="nm">36氪</span></div>
+<div class="cell"><span class="tile tl8">S</span><span class="nm">Solidot</span></div>
+<div class="cell"><span class="tile tl9">极</span><span class="nm">极客公园</span></div>
+<div class="cell"><span class="tile tl10">异</span><span class="nm">异视异色</span></div>
+<div class="cell"><span class="tile tl11">界</span><span class="nm">界面新闻</span></div>
+<div class="cell"><span class="tile tl12">阅</span><span class="nm">阅读派</span></div>
+<div class="cell"><span class="tile tl10">众</span><span class="nm">小众软件</span></div>
+<div class="cell"><span class="tile tl9">虎</span><span class="nm">虎嗅</span></div>
+<div class="cell"><span class="tile tl5">I</span><span class="nm">IT之家</span></div>
+
+</div>
+<div class="menu" style="left:14px;top:468px">
+<button><svg class="icon sm"><use href="#i-top"/></svg>置顶</button>
+<button><svg class="icon sm"><use href="#i-edit"/></svg>编辑</button>
+<button><svg class="icon sm"><use href="#i-ban"/></svg>禁用源</button>
+<button class="danger"><svg class="icon sm"><use href="#i-del"/></svg>删除</button></div>
+</div>
+<nav class="bottom">
+<div class="nav"><svg class="icon navicon"><use href="#i-book2"/></svg><span>书架</span></div>
+<div class="nav"><svg class="icon navicon"><use href="#i-compass"/></svg><span>发现</span></div>
+<div class="nav on"><svg class="icon navicon"><use href="#i-rssnav"/></svg><span>订阅</span></div>
+<div class="nav"><svg class="icon navicon"><use href="#i-user"/></svg><span>我的</span></div>
+</nav>
+<div class="home-indicator"></div>
+</div><figcaption>深色</figcaption></figure>
+</div>
+<ul class="notes">
+<li class="note">顶栏菜单 = <b>main_rss.xml</b>：收藏(star) / 分组(groups，子项为源分组，点击按 group: 搜索) / 设置(进入订阅源管理)</li>
+<li class="note">网格首位为固定入口「规则订阅」→ RuleSubActivity（adapter.addHeaderView）</li>
+<li class="note">长按菜单 = <b>rss_main_item.xml</b>：置顶 / 编辑 / 禁用源 / 删除</li>
+<li class="note">空态文案「RSS 源目前为空！」（tv_empty_msg，居中 14sp on_surface_variant）</li>
+<li class="note">点击源：单 URL 源直接进阅读页，多分类源进 RSS 分类页</li>
+</ul>
+</section>
+
+<!-- ============ S2 RSS 分类 ============ -->
+<section class="screen" id="s2">
+<div class="screen-head"><h2>02 · RSS 分类</h2><span class="src">activity_rss_articles.xml · ui/rss/article/RssSortActivity.kt</span></div>
+<p class="screen-desc">进入某个订阅源：blend 顶栏（返回 + 源名称），其下为按 sortUrl 生成的可滚动分类 Tab，正文为下拉刷新的文章流。默认 articleStyle 列表样式 = 左标题两行 + 斜体时间，右侧 110×68 缩略图；底部「加载更多」。图中展示了溢出菜单的全部真实项。</p>
+<div class="pair">
+<figure><div class="phone light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>少数派</h1>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
+<div class="tabs-row">
+<button class="tab on">首页</button><button class="tab">快讯</button><button class="tab">AI</button><button class="tab">设计</button><button class="tab">音视频</button><button class="tab">工具</button><button class="tab">咖啡</button></div>
+<div class="body">
+<div class="art-list">
+<div class="art"><div class="txt"><p class="t">把订阅源还给我：RSS 阅读的黄金时代</p><span class="d">2026-10-26 18:30</span></div><span class="ph-img" style="background:linear-gradient(135deg,#ffb27a,#ff6b2c)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t">实测三款国产折叠屏：轻了，也更耐用了</p><span class="d">2026-10-26 10:02</span></div><span class="ph-img" style="background:linear-gradient(135deg,#7db2ff,#2f6fed)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t">一份写给设计师的 AI 工作流指南（2026 版）</p><span class="d">2026-10-25 21:44</span></div></div>
+<div class="art"><div class="txt"><p class="t">周末去做一杯手冲：从器具到冲煮参数</p><span class="d">2026-10-25 09:15</span></div><span class="ph-img" style="background:linear-gradient(135deg,#6fd091,#1f8a4c)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t">为什么你的笔记应用总是用不下去？</p><span class="d">2026-10-24 20:08</span></div></div>
+<div class="art"><div class="txt"><p class="t">iPad 上的分屏学习法：一门课的两块屏</p><span class="d">2026-10-24 11:40</span></div><span class="ph-img" style="background:linear-gradient(135deg,#b3a0f2,#6a4ac0)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t">城市骑行装备清单：通勤党的十件好物</p><span class="d">2026-10-23 19:26</span></div></div>
+<div class="load-more"><span class="spinner"></span>加载更多</div>
+</div>
+<div class="menu" style="right:14px;top:8px;min-width:196px">
+<button>登录</button>
+<button>刷新分类</button>
+<button>设置源变量</button>
+<button>编辑源</button>
+<button>切换布局</button>
+<button>阅读记录</button>
+<button>清除</button></div>
+</div>
+</div><figcaption>浅色</figcaption></figure>
+<figure><div class="phone dark">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>少数派</h1>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
+<div class="tabs-row">
+<button class="tab on">首页</button><button class="tab">快讯</button><button class="tab">AI</button><button class="tab">设计</button><button class="tab">音视频</button><button class="tab">工具</button><button class="tab">咖啡</button></div>
+<div class="body">
+<div class="art-list">
+<div class="art"><div class="txt"><p class="t">把订阅源还给我：RSS 阅读的黄金时代</p><span class="d">2026-10-26 18:30</span></div><span class="ph-img" style="background:linear-gradient(135deg,#b25a33,#8a3a12)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t">实测三款国产折叠屏：轻了，也更耐用了</p><span class="d">2026-10-26 10:02</span></div><span class="ph-img" style="background:linear-gradient(135deg,#2c4a72,#1d3050)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t">一份写给设计师的 AI 工作流指南（2026 版）</p><span class="d">2026-10-25 21:44</span></div></div>
+<div class="art"><div class="txt"><p class="t">周末去做一杯手冲：从器具到冲煮参数</p><span class="d">2026-10-25 09:15</span></div><span class="ph-img" style="background:linear-gradient(135deg,#2c5c3e,#1a3a26)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t">为什么你的笔记应用总是用不下去？</p><span class="d">2026-10-24 20:08</span></div></div>
+<div class="art"><div class="txt"><p class="t">iPad 上的分屏学习法：一门课的两块屏</p><span class="d">2026-10-24 11:40</span></div><span class="ph-img" style="background:linear-gradient(135deg,#3c3a70,#2a2452)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t">城市骑行装备清单：通勤党的十件好物</p><span class="d">2026-10-23 19:26</span></div></div>
+<div class="load-more"><span class="spinner"></span>加载更多</div>
+</div>
+<div class="menu" style="right:14px;top:8px;min-width:196px">
+<button>登录</button>
+<button>刷新分类</button>
+<button>设置源变量</button>
+<button>编辑源</button>
+<button>切换布局</button>
+<button>阅读记录</button>
+<button>清除</button></div>
+</div>
+</div><figcaption>深色</figcaption></figure>
+</div>
+<ul class="notes">
+<li class="note">顶栏标题来自源名称（viewModel.titleLiveData）；溢出菜单 = <b>rss_articles.xml</b>：登录(有 loginUrl 才显示) / 刷新分类 / 设置源变量 / 编辑源 / 切换布局 / 阅读记录 / 清除</li>
+<li class="note">分类 Tab：仅 1 个分类时隐藏 tabLayout；下拉刷新 SwipeRefreshLayout（主色指示器）</li>
+<li class="note">articleStyle 支持 3 种：紧凑列表(0) / 大图列表(1) / 网格(2)；「切换布局」可切网格</li>
+<li class="note">触底加载 LoadMoreView；「阅读记录」弹出记录对话框（dialog_recycler_view + 清除菜单）</li>
+</ul>
+</section>
+
+<!-- ============ S3 RSS 收藏 ============ -->
+<section class="screen" id="s3">
+<div class="screen-head"><h2>03 · RSS 收藏</h2><span class="src">activity_rss_favorites.xml · ui/rss/favorites/RssFavoritesActivity.kt</span></div>
+<p class="screen-desc">收藏夹（rss_star）：顶栏「收藏夹」，按分组生成收藏 Tab（仅 1 组时隐藏），正文为收藏文章列表，点击进入阅读页。溢出菜单含分组子菜单与批量删除。图中展示分组子菜单展开态。</p>
+<div class="pair">
+<figure><div class="phone light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>收藏夹</h1>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
+<div class="tabs-row">
+<button class="tab on">默认分组</button><button class="tab">科技</button><button class="tab">设计</button></div>
+<div class="body">
+<div class="art-list">
+<div class="art"><div class="txt"><p class="t">把订阅源还给我：RSS 阅读的黄金时代</p><span class="d">少数派 · 2026-10-26 18:30</span></div><span class="ph-img" style="background:linear-gradient(135deg,#ffb27a,#ff6b2c)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t">阮一峰《科技爱好者周刊》第 340 期</p><span class="d">阮一峰的网络日志 · 2026-10-23 08:00</span></div></div>
+<div class="art"><div class="txt"><p class="t">Tailwind CSS v5 发布：默认栈与零配置</p><span class="d">掘金 · 2026-10-21 12:30</span></div><span class="ph-img" style="background:linear-gradient(135deg,#97a2ff,#4c5ae0)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t">Solidot：研究称浅睡眠更利于记忆巩固</p><span class="d">Solidot · 2026-10-20 15:12</span></div></div>
+<div class="art"><div class="txt"><p class="t">Emacs 30 发布：原生编译与新的树哨兵</p><span class="d">36氪 · 2026-10-19 09:00</span></div><span class="ph-img" style="background:linear-gradient(135deg,#d9b95c,#a8842c)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t">为什么老年人也需要一份「数字遗嘱」</p><span class="d">极客公园 · 2026-10-18 22:05</span></div></div>
+
+</div>
+<div class="menu" style="right:14px;top:8px;min-width:196px">
+<div class="m-label">分组</div>
+<button class="m-sub">默认分组<span class="ok"><svg class="icon sm"><use href="#i-check"/></svg></span></button>
+<button class="m-sub">科技</button>
+<button class="m-sub">设计</button>
+<div class="m-sep"></div>
+<button>删除当前分组</button>
+<button class="danger">删除所有</button></div>
+</div>
+</div><figcaption>浅色</figcaption></figure>
+<figure><div class="phone dark">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>收藏夹</h1>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
+<div class="tabs-row">
+<button class="tab on">默认分组</button><button class="tab">科技</button><button class="tab">设计</button></div>
+<div class="body">
+<div class="art-list">
+<div class="art"><div class="txt"><p class="t">把订阅源还给我：RSS 阅读的黄金时代</p><span class="d">少数派 · 2026-10-26 18:30</span></div><span class="ph-img" style="background:linear-gradient(135deg,#b25a33,#8a3a12)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t">阮一峰《科技爱好者周刊》第 340 期</p><span class="d">阮一峰的网络日志 · 2026-10-23 08:00</span></div></div>
+<div class="art"><div class="txt"><p class="t">Tailwind CSS v5 发布：默认栈与零配置</p><span class="d">掘金 · 2026-10-21 12:30</span></div><span class="ph-img" style="background:linear-gradient(135deg,#3c4478,#262c52)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t">Solidot：研究称浅睡眠更利于记忆巩固</p><span class="d">Solidot · 2026-10-20 15:12</span></div></div>
+<div class="art"><div class="txt"><p class="t">Emacs 30 发布：原生编译与新的树哨兵</p><span class="d">36氪 · 2026-10-19 09:00</span></div><span class="ph-img" style="background:linear-gradient(135deg,#5a4c1e,#3d330f)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t">为什么老年人也需要一份「数字遗嘱」</p><span class="d">极客公园 · 2026-10-18 22:05</span></div></div>
+
+</div>
+<div class="menu" style="right:14px;top:8px;min-width:196px">
+<div class="m-label">分组</div>
+<button class="m-sub">默认分组<span class="ok"><svg class="icon sm"><use href="#i-check"/></svg></span></button>
+<button class="m-sub">科技</button>
+<button class="m-sub">设计</button>
+<div class="m-sep"></div>
+<button>删除当前分组</button>
+<button class="danger">删除所有</button></div>
+</div>
+</div><figcaption>深色</figcaption></figure>
+</div>
+<ul class="notes">
+<li class="note">顶栏菜单 = <b>rss_favorites.xml</b>：分组(子菜单列出收藏分组，点击切 Tab) / 删除当前分组 / 删除所有</li>
+<li class="note">Tab = 收藏分组（rssStarDao.flowGroups），仅 1 组时隐藏；切 Tab 记录 currentGroup，从阅读页返回时自动定位</li>
+<li class="note">列表复用文章条目样式（RssFavoritesFragment : fragment_rss_articles），点击进 ReadRssActivity</li>
+<li class="note">删除有确认弹窗「确认删除？&lt;文章标题&gt;」</li>
+</ul>
+</section>
+
+<!-- ============ S4 RSS 阅读 ============ -->
+<section class="screen" id="s4">
+<div class="screen-head"><h2>04 · RSS 阅读</h2><span class="src">activity_rss_read.xml · ui/rss/read/ReadRssActivity.kt</span></div>
+<p class="screen-desc">文章 WebView 阅读页：blend 顶栏 = 返回 + 文章标题 + 刷新 / 收藏(星标) / 分享 / 朗读，溢出菜单还有 登录 / 浏览器打开；顶栏下方 1dp 加载进度线。正文由源样式 + 规则渲染，夜间自动切换暖黑。</p>
+<div class="pair">
+<figure><div class="phone light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>把订阅源还给我：RSS 阅读的黄金时代</h1>
+<button class="icon-btn" aria-label="刷新"><svg class="icon"><use href="#i-refresh"/></svg></button>
+<button class="icon-btn" aria-label="收藏"><svg class="icon"><use href="#i-star"/></svg></button>
+<button class="icon-btn" aria-label="分享"><svg class="icon"><use href="#i-share"/></svg></button>
+<button class="icon-btn" aria-label="朗读"><svg class="icon"><use href="#i-vol"/></svg></button>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:22px"><use href="#i-more"/></svg></button></div>
+<div class="prog"><span></span></div>
+<div class="body"><div class="article">
+<h2>把订阅源还给我：RSS 阅读的黄金时代</h2>
+<p class="meta">少数派 · 2026-10-26 18:30</p>
+<div class="hero"><svg><use href="#i-mtn"/></svg></div>
+<p>信息流算法接管阅读的这些年，RSS 一直在安静地活着。它不猜你想看什么，只忠实呈现你订阅的一切——这种朴素的确定性，正在被越来越多的人重新发现。</p>
+<blockquote>「订阅的意义不在于效率，而在于你为自己划定的边界。」</blockquote>
+<p>本篇从源的选择、规则编写到离线同步，梳理一套可持续的 RSS 阅读工作流，并附上我们整理的 12 个优质订阅源清单。</p>
+<div class="tags"><span>#RSS</span><span>#阅读工具</span><span>#工作流</span></div>
+<div class="end">完 · 本文来自 少数派</div>
+</div></div>
+</div><figcaption>浅色</figcaption></figure>
+<figure><div class="phone dark">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>把订阅源还给我：RSS 阅读的黄金时代</h1>
+<button class="icon-btn" aria-label="刷新"><svg class="icon"><use href="#i-refresh"/></svg></button>
+<button class="icon-btn" aria-label="收藏"><svg class="icon"><use href="#i-star"/></svg></button>
+<button class="icon-btn" aria-label="分享"><svg class="icon"><use href="#i-share"/></svg></button>
+<button class="icon-btn" aria-label="朗读"><svg class="icon"><use href="#i-vol"/></svg></button>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:22px"><use href="#i-more"/></svg></button></div>
+<div class="prog"><span></span></div>
+<div class="body"><div class="article">
+<h2>把订阅源还给我：RSS 阅读的黄金时代</h2>
+<p class="meta">少数派 · 2026-10-26 18:30</p>
+<div class="hero"><svg><use href="#i-mtn"/></svg></div>
+<p>信息流算法接管阅读的这些年，RSS 一直在安静地活着。它不猜你想看什么，只忠实呈现你订阅的一切——这种朴素的确定性，正在被越来越多的人重新发现。</p>
+<blockquote>「订阅的意义不在于效率，而在于你为自己划定的边界。」</blockquote>
+<p>本篇从源的选择、规则编写到离线同步，梳理一套可持续的 RSS 阅读工作流，并附上我们整理的 12 个优质订阅源清单。</p>
+<div class="tags"><span>#RSS</span><span>#阅读工具</span><span>#工作流</span></div>
+<div class="end">完 · 本文来自 少数派</div>
+</div></div>
+</div><figcaption>深色</figcaption></figure>
+</div>
+<ul class="notes">
+<li class="note">顶栏菜单 = <b>rss_read.xml</b>：刷新 / 收藏(已收藏态变实心星 +「已收藏」) / 分享 / 朗读(朗读中变停止图标「朗读停止」) / 登录(有 loginUrl 才显示) / 浏览器打开</li>
+<li class="note">顶栏下 1dp RefreshProgressBar 显示网页加载进度（图中 62%）</li>
+<li class="note">正文 WebView 按源样式渲染（style/injectJs/白黑名单规则）；custom_web_view 支持源自定义视图</li>
+<li class="note">下载拦截：长 Snackbar「文件名 + 下载」调用 Download.start</li>
+</ul>
+</section>
+
+<!-- ============ S5 订阅源管理 ============ -->
+<section class="screen" id="s5">
+<div class="screen-head"><h2>05 · 订阅源管理</h2><span class="src">activity_rss_source.xml · ui/rss/source/manage/RssSourceActivity.kt</span></div>
+<p class="screen-desc">订阅源列表：blend 顶栏 = 返回 + 搜索胶囊 + 「订阅源」+ 分组菜单；行内 = 复选框(选中态) + 源名 + 启用开关 + 编辑 + 更多；右侧 FastScroll 快滚条。底部为选择操作栏（全选 / 反选 / 删除 / 溢出批量操作）。图中为勾选 3 项后的选择模式，并展开分组菜单。</p>
+<div class="pair">
+<figure><div class="phone light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button>
+<h1>订阅源</h1>
+<button class="icon-btn" aria-label="分组"><svg class="icon"><use href="#i-groups"/></svg></button>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
+<div class="search-pill"><svg class="icon sm"><use href="#i-search"/></svg><span class="grow">搜索</span></div>
+<div class="body">
+<div class="src-row"><span class="cb on"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span class="nm">少数派</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row" style="background:var(--primary-soft)"><span class="cb on"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span class="nm">爱范儿</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row"><span class="cb on"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span class="nm">阮一峰的网络日志</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row"><span class="cb"></span><span class="nm">酷安</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row"><span class="cb"></span><span class="nm">掘金</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row"><span class="cb"></span><span class="nm">知乎日报</span><span class="sw"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row"><span class="cb"></span><span class="nm">36氪</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row"><span class="cb"></span><span class="nm">Solidot</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row"><span class="cb"></span><span class="nm">极客公园</span><span class="sw"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row"><span class="cb"></span><span class="nm">界面新闻</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row"><span class="cb"></span><span class="nm">异视异色</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row"><span class="cb"></span><span class="nm">阅读派</span><span class="sw"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="fastscroll"></div>
+<div class="menu" style="right:52px;top:2px;min-width:186px">
+<button>分组管理</button>
+<button>已启用</button>
+<button>已禁用</button>
+<button>需要登录</button>
+<button>未分组</button>
+<div class="m-sep"></div>
+<button>科技<span class="ok"><svg class="icon sm"><use href="#i-check"/></svg></span></button>
+<button>设计</button></div>
+</div>
+<div class="selbar">
+<span class="all"><span class="cb"></span>全选(3/12)</span>
+<button class="pill">反选</button>
+<button class="pill fill">删除</button>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:22px"><use href="#i-more"/></svg></button></div>
+</div><figcaption>浅色</figcaption></figure>
+<figure><div class="phone dark">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button>
+<h1>订阅源</h1>
+<button class="icon-btn" aria-label="分组"><svg class="icon"><use href="#i-groups"/></svg></button>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
+<div class="search-pill"><svg class="icon sm"><use href="#i-search"/></svg><span class="grow">搜索</span></div>
+<div class="body">
+<div class="src-row"><span class="cb on"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span class="nm">少数派</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row" style="background:var(--primary-soft)"><span class="cb on"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span class="nm">爱范儿</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row"><span class="cb on"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span class="nm">阮一峰的网络日志</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row"><span class="cb"></span><span class="nm">酷安</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row"><span class="cb"></span><span class="nm">掘金</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row"><span class="cb"></span><span class="nm">知乎日报</span><span class="sw"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row"><span class="cb"></span><span class="nm">36氪</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row"><span class="cb"></span><span class="nm">Solidot</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row"><span class="cb"></span><span class="nm">极客公园</span><span class="sw"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row"><span class="cb"></span><span class="nm">界面新闻</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row"><span class="cb"></span><span class="nm">异视异色</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row"><span class="cb"></span><span class="nm">阅读派</span><span class="sw"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="fastscroll"></div>
+<div class="menu" style="right:52px;top:2px;min-width:186px">
+<button>分组管理</button>
+<button>已启用</button>
+<button>已禁用</button>
+<button>需要登录</button>
+<button>未分组</button>
+<div class="m-sep"></div>
+<button>科技<span class="ok"><svg class="icon sm"><use href="#i-check"/></svg></span></button>
+<button>设计</button></div>
+</div>
+<div class="selbar">
+<span class="all"><span class="cb"></span>全选(3/12)</span>
+<button class="pill">反选</button>
+<button class="pill fill">删除</button>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:22px"><use href="#i-more"/></svg></button></div>
+</div><figcaption>深色</figcaption></figure>
+</div>
+<ul class="notes">
+<li class="note">顶栏分组菜单 = <b>rss_source.xml</b>：分组管理 / 已启用 / 已禁用 / 需要登录 / 未分组 + 各源分组；溢出菜单：新建订阅源 / 本地导入 / 网络导入 / 二维码导入 / 导入默认规则 / 帮助</li>
+<li class="note">行控件 = <b>item_rss_source.xml</b>：勾选(进选择模式) + 启用开关 + 编辑 + 更多(置顶/编辑/禁用源/删除弹窗)</li>
+<li class="note">选择操作栏 = <b>view_select_action_bar.xml + rss_source_sel.xml</b>：全选 / 反选 / 删除 / ⋮：启用所选 · 禁用所选 · 添加分组 · 移除分组 · 置顶所选 · 置底所选 · 导出所选 · 分享选中源 · 选中所选区间</li>
+<li class="note">列表为 FastScrollRecyclerView 快滚；搜索实时过滤</li>
+</ul>
+</section>
+
+<!-- ============ S6 订阅源编辑 ============ -->
+<section class="screen" id="s6">
+<div class="screen-head"><h2>06 · 订阅源编辑</h2><span class="src">activity_rss_source_edit.xml · ui/rss/source/edit/RssSourceEditActivity.kt</span></div>
+<p class="screen-desc">编辑订阅源：blend 顶栏 = 返回 + 「编辑订阅源」+ 保存 + 调试；其下为 启用 / 单 URL / CookieJar 三个复选框与三个 Tab（基本 / 列表 / WEB_VIEW），正文为 filled 输入框表单，可滚动。展示「基本」Tab 的前几个字段。</p>
+<div class="pair">
+<figure><div class="phone light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>编辑订阅源</h1>
+<button class="icon-btn" aria-label="保存"><svg class="icon"><use href="#i-save"/></svg></button>
+<button class="icon-btn" aria-label="调试"><svg class="icon"><use href="#i-bug"/></svg></button>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
+<div class="checks-row">
+<label><span class="cb on"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></span>启用</label>
+<label><span class="cb"></span>单 URL</label>
+<label><span class="cb on"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></span>CookieJar</label></div>
+<div class="tabs-row" style="border-bottom:0">
+<button class="tab on">基本</button><button class="tab">列表</button><button class="tab">WEB_VIEW</button></div>
+<div class="body">
+<div style="flex:1;padding-top:10px">
+<div class="field"><div class="lb">源名称（sourceName）</div><div class="vl">少数派</div></div>
+<div class="field"><div class="lb">源 URL（sourceUrl）</div><div class="vl">https://sspai.com</div></div>
+<div class="field"><div class="lb">图标（sourceIcon）</div><div class="vl">https://sspai.com/favicon.ico</div></div>
+<div class="field"><div class="lb">源分组（sourceGroup）</div><div class="vl">科技</div></div>
+<div class="field"><div class="lb">源注释（sourceComment）</div><div class="vl">少数派 RSS 订阅源</div></div>
+<div class="field"><div class="lb">分类Url（sortUrl）</div><div class="vl">首页::https://sspai.com/api/v1/i…</div></div>
+<div class="field"><div class="lb">登录 URL（loginUrl）</div><div class="vl empty"></div></div>
+<div class="field"><div class="lb">登录 UI（loginUi）</div><div class="vl empty"></div></div>
+<div class="field"><div class="lb">登录检查 JS（loginCheckJs）</div><div class="vl empty"></div></div>
+<div class="field"><div class="lb">封面解密 JS（coverDecodeJs）</div><div class="vl empty"></div></div>
+<div class="field"><div class="lb">请求头（header）</div><div class="vl empty"></div></div>
+<div class="field"><div class="lb">变量说明（variableComment）</div><div class="vl">源变量可在js中通过source.getVariable()获取</div></div>
+<div class="field"><div class="lb">并发率（concurrentRate）</div><div class="vl empty"></div></div>
+<div class="field"><div class="lb">jsLib</div><div class="vl empty"></div></div>
+
+</div>
+<div class="fade-out"></div>
+</div>
+</div><figcaption>浅色</figcaption></figure>
+<figure><div class="phone dark">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>编辑订阅源</h1>
+<button class="icon-btn" aria-label="保存"><svg class="icon"><use href="#i-save"/></svg></button>
+<button class="icon-btn" aria-label="调试"><svg class="icon"><use href="#i-bug"/></svg></button>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
+<div class="checks-row">
+<label><span class="cb on"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></span>启用</label>
+<label><span class="cb"></span>单 URL</label>
+<label><span class="cb on"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></span>CookieJar</label></div>
+<div class="tabs-row" style="border-bottom:0">
+<button class="tab on">基本</button><button class="tab">列表</button><button class="tab">WEB_VIEW</button></div>
+<div class="body">
+<div style="flex:1;padding-top:10px">
+<div class="field"><div class="lb">源名称（sourceName）</div><div class="vl">少数派</div></div>
+<div class="field"><div class="lb">源 URL（sourceUrl）</div><div class="vl">https://sspai.com</div></div>
+<div class="field"><div class="lb">图标（sourceIcon）</div><div class="vl">https://sspai.com/favicon.ico</div></div>
+<div class="field"><div class="lb">源分组（sourceGroup）</div><div class="vl">科技</div></div>
+<div class="field"><div class="lb">源注释（sourceComment）</div><div class="vl">少数派 RSS 订阅源</div></div>
+<div class="field"><div class="lb">分类Url（sortUrl）</div><div class="vl">首页::https://sspai.com/api/v1/i…</div></div>
+<div class="field"><div class="lb">登录 URL（loginUrl）</div><div class="vl empty"></div></div>
+<div class="field"><div class="lb">登录 UI（loginUi）</div><div class="vl empty"></div></div>
+<div class="field"><div class="lb">登录检查 JS（loginCheckJs）</div><div class="vl empty"></div></div>
+<div class="field"><div class="lb">封面解密 JS（coverDecodeJs）</div><div class="vl empty"></div></div>
+<div class="field"><div class="lb">请求头（header）</div><div class="vl empty"></div></div>
+<div class="field"><div class="lb">变量说明（variableComment）</div><div class="vl">源变量可在js中通过source.getVariable()获取</div></div>
+<div class="field"><div class="lb">并发率（concurrentRate）</div><div class="vl empty"></div></div>
+<div class="field"><div class="lb">jsLib</div><div class="vl empty"></div></div>
+
+</div>
+<div class="fade-out"></div>
+</div>
+</div><figcaption>深色</figcaption></figure>
+</div>
+<ul class="notes">
+<li class="note">顶栏 = <b>source_edit.xml</b>：保存 / 调试(常显) + 溢出：登录 · 搜索 · 清除 Cookie · 自动补全(可勾选) · 复制源 · 粘帖源 · 设置源变量 · 二维码导入 · 二维码分享 · 字符串分享 · 帮助</li>
+<li class="note">复选行：启用 / 单 URL / CookieJar（HorizontalScrollView 可横向滚动）</li>
+<li class="note">Tab「基本」字段：源名称 / 源URL / 图标 / 源分组 / 源注释 / 分类Url / 登录URL / 登录UI / 登录检查JS / 封面解密JS / 请求头 / 变量说明 / 并发率 / jsLib</li>
+<li class="note">Tab「列表」字段：列表规则 / 下一页 / 标题 / 时间 / 描述 / 图片 / 链接；Tab「WEB_VIEW」：启用JS / 加载BaseUrl(复选) + 内容规则 / 样式 / 注入Js / 白名单 / 黑名单 / url跳转拦截</li>
+<li class="note">未保存退出弹「退出」「尚未保存，确认退出？」</li>
+</ul>
+</section>
+
+<!-- ============ S7 订阅源调试 ============ -->
+<section class="screen" id="s7">
+<div class="screen-head"><h2>07 · 订阅源调试</h2><span class="src">activity_source_debug.xml · ui/rss/source/debug/RssSourceDebugActivity.kt</span></div>
+<p class="screen-desc">调试源（与书源调试共用 activity_source_debug）：blend 顶栏「调试源」，下方逐行输出调试日志（可长按选择复制），顶部居中旋转加载，结束时消失。溢出菜单可查看列表源码 / 正文源码。</p>
+<div class="pair">
+<figure><div class="phone light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>调试源</h1>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
+<div class="body">
+<div class="dbg-spin"></div>
+<div class="log">
+<div class="ln"><span class="tm">14:22:31</span><span class="msg">开始调试：少数派</span></div>
+<div class="ln"><span class="tm">14:22:31</span><span class="msg">获取列表页 <span class="hl">https://sspai.com/api/v1/index/article/all/page/1</span></span></div>
+<div class="ln"><span class="tm">14:22:33</span><span class="msg ok">✓ 列表页获取成功（200），耗时 1.8s</span></div>
+<div class="ln"><span class="tm">14:22:33</span><span class="msg">解析列表规则 ruleArticles…共 20 条</span></div>
+<div class="ln"><span class="tm">14:22:33</span><span class="msg">├ 标题：把订阅源还给我：RSS 阅读的黄金时代</span></div>
+<div class="ln"><span class="tm">14:22:33</span><span class="msg">├ 时间：2026-10-26 18:30</span></div>
+<div class="ln"><span class="tm">14:22:33</span><span class="msg">├ 图片：https://cdn.sspai.com/2026/10/26/…jpg</span></div>
+<div class="ln"><span class="tm">14:22:33</span><span class="msg">└ 链接：<span class="hl">https://sspai.com/post/98120</span></span></div>
+<div class="ln"><span class="tm">14:22:34</span><span class="msg">解析文章详情页 ruleContent…</span></div>
+<div class="ln"><span class="tm">14:22:36</span><span class="msg ok">✓ 正文获取成功（3286 字）</span></div>
+<div class="ln"><span class="tm">14:22:36</span><span class="msg">├ 标题：实测三款国产折叠屏：轻了，也更耐用了</span></div>
+<div class="ln"><span class="tm">14:22:36</span><span class="msg">├ 时间：2026-10-26 10:02</span></div>
+<div class="ln"><span class="tm">14:22:36</span><span class="msg">└ 链接：<span class="hl">https://sspai.com/post/98121</span></span></div>
+<div class="ln"><span class="tm">14:22:37</span><span class="msg">列表 / 正文源码已缓存，可从菜单查看</span></div>
+<div class="ln"><span class="tm">14:22:38</span><span class="msg ok">✓ 调试完成</span></div>
+</div>
+<div class="menu" style="right:14px;top:2px;min-width:150px">
+<button>列表源码</button>
+<button>正文源码</button></div>
+</div>
+</div><figcaption>浅色</figcaption></figure>
+<figure><div class="phone dark">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>调试源</h1>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
+<div class="body">
+<div class="dbg-spin"></div>
+<div class="log">
+<div class="ln"><span class="tm">14:22:31</span><span class="msg">开始调试：少数派</span></div>
+<div class="ln"><span class="tm">14:22:31</span><span class="msg">获取列表页 <span class="hl">https://sspai.com/api/v1/index/article/all/page/1</span></span></div>
+<div class="ln"><span class="tm">14:22:33</span><span class="msg ok">✓ 列表页获取成功（200），耗时 1.8s</span></div>
+<div class="ln"><span class="tm">14:22:33</span><span class="msg">解析列表规则 ruleArticles…共 20 条</span></div>
+<div class="ln"><span class="tm">14:22:33</span><span class="msg">├ 标题：把订阅源还给我：RSS 阅读的黄金时代</span></div>
+<div class="ln"><span class="tm">14:22:33</span><span class="msg">├ 时间：2026-10-26 18:30</span></div>
+<div class="ln"><span class="tm">14:22:33</span><span class="msg">├ 图片：https://cdn.sspai.com/2026/10/26/…jpg</span></div>
+<div class="ln"><span class="tm">14:22:33</span><span class="msg">└ 链接：<span class="hl">https://sspai.com/post/98120</span></span></div>
+<div class="ln"><span class="tm">14:22:34</span><span class="msg">解析文章详情页 ruleContent…</span></div>
+<div class="ln"><span class="tm">14:22:36</span><span class="msg ok">✓ 正文获取成功（3286 字）</span></div>
+<div class="ln"><span class="tm">14:22:36</span><span class="msg">├ 标题：实测三款国产折叠屏：轻了，也更耐用了</span></div>
+<div class="ln"><span class="tm">14:22:36</span><span class="msg">├ 时间：2026-10-26 10:02</span></div>
+<div class="ln"><span class="tm">14:22:36</span><span class="msg">└ 链接：<span class="hl">https://sspai.com/post/98121</span></span></div>
+<div class="ln"><span class="tm">14:22:37</span><span class="msg">列表 / 正文源码已缓存，可从菜单查看</span></div>
+<div class="ln"><span class="tm">14:22:38</span><span class="msg ok">✓ 调试完成</span></div>
+</div>
+<div class="menu" style="right:14px;top:2px;min-width:150px">
+<button>列表源码</button>
+<button>正文源码</button></div>
+</div>
+</div><figcaption>深色</figcaption></figure>
+</div>
+<ul class="notes">
+<li class="note">溢出菜单 = <b>rss_source_debug.xml</b>：列表源码 / 正文源码（TextDialog 查看 Html）</li>
+<li class="note">日志 item_log：可长按选择复制；旋转加载 RotateLoading（主色），state=-1/1000 时隐藏</li>
+<li class="note">调试入口：编辑页「调试」或源长按菜单；失败行以错误色输出（如「源不存在」）</li>
+<li class="note">布局底部含调试语法帮助卡片（调试搜索 / 发现 / 详情页 / 目录页 / 正文页输入示例）</li>
+</ul>
+</section>
+
+<!-- ============ S8 规则订阅 ============ -->
+<section class="screen" id="s8">
+<div class="screen-head"><h2>08 · 规则订阅</h2><span class="src">activity_rule_sub.xml · ui/rss/subscription/RuleSubActivity.kt</span></div>
+<p class="screen-desc">规则订阅管理：blend 顶栏 = 返回 + 「规则订阅」+ 新增(+)；列表行 = 名称 + 类型徽章（书源 / 订阅源 / 替换规则）+ 导入地址 URL + 编辑 + 更多（删除）；点击行按类型弹出导入对话框，长按行拖拽排序；空态显示引导文案。图中展示第二行的更多菜单。</p>
+<div class="pair">
+<figure><div class="phone light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>规则订阅</h1>
+<button class="icon-btn" aria-label="新增"><svg class="icon"><use href="#i-add"/></svg></button></div>
+<div class="body">
+<div class="rule-row"><div class="info"><p class="nm">书源合集（每日更新）<span class="badge">书源</span></p><span class="url">https://gitcode.com/legado/book_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">精选订阅源<span class="badge">订阅源</span></p><span class="url">https://gitcode.com/legado/rss_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">净化替换规则<span class="badge">替换规则</span></p><span class="url">https://gitcode.com/legado/replace_rules.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">本地图书馆源<span class="badge">书源</span></p><span class="url">https://gitee.com/mirrors/local_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">精校书源（周末更新）<span class="badge">书源</span></p><span class="url">https://gitcode.com/legado/fine_book_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">听书源合集<span class="badge">订阅源</span></p><span class="url">https://gitcode.com/legado/audio_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">去广告替换规则<span class="badge">替换规则</span></p><span class="url">https://gitcode.com/legado/ad_rules.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">轻小说书源<span class="badge">书源</span></p><span class="url">https://gitcode.com/legado/light_novel_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+
+<div class="menu" style="right:26px;top:66px;min-width:130px">
+<button class="danger"><svg class="icon sm"><use href="#i-del"/></svg>删除</button></div>
+</div>
+</div><figcaption>浅色</figcaption></figure>
+<figure><div class="phone dark">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>规则订阅</h1>
+<button class="icon-btn" aria-label="新增"><svg class="icon"><use href="#i-add"/></svg></button></div>
+<div class="body">
+<div class="rule-row"><div class="info"><p class="nm">书源合集（每日更新）<span class="badge">书源</span></p><span class="url">https://gitcode.com/legado/book_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">精选订阅源<span class="badge">订阅源</span></p><span class="url">https://gitcode.com/legado/rss_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">净化替换规则<span class="badge">替换规则</span></p><span class="url">https://gitcode.com/legado/replace_rules.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">本地图书馆源<span class="badge">书源</span></p><span class="url">https://gitee.com/mirrors/local_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">精校书源（周末更新）<span class="badge">书源</span></p><span class="url">https://gitcode.com/legado/fine_book_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">听书源合集<span class="badge">订阅源</span></p><span class="url">https://gitcode.com/legado/audio_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">去广告替换规则<span class="badge">替换规则</span></p><span class="url">https://gitcode.com/legado/ad_rules.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">轻小说书源<span class="badge">书源</span></p><span class="url">https://gitcode.com/legado/light_novel_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+
+<div class="menu" style="right:26px;top:66px;min-width:130px">
+<button class="danger"><svg class="icon sm"><use href="#i-del"/></svg>删除</button></div>
+</div>
+</div><figcaption>深色</figcaption></figure>
+</div>
+<ul class="notes">
+<li class="note">顶栏菜单：新增（source_subscription.xml，always 显示 + 图标）→ 弹出编辑对话框（类型下拉 + 名称 + URL）</li>
+<li class="note">行控件 = <b>item_rule_sub.xml</b>：名称(16sp) + AccentBg 类型徽章 + URL(12sp 中间省略) + 编辑 + 更多(menu：删除)</li>
+<li class="note">点击行按 type 导入：0 书源 / 1 订阅源 / 2 替换规则（ImportBookSourceDialog 等）</li>
+<li class="note">长按拖拽排序（ItemTouchHelper，落库 customOrder）；URL 重复时提示「地址已存在」</li>
+<li class="note">空态文案：「添加大佬们提供的规则导入地址\n添加后点击可导入规则」</li>
+</ul>
+</section>
+
+</main>
+<script>
+document.querySelectorAll('.doc-nav a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.querySelector(a.getAttribute('href'))?.scrollIntoView({behavior:'smooth'})}));
+</script>
+</body></html>

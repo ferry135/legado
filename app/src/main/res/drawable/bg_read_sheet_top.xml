@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 阅读器底部弹层：surface2 底 + 顶部 16dp 圆角（03 .sheet，供 05/06/07/08 弹层） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/background_menu" />
+    <corners
+        android:topLeftRadius="@dimen/corner_radius_lg"
+        android:topRightRadius="@dimen/corner_radius_lg" />
+</shape>

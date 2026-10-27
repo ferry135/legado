@@ -46,11 +46,18 @@
 
     </FrameLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bg_divider_line" />
+
     <com.google.android.flexbox.FlexboxLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
+        android:paddingLeft="18dp"
+        android:paddingTop="6dp"
+        android:paddingRight="18dp"
+        android:paddingBottom="14dp"
         app:flexWrap="wrap"
         app:justifyContent="space_between">
 
@@ -58,7 +65,10 @@
             android:id="@+id/tv_footer_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="12dp"
+            android:paddingLeft="14dp"
+            android:paddingTop="10dp"
+            android:paddingRight="14dp"
+            android:paddingBottom="10dp"
             android:visibility="gone"
             tools:ignore="RtlHardcoded" />
 
@@ -75,7 +85,10 @@
                 android:id="@+id/tv_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="12dp"
+                android:paddingLeft="14dp"
+                android:paddingTop="10dp"
+                android:paddingRight="14dp"
+                android:paddingBottom="10dp"
                 android:text="@string/cancel"
                 android:textColor="@color/secondaryText"
                 android:visibility="gone"
@@ -85,7 +98,10 @@
                 android:id="@+id/tv_ok"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="12dp"
+                android:paddingLeft="14dp"
+                android:paddingTop="10dp"
+                android:paddingRight="14dp"
+                android:paddingBottom="10dp"
                 android:text="@string/ok"
                 android:visibility="gone"
                 tools:ignore="RtlHardcoded" />
