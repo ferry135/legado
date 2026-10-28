@@ -21,14 +21,36 @@
         android:layout_width="match_parent"
         android:layout_height="2dp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingLeft="9dp"
-        android:paddingTop="11dp"
-        android:paddingRight="9dp"
-        android:paddingBottom="11dp" />
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingLeft="9dp"
+            android:paddingTop="11dp"
+            android:paddingRight="9dp"
+            android:paddingBottom="11dp" />
+
+        <!-- 换封面无结果空态（02-⑥）：EmptyTipView 单一实现，
+             ChangeCoverDialog.upEmptyMsgView() 按结果为空控制显隐 -->
+        <io.legado.app.ui.widget.EmptyTipView
+            android:id="@+id/empty_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingLeft="24dp"
+            android:paddingTop="32dp"
+            android:paddingRight="24dp"
+            android:paddingBottom="32dp"
+            android:visibility="gone"
+            app:empty_icon="@drawable/ic_image_outline"
+            app:empty_tip="@string/change_cover_empty_tip"
+            app:empty_title="@string/change_cover_empty_title" />
+
+    </FrameLayout>
 
 </LinearLayout>

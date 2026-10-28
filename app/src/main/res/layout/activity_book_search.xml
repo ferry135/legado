@@ -15,7 +15,8 @@
         app:contentLayout="@layout/view_search"
         app:layout_constraintTop_toTopOf="parent"
         app:themeMode="blend"
-        app:title="搜索" />
+        app:title="搜索"
+        app:titleTextAppearance="@style/TextAppearance.Legado.BarTitle" />
 
     <io.legado.app.ui.widget.anima.RefreshProgressBar
         android:id="@+id/refresh_progress_bar"

@@ -6,7 +6,10 @@
     <color name="surface_container">#FFFFFF</color>
     <color name="surface_container_high">#EEECE9</color>
     <color name="surface_hero">#FFF1E8</color>
-    <color name="bnv_item_indicator">#FFF0E6</color>
+    <!-- primary-soft（设计稿 primary-soft，明 #FFF0E6）：底部导航指示器/RSS 勾选行/chip 柔光底共用中性令牌 -->
+    <color name="primary_soft">#FFF0E6</color>
+    <!-- 底部导航指示器（语义别名，指向 primary_soft） -->
+    <color name="bnv_item_indicator">@color/primary_soft</color>
     <color name="on_surface">#20242B</color>
     <color name="on_surface_variant">#60656D</color>
     <color name="outline">#8B8878</color>
@@ -31,6 +34,10 @@
     <!-- 书籍详情 hero 渐变（02，自上而下） -->
     <color name="hero_gradient_start">#F7E8D9</color>
     <color name="hero_gradient_end">#F0D2B9</color>
+    <!-- 警示色（02/05 换源「踩」iv_bad 激活态，稿面 #C2551F；明暗同值） -->
+    <color name="warning">#C2551F</color>
+    <!-- 扫码取景辅助提示（08，相机预览上白 60%，设计 08:103 rgba(255,255,255,.6)，明暗同值） -->
+    <color name="scan_hint_text">#99FFFFFF</color>
 
     //**程序化写主题用固定色（无日夜变体，applyTheme 按分支直接取值，避免随启动时 configuration 漂移）**//
     <color name="day_surface">#FAF9F7</color>

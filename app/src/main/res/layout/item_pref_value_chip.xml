@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 设置值胶囊（08 稿 .vchip，NameListPreference widgetLayout）：surface2 底、8dp 圆角、7x14 内边距、max-width 148dp；
+     与 04 稿 chip（item_fillet_text.xml，max-width 216dp）同底同内边距，仅宽度上限按各自稿面收敛 -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/text_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    android:background="@drawable/bg_chip"
+    android:ellipsize="end"
+    android:maxWidth="148dp"
+    android:gravity="center"
+    android:paddingTop="7dp"
+    android:paddingBottom="7dp"
+    android:paddingLeft="14dp"
+    android:paddingRight="14dp"
+    android:maxLines="1"
+    android:textColor="@color/on_surface"
+    android:textSize="14sp"
+    tools:ignore="UnusedAttribute" />

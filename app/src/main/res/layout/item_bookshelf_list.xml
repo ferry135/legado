@@ -28,11 +28,11 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_row_more"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/more"
-        android:padding="4dp"
+        android:padding="12dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_more_vert"
         app:layout_constraintRight_toRightOf="parent"

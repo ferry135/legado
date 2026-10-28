@@ -190,6 +190,7 @@
     <string name="check_update">Check for Updates</string>
     <string name="camera_scan">Scan QR code</string>
     <string name="scan_image">Scan local images</string>
+    <string name="scan_hint">Align the QR code to scan automatically</string>
     <string name="rule_summary">Rules description</string>
     <string name="share">Share</string>
     <string name="share_app">Share to</string>
@@ -801,6 +802,15 @@
     <string name="sort_by_respondTime">Sort by respond time</string>
     <string name="search_content">Search content</string>
     <string name="rss_source_empty">Empty now!</string>
+    <string name="rss_source_empty_tip">Tap the source manager at the top-right to import sources from local / network / QR code</string>
+    <string name="change_source_empty_title">No matching sources found</string>
+    <string name="change_source_empty_tip">Try another keyword, or check source groups and enabled state in the menu</string>
+    <string name="change_cover_empty_title">No cover found</string>
+    <string name="change_cover_empty_tip">Check the source cover rule, then tap refresh to search again</string>
+    <string name="bookmark_empty_title">No bookmarks yet</string>
+    <string name="bookmark_empty_tip">Open the reading menu and choose \"Add bookmark\"; saved passages gather here</string>
+    <string name="badge_builtin">Built-in</string>
+    <string name="clear_filters">Clear filters</string>
     <string name="explore_empty">Empty now!</string>
     <string name="page_key_set_help">Focusing on the input box and pressing a physical key will automatically enter the value of the key, and multiple keys will be automatically separated by commas.</string>
     <string name="theme_name">Theme name</string>
@@ -822,6 +832,7 @@
     <string name="show_hide">Show/Hide</string>
     <string name="header_footer">Footer <![CDATA[&]]> Header</string>
     <string name="rule_subscription">Rule Subscription</string>
+    <string name="rule_sub_empty_title">No rule subscription yet</string>
     <string name="rule_sub_empty_msg">Add the rule import address provided by the bosses\nClick to import rules after adding</string>
     <string name="get_book_progress">Pull the cloud  progress</string>
     <string name="cover_book_progress">Overlay Cloud Progress</string>

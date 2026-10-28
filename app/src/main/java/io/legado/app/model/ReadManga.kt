@@ -26,6 +26,7 @@ import io.legado.app.ui.book.manga.entities.MangaContent
 import io.legado.app.ui.book.manga.entities.MangaPage
 import io.legado.app.ui.book.manga.entities.ReaderLoading
 import io.legado.app.utils.mapIndexed
+import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers.IO
@@ -60,8 +61,9 @@ object ReadManga : CoroutineScope by MainScope() {
     var simulatedChapterSize = 0
     var mCallback: Callback? = null
     var preDownloadTask: Job? = null
-    val downloadedChapters = hashSetOf<Int>()
-    val downloadFailChapters = hashMapOf<Int, Int>()
+    // 下载回调与预下载循环（IO）跨线程读写，须用并发容器
+    val downloadedChapters = ConcurrentHashMap.newKeySet<Int>()
+    val downloadFailChapters = ConcurrentHashMap<Int, Int>()
     val downloadScope = CoroutineScope(SupervisorJob() + IO)
     val preDownloadSemaphore = Semaphore(2)
     var rateLimiter = ConcurrentRateLimiter(null)
@@ -83,10 +85,12 @@ object ReadManga : CoroutineScope by MainScope() {
         clearMangaChapter()
         upWebBook(book)
         synchronized(this) {
+            // loadingChapters 与 @Synchronized 的 addLoading/removeLoading 共用 this 监视器
             loadingChapters.clear()
-            downloadedChapters.clear()
-            downloadFailChapters.clear()
         }
+        // downloaded/downloadFail 已是并发容器，跨线程 clear/add/读无需该监视器
+        downloadedChapters.clear()
+        downloadFailChapters.clear()
     }
 
     fun upData(book: Book) {
@@ -105,10 +109,12 @@ object ReadManga : CoroutineScope by MainScope() {
         }
         upWebBook(book)
         synchronized(this) {
+            // loadingChapters 与 @Synchronized 的 addLoading/removeLoading 共用 this 监视器
             loadingChapters.clear()
-            downloadedChapters.clear()
-            downloadFailChapters.clear()
         }
+        // downloaded/downloadFail 已是并发容器，跨线程 clear/add/读无需该监视器
+        downloadedChapters.clear()
+        downloadFailChapters.clear()
     }
 
     fun upWebBook(book: Book) {
@@ -443,8 +449,7 @@ object ReadManga : CoroutineScope by MainScope() {
                 downloadFailChapters.remove(chapter.index)
                 contentLoadFinish(chapter, it)
             }, error = {
-                downloadFailChapters[chapter.index] =
-                    (downloadFailChapters[chapter.index] ?: 0) + 1
+                downloadFailChapters.merge(chapter.index, 1) { a, b -> a + b }
                 contentLoadFinish(chapter, null)
             }, cancel = {
                 contentLoadFinish(chapter, null, canceled = true)

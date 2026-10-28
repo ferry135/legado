@@ -17,6 +17,7 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.DictRule
 import io.legado.app.databinding.ActivityDictRuleBinding
 import io.legado.app.databinding.DialogEditTextBinding
+import io.legado.app.help.DefaultData
 import io.legado.app.help.DirectLinkUpload
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
@@ -43,6 +44,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewModel>(),
@@ -126,11 +128,18 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
 
     private fun observeDictRuleData() {
         launchCollectWithLifecycle {
-            appDb.dictRuleDao.flowAll().catch {
-                AppLog.put("字典规则获取数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).collect {
-                adapter.setItems(it, adapter.diffItemCallBack)
-            }
+            appDb.dictRuleDao.flowAll()
+                .map { rules ->
+                    // 在 IO 期预计算内置规则名，避免适配器首次绑定在主线程读取 assets
+                    rules to runCatching { DefaultData.dictRules.map { it.name }.toSet() }
+                        .getOrDefault(emptySet())
+                }
+                .catch {
+                    AppLog.put("字典规则获取数据失败\n${it.localizedMessage}", it)
+                }.flowOn(IO).collect { (rules, builtinNames) ->
+                    adapter.setBuiltinNames(builtinNames)
+                    adapter.setItems(rules, adapter.diffItemCallBack)
+                }
 
         }
     }

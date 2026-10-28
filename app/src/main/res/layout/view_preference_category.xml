@@ -30,7 +30,7 @@
             android:textSize="11.5sp"
             android:textStyle="bold"
             android:letterSpacing="0.12"
-            android:textColor="@color/accent"
+            android:textColor="@color/on_surface_variant"
             tools:ignore="RtlHardcoded" />
 
         <!-- .pcat::after：分组标题右侧延伸的细分线 -->

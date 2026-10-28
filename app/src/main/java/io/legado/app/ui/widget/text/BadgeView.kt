@@ -77,6 +77,10 @@ class BadgeView @JvmOverloads constructor(
             typedArray.getDimensionPixelOffset(R.styleable.BadgeView_radius, 8)
         flatangle =
             typedArray.getBoolean(R.styleable.BadgeView_up_flat_angle, false)
+        val hasBadgeColor = typedArray.hasValue(R.styleable.BadgeView_badgeColor)
+        val badgeColor = typedArray.getColor(R.styleable.BadgeView_badgeColor, 0)
+        val hasBadgeTextColor = typedArray.hasValue(R.styleable.BadgeView_badgeTextColor)
+        val badgeTextColor = typedArray.getColor(R.styleable.BadgeView_badgeTextColor, 0)
         typedArray.recycle()
 
         if (layoutParams !is LayoutParams) {
@@ -93,8 +97,15 @@ class BadgeView @JvmOverloads constructor(
         setPadding(dip2Px(5f), dip2Px(1f), dip2Px(5f), dip2Px(1f))
         radius = radios.toFloat()
 
-        // set default background
-        setBackground(radius, context.accentColor)
+        // set default background：XML 注入 badge_color 时用之，否则默认 accentColor
+        if (hasBadgeColor) {
+            setBackground(radius, badgeColor, badgeTextColor.takeIf { hasBadgeTextColor })
+        } else {
+            setBackground(radius, context.accentColor)
+            if (hasBadgeTextColor) {
+                setTextColor(badgeTextColor)
+            }
+        }
 
         gravity = Gravity.CENTER
 
@@ -113,7 +124,7 @@ class BadgeView @JvmOverloads constructor(
         setBackground(radius, color)
     }
 
-    fun setBackground(dipRadius: Float, badgeColor: Int) {
+    fun setBackground(dipRadius: Float, badgeColor: Int, badgeTextColor: Int? = null) {
         val radius = dip2Px(dipRadius).toFloat()
         val radiusArray =
             floatArrayOf(radius, radius, radius, radius, radius, radius, radius, radius)
@@ -126,7 +137,7 @@ class BadgeView @JvmOverloads constructor(
         bgDrawable.paint.color = badgeColor
         background = bgDrawable
         setTextColor(
-            if (ColorUtils.isColorLight(badgeColor)) {
+            badgeTextColor ?: if (ColorUtils.isColorLight(badgeColor)) {
                 Color.BLACK
             } else {
                 Color.WHITE

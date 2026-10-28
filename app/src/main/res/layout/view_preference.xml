@@ -39,11 +39,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <!-- .ps：长摘要最多 2 行省略（v3） -->
         <TextView
             android:id="@+id/preference_desc"
             android:textSize="11.5sp"
             android:textColor="@color/on_surface_variant"
             android:text="@string/default1"
+            android:maxLines="2"
+            android:ellipsize="end"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp" />

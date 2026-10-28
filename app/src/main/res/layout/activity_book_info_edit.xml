@@ -159,44 +159,28 @@
                 android:paddingTop="14dp"
                 android:paddingEnd="16dp">
 
-                <io.legado.app.ui.widget.text.StrokeTextView
+                <!-- .obtn：surface_container_high 填充（bg_chip）+ StrokeTextView 1dp 描边叠加，
+                     暗色下纯描边对比不足（AA）；StrokeChipView 为三按钮单一实现（圆角 8dp 对齐 bg_chip） -->
+                <io.legado.app.ui.widget.text.StrokeChipView
                     android:id="@+id/tv_select_cover"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="13dp"
-                    android:paddingTop="7dp"
-                    android:paddingRight="13dp"
-                    android:paddingBottom="7dp"
-                    android:text="@string/select_local_image"
-                    android:textSize="13sp"
-                    app:radius="10dp" />
+                    android:text="@string/select_local_image" />
 
-                <io.legado.app.ui.widget.text.StrokeTextView
+                <io.legado.app.ui.widget.text.StrokeChipView
                     android:id="@+id/tv_change_cover"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:paddingLeft="13dp"
-                    android:paddingTop="7dp"
-                    android:paddingRight="13dp"
-                    android:paddingBottom="7dp"
                     android:text="@string/change_cover_source"
-                    android:textSize="13sp"
-                    app:radius="10dp"
                     tools:ignore="RtlHardcoded" />
 
-                <io.legado.app.ui.widget.text.StrokeTextView
+                <io.legado.app.ui.widget.text.StrokeChipView
                     android:id="@+id/tv_refresh_cover"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:paddingLeft="13dp"
-                    android:paddingTop="7dp"
-                    android:paddingRight="13dp"
-                    android:paddingBottom="7dp"
                     android:text="@string/refresh_cover"
-                    android:textSize="13sp"
-                    app:radius="10dp"
                     tools:ignore="RtlHardcoded" />
 
             </LinearLayout>

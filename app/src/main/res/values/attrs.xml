@@ -175,6 +175,18 @@
     <declare-styleable name="BadgeView">
         <attr name="radius" />
         <attr name="up_flat_angle" format="boolean" />
+        <!-- 徽标底色：设置后替代默认 accentColor 画背景（避免 backgroundTint 与内部 setBackground 对抗） -->
+        <attr name="badgeColor" format="color|reference" />
+        <!-- 徽标文字色：设置后替代内部按底色明暗自动黑白 -->
+        <attr name="badgeTextColor" format="color|reference" />
+    </declare-styleable>
+
+    <declare-styleable name="EmptyTipView">
+        <!-- 图标资源：drawableTop 描边变体；配合 empty_icon_circled 时为圆底大图标 -->
+        <attr name="empty_icon" format="reference" />
+        <attr name="empty_icon_circled" format="boolean" />
+        <attr name="empty_title" format="string|reference" />
+        <attr name="empty_tip" format="string|reference" />
     </declare-styleable>
 
     <declare-styleable name="ArcView">

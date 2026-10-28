@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.base.adapter.ItemViewHolder
@@ -21,6 +22,21 @@ class DictRuleAdapter(context: Context, var callBack: CallBack) :
     ItemTouchCallback.Callback {
 
     private val selected = linkedSetOf<DictRule>()
+
+    // 内置规则名集合（defaultData/dictRules.json），用于 tv_badge_builtin 显隐（设计稿05字典规则）
+    // 由页面在 IO 期预计算后经 setBuiltinNames 传入，避免首次绑定在主线程触发 assets 读取
+    var builtinNames: Set<String> = emptySet()
+        private set
+
+    fun setBuiltinNames(names: Set<String>) {
+        if (names == builtinNames) {
+            return
+        }
+        builtinNames = names
+        if (itemCount > 0) {
+            notifyItemRangeChanged(0, itemCount, bundleOf(Pair("builtin", null)))
+        }
+    }
 
     val selection: List<DictRule>
         get() {
@@ -98,6 +114,7 @@ class DictRuleAdapter(context: Context, var callBack: CallBack) :
             if (payloads.isEmpty()) {
                 root.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))
                 cbName.text = item.name
+                tvBadgeBuiltin.isGone = item.name !in builtinNames
                 swtEnabled.isChecked = item.enabled
                 cbName.isChecked = selected.contains(item)
             } else {
@@ -108,6 +125,7 @@ class DictRuleAdapter(context: Context, var callBack: CallBack) :
                             "selected" -> cbName.isChecked = selected.contains(item)
                             "upName" -> cbName.text = item.name
                             "enabled" -> swtEnabled.isChecked = item.enabled
+                            "builtin" -> tvBadgeBuiltin.isGone = item.name !in builtinNames
                         }
                     }
                 }

@@ -27,9 +27,9 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#6d6a62;margin
 .notes code{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;background:rgba(0,0,0,.055);padding:1px 6px;border-radius:5px;color:#8a4a20;white-space:nowrap}
 /* ---------- 手机壳与令牌（对齐 novel_reader_light/dark.html） ---------- */
 .phone{width:412px;height:900px;border-radius:30px;border:1px solid rgba(0,0,0,.2);position:relative;overflow:hidden;flex:none;
---bg:#faf9f7;--surface:#ffffff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--track:#e5e2de;--divider:rgba(0,0,0,.07);--indicator:#8d939c;
+--bg:#faf9f7;--surface:#ffffff;--surface2:#eeece9;--surface-high:#eeece9;--outline:#8b8878;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--track:#e5e2de;--divider:rgba(0,0,0,.07);--indicator:#8d939c;
 background:var(--bg);color:var(--text)}
-.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--track:#353331;--divider:rgba(255,255,255,.08);--indicator:#777}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--surface-high:#242220;--outline:#8f8b7f;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--track:#353331;--divider:rgba(255,255,255,.08);--indicator:#777}
 .status{height:36px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 22px 4px;font-size:13.5px;font-weight:600}
 .sright{display:flex;gap:7px;align-items:center}
 .main{position:absolute;inset:36px 0 0 0;display:flex;flex-direction:column}
@@ -45,29 +45,30 @@ background:var(--bg);color:var(--text)}
 .tabs::-webkit-scrollbar{display:none}
 .tab{flex:none;min-width:88px;padding:0 22px;border:0;background:transparent;font-size:16px;font-weight:600;color:var(--secondary);display:grid;place-items:center;border-radius:24px;cursor:pointer}
 .tab.active{background:var(--primary);color:#fff}
-.sort{border:0;background:transparent;color:var(--secondary);font-size:15px;display:flex;gap:6px;align-items:center;cursor:pointer;padding:4px;white-space:nowrap}
+.sort{border:0;background:transparent;color:var(--secondary);font-size:15px;display:flex;gap:6px;align-items:center;cursor:pointer;padding:0 6px;min-height:44px;white-space:nowrap}
 /* ---------- 列表条目 item_bookshelf_list ---------- */
 .list{flex:1;overflow:hidden;padding:0 24px;position:relative}
-.row{position:relative;display:grid;grid-template-columns:88px 1fr 32px;gap:16px;padding:16px 0;min-height:160px}
+.row{position:relative;display:grid;grid-template-columns:88px 1fr 44px;gap:16px;padding:16px 0;min-height:160px}
 .cover{width:88px;height:123px;border-radius:9px;display:grid;place-items:center;color:rgba(255,255,255,.93);font-weight:700;font-size:15px;letter-spacing:2px}
 .rinfo{min-width:0;display:flex;flex-direction:column;padding:1px 0}
 .rtitle-row{display:flex;align-items:center;gap:8px;min-width:0}
 .rtitle{font-size:20px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
 .bdg{flex:none;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:var(--primary);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
 .bdg.mut{background:var(--track);color:var(--secondary)}
-.rmeta{display:flex;align-items:center;gap:8px;font-size:14.5px;color:var(--secondary);line-height:2;min-width:0}
+.rmeta{display:flex;align-items:center;gap:8px;font-size:14.5px;color:var(--secondary);line-height:2;min-width:0;white-space:nowrap}
 .rmeta .fill{flex:1}
+.ellip{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mini{width:17px;height:17px;flex:none}
-.more{width:32px;height:32px;border:0;background:transparent;color:var(--secondary);display:grid;place-items:center;border-radius:16px;cursor:pointer;padding:0}
+.more{width:44px;height:44px;border:0;background:transparent;color:var(--secondary);display:grid;place-items:center;border-radius:22px;cursor:pointer;padding:0}
 .more .icon{width:20px;height:20px}
 .rdiv{position:absolute;left:104px;right:0;bottom:0;height:1px;background:var(--divider)}
 .spin{width:19px;height:19px;border-radius:50%;border:2px solid var(--track);border-top-color:var(--primary);animation:rot .9s linear infinite;flex:none}
-.spinwrap{position:absolute;top:9px;right:9px;z-index:2;background:var(--bg);border-radius:50%;padding:4px;display:grid;place-items:center}
+.spinwrap{position:absolute;top:2px;right:2px;z-index:2;background:var(--bg);border-radius:50%;padding:4px;display:grid;place-items:center}
 .spinwrap .spin{width:20px;height:20px}
 @keyframes rot{to{transform:rotate(1turn)}}
 .fthumb{position:absolute;right:5px;top:24%;height:54px;width:5px;border-radius:3px;background:var(--primary);opacity:.85;z-index:5}
 /* ---------- 溢出菜单（M3 圆角、无阴影） ---------- */
-.menu{position:absolute;top:96px;right:14px;min-width:220px;background:var(--surface);border:1px solid var(--divider);border-radius:12px;padding:8px;z-index:20}
+.menu{position:absolute;top:96px;right:14px;min-width:220px;background:var(--surface-high);border:1px solid var(--divider);border-radius:12px;padding:8px;z-index:20}
 .mi{display:flex;align-items:center;gap:12px;height:44px;padding:0 14px;border-radius:10px;font-size:14.5px;color:var(--text);white-space:nowrap}
 .mi .icon{width:20px;height:20px;color:var(--secondary);flex:none}
 /* ---------- 网格 item_bookshelf_grid ---------- */
@@ -75,7 +76,7 @@ background:var(--bg);color:var(--text)}
 .gcell{position:relative}
 .gcover{width:100%;aspect-ratio:2/3;border-radius:9px;display:grid;place-items:center;color:rgba(255,255,255,.93);font-weight:700;font-size:16px;letter-spacing:1.5px;text-align:center;line-height:1.45;padding:8px}
 .gname{margin-top:7px;font-size:13px;line-height:1.45;text-align:center;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.gcell>.bdg{position:absolute;top:-7px;right:-7px;z-index:2}
+.gcell>.bdg{position:absolute;top:6px;right:6px;z-index:2;box-shadow:0 1px 4px rgba(0,0,0,.28)}
 /* ---------- 文件夹分组卡片 item_bookshelf_list_group ---------- */
 .gcard{position:relative;display:grid;grid-template-columns:66px 1fr 24px;gap:14px;align-items:center;margin:0 12px 10px;padding:15px 16px;background:var(--surface);border:1px solid var(--divider);border-radius:12px;cursor:pointer}
 .gcover2{width:66px;height:90px;border-radius:9px;display:grid;place-items:center;color:rgba(255,255,255,.93);font-weight:700;font-size:15px;letter-spacing:2px}
@@ -92,10 +93,14 @@ background:var(--bg);color:var(--text)}
 .wl{position:absolute;inset:36px 0 0 0}
 .wl-brand{position:absolute;top:23%;left:50%;transform:translateX(-56%);display:flex;gap:16px}
 .wl-bar{width:6px;border-radius:3px;background:var(--primary)}
-.wl-title{writing-mode:vertical-rl;font-size:50px;font-weight:700;color:var(--primary);letter-spacing:8px}
+.wl-title{writing-mode:vertical-rl;font-size:49px;font-weight:700;color:var(--primary);letter-spacing:8px}
 .wl-sub{writing-mode:vertical-rl;font-size:16px;color:var(--primary);letter-spacing:6px;margin-top:60px}
 .wl-book{position:absolute;left:50%;bottom:216px;transform:translateX(-50%);width:120px;height:120px;color:var(--primary)}
 .wl-gzh{position:absolute;left:0;right:0;bottom:52px;text-align:center;color:var(--primary);font-size:14px;line-height:1.9}
+/* ---------- 空书架（tv_empty_msg 增强态；XML 配方见 03 注记） ---------- */
+.empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:0 56px}
+.empty-ic{width:54px;height:54px;color:var(--outline);flex:none}
+.empty-t{font-size:15px;line-height:1.8;color:var(--secondary);max-width:240px}
 /* 封面渐变（模拟真实封面内容，非界面令牌） */
 .c1{background:linear-gradient(160deg,#316350,#1e4237)}.c2{background:linear-gradient(160deg,#8c3b2e,#652a1f)}
 .c3{background:linear-gradient(160deg,#3c5a8c,#294065)}.c4{background:linear-gradient(160deg,#c28a3d,#96661f)}
@@ -161,21 +166,21 @@ background:var(--bg);color:var(--text)}
         <div class="list">
           <div class="row"><div class="cover c1">国民法医</div>
             <div class="rinfo"><div class="rtitle-row"><span class="rtitle">国民法医</span><span class="bdg">12</span></div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>志鸟村<span class="fill"></span>2 小时前更新</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg>最近：第十七章 · 十七叔</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>最新：第一千二百章 新案</div></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">志鸟村</span><span class="fill"></span>2 小时前更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第十七章 · 十七叔</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 34% · 昨天</span></div></div>
             <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button><i class="rdiv"></i></div>
           <div class="row"><div class="cover c4">大医凌然</div>
             <div class="rinfo"><div class="rtitle-row"><span class="rtitle">大医凌然</span><span class="bdg mut">1</span></div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>志鸟村<span class="fill"></span>昨天更新</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg>最近：第四百二十一章 手术室</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>最新：第一千零六章 会诊</div></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">志鸟村</span><span class="fill"></span>昨天更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第四百二十一章 手术室</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 78% · 3 天前</span></div></div>
             <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button><i class="rdiv"></i></div>
           <div class="row"><div class="cover c3">诡秘之主</div>
             <div class="rinfo"><div class="rtitle-row"><span class="rtitle">诡秘之主</span></div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>爱潜水的乌贼<span class="fill"></span>3 天前更新</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg>最近：第四百二十章 占卜家</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>最新：第一千三百章 愚者</div></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">爱潜水的乌贼</span><span class="fill"></span>3 天前更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第四百二十章 占卜家</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 12% · 上周</span></div></div>
             <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button></div>
         </div>
         <div class="bottom">
@@ -200,21 +205,21 @@ background:var(--bg);color:var(--text)}
         <div class="list">
           <div class="row"><div class="cover c3">诡秘之主</div>
             <div class="rinfo"><div class="rtitle-row"><span class="rtitle">诡秘之主</span><span class="bdg">99+</span></div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>爱潜水的乌贼<span class="fill"></span>3 天前更新</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg>最近：第四百二十章 占卜家</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>最新：第一千三百章 愚者</div></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">爱潜水的乌贼</span><span class="fill"></span>3 天前更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第四百二十章 占卜家</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 12% · 上周</span></div></div>
             <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button><i class="rdiv"></i></div>
           <div class="row"><div class="cover c5">深空彼岸</div>
             <div class="rinfo"><div class="rtitle-row"><span class="rtitle">深空彼岸</span><span class="spin"></span></div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>辰东<span class="fill"></span>刚刚更新</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg>最近：第八百零九章 彼岸</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>最新：第一千零一章 星海</div></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">辰东</span><span class="fill"></span>刚刚更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第八百零九章 彼岸</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 89% · 刚刚</span></div></div>
             <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button><i class="rdiv"></i></div>
           <div class="row"><div class="cover c9">临渊行</div>
             <div class="rinfo"><div class="rtitle-row"><span class="rtitle">临渊行</span></div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>宅猪<span class="fill"></span>昨天更新</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg>最近：第三百章 渊行</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>最新：第一千四百章 大结局</div></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">宅猪</span><span class="fill"></span>昨天更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第三百章 渊行</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 45% · 昨天</span></div></div>
             <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button></div>
         </div>
         <div class="bottom">
@@ -233,6 +238,7 @@ background:var(--bg);color:var(--text)}
     <li><b>页签可配置隐藏</b>：设置里可关闭「发现」「订阅」，底栏变为 3 项 <code>MainActivity.kt:367-387</code>；支持默认首页设置（书架/发现/订阅/我的）<code>MainActivity.kt:389-402</code>。</li>
     <li><b>交互</b>：双击书架页签回顶部、双击发现页签收起分组 <code>MainActivity.kt:174-192</code>；返回键先回书架页签 <code>MainActivity.kt:95-104</code>；两秒内再按返回弹「再按一次退出」<code>MainActivity.kt:105-115</code>。</li>
     <li><b>内容区</b>为书架分组样式一（标签模式）的实时呈现，详见 03；发现/订阅/我的页签内容归属其它分组设计。</li>
+    <li><b>暗色底栏层次</b>：底栏背景现为 <code>@color/background</code>（=surface，暗色下与页面同色、无层次）；按本稿底栏应为高一层表面，把 <code>activity_main.xml:26</code> 改为 <code>@color/surface_container</code> 一行即可对齐（不改换肤机制）。</li>
   </ul>
 </section>
 
@@ -254,27 +260,27 @@ background:var(--bg);color:var(--text)}
           <i class="fthumb"></i>
           <div class="row"><div class="cover c1">国民法医</div>
             <div class="rinfo"><div class="rtitle-row"><span class="rtitle">国民法医</span><span class="bdg">12</span></div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>志鸟村<span class="fill"></span>2 小时前更新</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg>最近：第十七章 · 十七叔</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>最新：第一千二百章 新案</div></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">志鸟村</span><span class="fill"></span>2 小时前更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第十七章 · 十七叔</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 34% · 昨天</span></div></div>
             <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button><i class="rdiv"></i></div>
           <div class="row"><div class="cover c4">大医凌然</div>
             <div class="rinfo"><div class="rtitle-row"><span class="rtitle">大医凌然</span><span class="bdg mut">1</span></div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>志鸟村<span class="fill"></span>昨天更新</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg>最近：第四百二十一章 手术室</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>最新：第一千零六章 会诊</div></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">志鸟村</span><span class="fill"></span>昨天更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第四百二十一章 手术室</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 78% · 3 天前</span></div></div>
             <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button><i class="rdiv"></i></div>
           <div class="row"><div class="cover c3">诡秘之主</div>
             <div class="rinfo"><div class="rtitle-row"><span class="rtitle">诡秘之主</span></div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>爱潜水的乌贼<span class="fill"></span>3 天前更新</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg>最近：第四百二十章 占卜家</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>最新：第一千三百章 愚者</div></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">爱潜水的乌贼</span><span class="fill"></span>3 天前更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第四百二十章 占卜家</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 12% · 上周</span></div></div>
             <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button><i class="rdiv"></i></div>
-          <div class="row"><div class="cover c6">明克街13号</div>
-            <div class="rinfo"><div class="rtitle-row"><span class="rtitle">明克街13号</span></div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>纯洁滴小龙<span class="fill"></span>4 天前更新</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg>最近：第九百零一章</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>最新：第一千零二章 完本</div></div>
+          <div class="row"><div class="cover c6">转生史莱姆</div>
+            <div class="rinfo"><div class="rtitle-row"><span class="rtitle">关于我转生变成史莱姆这档事</span><span class="bdg mut">3</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">会说话的肘子</span><span class="fill"></span>昨天更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第一千二百八十八章 转生之后的日子</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 56% · 2 小时前</span></div></div>
             <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button></div>
         </div>
         <div class="bottom">
@@ -299,7 +305,7 @@ background:var(--bg);color:var(--text)}
           <div class="mi"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="8" r="1.2" fill="currentColor" stroke="none"/></svg>日志</div>
         </div>
       </div>
-    </div><figcaption>浅色 Light · 溢出菜单展开态</figcaption></figure>
+    </div><figcaption>浅色 Light · 溢出菜单展开态 · 长书名</figcaption></figure>
     <figure class="dev"><div class="phone dark">
       <div class="status"><span>23:07</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="9" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
       <div class="main">
@@ -314,27 +320,27 @@ background:var(--bg);color:var(--text)}
           <i class="fthumb"></i>
           <div class="row"><div class="cover c5">深空彼岸</div>
             <div class="rinfo"><div class="rtitle-row"><span class="rtitle">深空彼岸</span><span class="spin"></span></div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>辰东<span class="fill"></span>刚刚更新</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg>最近：第八百零九章 彼岸</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>最新：第一千零一章 星海</div></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">辰东</span><span class="fill"></span>刚刚更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第八百零九章 彼岸</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 89% · 刚刚</span></div></div>
             <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button><i class="rdiv"></i></div>
           <div class="row"><div class="cover c1">国民法医</div>
             <div class="rinfo"><div class="rtitle-row"><span class="rtitle">国民法医</span><span class="bdg">12</span></div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>志鸟村<span class="fill"></span>2 小时前更新</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg>最近：第十七章 · 十七叔</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>最新：第一千二百章 新案</div></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">志鸟村</span><span class="fill"></span>2 小时前更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第十七章 · 十七叔</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 34% · 昨天</span></div></div>
             <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button><i class="rdiv"></i></div>
           <div class="row"><div class="cover c2">宿命之环</div>
             <div class="rinfo"><div class="rtitle-row"><span class="rtitle">宿命之环</span><span class="bdg mut">1</span></div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>爱潜水的乌贼<span class="fill"></span>昨天更新</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg>最近：第二百章 环外</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>最新：第三百零一章 命运</div></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">爱潜水的乌贼</span><span class="fill"></span>昨天更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第二百章 环外</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 23% · 昨天</span></div></div>
             <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button><i class="rdiv"></i></div>
           <div class="row"><div class="cover c7">道诡异仙</div>
             <div class="rinfo"><div class="rtitle-row"><span class="rtitle">道诡异仙</span></div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>狐尾的笔<span class="fill"></span>5 天前更新</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg>最近：第一百章 心斋</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>最新：第一千五百章 完本</div></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">狐尾的笔</span><span class="fill"></span>5 天前更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第一百章 心斋</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 8% · 5 天前</span></div></div>
             <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button></div>
         </div>
         <div class="bottom">
@@ -346,14 +352,120 @@ background:var(--bg);color:var(--text)}
         </div>
       </div>
     </div><figcaption>深色 Dark · 更新中 / 未读徽标</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>23:07</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="9" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><div class="t">书架</div><div class="actions">
+          <button class="icon-btn" aria-label="搜索"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+          <button class="icon-btn" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button></div></div>
+        <div class="controls">
+          <div class="tabs"><button class="tab active">全部</button><button class="tab">追更</button><button class="tab">本地</button><button class="tab">完本</button><button class="tab">漫画</button></div>
+          <button class="sort">按更新时间 <svg class="icon" style="width:18px;height:18px" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+        </div>
+        <div class="list">
+          <i class="fthumb"></i>
+          <div class="row"><div class="cover c5">深空彼岸</div>
+            <div class="rinfo"><div class="rtitle-row"><span class="rtitle">深空彼岸</span><span class="spin"></span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">辰东</span><span class="fill"></span>刚刚更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第八百零九章 彼岸</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 89% · 刚刚</span></div></div>
+            <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button><i class="rdiv"></i></div>
+          <div class="row"><div class="cover c1">国民法医</div>
+            <div class="rinfo"><div class="rtitle-row"><span class="rtitle">国民法医</span><span class="bdg">12</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">志鸟村</span><span class="fill"></span>2 小时前更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第十七章 · 十七叔</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 34% · 昨天</span></div></div>
+            <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button><i class="rdiv"></i></div>
+          <div class="row"><div class="cover c2">宿命之环</div>
+            <div class="rinfo"><div class="rtitle-row"><span class="rtitle">宿命之环</span><span class="bdg mut">1</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">爱潜水的乌贼</span><span class="fill"></span>昨天更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第二百章 环外</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 23% · 昨天</span></div></div>
+            <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button><i class="rdiv"></i></div>
+        </div>
+        <div class="bottom">
+          <div class="nav active"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4v16H5z"/><path d="M12 4h4v16h-4z"/><path d="m19.2 5.4 2.4 14.4-3.9.7L15.3 6z" transform="scale(.9) translate(1.5 .5)"/></svg>书架<span class="nbdg">12</span></div>
+          <div class="nav"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5Z"/></svg>发现</div>
+          <div class="nav"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 5a15 15 0 0 1 15 15"/><circle cx="5.2" cy="18.8" r="1.6" fill="currentColor" stroke="none"/></svg>订阅</div>
+          <div class="nav"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>我的</div>
+          <i class="home-indicator"></i>
+        </div>
+        <div class="menu">
+          <div class="mi"><svg class="icon" viewBox="0 0 24 24"><path d="M20 11.5A8 8 0 1 1 12.5 4"/><path d="M20 4v6h-6"/><path d="M20 4l-7.5 7.5"/></svg>更新目录</div>
+          <div class="mi"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>添加本地</div>
+          <div class="mi"><svg class="icon" viewBox="0 0 24 24"><path d="M6.5 18a4.5 4.5 0 1 1 .9-8.9A6 6 0 0 1 19 11a3.5 3.5 0 0 1-.5 7Z"/><path d="M12 12v6M9.5 15.5 12 18l2.5-2.5"/></svg>远程书籍</div>
+          <div class="mi"><svg class="icon" viewBox="0 0 24 24"><path d="M10 14a4.5 4.5 0 0 0 6.4.4l3-3a4.5 4.5 0 0 0-6.4-6.4l-1.5 1.5"/><path d="M14 10a4.5 4.5 0 0 0-6.4-.4l-3 3a4.5 4.5 0 0 0 6.4 6.4l1.5-1.5"/></svg>添加网址</div>
+          <div class="mi"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 12h2M10 12h10M4 17h10M18 17h2"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="16" cy="17" r="2"/></svg>书架管理</div>
+          <div class="mi"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3v11M8 10.5 12 14l4-3.5"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>缓存/导出</div>
+          <div class="mi"><svg class="icon" viewBox="0 0 24 24"><circle cx="8" cy="8" r="2.6"/><circle cx="16.5" cy="9.5" r="2.2"/><path d="M3.5 19c0-2.8 2-4.6 4.5-4.6s4.5 1.8 4.5 4.6"/><path d="M14 14.6c2.4.1 4.5 1.6 4.5 4.4"/></svg>分组管理</div>
+          <div class="mi"><svg class="icon" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="4" rx="1.5"/><rect x="13" y="10" width="7" height="10" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/></svg>书架布局</div>
+          <div class="mi"><svg class="icon" viewBox="0 0 24 24"><path d="M12 14V4M8.5 7.5 12 4l3.5 3.5"/><path d="M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>导出书单</div>
+          <div class="mi"><svg class="icon" viewBox="0 0 24 24"><path d="M12 4v10M8.5 10.5 12 14l3.5-3.5"/><path d="M5 13v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>导入书单</div>
+          <div class="mi"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="8" r="1.2" fill="currentColor" stroke="none"/></svg>日志</div>
+        </div>
+      </div>
+    </div><figcaption>深色 Dark · 溢出菜单（高层表面 surface_container_high）</figcaption></figure>
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><div class="t">书架</div><div class="actions">
+          <button class="icon-btn" aria-label="搜索"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+          <button class="icon-btn" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button></div></div>
+        <div class="controls">
+          <div class="tabs"><button class="tab active">全部</button></div>
+          <button class="sort">按阅读时间 <svg class="icon" style="width:18px;height:18px" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+        </div>
+        <div class="list">
+          <div class="empty">
+            <svg class="empty-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H10a2 2 0 0 1 2 2v13a2.5 2.5 0 0 0-2.5-2.5H4Z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H14a2 2 0 0 0-2 2v13a2.5 2.5 0 0 1 2.5-2.5H20Z"/></svg>
+            <div class="empty-t">书架还空着，先去搜索书籍或从发现里添加吧！</div>
+          </div>
+        </div>
+        <div class="bottom">
+          <div class="nav active"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4v16H5z"/><path d="M12 4h4v16h-4z"/><path d="m19.2 5.4 2.4 14.4-3.9.7L15.3 6z" transform="scale(.9) translate(1.5 .5)"/></svg>书架</div>
+          <div class="nav"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5Z"/></svg>发现</div>
+          <div class="nav"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 5a15 15 0 0 1 15 15"/><circle cx="5.2" cy="18.8" r="1.6" fill="currentColor" stroke="none"/></svg>订阅</div>
+          <div class="nav"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>我的</div>
+          <i class="home-indicator"></i>
+        </div>
+      </div>
+    </div><figcaption>浅色 Light · 空书架</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>23:07</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="9" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><div class="t">书架</div><div class="actions">
+          <button class="icon-btn" aria-label="搜索"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+          <button class="icon-btn" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button></div></div>
+        <div class="controls">
+          <div class="tabs"><button class="tab active">全部</button></div>
+          <button class="sort">按阅读时间 <svg class="icon" style="width:18px;height:18px" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+        </div>
+        <div class="list">
+          <div class="empty">
+            <svg class="empty-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H10a2 2 0 0 1 2 2v13a2.5 2.5 0 0 0-2.5-2.5H4Z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H14a2 2 0 0 0-2 2v13a2.5 2.5 0 0 1 2.5-2.5H20Z"/></svg>
+            <div class="empty-t">书架还空着，先去搜索书籍或从发现里添加吧！</div>
+          </div>
+        </div>
+        <div class="bottom">
+          <div class="nav active"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4v16H5z"/><path d="M12 4h4v16h-4z"/><path d="m19.2 5.4 2.4 14.4-3.9.7L15.3 6z" transform="scale(.9) translate(1.5 .5)"/></svg>书架</div>
+          <div class="nav"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5Z"/></svg>发现</div>
+          <div class="nav"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 5a15 15 0 0 1 15 15"/><circle cx="5.2" cy="18.8" r="1.6" fill="currentColor" stroke="none"/></svg>订阅</div>
+          <div class="nav"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>我的</div>
+          <i class="home-indicator"></i>
+        </div>
+      </div>
+    </div><figcaption>深色 Dark · 空书架</figcaption></figure>
   </div>
   <ul class="notes">
     <li><b>顶栏</b>：大标题「书架」28sp bold（blend 同色顶栏、无分割线），常驻「搜索」图标；「⋮」收拢 11 项操作，合计 12 项菜单 <code>menu/main_bookshelf.xml:6-77</code>，各项行为见 <code>BaseBookshelfFragment.kt:92-121</code>（更新目录 / 添加本地 / 远程书籍 / 添加网址 / 书架管理 / 缓存导出 / 分组管理 / 书架布局 / 导出书单 / 导入书单 / 日志）。</li>
     <li><b>分组胶囊 Tabs</b>：每个分组一个 Tab，48dp 高胶囊、选中主色填充、分组多时可横向滚动；指示器随页面滑动同步 <code>fragment_bookshelf1.xml:26-48</code>、<code>BookshelfFragment1.kt:101-116</code>；<b>长按 Tab 编辑分组</b>（GroupEditDialog）<code>BookshelfFragment1.kt:221-224</code>；重复点击同组 Toast 提示书籍数 <code>BookshelfFragment1.kt:251-257</code>。</li>
     <li><b>排序入口</b>：「按阅读时间 ▾」弹出 6 项排序菜单：按阅读时间 / 按更新时间 / 按书名 / 手动排序 / 综合排序 / 按作者 <code>BookshelfFragment1.kt:49-56</code>、<code>162-176</code>、<code>values-zh/strings.xml:245-248,1144-1145</code>。</li>
-    <li><b>列表条目</b>：封面 88×123、书名 20sp bold、未读徽标（橙=有新章节高亮，灰=普通未读计数 <code>BooksAdapterList.kt:94-99</code>）、作者 + 上次更新时间、最近阅读章节、最新章节、行内「⋮」更多（同长按：进书籍详情）、弱分割线 <code>item_bookshelf_list.xml:16-222</code>。</li>
+    <li><b>列表条目</b>：封面 88×123、书名 20sp bold 单行省略、未读徽标（橙=有新章节高亮，灰=普通未读计数；徽标文字色由 BadgeView 按底色自动取黑/白 <code>BadgeView.kt:128-132</code>）、作者 + 上次更新时间、最近阅读章节（tv_read=durChapterTitle）、阅读进度（tv_last=「阅读至 n% · 时间」，<code>BooksAdapterList.kt:70-86</code>）、行内「⋮」更多（同长按：进书籍详情）、弱分割线 <code>item_bookshelf_list.xml:16-222</code>。<b>v3 修正</b>：第三行是阅读进度而非最新章节（v2 稿误标「最新：」，实际数据见 <code>BooksAdapterList.kt:70-86</code>）；长书名/长章节名在图标后单行省略（左稿第四行）。</li>
     <li><b>更新中状态</b>：目录刷新时徽标位变为旋转加载 <code>BooksAdapterList.kt:89-91</code>；下拉刷新 = 更新当前分组全部目录 <code>BooksFragment.kt:99-102</code>。</li>
-    <li><b>快速滚动条</b>可开关（书架布局对话框）<code>BooksFragment.kt:135-138</code>；空书架文案「书架还空着，先去搜索书籍或从发现里添加吧！」<code>fragment_books.xml:21-32</code>、<code>values-zh/strings.xml:57</code>。</li>
+    <li><b>快速滚动条</b>可开关（书架布局对话框）<code>BooksFragment.kt:135-138</code>。</li>
+    <li><b>空书架</b>（明/暗两稿）：tv_empty_msg 增强为「图标 + 文案」两段式，纯 XML 可达——给 <code>fragment_books.xml:21-32</code> 的 TextView 加 <code>android:drawableTop</code>（书本线稿 vector）+ <code>app:drawableTint=@color/outline</code> + <code>drawablePadding=12dp</code>，textSize 14→15sp、<code>lineSpacingExtra=4dp</code>；不新增 id、不动 Kotlin（<code>BooksFragment.kt:193</code> 只控显隐）。文件夹模式空态同理（<code>fragment_bookshelf2.xml:34-49</code>）。空书架时底栏「等待更新」徽标为空、不显示。</li>
+    <li><b>触控区统一</b>：行内「⋮」32→44dp、glyph 20dp 不变，与顶栏 icon-btn 同规格 <code>item_bookshelf_list.xml:29-41</code>；「按xx排序」min-height 44dp <code>fragment_bookshelf1.xml:57-73</code>。MASTER 的 48dp 触控标准如需严格执行，应与 TitleBar 顶栏按钮一并放大（跨组统一决策，本稿未单方面改顶栏）。</li>
+    <li><b>溢出菜单表面</b>：菜单底色映射 <code>background_menu→surface_container_high</code>——亮色 <code>#EEECE9</code>、暗色 <code>#242220</code>（生产 colors.xml 实装值，本稿 --surface-high，见暗色菜单展开稿），暗色下不再与页面背景贴面。</li>
   </ul>
 </section>
 
@@ -377,10 +489,10 @@ background:var(--bg);color:var(--text)}
           <div class="gcell"><span class="bdg">3</span><div class="gcover c3">诡秘之主</div><div class="gname">诡秘之主</div></div>
           <div class="gcell"><div class="gcover c5">深空彼岸</div><div class="gname">深空彼岸</div></div>
           <div class="gcell"><div class="gcover c6">明克街13号</div><div class="gname">明克街13号</div></div>
-          <div class="gcell"><div class="gcover c7">道诡异仙</div><div class="gname">道诡异仙</div></div>
+          <div class="gcell"><div class="gcover c10">转生史莱姆</div><div class="gname">关于我转生变成史莱姆这档事</div></div>
           <div class="gcell"><div class="gcover c2">宿命之环</div><div class="gname">宿命之环</div></div>
           <div class="gcell"><div class="gcover c9">临渊行</div><div class="gname">临渊行</div></div>
-          <div class="gcell"><div class="gcover c10">夜的命名术</div><div class="gname">夜的命名术</div></div>
+          <div class="gcell"><div class="gcover c7">道诡异仙</div><div class="gname">道诡异仙</div></div>
         </div>
         <div class="bottom">
           <div class="nav active"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4v16H5z"/><path d="M12 4h4v16h-4z"/><path d="m19.2 5.4 2.4 14.4-3.9.7L15.3 6z" transform="scale(.9) translate(1.5 .5)"/></svg>书架<span class="nbdg">12</span></div>
@@ -407,8 +519,8 @@ background:var(--bg);color:var(--text)}
           <div class="gcell"><div class="gcover c2">宿命之环</div><div class="gname">宿命之环</div></div>
           <div class="gcell"><span class="bdg">99+</span><div class="gcover c3">诡秘之主</div><div class="gname">诡秘之主</div></div>
           <div class="gcell"><div class="gcover c9">临渊行</div><div class="gname">临渊行</div></div>
+          <div class="gcell"><div class="gcover c10">转生史莱姆</div><div class="gname">关于我转生变成史莱姆这档事</div></div>
           <div class="gcell"><div class="gcover c4">大医凌然</div><div class="gname">大医凌然</div></div>
-          <div class="gcell"><div class="gcover c10">夜的命名术</div><div class="gname">夜的命名术</div></div>
           <div class="gcell"><div class="gcover c7">道诡异仙</div><div class="gname">道诡异仙</div></div>
           <div class="gcell"><div class="gcover c6">明克街13号</div><div class="gname">明克街13号</div></div>
         </div>
@@ -424,7 +536,9 @@ background:var(--bg);color:var(--text)}
   </div>
   <ul class="notes">
     <li><b>网格形态</b>：bookshelfLayout=1 时 RecyclerView 换 GridLayoutManager 三列，顶部结构（顶栏 / 胶囊 Tabs / 排序）不变 <code>BooksFragment.kt:103-107</code>；style2 下同理 <code>BookshelfFragment2.kt:88-92</code>。</li>
-    <li><b>网格条目</b>：封面通栏 2:3、右上角未读徽标与更新中加载同位互斥、书名 13sp 居中最多两行 <code>item_bookshelf_grid.xml:30-81</code>；点击进书、长按进书籍详情（与列表一致）。</li>
+    <li><b>网格条目</b>：封面通栏 2:3、书名 13sp 居中最多两行（长书名两行截断见左稿第二行右格）<code>item_bookshelf_grid.xml:30-81</code>；点击进书、长按进书籍详情（与列表一致）。</li>
+    <li><b>徽标内缩（v3 修正）</b>：未读徽标/加载圈由 v2 稿的「悬出封面角 7dp」改为封面内右上角 6dp 内缩——负 margin 在 Android 不可实现，v2 实施时只能贴角锚定；本稿对齐可实现形态，XML 只需给 bv_unread / rl_loading 加 <code>6dp</code> margin <code>item_bookshelf_grid.xml:43-64</code>（加载圈外圈含 2dp 底衬，锚点取 2dp 使圆心与徽标对齐）。</li>
+    <li><b>行距（v3 补记）</b>：条目 LinearLayout 现只有 6dp 上/左/右 padding、无底部 padding，纵向行距仅靠书名两行撑开；加 <code>paddingBottom=16dp</code> 即可对齐本稿 16px 行距 <code>item_bookshelf_grid.xml:15-23</code>。</li>
     <li><b>列数可配置</b>：书架布局对话框可选 列表 / 网格三~六列 <code>dialog_bookshelf_config.xml:86-121</code>；切换布局立即重建 <code>BaseBookshelfFragment.kt:209-219</code>。列数增加时徽标保持右上角、书名字号不缩小（保证可读性）。</li>
     <li><b>伴随开关</b>：显示未读标志 / 显示上次更新时间 / 显示等待更新数量 / 显示快速滚动条 <code>dialog_bookshelf_config.xml:34-68</code>、<code>BaseBookshelfFragment.kt:171-204</code>；未读关闭时徽标整体隐藏 <code>BooksAdapterList.kt:97-99</code>。</li>
     <li>下拉刷新、空态文案、快速滚动条与列表模式共用（同见 03 注记）。</li>
@@ -444,18 +558,18 @@ background:var(--bg);color:var(--text)}
         <div class="list" style="padding-top:8px">
           <div class="gcard"><div class="gcover2 c4">追更</div><div class="gname2">追更</div><svg class="icon garr" style="width:20px;height:20px" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div>
           <div class="gcard"><div class="gcover2 c7">完本</div><div class="gname2">完本</div><svg class="icon garr" style="width:20px;height:20px" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div>
-          <div class="gcard"><div class="gcover2 c3">网文</div><div class="gname2">网文</div><svg class="icon garr" style="width:20px;height:20px" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div>
+          <div class="gcard"><div class="gcover2 c3">网文</div><div class="gname2">西幻·克苏鲁·规则怪谈</div><svg class="icon garr" style="width:20px;height:20px" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div>
           <div class="row"><div class="cover c1">国民法医</div>
             <div class="rinfo"><div class="rtitle-row"><span class="rtitle">国民法医</span><span class="bdg">12</span></div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>志鸟村<span class="fill"></span>2 小时前更新</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg>最近：第十七章 · 十七叔</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>最新：第一千二百章 新案</div></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">志鸟村</span><span class="fill"></span>2 小时前更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第十七章 · 十七叔</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 34% · 昨天</span></div></div>
             <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button><i class="rdiv"></i></div>
           <div class="row"><div class="cover c5">深空彼岸</div>
             <div class="rinfo"><div class="rtitle-row"><span class="rtitle">深空彼岸</span><span class="spin"></span></div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>辰东<span class="fill"></span>刚刚更新</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg>最近：第八百零九章 彼岸</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>最新：第一千零一章 星海</div></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">辰东</span><span class="fill"></span>刚刚更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第八百零九章 彼岸</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 89% · 刚刚</span></div></div>
             <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button></div>
         </div>
         <div class="bottom">
@@ -476,27 +590,27 @@ background:var(--bg);color:var(--text)}
         <div class="list" style="padding-top:8px">
           <div class="row"><div class="cover c1">国民法医</div>
             <div class="rinfo"><div class="rtitle-row"><span class="rtitle">国民法医</span><span class="bdg">12</span></div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>志鸟村<span class="fill"></span>2 小时前更新</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg>最近：第十七章 · 十七叔</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>最新：第一千二百章 新案</div></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">志鸟村</span><span class="fill"></span>2 小时前更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第十七章 · 十七叔</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 34% · 昨天</span></div></div>
             <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button><i class="rdiv"></i></div>
           <div class="row"><div class="cover c4">大医凌然</div>
             <div class="rinfo"><div class="rtitle-row"><span class="rtitle">大医凌然</span><span class="bdg mut">1</span></div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>志鸟村<span class="fill"></span>昨天更新</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg>最近：第四百二十一章 手术室</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>最新：第一千零六章 会诊</div></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">志鸟村</span><span class="fill"></span>昨天更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第四百二十一章 手术室</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 78% · 3 天前</span></div></div>
             <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button><i class="rdiv"></i></div>
           <div class="row"><div class="cover c2">宿命之环</div>
             <div class="rinfo"><div class="rtitle-row"><span class="rtitle">宿命之环</span></div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>爱潜水的乌贼<span class="fill"></span>昨天更新</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg>最近：第二百章 环外</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>最新：第三百零一章 命运</div></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">爱潜水的乌贼</span><span class="fill"></span>昨天更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第二百章 环外</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 23% · 昨天</span></div></div>
             <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button></div>
           <div class="row"><div class="cover c3">诡秘之主</div>
             <div class="rinfo"><div class="rtitle-row"><span class="rtitle">诡秘之主</span></div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>爱潜水的乌贼<span class="fill"></span>3 天前更新</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg>最近：第四百二十章 占卜家</div>
-              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>最新：第一千三百章 愚者</div></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span class="ellip">爱潜水的乌贼</span><span class="fill"></span>3 天前更新</div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.2L6 21Z"/></svg><span class="ellip">第四百二十章 占卜家</span></div>
+              <div class="rmeta"><svg class="icon mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="ellip">阅读至 12% · 上周</span></div></div>
             <button class="more" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button></div>
         </div>
         <div class="bottom">
@@ -511,10 +625,10 @@ background:var(--bg);color:var(--text)}
   </div>
   <ul class="notes">
     <li><b>文件夹形态</b>：分组样式=「文件夹」（bookGroupStyle=1）时无 Tabs，改为分组与书籍混排（bookGroups + books）<code>BookshelfFragment2.kt:244-249</code>。</li>
-    <li><b>分组卡片</b>：圆角卡片内仅显示分组封面 66×90 + 分组名 16sp，作者 / 章节 / 徽标均隐藏 <code>item_bookshelf_list_group.xml:16-76</code>、<code>BooksAdapterList.kt:118-134</code>；浅色稿的「›」为本稿添加的层级指引，非新增功能。</li>
+    <li><b>分组卡片</b>：圆角卡片内仅显示分组封面 66×90 + 分组名 16sp（长分组名单行省略，见左稿第三张），作者 / 章节 / 徽标均隐藏 <code>item_bookshelf_list_group.xml:16-76</code>、<code>BooksAdapterList.kt:118-134</code>；「›」层级指引 XML 可达：加一个无 id 的 AppCompatImageView（<code>app:srcCompat=@drawable/ic_arrow_right</code>、tint on_surface_variant）即可，纯装饰不涉 Kotlin，<code>ic_arrow_right.xml</code> 已存在。</li>
     <li><b>层级导航</b>：点击卡片进入分组，标题变为「书架(分组名)」并只显示组内书籍；返回键退回根层 <code>BookshelfFragment2.kt:128-142</code>、<code>184-191</code>、<code>MainActivity.kt:100-104</code>。分组为平铺结构（BookGroup 无父子层级），组内只出现书籍条目、不再嵌套分组卡片。</li>
     <li><b>编辑</b>：长按分组卡片打开 GroupEditDialog（重命名 / 设封面 / 删除）<code>BookshelfFragment2.kt:228</code>；顶栏「⋮」菜单与标签模式完全一致（12 项）。</li>
-    <li><b>下拉刷新</b>：根层默认可用，进入分组后跟随该分组 enableRefresh 开关 <code>BookshelfFragment2.kt:83-87</code>、<code>132-141</code>；空书架显示「书架还空着…」<code>fragment_bookshelf2.xml:33-48</code>。</li>
+    <li><b>下拉刷新</b>：根层默认可用，进入分组后跟随该分组 enableRefresh 开关 <code>BookshelfFragment2.kt:83-87</code>、<code>132-141</code>；空书架显示「书架还空着…」<code>fragment_bookshelf2.xml:33-48</code>，空态呈现同 03 注记的 drawableTop 配方。</li>
     <li>文件夹模式下书籍条目复用 item_bookshelf_list（与标签模式同构），网格布局同理可叠加 <code>BooksAdapterList.kt:15-24</code>。</li>
   </ul>
 </section>

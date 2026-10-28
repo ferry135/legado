@@ -5,6 +5,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isGone
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.lifecycle.lifecycleScope
@@ -72,10 +73,20 @@ class ChangeCoverDialog() : BaseDialogFragment(R.layout.dialog_change_cover),
         launchCollectWithLifecycle {
             viewModel.dataFlow.conflate().collect {
                 adapter.setItems(it)
+                upEmptyMsgView()
                 delay(1000)
             }
 
         }
+    }
+
+    /**
+     * 无结果空态（设计稿02-⑥）：列表恒含默认封面项，仅剩1项即无结果；
+     * 仅搜索结束时显示，搜索中不闪现
+     */
+    private fun upEmptyMsgView() {
+        binding.emptyTip.isGone =
+            adapter.itemCount > 1 || viewModel.searchStateData.value != false
     }
 
     override fun observeLiveBus() {
@@ -94,6 +105,7 @@ class ChangeCoverDialog() : BaseDialogFragment(R.layout.dialog_change_cover),
                 }
             }
             binding.toolBar.menu.applyTint(requireContext())
+            upEmptyMsgView()
         }
 
     }

@@ -17,6 +17,7 @@ import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.getCompatColor
 import java.util.Collections
 
 
@@ -74,10 +75,10 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
     ) {
         binding.run {
             if (payloads.isEmpty()) {
-                root.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))
                 cbSource.text = item.getDisplayNameGroup()
                 swtEnabled.isChecked = item.enabled
                 cbSource.isChecked = selected.contains(item)
+                upRowBackground(root, cbSource.isChecked)
             } else {
                 for (i in payloads.indices) {
                     val bundle = payloads[i] as Bundle
@@ -85,11 +86,26 @@ class RssSourceAdapter(context: Context, val callBack: CallBack) :
                         when (it) {
                             "upName" -> cbSource.text = item.getDisplayNameGroup()
                             "enabled" -> swtEnabled.isChecked = bundle.getBoolean("enabled")
-                            "selected" -> cbSource.isChecked = selected.contains(item)
+                            "selected" -> {
+                                cbSource.isChecked = selected.contains(item)
+                                upRowBackground(root, cbSource.isChecked)
+                            }
                         }
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * 06稿 S5 规格项：勾选行统一 primary-soft 底色（primary_soft，明 #FFF0E6/暗 #3A241B），
+     * 未勾选行保持原半透明背景；"selected" payload 路径同样刷新，保证勾选切换即时生效。
+     */
+    private fun upRowBackground(view: View, checked: Boolean) {
+        if (checked) {
+            view.setBackgroundColor(context.getCompatColor(R.color.primary_soft))
+        } else {
+            view.setBackgroundColor(ColorUtils.withAlpha(context.backgroundColor, 0.5f))
         }
     }
 

@@ -304,6 +304,8 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
         searchView.applyTint(primaryTextColor)
         searchView.queryHint = getString(R.string.search_book_source)
         searchView.setOnQueryTextListener(this)
+        // 空态动作钮：清除搜索与特殊筛选（设计稿05书源管理空态「清除筛选」）
+        binding.contentView.setEmptyAction { searchView.setQuery("", true) }
     }
 
     private fun upBookSource(searchKey: String? = null) {
@@ -401,6 +403,12 @@ class BookSourceActivity : VMBaseActivity<ActivityBookSourceBinding, BookSourceV
                 AppLog.put("书源界面更新书源出错", it)
             }.flowOn(IO).conflate().collect { data ->
                 adapter.setItems(data, adapter.diffItemCallback, !Debug.isChecking)
+                if (data.isEmpty()) {
+                    // 空态：首次无书源或搜索/筛选无结果（设计稿05）
+                    binding.contentView.showEmptyView()
+                } else {
+                    binding.contentView.showContentView()
+                }
                 itemTouchCallback.isCanDrag =
                     sort == BookSourceSort.Default && !showDuplicationSource
                 delay(500)

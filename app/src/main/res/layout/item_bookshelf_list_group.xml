@@ -67,11 +67,25 @@
         android:textColor="@color/primaryText"
         android:textSize="16sp"
         android:textStyle="bold"
+        app:layout_goneMarginRight="54dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/iv_cover"
         app:layout_constraintRight_toLeftOf="@id/fl_has_new"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="RtlHardcoded,RtlSymmetry" />
+
+    <!-- 01 设计稿 05：分组卡片「›」层级指引，纯装饰无 id，不涉 Kotlin -->
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="16dp"
+        android:importantForAccessibility="no"
+        app:srcCompat="@drawable/ic_arrow_right"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/on_surface_variant"
+        tools:ignore="RtlHardcoded" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_author"

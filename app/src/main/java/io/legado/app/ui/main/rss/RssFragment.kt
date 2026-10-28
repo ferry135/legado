@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.SubMenu
 import android.view.View
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isGone
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -173,6 +174,8 @@ class RssFragment() : VMBaseFragment<RssViewModel>(R.layout.fragment_rss),
                 AppLog.put("订阅界面更新数据出错", it)
             }.flowOn(IO).collect {
                 adapter.setItems(it)
+                // 空态（设计稿06）：无启用订阅源时显示（含搜索/分组过滤无结果）
+                binding.emptyTip.isGone = it.isNotEmpty()
             }
         }
     }

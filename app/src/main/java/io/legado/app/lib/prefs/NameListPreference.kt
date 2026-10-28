@@ -17,7 +17,8 @@ class NameListPreference(context: Context, attrs: AttributeSet) : ListPreference
 
     init {
         layoutResource = R.layout.view_preference
-        widgetLayoutResource = R.layout.item_fillet_text
+        // 08 稿 .vchip：值胶囊 max-width 148dp，与 04 稿 chip（item_fillet_text，216dp）稿面不同，拆分布局各自对齐
+        widgetLayoutResource = R.layout.item_pref_value_chip
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.Preference)
         isBottomBackground = typedArray.getBoolean(R.styleable.Preference_isBottomBackground, false)
         typedArray.recycle()

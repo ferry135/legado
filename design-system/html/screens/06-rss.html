@@ -3,7 +3,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>legado v2 · 订阅 RSS — 视觉稿</title><style>
-*{box-sizing:border-box}html,body{margin:0;padding:0}
+*{box-sizing:border-box}html{scroll-behavior:smooth}html,body{margin:0;padding:0}
 body{font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#f3f1ed;color:#1d1b16;-webkit-font-smoothing:antialiased}
 /* ---------- 文档框架 ---------- */
 .doc-head{max-width:1180px;margin:0 auto;padding:44px 24px 10px}
@@ -26,8 +26,8 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 .note b{color:#1d1b16;font-weight:650}
 /* ---------- 手机壳 ---------- */
 .phone{width:412px;height:900px;border-radius:30px;border:1px solid rgba(0,0,0,.10);overflow:hidden;position:relative;display:flex;flex-direction:column;flex:none}
-.phone.light{--bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--surface3:#f4f2ee;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--track:#e5e2de;--divider:rgba(0,0,0,.07);--field:#f1efe9;--error:#ba1a1a;--success:#3b7a45;--chip:rgba(0,0,0,.05);--home:#69717b;background:var(--bg);color:var(--text)}
-.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--surface3:#2a2925;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--track:#353331;--divider:rgba(255,255,255,.08);--field:#242220;--error:#ffb4ab;--success:#7fd891;--chip:rgba(255,255,255,.08);--home:#f3f0eb;background:var(--bg);color:var(--text)}
+.phone.light{--bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--track:#e5e2de;--divider:rgba(0,0,0,.07);--field:#f1efe9;--error:#ba1a1a;--success:#3b7a45;--chip:rgba(0,0,0,.05);--home:#69717b;background:var(--bg);color:var(--text)}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--track:#353331;--divider:rgba(255,255,255,.08);--field:#242220;--error:#ffb4ab;--success:#7fd891;--chip:rgba(255,255,255,.08);--home:#f3f0eb;background:var(--bg);color:var(--text)}
 .status{height:34px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:14px;font-weight:600}
 .status-right{display:flex;gap:10px;align-items:center}
 /* blend 顶栏：无底色、无阴影、无分割线 */
@@ -35,7 +35,7 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 .appbar.main-title{min-height:62px}
 .appbar h1{font-size:18px;font-weight:650;margin:0;padding:0 4px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .appbar.main-title h1{font-size:28px;font-weight:650}
-.icon-btn{width:42px;height:42px;border:0;background:transparent;border-radius:21px;display:grid;place-items:center;color:var(--secondary);flex:none}
+.icon-btn{width:44px;height:44px;border:0;background:transparent;border-radius:22px;display:grid;place-items:center;color:var(--text);flex:none}
 .icon{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .icon.f{fill:currentColor;stroke:none}
 .icon.sm{width:19px;height:19px}
@@ -98,7 +98,8 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 /* ---------- S5 源管理行 / 选择栏 / 快滚 ---------- */
 .src-row{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--divider)}
 .src-row .nm{flex:1;min-width:0;font-size:15px;font-weight:550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.src-row .op{color:var(--secondary);display:grid;place-items:center;width:34px;height:34px;flex:none}
+.src-row .op{color:var(--secondary);display:grid;place-items:center;width:36px;height:36px;flex:none}
+.src-row .op .icon,.rule-row .op .icon{width:20px;height:20px}
 .fastscroll{position:absolute;right:3px;top:34%;width:4px;height:52px;border-radius:3px;background:var(--primary);opacity:.45}
 .selbar{flex:none;display:flex;align-items:center;gap:10px;height:58px;padding:0 12px;background:var(--surface2);border-top:1px solid var(--divider)}
 .selbar .all{display:flex;align-items:center;gap:7px;font-size:14px}
@@ -121,9 +122,12 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 .log .ok{color:var(--success)}.log .err{color:var(--error)}.log .hl{color:var(--primary)}
 /* ---------- S8 规则订阅行 ---------- */
 .rule-row{display:flex;align-items:center;gap:10px;padding:13px 20px;border-bottom:1px solid var(--divider)}
+.rule-row .op{color:var(--secondary);display:grid;place-items:center;width:36px;height:36px;flex:none}
 .rule-row .info{flex:1;min-width:0}
 .rule-row .nm{font-size:16px;font-weight:650;margin:0 0 5px;display:flex;align-items:center;gap:8px}
 .badge{font-size:11.5px;font-weight:600;color:var(--primary);background:var(--primary-soft);border-radius:8px;padding:2px 8px;flex:none}
+/* AA 修复：亮色下 #ff6b2c/#fff0e6 仅 2.55:1，加深至暖橙 #b34a15（4.83:1，与 02 组 chip-soft 同方案）；暗色 5.10:1 不受影响 */
+.light .badge{color:#b34a15}
 .rule-row .url{font-size:12px;color:var(--secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 /* ---------- S4 阅读页 ---------- */
 .prog{height:2px;background:transparent;margin:-1px 0 0}
@@ -139,6 +143,13 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 .article .tags span{font-size:12px;color:var(--primary);background:var(--primary-soft);border-radius:999px;padding:4px 11px}
 .article .end{display:flex;align-items:center;gap:10px;color:var(--secondary);font-size:12.5px}
 .article .end::before,.article .end::after{content:"";height:1px;background:var(--divider);flex:1}
+/* ---------- 空态（tv_empty_msg 升级：图标 + 主文案 + 导入提示） ---------- */
+.phone.slim{height:640px}
+.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:0 44px;text-align:center}
+.empty-state .e-ic{width:76px;height:76px;border-radius:50%;background:var(--chip);display:grid;place-items:center;color:var(--secondary);margin-bottom:12px}
+.empty-state .e-ic svg{width:34px;height:34px}
+.empty-state .e-t{margin:0;font-size:14.5px;font-weight:600;color:var(--text)}
+.empty-state .e-h{margin:0;font-size:12.5px;line-height:1.75;color:var(--secondary)}
 </style></head>
 <body>
 
@@ -166,6 +177,7 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 <symbol id="i-book2" viewBox="0 0 24 24"><path d="M5 4h6v16H5zM13 4h6v16h-6z"/></symbol>
 <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-5 5 1.5-3.5 3.5-1.5"/></symbol>
 <symbol id="i-rssnav" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-3-6 3z"/><path d="M12 8v6M9 11h6"/></symbol>
+<symbol id="i-rss" viewBox="0 0 24 24"><circle cx="6.2" cy="17.8" r="2"/><path d="M4 10.5a9.5 9.5 0 0 1 9.5 9.5"/><path d="M4 4a16 16 0 0 1 16 16"/></symbol>
 <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></symbol>
 <symbol id="i-legado" viewBox="0 0 24 24"><path d="M12 6c-1.8-1.4-4.2-2-6.5-2v14c2.3 0 4.7.6 6.5 2 1.8-1.4 4.2-2 6.5-2V4c-2.3 0-4.7.6-6.5 2z"/><path d="M12 6v14"/></symbol>
 <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14.5 14.5 0 0 1 0 18M12 3a14.5 14.5 0 0 0 0 18"/></symbol>
@@ -185,7 +197,7 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 <!-- ============ S1 订阅主页 ============ -->
 <section class="screen" id="s1">
 <div class="screen-head"><h2>01 · 订阅主页</h2><span class="src">fragment_rss.xml · ui/main/rss/RssFragment.kt</span></div>
-<p class="screen-desc">主界面「订阅」Tab：blend 顶栏 = 标题「订阅」+ 菜单（收藏 / 分组 / 设置），下方为搜索胶囊（支持 group:分组名 过滤），正文为 4 列订阅源网格（图标 56dp 圆角 14 + 名称两行），首位固定「规则订阅」入口；底部导航当前 Tab 高亮。长按任一源弹出：置顶 / 编辑 / 禁用源 / 删除。</p>
+<p class="screen-desc">主界面「订阅」Tab：blend 顶栏 = 标题「订阅」+ 菜单（收藏 / 分组 / 设置），下方为搜索胶囊（支持 group:分组名 过滤），正文为 4 列订阅源网格（图标 56dp 圆角 14 + 名称两行），首位固定「规则订阅」入口；底部导航当前 Tab 高亮。长按任一源弹出纯文字菜单（与 PopupMenu 实际渲染一致）：置顶 / 编辑 / 禁用源 / 删除。网格末行展示超长源名两行截断；下方补充空态呈现。</p>
 <div class="pair">
 <figure><div class="phone light">
 <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
@@ -211,13 +223,14 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 <div class="cell"><span class="tile tl10">众</span><span class="nm">小众软件</span></div>
 <div class="cell"><span class="tile tl9">虎</span><span class="nm">虎嗅</span></div>
 <div class="cell"><span class="tile tl5">I</span><span class="nm">IT之家</span></div>
+<div class="cell"><span class="tile tl3">利</span><span class="nm">利器：创造者和他们的工具访谈专栏</span></div>
 
 </div>
 <div class="menu" style="left:14px;top:468px">
-<button><svg class="icon sm"><use href="#i-top"/></svg>置顶</button>
-<button><svg class="icon sm"><use href="#i-edit"/></svg>编辑</button>
-<button><svg class="icon sm"><use href="#i-ban"/></svg>禁用源</button>
-<button class="danger"><svg class="icon sm"><use href="#i-del"/></svg>删除</button></div>
+<button>置顶</button>
+<button>编辑</button>
+<button>禁用源</button>
+<button class="danger">删除</button></div>
 </div>
 <nav class="bottom">
 <div class="nav"><svg class="icon navicon"><use href="#i-book2"/></svg><span>书架</span></div>
@@ -251,13 +264,14 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 <div class="cell"><span class="tile tl10">众</span><span class="nm">小众软件</span></div>
 <div class="cell"><span class="tile tl9">虎</span><span class="nm">虎嗅</span></div>
 <div class="cell"><span class="tile tl5">I</span><span class="nm">IT之家</span></div>
+<div class="cell"><span class="tile tl3">利</span><span class="nm">利器：创造者和他们的工具访谈专栏</span></div>
 
 </div>
 <div class="menu" style="left:14px;top:468px">
-<button><svg class="icon sm"><use href="#i-top"/></svg>置顶</button>
-<button><svg class="icon sm"><use href="#i-edit"/></svg>编辑</button>
-<button><svg class="icon sm"><use href="#i-ban"/></svg>禁用源</button>
-<button class="danger"><svg class="icon sm"><use href="#i-del"/></svg>删除</button></div>
+<button>置顶</button>
+<button>编辑</button>
+<button>禁用源</button>
+<button class="danger">删除</button></div>
 </div>
 <nav class="bottom">
 <div class="nav"><svg class="icon navicon"><use href="#i-book2"/></svg><span>书架</span></div>
@@ -268,11 +282,54 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 <div class="home-indicator"></div>
 </div><figcaption>深色</figcaption></figure>
 </div>
+<div class="pair">
+<figure><div class="phone light slim">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar main-title"><h1>订阅</h1>
+<button class="icon-btn" aria-label="收藏"><svg class="icon"><use href="#i-star"/></svg></button>
+<button class="icon-btn" aria-label="分组"><svg class="icon"><use href="#i-groups"/></svg></button>
+<button class="icon-btn" aria-label="设置"><svg class="icon"><use href="#i-set"/></svg></button></div>
+<div class="search-pill"><svg class="icon sm"><use href="#i-search"/></svg><span class="grow">搜索订阅源，支持 group:科技</span></div>
+<div class="body"><div class="empty-state">
+<span class="e-ic"><svg class="icon"><use href="#i-rss"/></svg></span>
+<p class="e-t">RSS 源目前为空！</p>
+<p class="e-h">右上角进入订阅源管理，本地 / 网络 / 扫码导入订阅源</p>
+</div></div>
+<nav class="bottom">
+<div class="nav"><svg class="icon navicon"><use href="#i-book2"/></svg><span>书架</span></div>
+<div class="nav"><svg class="icon navicon"><use href="#i-compass"/></svg><span>发现</span></div>
+<div class="nav on"><svg class="icon navicon"><use href="#i-rssnav"/></svg><span>订阅</span></div>
+<div class="nav"><svg class="icon navicon"><use href="#i-user"/></svg><span>我的</span></div>
+</nav>
+<div class="home-indicator"></div>
+</div><figcaption>浅色 · 空态</figcaption></figure>
+<figure><div class="phone dark slim">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar main-title"><h1>订阅</h1>
+<button class="icon-btn" aria-label="收藏"><svg class="icon"><use href="#i-star"/></svg></button>
+<button class="icon-btn" aria-label="分组"><svg class="icon"><use href="#i-groups"/></svg></button>
+<button class="icon-btn" aria-label="设置"><svg class="icon"><use href="#i-set"/></svg></button></div>
+<div class="search-pill"><svg class="icon sm"><use href="#i-search"/></svg><span class="grow">搜索订阅源，支持 group:科技</span></div>
+<div class="body"><div class="empty-state">
+<span class="e-ic"><svg class="icon"><use href="#i-rss"/></svg></span>
+<p class="e-t">RSS 源目前为空！</p>
+<p class="e-h">右上角进入订阅源管理，本地 / 网络 / 扫码导入订阅源</p>
+</div></div>
+<nav class="bottom">
+<div class="nav"><svg class="icon navicon"><use href="#i-book2"/></svg><span>书架</span></div>
+<div class="nav"><svg class="icon navicon"><use href="#i-compass"/></svg><span>发现</span></div>
+<div class="nav on"><svg class="icon navicon"><use href="#i-rssnav"/></svg><span>订阅</span></div>
+<div class="nav"><svg class="icon navicon"><use href="#i-user"/></svg><span>我的</span></div>
+</nav>
+<div class="home-indicator"></div>
+</div><figcaption>深色 · 空态</figcaption></figure>
+</div>
 <ul class="notes">
 <li class="note">顶栏菜单 = <b>main_rss.xml</b>：收藏(star) / 分组(groups，子项为源分组，点击按 group: 搜索) / 设置(进入订阅源管理)</li>
 <li class="note">网格首位为固定入口「规则订阅」→ RuleSubActivity（adapter.addHeaderView）</li>
-<li class="note">长按菜单 = <b>rss_main_item.xml</b>：置顶 / 编辑 / 禁用源 / 删除</li>
-<li class="note">空态文案「RSS 源目前为空！」（tv_empty_msg，居中 14sp on_surface_variant）</li>
+<li class="note">长按菜单 = <b>rss_main_item.xml</b>：置顶 / 编辑 / 禁用源 / 删除；统一纯文字项（RssAdapter:65 用 PopupMenu，菜单图标默认不渲染），危险项 error 色</li>
+<li class="note">空态 = 圆底图标 + 主文案「RSS 源目前为空！」(rss_source_empty, 14sp on_surface) + 导入提示 (12sp on_surface_variant)；落地：fragment_rss.xml 把 tv_empty_msg 换成竖排 LinearLayout，图标复用 ic_bottom_rss_feed，提示为新增 string</li>
+<li class="note">超长源名两行截断（tv_name lines=2 + ellipsize=end，13sp on_surface_variant），网格复用 12 色瓦片</li>
 <li class="note">点击源：单 URL 源直接进阅读页，多分类源进 RSS 分类页</li>
 </ul>
 </section>
@@ -292,7 +349,7 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 <div class="art-list">
 <div class="art"><div class="txt"><p class="t">把订阅源还给我：RSS 阅读的黄金时代</p><span class="d">2026-10-26 18:30</span></div><span class="ph-img" style="background:linear-gradient(135deg,#ffb27a,#ff6b2c)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
 <div class="art"><div class="txt"><p class="t">实测三款国产折叠屏：轻了，也更耐用了</p><span class="d">2026-10-26 10:02</span></div><span class="ph-img" style="background:linear-gradient(135deg,#7db2ff,#2f6fed)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
-<div class="art"><div class="txt"><p class="t">一份写给设计师的 AI 工作流指南（2026 版）</p><span class="d">2026-10-25 21:44</span></div></div>
+<div class="art"><div class="txt"><p class="t">一份写给设计师的 AI 工作流指南：从素材收集、灵感整理到多端发布的完整实践（2026 修订版）</p><span class="d">2026-10-25 21:44</span></div></div>
 <div class="art"><div class="txt"><p class="t">周末去做一杯手冲：从器具到冲煮参数</p><span class="d">2026-10-25 09:15</span></div><span class="ph-img" style="background:linear-gradient(135deg,#6fd091,#1f8a4c)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
 <div class="art"><div class="txt"><p class="t">为什么你的笔记应用总是用不下去？</p><span class="d">2026-10-24 20:08</span></div></div>
 <div class="art"><div class="txt"><p class="t">iPad 上的分屏学习法：一门课的两块屏</p><span class="d">2026-10-24 11:40</span></div><span class="ph-img" style="background:linear-gradient(135deg,#b3a0f2,#6a4ac0)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
@@ -319,7 +376,7 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 <div class="art-list">
 <div class="art"><div class="txt"><p class="t">把订阅源还给我：RSS 阅读的黄金时代</p><span class="d">2026-10-26 18:30</span></div><span class="ph-img" style="background:linear-gradient(135deg,#b25a33,#8a3a12)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
 <div class="art"><div class="txt"><p class="t">实测三款国产折叠屏：轻了，也更耐用了</p><span class="d">2026-10-26 10:02</span></div><span class="ph-img" style="background:linear-gradient(135deg,#2c4a72,#1d3050)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
-<div class="art"><div class="txt"><p class="t">一份写给设计师的 AI 工作流指南（2026 版）</p><span class="d">2026-10-25 21:44</span></div></div>
+<div class="art"><div class="txt"><p class="t">一份写给设计师的 AI 工作流指南：从素材收集、灵感整理到多端发布的完整实践（2026 修订版）</p><span class="d">2026-10-25 21:44</span></div></div>
 <div class="art"><div class="txt"><p class="t">周末去做一杯手冲：从器具到冲煮参数</p><span class="d">2026-10-25 09:15</span></div><span class="ph-img" style="background:linear-gradient(135deg,#2c5c3e,#1a3a26)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
 <div class="art"><div class="txt"><p class="t">为什么你的笔记应用总是用不下去？</p><span class="d">2026-10-24 20:08</span></div></div>
 <div class="art"><div class="txt"><p class="t">iPad 上的分屏学习法：一门课的两块屏</p><span class="d">2026-10-24 11:40</span></div><span class="ph-img" style="background:linear-gradient(135deg,#3c3a70,#2a2452)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
@@ -339,6 +396,7 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 </div>
 <ul class="notes">
 <li class="note">顶栏标题来自源名称（viewModel.titleLiveData）；溢出菜单 = <b>rss_articles.xml</b>：登录(有 loginUrl 才显示) / 刷新分类 / 设置源变量 / 编辑源 / 切换布局 / 阅读记录 / 清除</li>
+<li class="note">超长标题两行截断（maxLines=2 + ellipsize=end，16sp 粗体 on_surface、1.42 行距）；无图条目 image_view=gone 标题占满整行</li>
 <li class="note">分类 Tab：仅 1 个分类时隐藏 tabLayout；下拉刷新 SwipeRefreshLayout（主色指示器）</li>
 <li class="note">articleStyle 支持 3 种：紧凑列表(0) / 大图列表(1) / 网格(2)；「切换布局」可切网格</li>
 <li class="note">触底加载 LoadMoreView；「阅读记录」弹出记录对话框（dialog_recycler_view + 清除菜单）</li>
@@ -348,18 +406,19 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 <!-- ============ S3 RSS 收藏 ============ -->
 <section class="screen" id="s3">
 <div class="screen-head"><h2>03 · RSS 收藏</h2><span class="src">activity_rss_favorites.xml · ui/rss/favorites/RssFavoritesActivity.kt</span></div>
-<p class="screen-desc">收藏夹（rss_star）：顶栏「收藏夹」，按分组生成收藏 Tab（仅 1 组时隐藏），正文为收藏文章列表，点击进入阅读页。溢出菜单含分组子菜单与批量删除。图中展示分组子菜单展开态。</p>
+<p class="screen-desc">收藏夹（rss_star）：顶栏「收藏夹」，按分组生成收藏 Tab（仅 1 组时隐藏），正文为收藏文章列表（副行 = 源名 · 时间，单行截断），点击进入阅读页。溢出菜单含分组子菜单与批量删除。图中展示分组子菜单展开态。</p>
 <div class="pair">
 <figure><div class="phone light">
 <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
 <div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>收藏夹</h1>
+<button class="icon-btn" aria-label="分组"><svg class="icon"><use href="#i-groups"/></svg></button>
 <button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
 <div class="tabs-row">
 <button class="tab on">默认分组</button><button class="tab">科技</button><button class="tab">设计</button></div>
 <div class="body">
 <div class="art-list">
 <div class="art"><div class="txt"><p class="t">把订阅源还给我：RSS 阅读的黄金时代</p><span class="d">少数派 · 2026-10-26 18:30</span></div><span class="ph-img" style="background:linear-gradient(135deg,#ffb27a,#ff6b2c)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
-<div class="art"><div class="txt"><p class="t">阮一峰《科技爱好者周刊》第 340 期</p><span class="d">阮一峰的网络日志 · 2026-10-23 08:00</span></div></div>
+<div class="art"><div class="txt"><p class="t">阮一峰《科技爱好者周刊》第 340 期</p><span class="d">阮一峰的科技爱好者周刊与免费资源博客 · 2026-10-23 08:00</span></div></div>
 <div class="art"><div class="txt"><p class="t">Tailwind CSS v5 发布：默认栈与零配置</p><span class="d">掘金 · 2026-10-21 12:30</span></div><span class="ph-img" style="background:linear-gradient(135deg,#97a2ff,#4c5ae0)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
 <div class="art"><div class="txt"><p class="t">Solidot：研究称浅睡眠更利于记忆巩固</p><span class="d">Solidot · 2026-10-20 15:12</span></div></div>
 <div class="art"><div class="txt"><p class="t">Emacs 30 发布：原生编译与新的树哨兵</p><span class="d">36氪 · 2026-10-19 09:00</span></div><span class="ph-img" style="background:linear-gradient(135deg,#d9b95c,#a8842c)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
@@ -379,13 +438,14 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 <figure><div class="phone dark">
 <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
 <div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>收藏夹</h1>
+<button class="icon-btn" aria-label="分组"><svg class="icon"><use href="#i-groups"/></svg></button>
 <button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
 <div class="tabs-row">
 <button class="tab on">默认分组</button><button class="tab">科技</button><button class="tab">设计</button></div>
 <div class="body">
 <div class="art-list">
 <div class="art"><div class="txt"><p class="t">把订阅源还给我：RSS 阅读的黄金时代</p><span class="d">少数派 · 2026-10-26 18:30</span></div><span class="ph-img" style="background:linear-gradient(135deg,#b25a33,#8a3a12)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
-<div class="art"><div class="txt"><p class="t">阮一峰《科技爱好者周刊》第 340 期</p><span class="d">阮一峰的网络日志 · 2026-10-23 08:00</span></div></div>
+<div class="art"><div class="txt"><p class="t">阮一峰《科技爱好者周刊》第 340 期</p><span class="d">阮一峰的科技爱好者周刊与免费资源博客 · 2026-10-23 08:00</span></div></div>
 <div class="art"><div class="txt"><p class="t">Tailwind CSS v5 发布：默认栈与零配置</p><span class="d">掘金 · 2026-10-21 12:30</span></div><span class="ph-img" style="background:linear-gradient(135deg,#3c4478,#262c52)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
 <div class="art"><div class="txt"><p class="t">Solidot：研究称浅睡眠更利于记忆巩固</p><span class="d">Solidot · 2026-10-20 15:12</span></div></div>
 <div class="art"><div class="txt"><p class="t">Emacs 30 发布：原生编译与新的树哨兵</p><span class="d">36氪 · 2026-10-19 09:00</span></div><span class="ph-img" style="background:linear-gradient(135deg,#5a4c1e,#3d330f)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
@@ -420,10 +480,10 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
 <div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>把订阅源还给我：RSS 阅读的黄金时代</h1>
 <button class="icon-btn" aria-label="刷新"><svg class="icon"><use href="#i-refresh"/></svg></button>
-<button class="icon-btn" aria-label="收藏"><svg class="icon"><use href="#i-star"/></svg></button>
+<button class="icon-btn" aria-label="已收藏"><svg class="icon f" style="color:var(--text);width:24px"><use href="#i-star"/></svg></button>
 <button class="icon-btn" aria-label="分享"><svg class="icon"><use href="#i-share"/></svg></button>
 <button class="icon-btn" aria-label="朗读"><svg class="icon"><use href="#i-vol"/></svg></button>
-<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:22px"><use href="#i-more"/></svg></button></div>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
 <div class="prog"><span></span></div>
 <div class="body"><div class="article">
 <h2>把订阅源还给我：RSS 阅读的黄金时代</h2>
@@ -440,10 +500,10 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
 <div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>把订阅源还给我：RSS 阅读的黄金时代</h1>
 <button class="icon-btn" aria-label="刷新"><svg class="icon"><use href="#i-refresh"/></svg></button>
-<button class="icon-btn" aria-label="收藏"><svg class="icon"><use href="#i-star"/></svg></button>
+<button class="icon-btn" aria-label="已收藏"><svg class="icon f" style="color:var(--text);width:24px"><use href="#i-star"/></svg></button>
 <button class="icon-btn" aria-label="分享"><svg class="icon"><use href="#i-share"/></svg></button>
 <button class="icon-btn" aria-label="朗读"><svg class="icon"><use href="#i-vol"/></svg></button>
-<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:22px"><use href="#i-more"/></svg></button></div>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
 <div class="prog"><span></span></div>
 <div class="body"><div class="article">
 <h2>把订阅源还给我：RSS 阅读的黄金时代</h2>
@@ -458,7 +518,7 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 </div><figcaption>深色</figcaption></figure>
 </div>
 <ul class="notes">
-<li class="note">顶栏菜单 = <b>rss_read.xml</b>：刷新 / 收藏(已收藏态变实心星 +「已收藏」) / 分享 / 朗读(朗读中变停止图标「朗读停止」) / 登录(有 loginUrl 才显示) / 浏览器打开</li>
+<li class="note">顶栏菜单 = <b>rss_read.xml</b>：刷新 / 收藏(已收藏态如图：实心星 +「已收藏」，ReadRssActivity upStarMenu 以 primaryTextColor 着色并切换 ic_star/ic_star_border) / 分享 / 朗读(朗读中变停止图标「朗读停止」) / 登录(有 loginUrl 才显示) / 浏览器打开</li>
 <li class="note">顶栏下 1dp RefreshProgressBar 显示网页加载进度（图中 62%）</li>
 <li class="note">正文 WebView 按源样式渲染（style/injectJs/白黑名单规则）；custom_web_view 支持源自定义视图</li>
 <li class="note">下载拦截：长 Snackbar「文件名 + 下载」调用 Download.start</li>
@@ -468,7 +528,7 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 <!-- ============ S5 订阅源管理 ============ -->
 <section class="screen" id="s5">
 <div class="screen-head"><h2>05 · 订阅源管理</h2><span class="src">activity_rss_source.xml · ui/rss/source/manage/RssSourceActivity.kt</span></div>
-<p class="screen-desc">订阅源列表：blend 顶栏 = 返回 + 搜索胶囊 + 「订阅源」+ 分组菜单；行内 = 复选框(选中态) + 源名 + 启用开关 + 编辑 + 更多；右侧 FastScroll 快滚条。底部为选择操作栏（全选 / 反选 / 删除 / 溢出批量操作）。图中为勾选 3 项后的选择模式，并展开分组菜单。</p>
+<p class="screen-desc">订阅源列表：blend 顶栏 = 返回 + 搜索胶囊 + 「订阅源」+ 分组菜单；行内 = 复选框(选中态) + 源名 + 启用开关 + 编辑 + 更多（36dp 点击区），勾选行统一 primary-soft 底色；右侧 FastScroll 快滚条。底部为选择操作栏（全选 / 反选 / 删除 / 溢出批量操作）。图中为勾选 3 项后的选择模式，并展开分组菜单。</p>
 <div class="pair">
 <figure><div class="phone light">
 <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
@@ -478,9 +538,9 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 <button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
 <div class="search-pill"><svg class="icon sm"><use href="#i-search"/></svg><span class="grow">搜索</span></div>
 <div class="body">
-<div class="src-row"><span class="cb on"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span class="nm">少数派</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row" style="background:var(--primary-soft)"><span class="cb on"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span class="nm">少数派</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
 <div class="src-row" style="background:var(--primary-soft)"><span class="cb on"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span class="nm">爱范儿</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
-<div class="src-row"><span class="cb on"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span class="nm">阮一峰的网络日志</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row" style="background:var(--primary-soft)"><span class="cb on"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span class="nm">阮一峰的网络日志</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
 <div class="src-row"><span class="cb"></span><span class="nm">酷安</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
 <div class="src-row"><span class="cb"></span><span class="nm">掘金</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
 <div class="src-row"><span class="cb"></span><span class="nm">知乎日报</span><span class="sw"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
@@ -505,7 +565,7 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 <span class="all"><span class="cb"></span>全选(3/12)</span>
 <button class="pill">反选</button>
 <button class="pill fill">删除</button>
-<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:22px"><use href="#i-more"/></svg></button></div>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
 </div><figcaption>浅色</figcaption></figure>
 <figure><div class="phone dark">
 <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
@@ -515,9 +575,9 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 <button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
 <div class="search-pill"><svg class="icon sm"><use href="#i-search"/></svg><span class="grow">搜索</span></div>
 <div class="body">
-<div class="src-row"><span class="cb on"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span class="nm">少数派</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row" style="background:var(--primary-soft)"><span class="cb on"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span class="nm">少数派</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
 <div class="src-row" style="background:var(--primary-soft)"><span class="cb on"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span class="nm">爱范儿</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
-<div class="src-row"><span class="cb on"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span class="nm">阮一峰的网络日志</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="src-row" style="background:var(--primary-soft)"><span class="cb on"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></span><span class="nm">阮一峰的网络日志</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
 <div class="src-row"><span class="cb"></span><span class="nm">酷安</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
 <div class="src-row"><span class="cb"></span><span class="nm">掘金</span><span class="sw on"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
 <div class="src-row"><span class="cb"></span><span class="nm">知乎日报</span><span class="sw"></span><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
@@ -542,12 +602,12 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 <span class="all"><span class="cb"></span>全选(3/12)</span>
 <button class="pill">反选</button>
 <button class="pill fill">删除</button>
-<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:22px"><use href="#i-more"/></svg></button></div>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
 </div><figcaption>深色</figcaption></figure>
 </div>
 <ul class="notes">
 <li class="note">顶栏分组菜单 = <b>rss_source.xml</b>：分组管理 / 已启用 / 已禁用 / 需要登录 / 未分组 + 各源分组；溢出菜单：新建订阅源 / 本地导入 / 网络导入 / 二维码导入 / 导入默认规则 / 帮助</li>
-<li class="note">行控件 = <b>item_rss_source.xml</b>：勾选(进选择模式) + 启用开关 + 编辑 + 更多(置顶/编辑/禁用源/删除弹窗)</li>
+<li class="note">行控件 = <b>item_rss_source.xml</b>：勾选(进选择模式) + 启用开关 + 编辑 + 更多(置顶/编辑/禁用源/删除弹窗)；勾选行统一 primary-soft 底色，编辑/更多按钮 36dp 点击区与布局一致</li>
 <li class="note">选择操作栏 = <b>view_select_action_bar.xml + rss_source_sel.xml</b>：全选 / 反选 / 删除 / ⋮：启用所选 · 禁用所选 · 添加分组 · 移除分组 · 置顶所选 · 置底所选 · 导出所选 · 分享选中源 · 选中所选区间</li>
 <li class="note">列表为 FastScrollRecyclerView 快滚；搜索实时过滤</li>
 </ul>
@@ -630,7 +690,7 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 <li class="note">复选行：启用 / 单 URL / CookieJar（HorizontalScrollView 可横向滚动）</li>
 <li class="note">Tab「基本」字段：源名称 / 源URL / 图标 / 源分组 / 源注释 / 分类Url / 登录URL / 登录UI / 登录检查JS / 封面解密JS / 请求头 / 变量说明 / 并发率 / jsLib</li>
 <li class="note">Tab「列表」字段：列表规则 / 下一页 / 标题 / 时间 / 描述 / 图片 / 链接；Tab「WEB_VIEW」：启用JS / 加载BaseUrl(复选) + 内容规则 / 样式 / 注入Js / 白名单 / 黑名单 / url跳转拦截</li>
-<li class="note">未保存退出弹「退出」「尚未保存，确认退出？」</li>
+<li class="note">未保存退出弹「退出」「尚未保存，是否继续编辑」（exit_no_save，RssSourceEditActivity.kt:98-99）</li>
 </ul>
 </section>
 
@@ -707,24 +767,24 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 <!-- ============ S8 规则订阅 ============ -->
 <section class="screen" id="s8">
 <div class="screen-head"><h2>08 · 规则订阅</h2><span class="src">activity_rule_sub.xml · ui/rss/subscription/RuleSubActivity.kt</span></div>
-<p class="screen-desc">规则订阅管理：blend 顶栏 = 返回 + 「规则订阅」+ 新增(+)；列表行 = 名称 + 类型徽章（书源 / 订阅源 / 替换规则）+ 导入地址 URL + 编辑 + 更多（删除）；点击行按类型弹出导入对话框，长按行拖拽排序；空态显示引导文案。图中展示第二行的更多菜单。</p>
+<p class="screen-desc">规则订阅管理：blend 顶栏 = 返回 + 「规则订阅」+ 新增(+)；列表行 = 名称 + 类型徽章（书源 / 订阅源 / 替换规则）+ 导入地址 URL + 编辑 + 更多（删除，36dp 点击区、纯文字弹出菜单）；点击行按类型弹出导入对话框，长按行拖拽排序。图中展示第二行的纯文字更多菜单；下方补充空态呈现（图标 + 引导文案）。</p>
 <div class="pair">
 <figure><div class="phone light">
 <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
 <div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>规则订阅</h1>
 <button class="icon-btn" aria-label="新增"><svg class="icon"><use href="#i-add"/></svg></button></div>
 <div class="body">
-<div class="rule-row"><div class="info"><p class="nm">书源合集（每日更新）<span class="badge">书源</span></p><span class="url">https://gitcode.com/legado/book_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
-<div class="rule-row"><div class="info"><p class="nm">精选订阅源<span class="badge">订阅源</span></p><span class="url">https://gitcode.com/legado/rss_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
-<div class="rule-row"><div class="info"><p class="nm">净化替换规则<span class="badge">替换规则</span></p><span class="url">https://gitcode.com/legado/replace_rules.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
-<div class="rule-row"><div class="info"><p class="nm">本地图书馆源<span class="badge">书源</span></p><span class="url">https://gitee.com/mirrors/local_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
-<div class="rule-row"><div class="info"><p class="nm">精校书源（周末更新）<span class="badge">书源</span></p><span class="url">https://gitcode.com/legado/fine_book_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
-<div class="rule-row"><div class="info"><p class="nm">听书源合集<span class="badge">订阅源</span></p><span class="url">https://gitcode.com/legado/audio_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
-<div class="rule-row"><div class="info"><p class="nm">去广告替换规则<span class="badge">替换规则</span></p><span class="url">https://gitcode.com/legado/ad_rules.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
-<div class="rule-row"><div class="info"><p class="nm">轻小说书源<span class="badge">书源</span></p><span class="url">https://gitcode.com/legado/light_novel_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">书源合集（每日更新）<span class="badge">书源</span></p><span class="url">https://gitcode.com/legado/book_sources.json</span></div><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">精选订阅源<span class="badge">订阅源</span></p><span class="url">https://gitcode.com/legado/rss_sources.json</span></div><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">净化替换规则<span class="badge">替换规则</span></p><span class="url">https://gitcode.com/legado/replace_rules.json</span></div><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">本地图书馆源<span class="badge">书源</span></p><span class="url">https://gitee.com/mirrors/local_sources.json</span></div><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">精校书源（周末更新）<span class="badge">书源</span></p><span class="url">https://gitcode.com/legado/fine_book_sources.json</span></div><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">听书源合集<span class="badge">订阅源</span></p><span class="url">https://gitcode.com/legado/audio_sources.json</span></div><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">去广告替换规则<span class="badge">替换规则</span></p><span class="url">https://gitcode.com/legado/ad_rules.json</span></div><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">轻小说书源<span class="badge">书源</span></p><span class="url">https://gitcode.com/legado/light_novel_sources.json</span></div><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
 
 <div class="menu" style="right:26px;top:66px;min-width:130px">
-<button class="danger"><svg class="icon sm"><use href="#i-del"/></svg>删除</button></div>
+<button class="danger">删除</button></div>
 </div>
 </div><figcaption>浅色</figcaption></figure>
 <figure><div class="phone dark">
@@ -732,31 +792,52 @@ figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin
 <div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>规则订阅</h1>
 <button class="icon-btn" aria-label="新增"><svg class="icon"><use href="#i-add"/></svg></button></div>
 <div class="body">
-<div class="rule-row"><div class="info"><p class="nm">书源合集（每日更新）<span class="badge">书源</span></p><span class="url">https://gitcode.com/legado/book_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
-<div class="rule-row"><div class="info"><p class="nm">精选订阅源<span class="badge">订阅源</span></p><span class="url">https://gitcode.com/legado/rss_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
-<div class="rule-row"><div class="info"><p class="nm">净化替换规则<span class="badge">替换规则</span></p><span class="url">https://gitcode.com/legado/replace_rules.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
-<div class="rule-row"><div class="info"><p class="nm">本地图书馆源<span class="badge">书源</span></p><span class="url">https://gitee.com/mirrors/local_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
-<div class="rule-row"><div class="info"><p class="nm">精校书源（周末更新）<span class="badge">书源</span></p><span class="url">https://gitcode.com/legado/fine_book_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
-<div class="rule-row"><div class="info"><p class="nm">听书源合集<span class="badge">订阅源</span></p><span class="url">https://gitcode.com/legado/audio_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
-<div class="rule-row"><div class="info"><p class="nm">去广告替换规则<span class="badge">替换规则</span></p><span class="url">https://gitcode.com/legado/ad_rules.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
-<div class="rule-row"><div class="info"><p class="nm">轻小说书源<span class="badge">书源</span></p><span class="url">https://gitcode.com/legado/light_novel_sources.json</span></div><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op" style="color:var(--secondary);display:grid;place-items:center;width:34px;height:34px"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">书源合集（每日更新）<span class="badge">书源</span></p><span class="url">https://gitcode.com/legado/book_sources.json</span></div><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">精选订阅源<span class="badge">订阅源</span></p><span class="url">https://gitcode.com/legado/rss_sources.json</span></div><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">净化替换规则<span class="badge">替换规则</span></p><span class="url">https://gitcode.com/legado/replace_rules.json</span></div><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">本地图书馆源<span class="badge">书源</span></p><span class="url">https://gitee.com/mirrors/local_sources.json</span></div><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">精校书源（周末更新）<span class="badge">书源</span></p><span class="url">https://gitcode.com/legado/fine_book_sources.json</span></div><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">听书源合集<span class="badge">订阅源</span></p><span class="url">https://gitcode.com/legado/audio_sources.json</span></div><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">去广告替换规则<span class="badge">替换规则</span></p><span class="url">https://gitcode.com/legado/ad_rules.json</span></div><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
+<div class="rule-row"><div class="info"><p class="nm">轻小说书源<span class="badge">书源</span></p><span class="url">https://gitcode.com/legado/light_novel_sources.json</span></div><span class="op"><svg class="icon sm"><use href="#i-edit"/></svg></span><span class="op"><svg class="icon f" style="width:20px"><use href="#i-more"/></svg></span></div>
 
 <div class="menu" style="right:26px;top:66px;min-width:130px">
-<button class="danger"><svg class="icon sm"><use href="#i-del"/></svg>删除</button></div>
+<button class="danger">删除</button></div>
 </div>
 </div><figcaption>深色</figcaption></figure>
 </div>
+<div class="pair">
+<figure><div class="phone light slim">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>规则订阅</h1>
+<button class="icon-btn" aria-label="新增"><svg class="icon"><use href="#i-add"/></svg></button></div>
+<div class="body"><div class="empty-state">
+<span class="e-ic"><svg class="icon"><use href="#i-import"/></svg></span>
+<p class="e-t">还没有规则订阅</p>
+<p class="e-h">添加大佬们提供的规则导入地址<br>添加后点击可导入规则</p>
+</div></div>
+<div class="home-indicator"></div>
+</div><figcaption>浅色 · 空态</figcaption></figure>
+<figure><div class="phone dark slim">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>规则订阅</h1>
+<button class="icon-btn" aria-label="新增"><svg class="icon"><use href="#i-add"/></svg></button></div>
+<div class="body"><div class="empty-state">
+<span class="e-ic"><svg class="icon"><use href="#i-import"/></svg></span>
+<p class="e-t">还没有规则订阅</p>
+<p class="e-h">添加大佬们提供的规则导入地址<br>添加后点击可导入规则</p>
+</div></div>
+<div class="home-indicator"></div>
+</div><figcaption>深色 · 空态</figcaption></figure>
+</div>
 <ul class="notes">
 <li class="note">顶栏菜单：新增（source_subscription.xml，always 显示 + 图标）→ 弹出编辑对话框（类型下拉 + 名称 + URL）</li>
-<li class="note">行控件 = <b>item_rule_sub.xml</b>：名称(16sp) + AccentBg 类型徽章 + URL(12sp 中间省略) + 编辑 + 更多(menu：删除)</li>
+<li class="note">行控件 = <b>item_rule_sub.xml</b>：名称(16sp) + AccentBg 类型徽章 + URL(12sp 中间省略) + 编辑 + 更多(menu：删除)；编辑/更多 36dp 点击区，弹出菜单统一纯文字项</li>
 <li class="note">点击行按 type 导入：0 书源 / 1 订阅源 / 2 替换规则（ImportBookSourceDialog 等）</li>
 <li class="note">长按拖拽排序（ItemTouchHelper，落库 customOrder）；URL 重复时提示「地址已存在」</li>
-<li class="note">空态文案：「添加大佬们提供的规则导入地址\n添加后点击可导入规则」</li>
+<li class="note">空态 = 圆底图标(ic_import) + 主标题「还没有规则订阅」(14sp on_surface，新增 string) + 现有 rule_sub_empty_msg 两行提示 (12sp on_surface_variant)；activity_rule_sub.xml 的 tv_empty_msg 换成竖排 LinearLayout 落地</li>
 </ul>
 </section>
 
 </main>
-<script>
-document.querySelectorAll('.doc-nav a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.querySelector(a.getAttribute('href'))?.scrollIntoView({behavior:'smooth'})}));
-</script>
 </body></html>

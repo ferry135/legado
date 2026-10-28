@@ -79,12 +79,14 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_bar" />
 
-    <!-- .subt：14.5sp 白色章名 -->
+    <!-- .subt：14.5sp 白色章名，最多 2 行省略（v3：超长网文章节名不丢上下文） -->
     <TextView
         android:id="@+id/tv_sub_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:maxLines="2"
+        android:ellipsize="end"
         android:paddingStart="32dp"
         android:paddingTop="8dp"
         android:paddingEnd="32dp"

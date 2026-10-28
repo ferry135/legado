@@ -1,6 +1,7 @@
 package io.legado.app.ui.widget.dynamiclayout
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import io.legado.app.R
+import io.legado.app.lib.theme.primaryColor
 
 @Suppress("unused")
 class DynamicFrameLayout @JvmOverloads constructor(
@@ -101,9 +103,9 @@ class DynamicFrameLayout @JvmOverloads constructor(
 
         actionBtn?.let {
             it.tag = ACTION_WHEN_EMPTY
-            if (errorActionDescription != null) {
+            if (emptyActionDescription != null) {
                 it.visibility = View.VISIBLE
-                it.text = errorActionDescription
+                it.text = emptyActionDescription
             } else {
                 it.visibility = View.INVISIBLE
             }
@@ -154,6 +156,12 @@ class DynamicFrameLayout @JvmOverloads constructor(
             errorImage = errorView?.findViewById(R.id.iv_error_image)
             errorTextView = errorView?.findViewById(R.id.tv_error_message)
             actionBtn = errorView?.findViewById(R.id.btn_error_retry)
+            // 05 稿 .pill：描边与文字运行时取主题主色，保证可换肤（MASTER.md §4 布局不得固化 primary/accent；
+            // 同 ReadAloudDialog.upPlayState 的运行时着色方式）
+            actionBtn?.apply {
+                backgroundTintList = ColorStateList.valueOf(context.primaryColor)
+                setTextColor(context.primaryColor)
+            }
 
             actionBtn?.setOnClickListener {
                 when (it.tag) {
@@ -175,7 +183,7 @@ class DynamicFrameLayout @JvmOverloads constructor(
         changeListener?.onVisibilityChanged(visibility)
     }
 
-    interface Action {
+    fun interface Action {
         fun onAction(switcher: ViewSwitcher)
     }
 

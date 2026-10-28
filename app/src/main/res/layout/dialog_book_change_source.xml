@@ -34,6 +34,25 @@
         app:layout_constraintBottom_toTopOf="@+id/ll_bottom_bar"
         app:layout_constraintTop_toBottomOf="@+id/refresh_progress_bar" />
 
+    <!-- 换源无结果空态（02-⑤，同④）：EmptyTipView 单一实现（图标+主行+副行），
+         ChangeBookSourceDialog.upEmptyMsgView() 按结果为空控制 gone 显隐 -->
+    <io.legado.app.ui.widget.EmptyTipView
+        android:id="@+id/empty_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="24dp"
+        android:paddingTop="32dp"
+        android:paddingRight="24dp"
+        android:paddingBottom="32dp"
+        android:visibility="gone"
+        app:empty_icon="@drawable/ic_search"
+        app:empty_tip="@string/change_source_empty_tip"
+        app:empty_title="@string/change_source_empty_title"
+        app:layout_constraintBottom_toTopOf="@+id/ll_bottom_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/refresh_progress_bar" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"

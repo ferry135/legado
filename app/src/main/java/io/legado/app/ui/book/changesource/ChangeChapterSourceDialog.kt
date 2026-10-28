@@ -9,6 +9,7 @@ import androidx.activity.addCallback
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle.State.STARTED
@@ -230,10 +231,12 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
                 }
             }
             binding.toolBar.menu.applyTint(requireContext())
+            upEmptyMsgView()
         }
         launchCollectWithLifecycle {
             viewModel.searchDataFlow.conflate().collect {
                 searchBookAdapter.setItems(it)
+                upEmptyMsgView()
                 delay(1000)
             }
 
@@ -246,6 +249,14 @@ class ChangeChapterSourceDialog() : BaseDialogFragment(R.layout.dialog_chapter_c
             }
 
         }
+    }
+
+    /**
+     * 无结果空态（设计稿02-④）：仅搜索结束且结果为空时显示，搜索中不闪现
+     */
+    private fun upEmptyMsgView() {
+        binding.emptyTip.isGone =
+            searchBookAdapter.itemCount > 0 || viewModel.searchStateData.value != false
     }
 
     private val startStopMenuItem: MenuItem?

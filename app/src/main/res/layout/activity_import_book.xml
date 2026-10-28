@@ -58,6 +58,7 @@
             android:text="@string/go_back"
             android:textFontWeight="650"
             android:textSize="13sp"
+            android:minHeight="44dp"
             app:cornerRadius="9dp"
             tools:ignore="UnusedAttribute" />
     </LinearLayout>
@@ -94,6 +95,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="16dp"
+            android:drawableTop="@drawable/ic_folder_outline"
+            app:drawableTint="@color/on_surface_variant"
+            android:drawablePadding="14dp"
             android:gravity="center"
             android:text="@string/empty"
             android:textColor="@color/on_surface_variant"

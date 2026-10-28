@@ -102,6 +102,9 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     private fun startSearch() {
         execute {
             stopSearch()
+            // 立即标记搜索中，避免 stopSearch 的 false 到新搜索 onStart 的 true 之间
+            // 主线程观察到 false+空列表而闪现空态（upEmptyMsgView）
+            searchStateData.postValue(true)
             searchBooks.clear()
             upAdapter?.invoke()
             bookSourceParts.clear()
