@@ -142,6 +142,12 @@
         <item name="android:textColor">@color/on_surface</item>
     </style>
 
+    <!-- 04 稿 .tb .t：普通顶栏标题 18sp 加粗（发现页/发现详情/搜索类屏）；PageTitle 为 28sp 大标题档 -->
+    <style name="TextAppearance.Legado.BarTitle" parent="TextAppearance.Legado">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="TextAppearance.Legado.Tab" parent="TextAppearance.Legado">
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>

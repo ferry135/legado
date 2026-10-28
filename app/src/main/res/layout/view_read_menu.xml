@@ -90,11 +90,11 @@
 
         <ImageView
             android:id="@+id/iv_brightness_auto"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginHorizontal="8dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="4dp"
+            android:padding="10dp"
             android:contentDescription="@string/brightness_auto"
             android:src="@drawable/ic_brightness_auto"
             tools:ignore="ImageContrastCheck" />
@@ -115,11 +115,11 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/vw_brightness_pos_adjust"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginHorizontal="8dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="6dp"
+            android:padding="10dp"
             android:contentDescription="@string/adjust_pos"
             android:src="@drawable/ic_swap_horiz"
             app:tint="@color/on_surface" />
@@ -325,7 +325,7 @@
                         android:layout_weight="1"
                         android:adjustViewBounds="true"
                         android:contentDescription="@string/chapter_list"
-                        android:maxHeight="22dp"
+                        android:maxHeight="@dimen/action_icon_size"
                         android:src="@drawable/ic_toc"
                         app:tint="@color/on_surface"
                         tools:ignore="NestedWeights" />
@@ -369,7 +369,7 @@
                         android:layout_weight="1"
                         android:adjustViewBounds="true"
                         android:contentDescription="@string/read_aloud"
-                        android:maxHeight="22dp"
+                        android:maxHeight="@dimen/action_icon_size"
                         android:src="@drawable/ic_read_aloud"
                         app:tint="@color/on_surface"
                         tools:ignore="NestedWeights" />
@@ -413,7 +413,7 @@
                         android:layout_weight="1"
                         android:adjustViewBounds="true"
                         android:contentDescription="@string/interface_setting"
-                        android:maxHeight="22dp"
+                        android:maxHeight="@dimen/action_icon_size"
                         android:src="@drawable/ic_interface_setting"
                         app:tint="@color/on_surface"
                         tools:ignore="NestedWeights" />
@@ -457,7 +457,7 @@
                         android:layout_weight="1"
                         android:adjustViewBounds="true"
                         android:contentDescription="@string/setting"
-                        android:maxHeight="22dp"
+                        android:maxHeight="@dimen/action_icon_size"
                         android:src="@drawable/ic_settings"
                         app:tint="@color/on_surface"
                         tools:ignore="NestedWeights" />

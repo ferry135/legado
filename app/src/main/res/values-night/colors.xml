@@ -5,7 +5,9 @@
     <color name="surface_container">#1D1B19</color>
     <color name="surface_container_high">#242220</color>
     <color name="surface_hero">#1D1B19</color>
-    <color name="bnv_item_indicator">#3A241B</color>
+    <!-- primary-soft（设计稿 primary-soft，暗 #3A241B） -->
+    <color name="primary_soft">#3A241B</color>
+    <color name="bnv_item_indicator">@color/primary_soft</color>
     <color name="on_surface">#F3F0EB</color>
     <color name="on_surface_variant">#B4B0AA</color>
     <color name="divider_subtle">#0FFFFFFF</color>
@@ -27,6 +29,7 @@
     <color name="scrim_dialog">#80000000</color>
     <color name="hero_gradient_start">#33261C</color>
     <color name="hero_gradient_end">#221A14</color>
+    <color name="warning">#C2551F</color>
 
     <color name="primary">@color/design_orange</color>
     <color name="primaryDark">@color/md_deep_orange_800</color>

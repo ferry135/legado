@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 05 稿 .pill 描边胶囊底：透明底 + 1dp 描边 + 17dp 圆角；描边色由 DynamicFrameLayout.ensureErrorView
+     运行时以主题主色着色（MASTER.md §4 布局不得固化 primary/accent，须可换肤） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@android:color/transparent" />
+    <stroke
+        android:width="1dp"
+        android:color="@color/outline" />
+    <corners android:radius="17dp" />
+</shape>

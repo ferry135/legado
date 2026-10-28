@@ -14,7 +14,7 @@
 - 如需极简 unlabeled：改 `styles.xml` 中 `Widget.Legado.BottomNavigationView` 的 `labelVisibilityMode` 为 `unlabeled`。
 
 ## 3. 中性表面色温
-- 现状：暖纸白 `#FAF9F6` / 暖黑 `#151412`（阅读类 App 主流）。
+- 现状：暖纸白 `#FAF9F7` / 暖黑 `#141312`（阅读类 App 主流，与 MASTER.md 及 colors.xml 实装值一致）。
 - 备选：纯白 `#FFFFFF` / 纯黑 `#000000`（AMOLED 省电）或原来的冷灰。
 - 改动点：`colors.xml`（含 night）中 `surface` / `surface_container` 系列即可全局生效。
 
@@ -32,3 +32,19 @@
 
 ## 7. 未逐页打磨的次要页面
 - RSS 订阅源列表、漫画页、词典/字体管理等低频页面只受益于全局令牌，未做页面级布局调整。
+
+## 8. 布局内 primary/accent 引用的换肤豁免清单
+- 背景：MASTER.md §4 要求「布局不得固化 primary/accent（必须可换肤）」；经逐处核查，
+  本应用无 ThemeStore→主题属性覆盖机制（`applyStyle` 全库零命中），`?attr/colorPrimary`
+  实际解析 `styles.xml:28` 的静态映射 `@color/primary`，用户换肤后不跟随——机制性既有限制。
+- 已达标（无豁免）：`dialog_read_aloud` 主播放钮已升级为运行时着色
+  （`ReadAloudDialog.upPlayState` 以 `ThemeStore.accentColor` 设 backgroundTintList 并按明暗取图标黑白），
+  XML 侧仅余 `tools:backgroundTint` 预览属性（03 稿注记许可的纯 XML 方案之上的加强）。
+- 豁免 1：`item_chapter_list.xml:84` iv_checked `app:tint="?attr/colorPrimary"` ——
+  02 稿 :461 注记明确许可「改 ?attr/colorPrimary 即与本稿一致（纯 XML 一行）」，按稿保留。
+- 豁免 2：`activity_manga.xml:57` 加载指示器 `app:indicatorColor="@color/primary"` ——
+  Material3 CircularProgressIndicator，稿面无单独换肤注记，按静态兜底色落地。
+- 如需严格可换肤：前者在 ChapterListAdapter 绑定处以 `context.primaryColor` 着色（约 3 行），
+  后者在加载视图初始化处 `setIndicatorColor(context.primaryColor)`（约 1 行）；
+  默认色兜底已是暖橙体系（见 §1），未换肤用户观感不受影响。
+

@@ -9,6 +9,7 @@ import android.widget.ImageButton
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
+import androidx.core.view.isGone
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.lifecycle.lifecycleScope
@@ -230,10 +231,12 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
                 }
             }
             binding.toolBar.menu.applyTint(requireContext())
+            upEmptyMsgView()
         }
         launchCollectWithLifecycle {
             viewModel.searchDataFlow.conflate().collect {
                 adapter.setItems(it)
+                upEmptyMsgView()
                 delay(1000)
             }
 
@@ -264,6 +267,14 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
             }
 
         }
+    }
+
+    /**
+     * 无结果空态（设计稿02-⑤，同④）：仅搜索结束且结果为空时显示，搜索中不闪现
+     */
+    private fun upEmptyMsgView() {
+        binding.emptyTip.isGone =
+            adapter.itemCount > 0 || viewModel.searchStateData.value != false
     }
 
     private val startStopMenuItem: MenuItem?

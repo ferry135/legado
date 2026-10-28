@@ -73,7 +73,7 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
             appDb.ruleSubDao.flowAll().catch {
                 AppLog.put("规则订阅界面获取数据失败\n${it.localizedMessage}", it)
             }.flowOn(IO).conflate().collect {
-                binding.tvEmptyMsg.isGone = it.isNotEmpty()
+                binding.emptyTip.isGone = it.isNotEmpty()
                 adapter.setItems(it)
             }
 

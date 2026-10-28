@@ -23,7 +23,7 @@
         style="@style/Widget.Legado.BottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background"
+        android:background="@color/surface_container"
         app:menu="@menu/main_bnv" />
 
 </LinearLayout>

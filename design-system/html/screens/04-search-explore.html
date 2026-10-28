@@ -26,8 +26,8 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
 .spec ul{margin:0;padding-left:18px}
 /* ---------- phone shell ---------- */
 .phone{width:412px;height:900px;border-radius:26px;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.13);font-size:14px}
-.phone.t-light{--bg:#faf9f7;--surface:#ffffff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--outline:#8b8878;--divider:rgba(0,0,0,.07);--track:#e5e2de;--primary:#ff6b2c;--primary-soft:#fff0e6;--primary-soft-line:rgba(255,107,44,.35);--green:#3b7a45;--badge:#60656d}
-.phone.t-dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--text:#f3f0eb;--secondary:#b4b0aa;--outline:#8f8b7f;--divider:rgba(255,255,255,.08);--track:#36342e;--primary:#ff6b2c;--primary-soft:#3a241b;--primary-soft-line:rgba(255,107,44,.45);--green:#7fd891;--badge:#514e47}
+.phone.t-light{--bg:#faf9f7;--surface:#ffffff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--outline:#8b8878;--divider:rgba(0,0,0,.07);--track:#e5e2de;--ov:#e4e1d8;--primary:#ff6b2c;--primary-soft:#fff0e6;--primary-soft-line:rgba(255,107,44,.35);--green:#3b7a45}
+.phone.t-dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--text:#f3f0eb;--secondary:#b4b0aa;--outline:#8f8b7f;--divider:rgba(255,255,255,.08);--track:#353331;--ov:#36342e;--primary:#ff6b2c;--primary-soft:#3a241b;--primary-soft-line:rgba(255,107,44,.45);--green:#7fd891}
 .t-light{background:var(--bg);color:var(--text)}
 .t-dark{background:var(--bg);color:var(--text)}
 .status{height:34px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:13px;font-weight:600;color:var(--text)}
@@ -53,7 +53,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
 .pline>span{display:block;height:100%;width:42%;background:var(--primary);border-radius:2px}
 /* chips（item_fillet_text） */
 .chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 16px}
-.chip{padding:7px 14px;border-radius:8px;background:var(--surface2);color:var(--text);font-size:14px;line-height:1.35}
+.chip{padding:7px 14px;border-radius:8px;background:var(--surface2);color:var(--text);font-size:14px;line-height:1.35;max-width:216px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chip.k{background:var(--primary-soft);color:var(--primary);font-size:11.5px;padding:3px 8px;border-radius:5px}
 .sec-label{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 10px;font-size:13px;color:var(--secondary);letter-spacing:.5px}
 .sec-label .act{color:var(--secondary);font-size:13px}
@@ -72,37 +72,43 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
 .b-name{display:flex;align-items:flex-start;gap:7px;min-width:0}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex:none;margin-top:6px}
 .b-title{font-size:17px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.badge{margin-left:auto;flex:none;font-size:11px;line-height:1;padding:4px 7px;border-radius:999px;background:var(--badge);color:#fff;margin-top:1px}
+.badge{margin-left:auto;flex:none;font-size:11px;line-height:1;padding:4px 7px;border-radius:999px;background:var(--track);color:var(--secondary);margin-top:1px}
 .b-info{min-width:0;display:flex;flex-direction:column;gap:5px;margin-top:2px}
 .b-meta{font-size:12.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.b-meta.lasted{color:var(--secondary)}
 .b-meta.kindrow{display:flex;gap:6px}
 .b-intro{font-size:12.5px;color:var(--secondary);line-height:1.65;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 /* FAB */
 .fab{position:absolute;right:16px;bottom:18px;width:42px;height:42px;border-radius:50%;background:var(--primary);border:1px solid rgba(0,0,0,.08);display:grid;place-items:center;color:#fff;z-index:4}
-.fab.up{bottom:58px}
+.fab.up{bottom:70px}
 /* 全文搜索条目（item_search_list） */
 .citem{padding:11px 16px;font-size:13.5px;line-height:1.7;border-bottom:1px solid var(--divider)}
 .citem .ct-ch{color:var(--primary);font-weight:600}
 .citem .hl{color:var(--primary)}
 .citem.dur{font-weight:700}
 /* 底部信息条（ll_search_base_info） */
-.infobar{position:absolute;left:0;right:0;bottom:0;height:36px;background:var(--surface2);display:flex;align-items:center;padding:0 6px;z-index:4}
-.infobar .txt{flex:1;font-size:12px;color:var(--text);padding:0 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.infobar .ib{width:36px;height:36px;display:grid;place-items:center;color:var(--text)}
+.infobar{position:absolute;left:0;right:0;bottom:0;height:48px;background:var(--surface2);display:flex;align-items:center;padding:0 6px;z-index:4}
+.infobar .txt{flex:1;min-width:0;font-size:12px;color:var(--text);padding:0 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.infobar .ib{width:44px;height:48px;flex:none;display:grid;place-items:center;color:var(--text)}
 /* 快滚条 */
 .fscroll{position:absolute;right:2px;top:120px;width:4px;height:220px;border-radius:3px;background:var(--outline);opacity:.35;z-index:4}
-/* 发现页源条目（item_find_book） */
+/* 发现页源条目（item_find_book）：两卡叠放，描边/圆角对齐 bg_card（surface_container 底 + 0.5dp outline_variant 描边 + 12dp 圆角） */
 .srcwrap{padding:0 16px}
-.src{background:var(--surface);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;border:1px solid var(--divider)}
-.t-dark .src{background:var(--surface);border-color:transparent}
+.src{background:var(--surface);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;border:1px solid var(--ov)}
+.t-dark .src{background:var(--surface);border-color:var(--ov)}
 .src .nm{font-size:15px;font-weight:500;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .src .arr{color:var(--secondary)}
-.src.open{border-radius:12px 12px 8px 8px}
-.src-chips{background:var(--surface);border-radius:8px 8px 12px 12px;margin:2px 0 10px;padding:12px 14px 14px;display:flex;flex-wrap:wrap;gap:8px}
+.src.open{border-radius:12px}
+.src-chips{background:var(--surface);border-radius:12px;border:1px solid var(--ov);margin:2px 0 10px;padding:12px 14px 14px;display:flex;flex-wrap:wrap;gap:8px}
 .t-dark .src-chips{background:var(--surface)}
-/* 加载更多 footer */
+/* 加载更多 footer（view_load_more：RotateLoading + tv_text 14sp textColorSecondary） */
 .loadmore{display:grid;place-items:center;padding:16px 0 22px;color:var(--secondary)}
+.loadmore .txt{font-size:14px;color:var(--secondary);line-height:1.6}
 .pill-note{margin:4px 16px;padding:10px 14px;border-radius:10px;border:1px dashed var(--primary-soft-line);font-size:12px;color:var(--secondary);line-height:1.7}
+/* 空态（fragment_explore tv_empty_msg：drawableTop 图标 + 文案，均次要色） */
+.empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:var(--secondary)}
+.empty .eic{width:58px;height:58px;border-radius:50%;background:var(--surface2);display:grid;place-items:center;color:var(--secondary)}
+.empty .etxt{font-size:14px}
 </style></head>
 <body><div class="wrap">
 
@@ -142,7 +148,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
         <div class="chips"><span class="chip">诡秘之主</span></div>
         <div class="sec-label"><span>搜索历史</span><span class="act">清除</span></div>
         <div class="chips">
-          <span class="chip">凡人修仙传</span><span class="chip">灵境行者</span><span class="chip">深空彼岸</span><span class="chip">默读</span><span class="chip">残次品</span><span class="chip">大奉打更人</span><span class="chip">夜的命名术</span><span class="chip">万相之王</span><span class="chip">绍宋</span>
+          <span class="chip">那年那蝉那座食堂：一个食堂阿姨的修仙日常实录（增补修订版）</span><span class="chip">凡人修仙传</span><span class="chip">灵境行者</span><span class="chip">深空彼岸</span><span class="chip">默读</span><span class="chip">残次品</span><span class="chip">大奉打更人</span><span class="chip">夜的命名术</span><span class="chip">万相之王</span><span class="chip">绍宋</span>
         </div>
       </div>
     </figure>
@@ -159,7 +165,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
         <div class="chips"><span class="chip">诡秘之主</span></div>
         <div class="sec-label"><span>搜索历史</span><span class="act">清除</span></div>
         <div class="chips">
-          <span class="chip">凡人修仙传</span><span class="chip">灵境行者</span><span class="chip">深空彼岸</span><span class="chip">默读</span><span class="chip">残次品</span><span class="chip">大奉打更人</span><span class="chip">夜的命名术</span><span class="chip">万相之王</span><span class="chip">绍宋</span>
+          <span class="chip">那年那蝉那座食堂：一个食堂阿姨的修仙日常实录（增补修订版）</span><span class="chip">凡人修仙传</span><span class="chip">灵境行者</span><span class="chip">深空彼岸</span><span class="chip">默读</span><span class="chip">残次品</span><span class="chip">大奉打更人</span><span class="chip">夜的命名术</span><span class="chip">万相之王</span><span class="chip">绍宋</span>
         </div>
       </div>
     </figure>
@@ -183,17 +189,17 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="dot"></span><span class="b-title">诡秘之主</span><span class="badge">4</span></div>
             <div class="b-meta">作者：爱潜水的乌贼</div>
             <div class="b-meta kindrow"><span class="chip k">玄幻</span><span class="chip k">奇幻</span><span class="chip k">完本</span></div>
-            <div class="b-meta">最新：第 1432 章 昏暗之中</div>
-            <div class="b-intro">蒸汽与机械的浪潮中，谁能触及非凡？历史和黑暗的迷雾里，又是谁在耳语？我从诡秘中醒来，睁眼看见这个世界……</div>
+            <div class="b-meta lasted">最新：第 1432 章 昏暗之中</div>
+            <div class="b-intro">蒸汽与机械的浪潮中，谁能触及非凡？历史和黑暗的迷雾里，又是谁在耳语？我从诡秘中醒来，睁眼看见这个世界：序列、魔药、占卜与封印物构成了全新的秩序，而我必须在疯狂与理智的边缘寻找属于自己的道路……</div>
           </div>
         </div>
         <div class="bitem">
           <div class="cover c2"><span class="ct">诡秘之主 · 命运长河</span><span class="ca">某位诗人</span></div>
           <div class="b-info">
-            <div class="b-name"><span class="b-title">诡秘之主·命运长河</span><span class="badge">2</span></div>
+            <div class="b-name"><span class="b-title">诡秘之主·命运长河与灰雾之上观察者手记</span><span class="badge">2</span></div>
             <div class="b-meta">作者：某位诗人</div>
             <div class="b-meta kindrow"><span class="chip k">同人</span><span class="chip k">衍生</span></div>
-            <div class="b-meta">最新：第 96 章 序列之外</div>
+            <div class="b-meta lasted">最新：第 96 章 序列之外</div>
             <div class="b-intro">穿越到诡秘世界，成为命运齿轮上的一环。魔药的配方、晋升的仪式、沉睡的古神……这一次，他想把命运握在自己手里。</div>
           </div>
         </div>
@@ -203,7 +209,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="b-title">诡秘侦探事务所</span><span class="badge">1</span></div>
             <div class="b-meta">作者：夜航星</div>
             <div class="b-meta kindrow"><span class="chip k">悬疑</span><span class="chip k">侦探</span></div>
-            <div class="b-meta">最新：第 41 章 线索中断</div>
+            <div class="b-meta lasted">最新：第 41 章 线索中断</div>
             <div class="b-intro">开在小巷里的侦探事务所，接的却都是与「非凡」沾边的案子。佣金丰厚，命也悬得更高……</div>
           </div>
         </div>
@@ -213,7 +219,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="b-title">诡秘纪元</span><span class="badge">3</span></div>
             <div class="b-meta">作者：白鸦</div>
             <div class="b-meta kindrow"><span class="chip k">玄幻</span><span class="chip k">连载中</span></div>
-            <div class="b-meta">最新：第 207 章 雾都来客</div>
+            <div class="b-meta lasted">最新：第 207 章 雾都来客</div>
             <div class="b-intro">旧日纪元终结之后，残留的诡秘之物散落人间。少年拾到了一枚会低语的铜哨……</div>
           </div>
         </div>
@@ -223,7 +229,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="b-title">诡秘高塔</span><span class="badge">2</span></div>
             <div class="b-meta">作者：临江仙</div>
             <div class="b-meta kindrow"><span class="chip k">奇幻</span><span class="chip k">连载中</span></div>
-            <div class="b-meta">最新：第 88 章 第七层</div>
+            <div class="b-meta lasted">最新：第 88 章 第七层</div>
             <div class="b-intro">通天高塔每十年开启一次，塔中的秘密与宝藏同样危险。这一届的攀登者们……</div>
           </div>
         </div>
@@ -233,7 +239,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="b-title">诡秘航线</span><span class="badge">1</span></div>
             <div class="b-meta">作者：北辰</div>
             <div class="b-meta kindrow"><span class="chip k">冒险</span></div>
-            <div class="b-meta">最新：第 12 章 起锚</div>
+            <div class="b-meta lasted">最新：第 12 章 起锚</div>
             <div class="b-intro">浓雾锁海，罗盘失灵。传闻雾海尽头藏着旧日支配者的沉眠之地……</div>
           </div>
         </div>
@@ -256,17 +262,17 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="dot"></span><span class="b-title">诡秘之主</span><span class="badge">4</span></div>
             <div class="b-meta">作者：爱潜水的乌贼</div>
             <div class="b-meta kindrow"><span class="chip k">玄幻</span><span class="chip k">奇幻</span><span class="chip k">完本</span></div>
-            <div class="b-meta">最新：第 1432 章 昏暗之中</div>
-            <div class="b-intro">蒸汽与机械的浪潮中，谁能触及非凡？历史和黑暗的迷雾里，又是谁在耳语？我从诡秘中醒来，睁眼看见这个世界……</div>
+            <div class="b-meta lasted">最新：第 1432 章 昏暗之中</div>
+            <div class="b-intro">蒸汽与机械的浪潮中，谁能触及非凡？历史和黑暗的迷雾里，又是谁在耳语？我从诡秘中醒来，睁眼看见这个世界：序列、魔药、占卜与封印物构成了全新的秩序，而我必须在疯狂与理智的边缘寻找属于自己的道路……</div>
           </div>
         </div>
         <div class="bitem">
           <div class="cover c2"><span class="ct">诡秘之主 · 命运长河</span><span class="ca">某位诗人</span></div>
           <div class="b-info">
-            <div class="b-name"><span class="b-title">诡秘之主·命运长河</span><span class="badge">2</span></div>
+            <div class="b-name"><span class="b-title">诡秘之主·命运长河与灰雾之上观察者手记</span><span class="badge">2</span></div>
             <div class="b-meta">作者：某位诗人</div>
             <div class="b-meta kindrow"><span class="chip k">同人</span><span class="chip k">衍生</span></div>
-            <div class="b-meta">最新：第 96 章 序列之外</div>
+            <div class="b-meta lasted">最新：第 96 章 序列之外</div>
             <div class="b-intro">穿越到诡秘世界，成为命运齿轮上的一环。魔药的配方、晋升的仪式、沉睡的古神……这一次，他想把命运握在自己手里。</div>
           </div>
         </div>
@@ -276,7 +282,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="b-title">诡秘侦探事务所</span><span class="badge">1</span></div>
             <div class="b-meta">作者：夜航星</div>
             <div class="b-meta kindrow"><span class="chip k">悬疑</span><span class="chip k">侦探</span></div>
-            <div class="b-meta">最新：第 41 章 线索中断</div>
+            <div class="b-meta lasted">最新：第 41 章 线索中断</div>
             <div class="b-intro">开在小巷里的侦探事务所，接的却都是与「非凡」沾边的案子。佣金丰厚，命也悬得更高……</div>
           </div>
         </div>
@@ -286,7 +292,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="b-title">诡秘纪元</span><span class="badge">3</span></div>
             <div class="b-meta">作者：白鸦</div>
             <div class="b-meta kindrow"><span class="chip k">玄幻</span><span class="chip k">连载中</span></div>
-            <div class="b-meta">最新：第 207 章 雾都来客</div>
+            <div class="b-meta lasted">最新：第 207 章 雾都来客</div>
             <div class="b-intro">旧日纪元终结之后，残留的诡秘之物散落人间。少年拾到了一枚会低语的铜哨……</div>
           </div>
         </div>
@@ -296,7 +302,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="b-title">诡秘高塔</span><span class="badge">2</span></div>
             <div class="b-meta">作者：临江仙</div>
             <div class="b-meta kindrow"><span class="chip k">奇幻</span><span class="chip k">连载中</span></div>
-            <div class="b-meta">最新：第 88 章 第七层</div>
+            <div class="b-meta lasted">最新：第 88 章 第七层</div>
             <div class="b-intro">通天高塔每十年开启一次，塔中的秘密与宝藏同样危险。这一届的攀登者们……</div>
           </div>
         </div>
@@ -306,7 +312,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="b-title">诡秘航线</span><span class="badge">1</span></div>
             <div class="b-meta">作者：北辰</div>
             <div class="b-meta kindrow"><span class="chip k">冒险</span></div>
-            <div class="b-meta">最新：第 12 章 起锚</div>
+            <div class="b-meta lasted">最新：第 12 章 起锚</div>
             <div class="b-intro">浓雾锁海，罗盘失灵。传闻雾海尽头藏着旧日支配者的沉眠之地……</div>
           </div>
         </div>
@@ -319,7 +325,8 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
     <li><b>顶栏（blend，与页面同色无阴影）</b>：返回 + 搜索胶囊（提示「搜索书名、作者」，提交按钮可用，提交即搜）+ 溢出菜单 ⋮。</li>
     <li><b>溢出菜单（menu/book_search.xml）</b>：精准搜索（可勾选，记忆偏好，影响书名匹配方式）/ 书源管理 / 多分组·书源（打开 SearchScopeDialog 选择分组或书源）/ 日志（AppLog）；菜单展开时动态追加「全部书源」与各分组勾选项。</li>
     <li><b>输入帮助层</b>：搜索框聚焦时覆盖列表 —— 「书架」联想 chips（按关键词匹配的书架书籍，点按进详情）；「搜索历史」chips（点按执行搜索，长按爆炸动画删除单条；右侧「清除」全部，带确认弹窗）。</li>
-    <li><b>结果条目</b>：按书名+作者聚合，右上角灰色角标为可用书源数；绿色圆点表示已在书架；分类标签（LabelsBar）；最新章节；简介两行截断；点按进书籍详情。</li>
+    <li><b>chip 长文本</b>：超长关键词/书名按 <b>216dp</b> 上限尾部省略 —— item_fillet_text.xml 已有 maxLines=1 + ellipsize=end，补 <b>android:maxWidth="216dp"</b> 防止单枚 chip 撑破 FlexboxLayoutManager 容器。</li>
+    <li><b>结果条目</b>：按书名+作者聚合；书源数角标复用书架徽标语言（<b>bg_badge_muted</b>：progress_track 底 + on_surface_variant 字 —— BadgeView 默认 accent 底白字，XML 需 android:backgroundTint="@color/progress_track" + android:textColor="@color/on_surface_variant" 落地中性角标）；绿色圆点表示已在书架；分类标签（LabelsBar）；「最新章节」降为次要色（item_search.xml tv_lasted textColor → @color/tv_text_summary），与作者行/简介形成 17sp 主标题 → 12.5sp 主信息 → 12.5sp 辅助信息三级层级；简介两行截断；点按进书籍详情。</li>
     <li><b>搜索中</b>：标题栏下 2dp 进度条 + 迷你 FAB 停止；手动停止后若还有更多结果，FAB 变播放键续搜；滚动到底自动续搜。</li>
     <li><b>空结果</b>：限定了分组/书源时弹窗引导 —— 关闭精准搜索或切回「全部书源」。</li>
   </ul></div>
@@ -351,6 +358,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
         <div class="citem"><span class="ct-ch">第二十七章 灵气反噬</span><br><span class="hl">灵气</span>暴走的瞬间，他猛地咬破舌尖，借着剧痛才勉强稳住心神。</div>
         <div class="citem"><span class="ct-ch">第三十一章 灵气枯竭</span><br>洞府外的<span class="hl">灵气</span>已近枯竭，再闭关百年也难有寸进，他不得不下山。</div>
         <div class="citem"><span class="ct-ch">第四十章 灵气化液</span><br>丹田中的<span class="hl">灵气</span>终于凝而成液，一滴，又一滴，敲在寂静的识海里。</div>
+        <div class="citem"><span class="ct-ch">第一百零八章 灵气、灵纹与灵犀：论修行三重境界的圆融之道（下）</span><br>所谓灵犀，讲求物我两忘——他闭目吐纳，任<span class="hl">灵气</span>在百脉间缓缓流转。</div>
         <div class="citem"><span class="ct-ch">第五十五章 灵气之潮</span><br>夜半时分，山谷中<span class="hl">灵气</span>如潮水般涌来，草木在月光下轻轻摇曳。</div>
         <div class="citem"><span class="ct-ch">第六十一章 借灵气修行</span><br>所谓借势，便是借这天地<span class="hl">灵气</span>为己用，四两拨千斤。</div>
         <div class="citem"><span class="ct-ch">第七十章 灵气与剑意</span><br>剑出鞘的一刻，周身<span class="hl">灵气</span>尽数附于锋刃，寒光凛冽如秋水。</div>
@@ -379,6 +387,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
         <div class="citem"><span class="ct-ch">第二十七章 灵气反噬</span><br><span class="hl">灵气</span>暴走的瞬间，他猛地咬破舌尖，借着剧痛才勉强稳住心神。</div>
         <div class="citem"><span class="ct-ch">第三十一章 灵气枯竭</span><br>洞府外的<span class="hl">灵气</span>已近枯竭，再闭关百年也难有寸进，他不得不下山。</div>
         <div class="citem"><span class="ct-ch">第四十章 灵气化液</span><br>丹田中的<span class="hl">灵气</span>终于凝而成液，一滴，又一滴，敲在寂静的识海里。</div>
+        <div class="citem"><span class="ct-ch">第一百零八章 灵气、灵纹与灵犀：论修行三重境界的圆融之道（下）</span><br>所谓灵犀，讲求物我两忘——他闭目吐纳，任<span class="hl">灵气</span>在百脉间缓缓流转。</div>
         <div class="citem"><span class="ct-ch">第五十五章 灵气之潮</span><br>夜半时分，山谷中<span class="hl">灵气</span>如潮水般涌来，草木在月光下轻轻摇曳。</div>
         <div class="citem"><span class="ct-ch">第六十一章 借灵气修行</span><br>所谓借势，便是借这天地<span class="hl">灵气</span>为己用，四两拨千斤。</div>
         <div class="citem"><span class="ct-ch">第七十章 灵气与剑意</span><br>剑出鞘的一刻，周身<span class="hl">灵气</span>尽数附于锋刃，寒光凛冽如秋水。</div>
@@ -392,13 +401,50 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
       </div>
     </figure>
   </div>
+  <!-- 状态 B：空结果（空文案以列表条目呈现） -->
+  <div class="duo">
+    <figure>
+      <figcaption>浅色 · 空结果 —— 空文案随结果列表渲染，信息条计数归零</figcaption>
+      <div class="phone t-light">
+        <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+        <div class="tb">
+          <button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <div class="spill"><svg class="icon s" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><span class="q">混沌青莲</span><span class="x"><svg class="icon s" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></span></div>
+          <button class="icon-btn" aria-label="更多"><span style="font-size:22px">⋮</span></button>
+        </div>
+        <div class="citem">搜索内容为空，请检查净化或简繁设置</div>
+        <div class="infobar">
+          <span class="txt">搜索结果: 0</span>
+          <button class="ib" aria-label="回顶部"><svg class="icon s" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></button>
+          <button class="ib" aria-label="到底部"><svg class="icon s" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+        </div>
+      </div>
+    </figure>
+    <figure>
+      <figcaption>深色 · 空结果 —— 同状态</figcaption>
+      <div class="phone t-dark">
+        <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+        <div class="tb">
+          <button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <div class="spill"><svg class="icon s" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><span class="q">混沌青莲</span><span class="x"><svg class="icon s" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></span></div>
+          <button class="icon-btn" aria-label="更多"><span style="font-size:22px">⋮</span></button>
+        </div>
+        <div class="citem">搜索内容为空，请检查净化或简繁设置</div>
+        <div class="infobar">
+          <span class="txt">搜索结果: 0</span>
+          <button class="ib" aria-label="回顶部"><svg class="icon s" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></button>
+          <button class="ib" aria-label="到底部"><svg class="icon s" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+        </div>
+      </div>
+    </figure>
+  </div>
   <div class="spec"><ul>
     <li><b>顶栏（blend）</b>：返回 + 搜索胶囊（提交即搜，返回本页时自动回填上次关键词）+ 溢出菜单。</li>
     <li><b>溢出菜单（menu/content_search.xml）</b>：「启用替换净化」可勾选 —— 开启后命中文本先应用替换净化规则再显示。</li>
-    <li><b>结果条目</b>：章节名（主题色）+ 换行 + 命中上下文（关键词主题色）；当前正在阅读的章节整行加粗；章节间弱分割线；FastScroll 快滚条（右缘）。</li>
-    <li><b>底部信息条</b>：「搜索结果: N」点按可唤起输入法改词；↑ 回顶部；↓ 到底。</li>
+    <li><b>结果条目</b>：章节名（主题色）+ 换行 + 命中上下文（关键词主题色）；章节名不截断（tv_search_result singleLine=false，超长章节名自然折行）；当前正在阅读的章节整行加粗；章节间弱分割线；FastScroll 快滚条（右缘）。</li>
+    <li><b>底部信息条</b>：「搜索结果: N」点按可唤起输入法改词；↑ 回顶部；↓ 到底。高度 36dp 提升到 <b>48dp</b>（activity_search_content.xml ll_search_base_info layout_height、两端 iv 按钮 36→44dp），满足触控目标 ≥48dp。</li>
     <li><b>搜索中</b>：标题下 2dp 进度条 + 迷你 FAB 停止；仅搜索本地/已缓存章节。</li>
-    <li><b>点按结果</b>：返回阅读页并定位到命中页；无结果显示「搜索内容为空，请检查净化或简繁设置」。</li>
+    <li><b>点按结果</b>：返回阅读页并定位到命中页；<b>空结果</b>不弹窗 —— 空文案「搜索内容为空，请检查净化或简繁设置」作为列表条目插入（SearchContentActivity: adapter.addItem(SearchResult)，与结果同用 item_search_list 渲染），信息条计数显示 0。</li>
   </ul></div>
 </section>
 
@@ -432,7 +478,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
           <div class="src" style="margin-top:10px"><span class="nm">飞卢小说网</span><svg class="icon s arr" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
           <div class="src" style="margin-top:10px"><span class="nm">晋江文学城</span><svg class="icon s arr" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
           <div class="src" style="margin-top:10px"><span class="nm">17K小说网</span><svg class="icon s arr" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
-          <div class="src" style="margin-top:10px"><span class="nm">刺猬猫阅读</span><svg class="icon s arr" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
+          <div class="src" style="margin-top:10px"><span class="nm">刺猬猫阅读（脑洞·二次元聚合分站版·含轻小说与漫画频道）</span><svg class="icon s arr" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
           <div class="src" style="margin-top:10px"><span class="nm">少年梦阅读</span><svg class="icon s arr" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
         </div>
       </div>
@@ -457,17 +503,51 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
           <div class="src" style="margin-top:10px"><span class="nm">飞卢小说网</span><svg class="icon s arr" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
           <div class="src" style="margin-top:10px"><span class="nm">晋江文学城</span><svg class="icon s arr" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
           <div class="src" style="margin-top:10px"><span class="nm">17K小说网</span><svg class="icon s arr" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
-          <div class="src" style="margin-top:10px"><span class="nm">刺猬猫阅读</span><svg class="icon s arr" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
+          <div class="src" style="margin-top:10px"><span class="nm">刺猬猫阅读（脑洞·二次元聚合分站版·含轻小说与漫画频道）</span><svg class="icon s arr" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
           <div class="src" style="margin-top:10px"><span class="nm">少年梦阅读</span><svg class="icon s arr" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></div>
+        </div>
+      </div>
+    </figure>
+  </div>
+  <!-- 状态 B：空态 -->
+  <div class="duo">
+    <figure>
+      <figcaption>浅色 · 无发现源 —— 图标 + 文案居中空态（tv_empty_msg）</figcaption>
+      <div class="phone t-light">
+        <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+        <div class="tb">
+          <span class="t">发现</span>
+          <div class="spill"><svg class="icon s" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><span class="hint">筛选发现</span></div>
+          <button class="icon-btn" aria-label="分组"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><circle cx="16.5" cy="9.5" r="2.4"/><path d="M3.5 19c.6-3 2.9-4.8 5.5-4.8s4.9 1.8 5.5 4.8"/><path d="M15.5 14.6c2.3.2 4.2 1.7 4.9 4.4"/></svg></button>
+        </div>
+        <div class="empty">
+          <span class="eic"><svg class="icon" viewBox="0 0 24 24" style="width:26px;height:26px"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg></span>
+          <span class="etxt">当前没有发现源！</span>
+        </div>
+      </div>
+    </figure>
+    <figure>
+      <figcaption>深色 · 空态 —— 同状态</figcaption>
+      <div class="phone t-dark">
+        <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+        <div class="tb">
+          <span class="t">发现</span>
+          <div class="spill"><svg class="icon s" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><span class="hint">筛选发现</span></div>
+          <button class="icon-btn" aria-label="分组"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><circle cx="16.5" cy="9.5" r="2.4"/><path d="M3.5 19c.6-3 2.9-4.8 5.5-4.8s4.9 1.8 5.5 4.8"/><path d="M15.5 14.6c2.3.2 4.2 1.7 4.9 4.4"/></svg></button>
+        </div>
+        <div class="empty">
+          <span class="eic"><svg class="icon" viewBox="0 0 24 24" style="width:26px;height:26px"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg></span>
+          <span class="etxt">当前没有发现源！</span>
         </div>
       </div>
     </figure>
   </div>
   <div class="spec"><ul>
     <li><b>顶栏（blend）</b>：「发现」标题 + 搜索胶囊（提示「筛选发现」，输入实时过滤源名，支持 group:xxx 语法）+ 分组菜单（ic_groups，子菜单列出各发现分组，点选即过滤）。</li>
-    <li><b>源条目</b>：点按标题行展开/收起分类（同时仅一个展开），展开时标题行右侧出现旋转加载（有缓存时近乎秒开）；分类 chips 来自书源探索规则，点按进入发现详情；规则返回 ERROR 的项点按弹出错误文本。</li>
+    <li><b>源条目</b>：点按标题行展开/收起分类（同时仅一个展开），展开时标题行右侧出现旋转加载（有缓存时近乎秒开，收起态 ic_arrow_right / 展开态 ic_arrow_down，与 ExploreAdapter 行为一致）；分类 chips 来自书源探索规则，点按进入发现详情；规则返回 ERROR 的项点按弹出错误文本。</li>
+    <li><b>卡片规格</b>：标题行与分类面板为两张 <b>bg_card</b> 叠放（surface_container 底 + 0.5dp outline_variant 描边 + corner_radius_md 圆角，间距 2dp）—— 明暗两主题均保留描边；长源名单行尾部省略（item_find_book.xml tv_name 目前缺 singleLine/ellipsize，长名会折行撑高卡片，需补 android:singleLine="true" + android:ellipsize="end"）。</li>
     <li><b>长按源标题</b>弹出菜单：编辑 / 置顶 / 登录（源有登录地址时显示）/ 搜索（进入书籍搜索并限定该源）/ 刷新（清空分类缓存重新加载）/ 删除（确认弹窗）。</li>
-    <li><b>空态</b>：没有任何发现源时居中显示「当前没有发现源！」；筛选中不显示空态提示。</li>
+    <li><b>空态</b>：没有任何发现源时居中显示「当前没有发现源！」—— 升级为图标 + 文案：tv_empty_msg 加 android:drawableTop（新建 layer-list：surface_container_high 圆底 + ic_bottom_explore_e tint on_surface_variant）与 android:drawablePadding="12dp"，文案色保持 on_surface_variant；Kotlin 仍只控制 text/visibility，纯 XML 落地；筛选中不显示空态提示。</li>
   </ul></div>
 </section>
 
@@ -495,7 +575,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="dot"></span><span class="b-title">武动乾坤</span><span class="badge">3</span></div>
             <div class="b-meta">作者：天蚕土豆</div>
             <div class="b-meta kindrow"><span class="chip k">玄幻</span><span class="chip k">东方玄幻</span><span class="chip k">完本</span></div>
-            <div class="b-meta">最新：第 1563 章 大结局（全书完）</div>
+            <div class="b-meta lasted">最新：第 1563 章 大结局（全书完）</div>
             <div class="b-intro">修炼一途，乃窃阴阳，夺造化，转涅槃，握生死，掌轮回。武之极，破苍穹，动乾坤！</div>
           </div>
         </div>
@@ -505,7 +585,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="b-title">一念永恒</span><span class="badge">2</span></div>
             <div class="b-meta">作者：耳根</div>
             <div class="b-meta kindrow"><span class="chip k">玄幻</span><span class="chip k">仙侠</span></div>
-            <div class="b-meta">最新：第 1496 章 一念成沧海</div>
+            <div class="b-meta lasted">最新：第 1496 章 一念成沧海</div>
             <div class="b-intro">一念成沧海，一念化桑田。一念斩千魔，一念诛万仙。唯我念……永恒。</div>
           </div>
         </div>
@@ -515,7 +595,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="dot"></span><span class="b-title">圣墟</span><span class="badge">2</span></div>
             <div class="b-meta">作者：辰东</div>
             <div class="b-meta kindrow"><span class="chip k">玄幻</span><span class="chip k">东方玄幻</span></div>
-            <div class="b-meta">最新：第 1501 章 尾声</div>
+            <div class="b-meta lasted">最新：第 1501 章 尾声</div>
             <div class="b-intro">在破败中崛起，在寂灭中复苏。沧海成尘，雷电枯竭，那一缕幽雾又一次临近大地……</div>
           </div>
         </div>
@@ -525,7 +605,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="b-title">万族之劫</span><span class="badge">4</span></div>
             <div class="b-meta">作者：老鹰吃小鸡</div>
             <div class="b-meta kindrow"><span class="chip k">玄幻</span><span class="chip k">完本</span></div>
-            <div class="b-meta">最新：第 1490 章 新的时代</div>
+            <div class="b-meta lasted">最新：第 1490 章 新的时代</div>
             <div class="b-intro">万族入侵的时代，人族守夜人燃起烽火。苏宇说：这一次，换我们守护这方天地。</div>
           </div>
         </div>
@@ -535,7 +615,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="b-title">长夜余火</span><span class="badge">2</span></div>
             <div class="b-meta">作者：爱潜水的乌贼</div>
             <div class="b-meta kindrow"><span class="chip k">玄幻</span><span class="chip k">科幻</span></div>
-            <div class="b-meta">最新：第 1074 章 余烬</div>
+            <div class="b-meta lasted">最新：第 1074 章 余烬</div>
             <div class="b-intro">旧世界毁于灾变，幸存者在废土上挣扎。火种不灭，长夜终有尽头……</div>
           </div>
         </div>
@@ -545,7 +625,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="b-title">光暗之书</span><span class="badge">1</span></div>
             <div class="b-meta">作者：雾外江山</div>
             <div class="b-meta kindrow"><span class="chip k">玄幻</span><span class="chip k">连载中</span></div>
-            <div class="b-meta">最新：第 342 章 光与暗的交界</div>
+            <div class="b-meta lasted">最新：第 342 章 光与暗的交界</div>
             <div class="b-intro">一册古书半页光、半页暗，翻开它的人要在黎明与黄昏之间做出选择……</div>
           </div>
         </div>
@@ -566,7 +646,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="dot"></span><span class="b-title">武动乾坤</span><span class="badge">3</span></div>
             <div class="b-meta">作者：天蚕土豆</div>
             <div class="b-meta kindrow"><span class="chip k">玄幻</span><span class="chip k">东方玄幻</span><span class="chip k">完本</span></div>
-            <div class="b-meta">最新：第 1563 章 大结局（全书完）</div>
+            <div class="b-meta lasted">最新：第 1563 章 大结局（全书完）</div>
             <div class="b-intro">修炼一途，乃窃阴阳，夺造化，转涅槃，握生死，掌轮回。武之极，破苍穹，动乾坤！</div>
           </div>
         </div>
@@ -576,7 +656,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="b-title">一念永恒</span><span class="badge">2</span></div>
             <div class="b-meta">作者：耳根</div>
             <div class="b-meta kindrow"><span class="chip k">玄幻</span><span class="chip k">仙侠</span></div>
-            <div class="b-meta">最新：第 1496 章 一念成沧海</div>
+            <div class="b-meta lasted">最新：第 1496 章 一念成沧海</div>
             <div class="b-intro">一念成沧海，一念化桑田。一念斩千魔，一念诛万仙。唯我念……永恒。</div>
           </div>
         </div>
@@ -586,7 +666,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="dot"></span><span class="b-title">圣墟</span><span class="badge">2</span></div>
             <div class="b-meta">作者：辰东</div>
             <div class="b-meta kindrow"><span class="chip k">玄幻</span><span class="chip k">东方玄幻</span></div>
-            <div class="b-meta">最新：第 1501 章 尾声</div>
+            <div class="b-meta lasted">最新：第 1501 章 尾声</div>
             <div class="b-intro">在破败中崛起，在寂灭中复苏。沧海成尘，雷电枯竭，那一缕幽雾又一次临近大地……</div>
           </div>
         </div>
@@ -596,7 +676,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="b-title">万族之劫</span><span class="badge">4</span></div>
             <div class="b-meta">作者：老鹰吃小鸡</div>
             <div class="b-meta kindrow"><span class="chip k">玄幻</span><span class="chip k">完本</span></div>
-            <div class="b-meta">最新：第 1490 章 新的时代</div>
+            <div class="b-meta lasted">最新：第 1490 章 新的时代</div>
             <div class="b-intro">万族入侵的时代，人族守夜人燃起烽火。苏宇说：这一次，换我们守护这方天地。</div>
           </div>
         </div>
@@ -606,7 +686,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="b-title">长夜余火</span><span class="badge">2</span></div>
             <div class="b-meta">作者：爱潜水的乌贼</div>
             <div class="b-meta kindrow"><span class="chip k">玄幻</span><span class="chip k">科幻</span></div>
-            <div class="b-meta">最新：第 1074 章 余烬</div>
+            <div class="b-meta lasted">最新：第 1074 章 余烬</div>
             <div class="b-intro">旧世界毁于灾变，幸存者在废土上挣扎。火种不灭，长夜终有尽头……</div>
           </div>
         </div>
@@ -616,7 +696,7 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
             <div class="b-name"><span class="b-title">光暗之书</span><span class="badge">1</span></div>
             <div class="b-meta">作者：雾外江山</div>
             <div class="b-meta kindrow"><span class="chip k">玄幻</span><span class="chip k">连载中</span></div>
-            <div class="b-meta">最新：第 342 章 光与暗的交界</div>
+            <div class="b-meta lasted">最新：第 342 章 光与暗的交界</div>
             <div class="b-intro">一册古书半页光、半页暗，翻开它的人要在黎明与黄昏之间做出选择……</div>
           </div>
         </div>
@@ -624,15 +704,77 @@ figcaption{font-size:12.5px;color:#8d887c;margin:0 0 10px 2px;letter-spacing:.4p
       </div>
     </figure>
   </div>
+  <!-- 状态 B：footer 三态 -->
+  <div class="duo">
+    <figure>
+      <figcaption>浅色 · footer 加载失败态 —— 整条可点弹错误详情</figcaption>
+      <div class="phone t-light">
+        <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+        <div class="tb">
+          <button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <span class="t" style="margin-left:2px">玄幻</span>
+        </div>
+        <div class="bitem" style="border-top:1px solid var(--divider)">
+          <div class="cover c5"><span class="ct">一念永恒</span><span class="ca">耳根</span></div>
+          <div class="b-info">
+            <div class="b-name"><span class="b-title">一念永恒</span><span class="badge">2</span></div>
+            <div class="b-meta">作者：耳根</div>
+            <div class="b-meta kindrow"><span class="chip k">玄幻</span><span class="chip k">仙侠</span></div>
+            <div class="b-meta lasted">最新：第 1496 章 一念成沧海</div>
+            <div class="b-intro">一念成沧海，一念化桑田。一念斩千魔，一念诛万仙。唯我念……永恒。</div>
+          </div>
+        </div>
+        <div class="bitem">
+          <div class="cover c6"><span class="ct">圣墟</span><span class="ca">辰东</span></div>
+          <div class="b-info">
+            <div class="b-name"><span class="dot"></span><span class="b-title">圣墟</span><span class="badge">2</span></div>
+            <div class="b-meta">作者：辰东</div>
+            <div class="b-meta kindrow"><span class="chip k">玄幻</span><span class="chip k">东方玄幻</span></div>
+            <div class="b-meta lasted">最新：第 1501 章 尾声</div>
+            <div class="b-intro">在破败中崛起，在寂灭中复苏。沧海成尘，雷电枯竭，那一缕幽雾又一次临近大地……</div>
+          </div>
+        </div>
+        <div class="loadmore"><span class="txt">加载失败 · 点击查看详情</span></div>
+      </div>
+    </figure>
+    <figure>
+      <figcaption>深色 · footer 底线态（无更多）</figcaption>
+      <div class="phone t-dark">
+        <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+        <div class="tb">
+          <button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <span class="t" style="margin-left:2px">玄幻</span>
+        </div>
+        <div class="bitem" style="border-top:1px solid var(--divider)">
+          <div class="cover c5"><span class="ct">一念永恒</span><span class="ca">耳根</span></div>
+          <div class="b-info">
+            <div class="b-name"><span class="b-title">一念永恒</span><span class="badge">2</span></div>
+            <div class="b-meta">作者：耳根</div>
+            <div class="b-meta kindrow"><span class="chip k">玄幻</span><span class="chip k">仙侠</span></div>
+            <div class="b-meta lasted">最新：第 1496 章 一念成沧海</div>
+            <div class="b-intro">一念成沧海，一念化桑田。一念斩千魔，一念诛万仙。唯我念……永恒。</div>
+          </div>
+        </div>
+        <div class="bitem">
+          <div class="cover c6"><span class="ct">圣墟</span><span class="ca">辰东</span></div>
+          <div class="b-info">
+            <div class="b-name"><span class="dot"></span><span class="b-title">圣墟</span><span class="badge">2</span></div>
+            <div class="b-meta">作者：辰东</div>
+            <div class="b-meta kindrow"><span class="chip k">玄幻</span><span class="chip k">东方玄幻</span></div>
+            <div class="b-meta lasted">最新：第 1501 章 尾声</div>
+            <div class="b-intro">在破败中崛起，在寂灭中复苏。沧海成尘，雷电枯竭，那一缕幽雾又一次临近大地……</div>
+          </div>
+        </div>
+        <div class="loadmore"><span class="txt">我是有底线的</span></div>
+      </div>
+    </figure>
+  </div>
   <div class="spec"><ul>
     <li><b>顶栏（blend）</b>：返回 + 分类名（intent「exploreName」，如「玄幻」；列表来自单一书源的该分类）；本页无溢出菜单。</li>
-    <li><b>结果条目</b>：与书籍搜索共用 item_search —— 封面（CoverImageView，过渡动画共享元素）/ 书架绿点 / 书名 / 书源数角标（BadgeView）/ 作者 / 分类标签 / 最新章节 / 简介；点按进书籍详情；条目间弱分割线。</li>
-    <li><b>加载更多（LoadMoreView footer）</b>：滚动到底自动翻页，footer 显示旋转加载；没有更多时显示「我是有底线的」；列表为空显示「空」；加载失败显示「加载失败 · 点击查看详情」，点按重试。</li>
+    <li><b>结果条目</b>：与书籍搜索共用 item_search —— 封面（CoverImageView，过渡动画共享元素）/ 书架绿点 / 书名 / 书源数角标（BadgeView，中性徽标语言见屏 1）/ 作者 / 分类标签 / 最新章节（次要色 tv_text_summary，层级同屏 1）/ 简介；点按进书籍详情；条目间弱分割线由 <b>VerticalDivider</b> 提供（ExploreShowActivity.kt:44 addItemDecoration）—— 书籍搜索未加分隔装饰，两屏共用条目布局但分割线差异属实现现状，设计如实呈现。</li>
+    <li><b>加载更多（LoadMoreView footer）</b>：滚动到底自动翻页，footer 显示旋转加载（RotateLoading 36dp）；没有更多时显示「我是有底线的」（bottom_line）；列表为空显示「空」；加载失败显示「加载失败 · 点击查看详情」，<b>整条 footer 可点</b>，弹出错误详情对话框（LoadMoreView.showErrorDialog）。footer 文案 14sp textColorSecondary（view_load_more.xml tv_text）；注记：error_load_msg 含 \n 会被 tv_text 的 singleLine 折叠，实施按单行「加载失败 · 点击查看详情」呈现。</li>
   </ul></div>
 </section>
 
 </div>
-<script>
-document.querySelectorAll('.g-nav a').forEach(a=>a.addEventListener('click',e=>{document.querySelectorAll('.g-nav a').forEach(x=>x.style.borderColor='');a.style.borderColor='rgba(255,107,44,.8)';}));
-</script>
 </body></html>

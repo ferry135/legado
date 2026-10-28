@@ -24,11 +24,15 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="16dp"
+        android:drawablePadding="12dp"
+        android:drawableTop="@drawable/ic_empty_bookshelf"
         android:gravity="center"
+        android:lineSpacingExtra="4dp"
         android:text="@string/bookshelf_empty"
         android:textColor="@color/on_surface_variant"
-        android:textSize="14sp"
+        android:textSize="15sp"
         android:visibility="gone"
+        app:drawableTint="@color/outline"
         tools:text="TextView" />
 
 </FrameLayout>

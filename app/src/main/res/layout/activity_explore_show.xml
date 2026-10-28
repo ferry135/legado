@@ -12,8 +12,9 @@
         android:layout_height="wrap_content"
         app:contentInsetStartWithNavigation="0dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/discovery" 
-        app:themeMode="blend" />
+        app:title="@string/discovery"
+        app:themeMode="blend"
+        app:titleTextAppearance="@style/TextAppearance.Legado.BarTitle" />
 
     <io.legado.app.ui.widget.dynamiclayout.DynamicFrameLayout
         android:id="@+id/content_view"

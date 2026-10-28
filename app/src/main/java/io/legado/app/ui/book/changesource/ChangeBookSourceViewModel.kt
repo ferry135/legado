@@ -183,6 +183,9 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     fun startSearch() {
         execute {
             stopSearch()
+            // 立即标记搜索中，避免 stopSearch 的 false 到新搜索 onStart 的 true 之间
+            // 主线程观察到 false+空列表而闪现空态（upEmptyMsgView）
+            searchStateData.postValue(true)
             if (searchBooks.isNotEmpty()) {
                 appDb.searchBookDao.delete(*searchBooks.toTypedArray())
                 searchBooks.clear()
@@ -213,6 +216,8 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     fun startSearch(origin: String) {
         execute {
             stopSearch()
+            // 同 startSearch：立即标记搜索中，避免空态闪现
+            searchStateData.postValue(true)
             bookSourceParts.clear()
             tocMap.clear()
             bookMap.clear()
@@ -359,6 +364,8 @@ open class ChangeBookSourceViewModel(application: Application) : BaseViewModel(a
     fun startRefreshList(onlyRefreshNoWordCountBook: Boolean = false) {
         execute {
             stopSearch()
+            // 同 startSearch：立即标记搜索中，避免空态闪现
+            searchStateData.postValue(true)
             searchBookList.clear()
             if (onlyRefreshNoWordCountBook) {
                 searchBooks.filterTo(searchBookList) {

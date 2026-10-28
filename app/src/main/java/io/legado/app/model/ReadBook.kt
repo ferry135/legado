@@ -33,6 +33,7 @@ import io.legado.app.ui.book.read.page.provider.LayoutProgressListener
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.stackTraceStr
 import io.legado.app.utils.toastOnUi
+import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
@@ -78,8 +79,9 @@ object ReadBook : CoroutineScope by MainScope() {
     var webBookProgress: BookProgress? = null
 
     var preDownloadTask: Job? = null
-    val downloadedChapters = hashSetOf<Int>()
-    val downloadFailChapters = hashMapOf<Int, Int>()
+    // 下载回调（CacheBook/IO）与预下载循环（launch(IO)）跨线程读写，须用并发容器
+    val downloadedChapters = ConcurrentHashMap.newKeySet<Int>()
+    val downloadFailChapters = ConcurrentHashMap<Int, Int>()
     var contentProcessor: ContentProcessor? = null
     val downloadScope = CoroutineScope(SupervisorJob() + IO)
     val preDownloadSemaphore = Semaphore(2)
@@ -108,10 +110,12 @@ object ReadBook : CoroutineScope by MainScope() {
         webBookProgress = null
         TextFile.clear()
         synchronized(this) {
+            // loadingChapters 与 @Synchronized 的 addLoading/removeLoading 共用 this 监视器
             loadingChapters.clear()
-            downloadedChapters.clear()
-            downloadFailChapters.clear()
         }
+        // downloaded/downloadFail 已是并发容器，跨线程 clear/add/读无需该监视器
+        downloadedChapters.clear()
+        downloadFailChapters.clear()
     }
 
     fun upData(book: Book) {
@@ -139,10 +143,12 @@ object ReadBook : CoroutineScope by MainScope() {
         callBack?.upMenuView()
         upWebBook(book)
         synchronized(this) {
+            // loadingChapters 与 @Synchronized 的 addLoading/removeLoading 共用 this 监视器
             loadingChapters.clear()
-            downloadedChapters.clear()
-            downloadFailChapters.clear()
         }
+        // downloaded/downloadFail 已是并发容器，跨线程 clear/add/读无需该监视器
+        downloadedChapters.clear()
+        downloadFailChapters.clear()
     }
 
     fun upWebBook(book: Book) {
@@ -320,14 +326,32 @@ object ReadBook : CoroutineScope by MainScope() {
         return hasPrevPage
     }
 
+    /**
+     * 章节槽位轮转：cur→prev、next→cur（moveToNextChapter / moveToNextChapterAwait 共用）
+     */
+    private fun shiftToNextChapter() {
+        durChapterPos = 0
+        durChapterIndex++
+        prevTextChapter?.cancelLayout()
+        prevTextChapter = curTextChapter
+        curTextChapter = nextTextChapter
+        nextTextChapter = null
+    }
+
+    /**
+     * 章节切换收尾：预载下一章、存进度、刷菜单与页面（两入口共用）
+     */
+    private fun afterNextChapterChanged(upContent: Boolean) {
+        loadContent(durChapterIndex.plus(1), upContent, false)
+        saveRead()
+        callBack?.upMenuView()
+        AppLog.putDebug("moveToNextChapter-curPageChanged()")
+        curPageChanged()
+    }
+
     fun moveToNextChapter(upContent: Boolean, upContentInPlace: Boolean = true): Boolean {
         if (durChapterIndex < simulatedChapterSize - 1) {
-            durChapterPos = 0
-            durChapterIndex++
-            prevTextChapter?.cancelLayout()
-            prevTextChapter = curTextChapter
-            curTextChapter = nextTextChapter
-            nextTextChapter = null
+            shiftToNextChapter()
             if (curTextChapter == null) {
                 AppLog.putDebug("moveToNextChapter-章节未加载,开始加载")
                 if (upContentInPlace) callBack?.upContent()
@@ -336,11 +360,7 @@ object ReadBook : CoroutineScope by MainScope() {
                 AppLog.putDebug("moveToNextChapter-章节已加载,刷新视图")
                 callBack?.upContent()
             }
-            loadContent(durChapterIndex.plus(1), upContent, false)
-            saveRead()
-            callBack?.upMenuView()
-            AppLog.putDebug("moveToNextChapter-curPageChanged()")
-            curPageChanged()
+            afterNextChapterChanged(upContent)
             return true
         } else {
             AppLog.putDebug("跳转下一章失败,没有下一章")
@@ -353,12 +373,7 @@ object ReadBook : CoroutineScope by MainScope() {
         upContentInPlace: Boolean = true
     ): Boolean {
         if (durChapterIndex < simulatedChapterSize - 1) {
-            durChapterPos = 0
-            durChapterIndex++
-            prevTextChapter?.cancelLayout()
-            prevTextChapter = curTextChapter
-            curTextChapter = nextTextChapter
-            nextTextChapter = null
+            shiftToNextChapter()
             if (curTextChapter == null) {
                 AppLog.putDebug("moveToNextChapter-章节未加载,开始加载")
                 if (upContentInPlace) callBack?.upContentAwait()
@@ -367,11 +382,7 @@ object ReadBook : CoroutineScope by MainScope() {
                 AppLog.putDebug("moveToNextChapter-章节已加载,刷新视图")
                 callBack?.upContentAwait()
             }
-            loadContent(durChapterIndex.plus(1), upContent, false)
-            saveRead()
-            callBack?.upMenuView()
-            AppLog.putDebug("moveToNextChapter-curPageChanged()")
-            curPageChanged()
+            afterNextChapterChanged(upContent)
             return true
         } else {
             AppLog.putDebug("跳转下一章失败,没有下一章")
@@ -669,6 +680,73 @@ object ReadBook : CoroutineScope by MainScope() {
     }
 
     /**
+     * 加载净化排版并按章节槽位（cur/prev/next）应用排版结果，
+     * contentLoadFinish / contentLoadFinishAwait 的共用核心，错误处理由两入口各自包装
+     */
+    private suspend fun applyTextChapter(
+        book: Book,
+        chapter: BookChapter,
+        content: String,
+        upContent: Boolean,
+        resetPageOffset: Boolean
+    ) {
+        val contentProcessor = ContentProcessor.get(book.name, book.origin)
+        val displayTitle = chapter.getDisplayTitle(
+            contentProcessor.getTitleReplaceRules(),
+            book.getUseReplaceRule()
+        )
+        val contents = contentProcessor
+            .getContent(book, chapter, content, includeTitle = false)
+        val textChapter = ChapterProvider.getTextChapterAsync(
+            this@ReadBook, book, chapter, displayTitle, contents, simulatedChapterSize
+        )
+        when (val offset = chapter.index - durChapterIndex) {
+            0 -> {
+                curTextChapter?.cancelLayout()
+                curTextChapter = textChapter
+                callBack?.upMenuView()
+                var available = false
+                for (page in textChapter.layoutChannel) {
+                    val index = page.index
+                    if (!available && page.containPos(durChapterPos)) {
+                        if (upContent) {
+                            callBack?.upContent(offset, resetPageOffset)
+                        }
+                        available = true
+                    }
+                    if (upContent && isScroll) {
+                        if (max(index - 3, 0) < durPageIndex) {
+                            callBack?.upContent(offset, false)
+                        }
+                    }
+                    callBack?.onLayoutPageCompleted(index, page)
+                }
+                if (upContent) callBack?.upContent(offset, !available && resetPageOffset)
+                curPageChanged()
+                callBack?.contentLoadFinish()
+            }
+
+            -1 -> {
+                prevTextChapter?.cancelLayout()
+                prevTextChapter = textChapter
+                textChapter.layoutChannel.receiveAsFlow().collect()
+                if (upContent) callBack?.upContent(offset, resetPageOffset)
+            }
+
+            1 -> {
+                nextTextChapter?.cancelLayout()
+                nextTextChapter = textChapter
+                for (page in textChapter.layoutChannel) {
+                    if (page.index > 1) {
+                        continue
+                    }
+                    if (upContent) callBack?.upContent(offset, resetPageOffset)
+                }
+            }
+        }
+    }
+
+    /**
      * 内容加载完成
      */
     fun contentLoadFinish(
@@ -685,62 +763,7 @@ object ReadBook : CoroutineScope by MainScope() {
             return
         }
         Coroutine.async {
-            val contentProcessor = ContentProcessor.get(book.name, book.origin)
-            val displayTitle = chapter.getDisplayTitle(
-                contentProcessor.getTitleReplaceRules(),
-                book.getUseReplaceRule()
-            )
-            val contents = contentProcessor
-                .getContent(book, chapter, content, includeTitle = false)
-            val textChapter = ChapterProvider.getTextChapterAsync(
-                this@ReadBook, book, chapter, displayTitle, contents, simulatedChapterSize
-            )
-            when (val offset = chapter.index - durChapterIndex) {
-                0 -> {
-                    curTextChapter?.cancelLayout()
-                    curTextChapter = textChapter
-                    callBack?.upMenuView()
-                    var available = false
-                    for (page in textChapter.layoutChannel) {
-                        val index = page.index
-                        if (!available && page.containPos(durChapterPos)) {
-                            if (upContent) {
-                                callBack?.upContent(offset, resetPageOffset)
-                            }
-                            available = true
-                        }
-                        if (upContent && isScroll) {
-                            if (max(index - 3, 0) < durPageIndex) {
-                                callBack?.upContent(offset, false)
-                            }
-                        }
-                        callBack?.onLayoutPageCompleted(index, page)
-                    }
-                    if (upContent) callBack?.upContent(offset, !available && resetPageOffset)
-                    curPageChanged()
-                    callBack?.contentLoadFinish()
-                }
-
-                -1 -> {
-                    prevTextChapter?.cancelLayout()
-                    prevTextChapter = textChapter
-                    textChapter.layoutChannel.receiveAsFlow().collect()
-                    if (upContent) callBack?.upContent(offset, resetPageOffset)
-                }
-
-                1 -> {
-                    nextTextChapter?.cancelLayout()
-                    nextTextChapter = textChapter
-                    for (page in textChapter.layoutChannel) {
-                        if (page.index > 1) {
-                            continue
-                        }
-                        if (upContent) callBack?.upContent(offset, resetPageOffset)
-                    }
-                }
-            }
-
-            return@async
+            applyTextChapter(book, chapter, content, upContent, resetPageOffset)
         }.onError {
             AppLog.put("ChapterProvider ERROR", it)
             appCtx.toastOnUi("ChapterProvider ERROR:\n${it.stackTraceStr}")
@@ -761,62 +784,7 @@ object ReadBook : CoroutineScope by MainScope() {
             return
         }
         kotlin.runCatching {
-            val contentProcessor = ContentProcessor.get(book.name, book.origin)
-            val displayTitle = chapter.getDisplayTitle(
-                contentProcessor.getTitleReplaceRules(),
-                book.getUseReplaceRule()
-            )
-            val contents = contentProcessor
-                .getContent(book, chapter, content, includeTitle = false)
-            val textChapter = ChapterProvider.getTextChapterAsync(
-                this@ReadBook, book, chapter, displayTitle, contents, simulatedChapterSize
-            )
-            when (val offset = chapter.index - durChapterIndex) {
-                0 -> {
-                    curTextChapter?.cancelLayout()
-                    curTextChapter = textChapter
-                    callBack?.upMenuView()
-                    var available = false
-                    for (page in textChapter.layoutChannel) {
-                        val index = page.index
-                        if (!available && page.containPos(durChapterPos)) {
-                            if (upContent) {
-                                callBack?.upContent(offset, resetPageOffset)
-                            }
-                            available = true
-                        }
-                        if (upContent && isScroll) {
-                            if (max(index - 3, 0) < durPageIndex) {
-                                callBack?.upContent(offset, false)
-                            }
-                        }
-                        callBack?.onLayoutPageCompleted(index, page)
-                    }
-                    if (upContent) callBack?.upContent(offset, !available && resetPageOffset)
-                    curPageChanged()
-                    callBack?.contentLoadFinish()
-                }
-
-                -1 -> {
-                    prevTextChapter?.cancelLayout()
-                    prevTextChapter = textChapter
-                    textChapter.layoutChannel.receiveAsFlow().collect()
-                    if (upContent) callBack?.upContent(offset, resetPageOffset)
-                }
-
-                1 -> {
-                    nextTextChapter?.cancelLayout()
-                    nextTextChapter = textChapter
-                    for (page in textChapter.layoutChannel) {
-                        if (page.index > 1) {
-                            continue
-                        }
-                        if (upContent) callBack?.upContent(offset, resetPageOffset)
-                    }
-                }
-            }
-
-            return
+            applyTextChapter(book, chapter, content, upContent, resetPageOffset)
         }.onFailure {
             AppLog.put("ChapterProvider ERROR", it)
             appCtx.toastOnUi("ChapterProvider ERROR:\n${it.stackTraceStr}")

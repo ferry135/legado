@@ -12,11 +12,11 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.preference.PreferenceViewHolder
 import io.legado.app.R
-import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.lib.theme.getSecondaryTextColor
 import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.getCompatColor
 import splitties.views.onLongClick
 import kotlin.math.roundToInt
 
@@ -69,7 +69,9 @@ open class Preference(context: Context, attrs: AttributeSet) :
             if (iconView is ImageView) {
                 iconView.isVisible = icon != null
                 iconView.setImageDrawable(icon)
-                iconView.setColorFilter(context.accentColor)
+                // 08稿：偏好行图标随行次级色着色（--secondary = on_surface_variant），
+                // 原为 accentColor 强调橙，与稿面「条目图标 21px 描边次级色」不符
+                iconView.setColorFilter(context.getCompatColor(R.color.on_surface_variant))
             }
 
             if (weightLayoutRes != null && weightLayoutRes != 0 && viewId != null && viewId != 0) {

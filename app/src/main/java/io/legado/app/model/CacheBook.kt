@@ -332,8 +332,7 @@ object CacheBook {
                     onCancel(chapter.index)
                 }
                 onError(chapter, e)
-                ReadBook.downloadFailChapters[chapter.index] =
-                    (ReadBook.downloadFailChapters[chapter.index] ?: 0) + 1
+                ReadBook.downloadFailChapters.merge(chapter.index, 1) { a, b -> a + b }
                 return "获取正文失败\n${e.localizedMessage}"
             } finally {
                 postEvent(EventBus.UP_DOWNLOAD, book.bookUrl)
@@ -368,8 +367,7 @@ object CacheBook {
                 downloadFinish(chapter, content, resetPageOffset)
             }.onError {
                 onError(chapter, it)
-                ReadBook.downloadFailChapters[chapter.index] =
-                    (ReadBook.downloadFailChapters[chapter.index] ?: 0) + 1
+                ReadBook.downloadFailChapters.merge(chapter.index, 1) { a, b -> a + b }
                 downloadFinish(chapter, "获取正文失败\n${it.localizedMessage}", resetPageOffset)
             }.onCancel {
                 onCancel(chapter.index)

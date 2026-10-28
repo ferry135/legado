@@ -39,7 +39,8 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
             when (session.method) {
                 Method.OPTIONS -> {
                     val response = newFixedLengthResponse("")
-                    response.addHeader("Access-Control-Allow-Methods", "POST")
+                    // 与 addCommonHeaders 的实际响应保持一致，避免带自定义头的 GET 预检被浏览器拒绝
+                    response.addHeader("Access-Control-Allow-Methods", ALLOW_METHODS)
                     response.addHeader("Access-Control-Allow-Headers", "content-type")
                     // 不回显任意 Origin；仅在持有有效令牌时允许跨域
                     val token = AppConfig.webToken
@@ -120,7 +121,15 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
             LogUtils.d(TAG) {
                 "${session.method.name} - $uri - ${session.queryParameterString} - Error End($startAt)\n$e\n${e.stackTraceStr}"
             }
-            return newFixedLengthResponse(e.message)
+            // 500 + JSON 错误体：只回受限摘要（异常类名），不回传原始异常消息以免泄露内部信息；
+            // 完整堆栈已在上方服务端日志
+            val response = newFixedLengthResponse(
+                Response.Status.INTERNAL_ERROR,
+                "application/json",
+                GSON.toJson(ReturnData().setErrorMsg(e.javaClass.simpleName))
+            )
+            addCommonHeaders(response, session)
+            return response
         }
 
     }
@@ -154,7 +163,7 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
         }
         val tokenValid = checkToken(session, token)
         if (tokenValid) {
-            response.addHeader("Access-Control-Allow-Methods", "GET, POST")
+            response.addHeader("Access-Control-Allow-Methods", ALLOW_METHODS)
             response.addHeader("Access-Control-Allow-Origin", session.headers["origin"])
             // 通过 ?token= 访问时种下 Cookie，浏览器后续请求自动携带
             if (session.parameters["token"]?.firstOrNull() == token) {
@@ -165,6 +174,9 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
 
     companion object {
         private const val TAG = "HttpServer"
+
+        /** CORS 允许的方法：OPTIONS 预检与实际响应共用，防止两者不一致 */
+        private const val ALLOW_METHODS = "GET, POST"
 
         /**
          * POST 数据接口路由表，键集合即鉴权范围，新增接口无需另行登记

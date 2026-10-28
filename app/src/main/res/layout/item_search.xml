@@ -45,6 +45,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="1dp"
         android:scrollbars="none"
+        app:badgeColor="@color/progress_track"
+        app:badgeTextColor="@color/on_surface_variant"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/tv_name"
         app:radius="10dp" />
@@ -104,7 +106,7 @@
             android:lines="1"
             android:scrollbars="none"
             android:text="@string/last_read"
-            android:textColor="@color/on_surface"
+            android:textColor="@color/tv_text_summary"
             android:textSize="12.5sp" />
 
         <TextView

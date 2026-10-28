@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- EmptyTipView 内部结构：圆底图标变体用 iv_empty_icon（EmptyTipView 置 visible），
+     drawableTop 变体由 EmptyTipView 把图标设为主行 compound drawable -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="android.widget.LinearLayout">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_empty_icon"
+        android:layout_width="76dp"
+        android:layout_height="76dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_circle"
+        android:contentDescription="@null"
+        android:padding="21dp"
+        android:visibility="gone"
+        app:tint="@color/on_surface_variant"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tv_empty_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/on_surface"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        tools:text="主文案" />
+
+    <TextView
+        android:id="@+id/tv_empty_tip_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:gravity="center"
+        android:lineSpacingExtra="3dp"
+        android:maxWidth="236dp"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="12sp"
+        tools:text="副行提示" />
+
+</merge>

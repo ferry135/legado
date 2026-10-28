@@ -189,6 +189,7 @@
     <string name="check_update">检查更新</string>
     <string name="camera_scan">扫描二维码</string>
     <string name="scan_image">扫描本地图片</string>
+    <string name="scan_hint">对准二维码，自动识别</string>
     <string name="rule_summary">规则说明</string>
     <string name="share">分享</string>
     <string name="share_app">软件分享</string>
@@ -800,6 +801,15 @@
     <string name="search_content_size">搜索结果</string>
     <string name="search_content_empty">搜索内容为空，请检查净化或简繁设置</string>
     <string name="rss_source_empty">RSS 源目前为空！</string>
+    <string name="rss_source_empty_tip">右上角进入订阅源管理，本地 / 网络 / 扫码导入订阅源</string>
+    <string name="change_source_empty_title">未找到相关书源</string>
+    <string name="change_source_empty_tip">换个关键词，或在菜单中检查书源分组与启用状态</string>
+    <string name="change_cover_empty_title">未搜索到封面</string>
+    <string name="change_cover_empty_tip">检查书源封面规则后，点击顶栏刷新重新搜索</string>
+    <string name="bookmark_empty_title">暂无书签</string>
+    <string name="bookmark_empty_tip">阅读时打开菜单选择「添加书签」，收藏的段落会集中在这里</string>
+    <string name="badge_builtin">内置</string>
+    <string name="clear_filters">清除筛选</string>
     <string name="explore_empty">当前没有发现源！</string>
     <string name="page_key_set_help">将焦点放到输入框按下物理按键会自动录入键值，多个按键会自动用英文逗号隔开。</string>
     <string name="theme_name">主题名称</string>
@@ -823,6 +833,7 @@
     <string name="show_hide">显示/隐藏</string>
     <string name="header_footer">页眉<![CDATA[&]]>页脚</string>
     <string name="rule_subscription">规则订阅</string>
+    <string name="rule_sub_empty_title">还没有规则订阅</string>
     <string name="rule_sub_empty_msg">添加大佬们提供的规则导入地址\n添加后点击可导入规则</string>
     <string name="get_book_progress">拉取云端进度</string>
     <string name="cover_book_progress">覆盖云端进度</string>

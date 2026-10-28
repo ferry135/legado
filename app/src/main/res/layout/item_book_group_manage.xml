@@ -17,8 +17,9 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
         android:singleLine="true"
-        android:textColor="@color/on_surface_variant"
+        android:textColor="@color/on_surface"
         android:textSize="15sp"
         tools:text="group" />
 
@@ -27,7 +28,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
-        android:padding="8dp"
+        android:paddingLeft="12dp"
+        android:paddingTop="10dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="10dp"
         android:text="@string/edit"
         android:textColor="@color/on_surface_variant"
         android:textSize="12sp" />

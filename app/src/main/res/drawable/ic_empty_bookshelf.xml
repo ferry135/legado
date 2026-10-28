@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 书架空态图标（01-framework:102 .empty-ic 54px，打开书本线稿；stroke 随 54dp 渲染等比放大，
+     与稿面 svg 一致；stroke 由布局 drawableTint=@color/outline 染色。
+     与 about 页 24dp ic_book_outline 分文件，勿混用） -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="54dp"
+    android:height="54dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M4,5.5 A1.5,1.5 0 0 1 5.5,4 L10,4 A2,2 0 0 1 12,6 L12,19 A2.5,2.5 0 0 0 9.5,16.5 L4,16.5 Z"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000" />
+    <path
+        android:pathData="M20,5.5 A1.5,1.5 0 0 0 18.5,4 L14,4 A2,2 0 0 0 12,6 L12,19 A2.5,2.5 0 0 1 14.5,16.5 L20,16.5 Z"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000" />
+</vector>

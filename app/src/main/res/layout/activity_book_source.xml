@@ -15,10 +15,17 @@
         app:themeMode="blend"
         app:title="@string/book_source" />
 
-    <FrameLayout
+    <!-- 空态：结构同 view_error（DynamicFrameLayout 内置 error_view_stub），showEmptyView 时居中展示
+         图标+标题+动作钮（05 书源管理：64dp 圆底搜索图标 + 「未找到相关书源」+「清除筛选」）；
+         BookSourceActivity.collect 按列表为空显隐，动作钮清除搜索与筛选 -->
+    <io.legado.app.ui.widget.dynamiclayout.DynamicFrameLayout
+        android:id="@+id/content_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        app:emptyActionDescription="@string/clear_filters"
+        app:emptyDescription="@string/change_source_empty_title"
+        app:emptySrc="@drawable/ic_empty_search_circle">
 
         <io.legado.app.ui.widget.recycler.scroller.FastScrollRecyclerView
             android:id="@+id/recycler_view"
@@ -26,7 +33,7 @@
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-    </FrameLayout>
+    </io.legado.app.ui.widget.dynamiclayout.DynamicFrameLayout>
 
     <io.legado.app.ui.widget.SelectActionBar
         android:id="@+id/select_action_bar"

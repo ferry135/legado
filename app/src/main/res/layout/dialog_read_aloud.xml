@@ -55,16 +55,17 @@
 
         <ImageView
             android:id="@+id/iv_play_pause"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_marginLeft="3dp"
             android:layout_marginRight="3dp"
-            android:padding="9dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:padding="12dp"
+            android:background="@drawable/bg_circle"
             android:contentDescription="@string/audio_play"
             android:src="@drawable/ic_play_24dp"
             android:tooltipText="@string/audio_play"
-            app:tint="@color/primaryText"
+            app:tint="@color/white"
+            tools:backgroundTint="@color/primary"
             tools:ignore="UnusedAttribute" />
 
         <ImageView
@@ -183,7 +184,8 @@
                 android:layout_gravity="center"
                 android:text="@string/read_aloud_speed"
                 android:textColor="@color/primaryText"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_tts_speed_value"
@@ -285,7 +287,7 @@
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/chapter_list"
-                android:maxHeight="22dp"
+                android:maxHeight="@dimen/action_icon_size"
                 android:src="@drawable/ic_toc"
                 app:tint="@color/primaryText"
                 tools:ignore="NestedWeights" />
@@ -327,7 +329,7 @@
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/main_menu"
-                android:maxHeight="22dp"
+                android:maxHeight="@dimen/action_icon_size"
                 android:src="@drawable/ic_menu"
                 app:tint="@color/primaryText"
                 tools:ignore="NestedWeights" />
@@ -368,7 +370,7 @@
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/to_backstage"
-                android:maxHeight="22dp"
+                android:maxHeight="@dimen/action_icon_size"
                 android:src="@drawable/ic_visibility_off"
                 app:tint="@color/primaryText"
                 tools:ignore="NestedWeights" />
@@ -409,7 +411,7 @@
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/aloud_config"
-                android:maxHeight="22dp"
+                android:maxHeight="@dimen/action_icon_size"
                 android:src="@drawable/ic_settings"
                 app:tint="@color/primaryText"
                 tools:ignore="NestedWeights" />

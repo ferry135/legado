@@ -9,12 +9,37 @@
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="@string/scan_qr_code" 
+        app:title="@string/scan_qr_code"
         app:themeMode="blend" />
 
-    <FrameLayout
-        android:id="@+id/fl_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <FrameLayout
+            android:id="@+id/fl_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- .scanhint：取景辅助提示，位于取景框下方（取景框与扫描线由 zxing-lite ViewfinderView 自绘） -->
+        <TextView
+            android:id="@+id/tv_scan_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/scan_hint"
+            android:textColor="@color/scan_hint_text"
+            android:textSize="12.5sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.65" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

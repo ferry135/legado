@@ -34,20 +34,22 @@
         app:spanCount="4"
         tools:listitem="@layout/item_rss" />
 
-    <TextView
-        android:id="@+id/tv_empty_msg"
+    <!-- 空态（v3）：EmptyTipView 单一实现（圆底图标变体），RssFragment 按订阅源为空控制显隐 -->
+    <io.legado.app.ui.widget.EmptyTipView
+        android:id="@+id/empty_tip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:gravity="center"
-        android:textColor="@color/on_surface_variant"
-        android:textSize="14sp"
+        android:paddingStart="28dp"
+        android:paddingEnd="28dp"
         android:visibility="gone"
-        android:text="@string/rss_source_empty"
-        app:layout_constraintTop_toBottomOf="@+id/title_bar"
+        app:empty_icon="@drawable/ic_bottom_rss_feed_e"
+        app:empty_icon_circled="true"
+        app:empty_tip="@string/rss_source_empty_tip"
+        app:empty_title="@string/rss_source_empty"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        tools:text="TextView" />
+        app:layout_constraintTop_toBottomOf="@+id/title_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

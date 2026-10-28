@@ -212,18 +212,21 @@
                                     tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
                                     tools:text="@string/origin_format" />
 
-                                <io.legado.app.ui.widget.text.AccentBgTextView
+                                <!-- .chip-soft：primary-soft 柔光底 + on_primary_soft 文字（AA 4.83:1），
+                                     替换原 AccentBgTextView 实心主色底（白字对比仅 2.55:1） -->
+                                <TextView
                                     android:id="@+id/tv_change_source"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="8dp"
+                                    android:background="@drawable/bg_chip_accent_soft"
                                     android:paddingLeft="10dp"
                                     android:paddingTop="4dp"
                                     android:paddingRight="10dp"
                                     android:paddingBottom="4dp"
                                     android:text="@string/change_origin"
-                                    android:textSize="12sp"
-                                    app:radius="8dp" />
+                                    android:textColor="@color/on_primary_soft"
+                                    android:textSize="12sp" />
 
                             </LinearLayout>
 
@@ -293,18 +296,19 @@
                                     tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
                                     tools:text="@string/group_s" />
 
-                                <io.legado.app.ui.widget.text.AccentBgTextView
+                                <TextView
                                     android:id="@+id/tv_change_group"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="8dp"
+                                    android:background="@drawable/bg_chip_accent_soft"
                                     android:paddingLeft="10dp"
                                     android:paddingTop="4dp"
                                     android:paddingRight="10dp"
                                     android:paddingBottom="4dp"
                                     android:text="@string/change_group"
-                                    android:textSize="12sp"
-                                    app:radius="8dp" />
+                                    android:textColor="@color/on_primary_soft"
+                                    android:textSize="12sp" />
 
                             </LinearLayout>
 
@@ -340,18 +344,19 @@
                                     tools:ignore="NestedWeights,RtlHardcoded,RtlSymmetry"
                                     tools:text="@string/toc_s" />
 
-                                <io.legado.app.ui.widget.text.AccentBgTextView
+                                <TextView
                                     android:id="@+id/tv_toc_view"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="8dp"
+                                    android:background="@drawable/bg_chip_accent_soft"
                                     android:paddingLeft="10dp"
                                     android:paddingTop="4dp"
                                     android:paddingRight="10dp"
                                     android:paddingBottom="4dp"
                                     android:text="@string/view_toc"
-                                    android:textSize="12sp"
-                                    app:radius="8dp" />
+                                    android:textColor="@color/on_primary_soft"
+                                    android:textSize="12sp" />
 
                             </LinearLayout>
 

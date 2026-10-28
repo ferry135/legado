@@ -54,7 +54,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:indeterminate="true"
-                app:indicatorColor="@color/white"
+                app:indicatorColor="@color/primary"
                 app:indicatorSize="36dp"
                 app:trackCornerRadius="99dp"
                 app:trackThickness="3dp" />
@@ -76,17 +76,37 @@
             android:orientation="vertical"
             android:visibility="gone">
 
+            <!-- v3 失败态：52dp 图片线稿提示图标（次级色染色，见 08-system.html s14 失败态） -->
+            <ImageView
+                android:id="@+id/iv_error_icon"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_marginBottom="14dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_image_outline"
+                app:tint="@color/on_surface_variant" />
+
+            <!-- v3 失败态：错误信息居中可换行，横向 44dp 留白 -->
             <TextView
                 android:id="@+id/tv_msg"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
+                android:lineSpacingMultiplier="1.7"
+                android:paddingStart="44dp"
+                android:paddingEnd="44dp"
+                android:textSize="13.5sp"
                 android:textColor="@color/primaryText" />
 
             <io.legado.app.ui.widget.text.AccentTextView
                 android:id="@+id/tv_retry"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_marginTop="16dp"
+                android:paddingLeft="16dp"
+                android:paddingTop="10dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="10dp"
                 android:text="重新加载"
                 android:textSize="18sp"
                 tools:visibility="visible" />

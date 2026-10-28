@@ -18,6 +18,8 @@
     <dimen name="spacing_md">12dp</dimen>
     <dimen name="spacing_lg">16dp</dimen>
     <dimen name="spacing_xl">24dp</dimen>
+    <!--阅读菜单/弹层动作图标最大高度（原各布局内联 24dp 魔法数收敛为令牌）-->
+    <dimen name="action_icon_size">24dp</dimen>
     <dimen name="touch_target_min">48dp</dimen>
 
     <dimen name="font_size_normal">14sp</dimen>

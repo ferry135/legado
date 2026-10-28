@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         app:attachToActivity="false"
         app:themeMode="blend"
-        app:title="@string/bookshelf" />
+        app:title="@string/bookshelf"
+        app:titleTextAppearance="@style/TextAppearance.Legado.PageTitle" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -62,6 +63,7 @@
             android:background="?android:attr/selectableItemBackground"
             android:drawablePadding="6dp"
             android:gravity="center_vertical"
+            android:minHeight="44dp"
             android:padding="4dp"
             android:text="@string/bookshelf_px_0"
             android:textColor="@color/on_surface_variant"

@@ -20,6 +20,25 @@
         android:textSize="15sp"
         tools:ignore="RtlSymmetry" />
 
+    <!-- 内置徽标（bg_badge_muted、10sp、on_surface_variant，名称右侧 7dp）：默认 gone，由适配层按规则来源（defaultData/dictRules.json）控制显隐 -->
+    <TextView
+        android:id="@+id/tv_badge_builtin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="7dp"
+        android:background="@drawable/bg_badge_muted"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:paddingStart="7dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="7dp"
+        android:paddingBottom="2dp"
+        android:text="@string/badge_builtin"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="10sp"
+        android:visibility="gone" />
+
     <io.legado.app.lib.theme.view.ThemeSwitch
         android:id="@+id/swt_enabled"
         android:name="@string/enable"

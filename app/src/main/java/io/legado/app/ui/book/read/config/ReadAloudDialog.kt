@@ -2,6 +2,8 @@ package io.legado.app.ui.book.read.config
 
 import android.annotation.SuppressLint
 import android.content.DialogInterface
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
@@ -14,6 +16,7 @@ import io.legado.app.constant.EventBus
 import io.legado.app.databinding.DialogReadAloudBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.selector
+import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.model.ReadAloud
@@ -62,7 +65,7 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
             tvPre.setTextColor(textColor)
             tvNext.setTextColor(textColor)
             ivPlayPrev.setColorFilter(textColor)
-            ivPlayPause.setColorFilter(textColor)
+            // 播放键圆底+图标由 upPlayState() 按主题强调色统一着色，不走 textColor
             ivPlayNext.setColorFilter(textColor)
             ivStop.setColorFilter(textColor)
             ivTimer.setColorFilter(textColor)
@@ -181,10 +184,13 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
             binding.ivPlayPause.setImageResource(R.drawable.ic_play_24dp)
             binding.ivPlayPause.contentDescription = getString(R.string.audio_play)
         }
-        val bg = requireContext().bottomBackground
-        val isLight = ColorUtils.isColorLight(bg)
-        val textColor = requireContext().getPrimaryTextColor(isLight)
-        binding.ivPlayPause.setColorFilter(textColor)
+        // 播放键：圆底运行时取主题强调色（MASTER.md §4 布局不得固化 primary/accent），
+        // 图标按强调色明暗取黑白保证对比（同 AccentBgTextView 逻辑）
+        val accentColor = ThemeStore.accentColor(requireContext())
+        binding.ivPlayPause.backgroundTintList = ColorStateList.valueOf(accentColor)
+        binding.ivPlayPause.setColorFilter(
+            if (ColorUtils.isColorLight(accentColor)) Color.BLACK else Color.WHITE
+        )
     }
 
     private fun upSeekTimer() {
