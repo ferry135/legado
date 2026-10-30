@@ -137,7 +137,7 @@
     <style name="TextAppearance.Legado" parent="android:Widget" />
 
     <style name="TextAppearance.Legado.PageTitle" parent="TextAppearance.Legado">
-        <item name="android:textSize">28sp</item>
+        <item name="android:textSize">24sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/on_surface</item>
     </style>
@@ -149,7 +149,7 @@
     </style>
 
     <style name="TextAppearance.Legado.Tab" parent="TextAppearance.Legado">
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">15sp</item>
         <item name="android:textStyle">bold</item>
     </style>
 
