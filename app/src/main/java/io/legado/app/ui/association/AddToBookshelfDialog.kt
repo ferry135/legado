@@ -20,6 +20,7 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.model.analyzeRule.AnalyzeUrl
 import io.legado.app.model.webBook.WebBook
 import io.legado.app.ui.book.info.BookInfoActivity
+import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.utils.GSON
 import io.legado.app.utils.NetworkUtils
 import io.legado.app.utils.fromJsonObject
@@ -27,6 +28,7 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 
 /**
  * 添加书籍链接到书架，需要对应网站书源
@@ -80,18 +82,44 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
             dismiss()
         }
         viewModel.load(bookUrl) {
-            viewModel.saveSearchBook(it) {
-                startActivity<BookInfoActivity> {
-                    putExtra("name", it.name)
-                    putExtra("author", it.author)
-                    putExtra("bookUrl", it.bookUrl)
+            // 12-missed-2 #19：载入完成后展示书籍信息进入确认态，不再自动跳转
+            showBookInfo(it)
+        }
+        binding.tvOk.setOnClickListener {
+            viewModel.book?.let { book ->
+                viewModel.saveSearchBook(book) {
+                    startActivity<BookInfoActivity> {
+                        putExtra("name", book.name)
+                        putExtra("author", book.author)
+                        putExtra("bookUrl", book.bookUrl)
+                    }
+                    dismiss()
                 }
-                dismiss()
+            }
+        }
+        binding.tvRead.setOnClickListener {
+            viewModel.book?.let { book ->
+                viewModel.addToBookshelf(book) {
+                    startActivity<ReadBookActivity> {
+                        putExtra("bookUrl", book.bookUrl)
+                        putExtra("inBookshelf", true)
+                    }
+                    dismiss()
+                }
             }
         }
         binding.tvCancel.setOnClickListener {
             dismiss()
         }
+    }
+
+    private fun showBookInfo(book: Book) {
+        binding.tvName.text = book.name
+        binding.tvAuthor.text = book.author
+        binding.tvOrigin.text = book.originName
+        binding.bookInfo.visible()
+        binding.tvOk.visible()
+        binding.tvRead.visible()
     }
 
     class ViewModel(application: Application) : BaseViewModel(application) {
@@ -167,6 +195,16 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
                 val searchBook = book.toSearchBook()
                 appDb.searchBookDao.insert(searchBook)
                 searchBook
+            }.onSuccess {
+                success.invoke()
+            }
+        }
+
+        // 12-missed-2 #19：「阅读」动作 = 加入书架后直接进阅读
+        // （与 BookInfoViewModel.saveBook 共用 Book.saveWithOrderBackfill；新书入架不回填进度）
+        fun addToBookshelf(book: Book, success: () -> Unit) {
+            execute {
+                book.saveWithOrderBackfill()
             }.onSuccess {
                 success.invoke()
             }

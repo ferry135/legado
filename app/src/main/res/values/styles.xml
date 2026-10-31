@@ -211,4 +211,17 @@
         <item name="elevation">0dp</item>
     </style>
 
+    //**********Filled Field（10-reader-prefs#06：filled 输入框，同 activity_replace_edit 字段）**********//
+
+    <style name="Widget.Legado.FilledField" parent="">
+        <item name="boxBackgroundMode">filled</item>
+        <item name="boxBackgroundColor">@color/surface_container_high</item>
+        <item name="boxCornerRadiusTopStart">10dp</item>
+        <item name="boxCornerRadiusTopEnd">10dp</item>
+        <item name="boxCornerRadiusBottomStart">10dp</item>
+        <item name="boxCornerRadiusBottomEnd">10dp</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+    </style>
+
 </resources>

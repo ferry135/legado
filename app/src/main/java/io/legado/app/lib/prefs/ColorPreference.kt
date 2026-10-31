@@ -118,7 +118,7 @@ class ColorPreference(context: Context, attrs: AttributeSet) : Preference(contex
 
     override fun onBindView(holder: PreferenceViewHolder) {
         val v = bindView<ColorPanelView>(
-            context, holder, icon, title, summary, widgetLayoutResource,
+            holder, widgetLayoutResource,
             R.id.cpv_preference_preview_color_panel, 30, 30
         )
         if (v is ColorPanelView) {

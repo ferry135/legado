@@ -1,0 +1,1012 @@
+<!-- design-system: legado v2 -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>legado v3 · 遗漏页面（二）· 弹窗与工具屏</title><style>
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#eceae5;color:#24221e;padding:44px 20px 90px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:980px;margin:0 auto}
+.eyebrow{font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:#8d8878;font-weight:650}
+h1.group{font-size:34px;font-weight:750;margin:8px 0 10px}
+.lede{font-size:14.5px;line-height:1.9;color:#5f5b52;margin:0 0 20px;max-width:780px}
+.sec-nav{display:flex;flex-wrap:wrap;gap:8px}
+.sec-nav a{font-size:12.5px;color:#3f3c35;text-decoration:none;padding:6px 13px;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.07);font-weight:550}
+.sec-nav a:hover{background:#ff6b2c;color:#fff;border-color:#ff6b2c}
+.screen-sec{margin-top:72px}
+.sec-head{display:flex;align-items:baseline;gap:12px}
+.sec-no{font-size:13px;font-weight:750;color:#ff6b2c;letter-spacing:.1em}
+.sec-head h2{font-size:24px;font-weight:700;margin:0}
+.sec-sub{font-size:13.5px;color:#6d6a62;margin:6px 0 24px;line-height:1.8;max-width:880px}
+.pair{display:flex;gap:32px;flex-wrap:wrap}
+figure.phone-col{display:flex;flex-direction:column;gap:9px;margin:0}
+.phone{width:412px;height:900px;border-radius:30px;position:relative;overflow:hidden;border:1px solid rgba(0,0,0,.10);flex:none}
+.phone-tag{font-size:12.5px;color:#8d8878;display:flex;justify-content:space-between}
+.spec{margin:22px 0 0;padding:16px 20px;background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:14px;font-size:13px;line-height:2;color:#5f5b52;max-width:872px}
+.spec code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#f2f0ea;padding:1px 6px;border-radius:6px;color:#45423a}
+.footnote{margin-top:80px;padding-top:20px;border-top:1px solid rgba(0,0,0,.08);font-size:12.5px;color:#8d8878;line-height:2}
+/* ---------- 主题令牌 ---------- */
+.t-light{--bg:#faf9f7;--surface:#ffffff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--outline:#8b8878;--primary:#ff6b2c;--primary-soft:#fff0e6;--ghost:rgba(255,107,44,.08);--track:#e5e2de;--divider:rgba(0,0,0,.07);--err:#ba1a1a;--ok:#3b7a45;--panel:rgba(238,236,233,.96);background:var(--bg);color:var(--text)}
+.t-dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--text:#f3f0eb;--secondary:#b4b0aa;--outline:#8f8b7f;--primary:#ff6b2c;--primary-soft:#3a241b;--ghost:rgba(255,255,255,.08);--track:#353331;--divider:rgba(255,255,255,.08);--err:#ffb4ab;--ok:#7fd891;--panel:rgba(30,28,25,.96);background:var(--bg);color:var(--text)}
+/* ---------- 手机壳 ---------- */
+.status{height:34px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:14px;font-weight:600;position:relative;z-index:12}
+.status-right{display:flex;gap:10px;align-items:center}
+.home-indicator{position:absolute;left:50%;bottom:5px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--secondary);opacity:.9;z-index:40;pointer-events:none}
+.icon{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block}
+/* ---------- 被遮罩的宿主屏 ---------- */
+.host{position:absolute;top:34px;left:0;right:0;bottom:0;padding:12px 16px;z-index:1;opacity:.9}
+.host-tb{display:flex;align-items:center;gap:12px;height:54px;font-size:17px;font-weight:650}
+.host-tb i{width:22px;height:22px;border-radius:7px;background:var(--surface2);flex:none}
+.host .sk{height:11px;border-radius:6px;background:var(--surface2);margin:14px 0}
+.rhost{position:absolute;top:34px;left:0;right:0;bottom:0;padding:12px 18px;z-index:1;font-size:16px;line-height:2.05}
+.t-light .rhost{color:#3e3d3b}.t-dark .rhost{color:#adadad}
+.rhost h4{font-size:17.5px;margin:2px 0 10px;font-weight:700}
+.rhost p{margin:0;text-indent:2em}
+.mhost{position:absolute;top:34px;left:0;right:0;bottom:0;z-index:1;display:grid;place-items:center}
+.mhost .pg{width:300px;height:210px;border-radius:10px;background:linear-gradient(135deg,#c9c6c1,#a5a29c)}
+.t-dark .mhost .pg{background:linear-gradient(135deg,#3a3833,#242220)}
+/* ---------- 遮罩与容器 ---------- */
+.veil{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:10}
+.t-dark .veil{background:rgba(0,0,0,.55)}
+.dlg{position:absolute;z-index:11;left:50%;top:43%;transform:translate(-50%,-50%);width:344px;max-height:742px;background:var(--surface);border:1px solid var(--divider);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.dlg.wide{width:374px}
+.dlg-tall{top:50%;height:730px;transform:translate(-50%,-50%)}
+.dtb{display:flex;align-items:center;gap:2px;min-height:56px;padding:0 4px 0 18px;flex:none;border-bottom:1px solid var(--divider)}
+.dtb b{flex:1;font-size:17px;font-weight:650;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dtb .ico{border:0;background:transparent;width:42px;height:42px;border-radius:21px;display:grid;place-items:center;color:var(--text);cursor:pointer;padding:0}
+.dtb .ico:hover{background:var(--ghost)}
+.dbody{padding:6px 0 4px;overflow:hidden;flex:1;min-height:0;position:relative}
+.dfoot{display:flex;align-items:center;gap:2px;padding:8px 12px 12px;flex:none}
+.dfoot .sp{flex:1}
+.dact{border:0;background:transparent;color:var(--text);font-family:inherit;font-size:13.5px;font-weight:600;padding:10px 12px;border-radius:9px;cursor:pointer;white-space:nowrap}
+.dact:hover{background:var(--ghost)}
+.dact.mut{color:var(--secondary)}
+.dact.pri{color:var(--primary)}
+/* 亮色主色文字钮/标签可达性：#FF6B2C 压白卡 2.84:1 不达标，改深主色 #B34A15（与 10-reader-prefs tonal 同源），压白 5.37 / surface2 4.56 / 纸底 5.11 */
+.t-light .dact.pri,.t-light .sec-lab,.t-light .ca-cell.mid,.t-light .web a{color:#b34a15}
+.dact.danger{color:var(--err)}
+.dbody .sec-lab{font-size:12.5px;font-weight:700;color:var(--primary);padding:8px 16px 4px}
+.field{background:var(--surface2);border-radius:10px;padding:7px 14px 8px;margin:0 16px 10px}
+.field label{display:block;font-size:11.5px;color:var(--secondary)}
+.field b{display:block;font-weight:500;font-size:14px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);min-height:19px}
+.field b.ph{color:var(--secondary);font-weight:400}
+.field.multi b{white-space:normal;line-height:1.7;font-family:ui-monospace,Consolas,monospace;font-size:12.5px}
+.hr{height:1px;background:var(--divider);margin:8px 16px;flex:none}
+.cb{display:flex;align-items:center;gap:11px;padding:9px 16px;font-size:14px;cursor:pointer}
+.cb i{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--outline);flex:none;position:relative}
+.cb.on i{background:var(--primary);border-color:var(--primary)}
+.cb.on i:after{content:"";position:absolute;left:5px;top:1.5px;width:4px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.cb.dis{opacity:.45}
+.rd i{border-radius:50%}
+.rd.on i:after{content:"";position:absolute;left:4.5px;top:4.5px;width:7px;height:7px;border-radius:50%;background:var(--primary);border:0;transform:none}
+.row{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:14px}
+.row .lab{flex:1;min-width:0}
+.row .val{color:var(--secondary);font-size:13px;display:flex;align-items:center;gap:5px}
+.switch{width:38px;height:22px;border-radius:11px;background:var(--track);position:relative;flex:none;display:inline-block}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff}
+.switch.on{background:var(--primary)}
+.switch.on::after{left:auto;right:3px}
+.dsb{padding:7px 16px 3px}
+.dsb .t{display:flex;justify-content:space-between;align-items:center;font-size:13.5px}
+.dsb .t b{font-weight:600}
+.dsb .t output{color:var(--secondary);font-variant-numeric:tabular-nums;font-size:13px}
+.dsb .ctl{display:flex;align-items:center;gap:8px;margin-top:3px}
+.dsb .pm{width:30px;height:30px;border-radius:15px;border:0;background:transparent;color:var(--secondary);display:grid;place-items:center;font-size:17px;font-family:inherit;cursor:pointer;flex:none}
+.dsb .bar{flex:1;height:4px;border-radius:2px;background:var(--track);position:relative}
+.dsb .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--primary);border-radius:2px}
+.dsb .bar b{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;background:var(--primary);transform:translate(-50%,-50%);font-style:normal;font-weight:400}
+.btn{flex:1;text-align:center;border:1px solid var(--track);border-radius:10px;padding:9px 0;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;background:transparent;color:var(--text)}
+.btn.pri{background:var(--primary);border-color:var(--primary);color:#fff}
+.fade{position:absolute;left:0;right:0;bottom:0;height:46px;background:linear-gradient(180deg,rgba(0,0,0,0),var(--surface));pointer-events:none;z-index:2}
+/* ---------- 列表行（运行日志/崩溃/主题/辅助按键） ---------- */
+.lrow{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:14px}
+.lrow .t1{flex:1;min-width:0;min-height:19px}
+.lrow .t1 small{display:block;color:var(--secondary);font-size:11.5px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lrow .t1 b{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.lrow .ic{width:20px;height:20px;color:var(--secondary);flex:none}
+.lrow .ic.pri{color:var(--primary)}
+/* ---------- 底部弹层 ---------- */
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:11;background:var(--surface);border-top:1px solid var(--divider);border-radius:16px 16px 0 0;display:flex;flex-direction:column;max-height:96%;overflow:hidden}
+.sheet .grab{width:36px;height:4px;border-radius:2px;background:var(--track);margin:8px auto 0;flex:none}
+.sheet h4{font-size:17px;font-weight:650;margin:8px 20px 2px;flex:none}
+.sheet .body{overflow:hidden;flex:1;min-height:0;position:relative}
+/* ---------- 点击区域覆盖层（修复设计：panel+on_surface） ---------- */
+.ca{position:absolute;inset:34px 0 0;z-index:11;display:flex;flex-direction:column;padding:8px}
+.ca-head{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--divider);border-radius:12px;padding:10px 14px;font-size:14.5px;font-weight:650}
+.ca-head .sp{flex:1}
+.ca-head .x{border:0;background:transparent;width:30px;height:30px;border-radius:15px;display:grid;place-items:center;color:var(--text);cursor:pointer;padding:0}
+.ca-grid{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+.ca-cell{border-radius:12px;background:var(--panel);border:1px solid var(--divider);display:grid;place-items:center;font-size:13.5px;color:var(--text);cursor:pointer}
+.ca-cell.mid{border-style:dashed;border-color:var(--primary);color:var(--primary);font-weight:650}
+/* ---------- 数字选择轮 ---------- */
+.wheel{position:relative;margin:6px 52px 12px;height:132px;overflow:hidden;flex:none}
+.wheel:before,.wheel:after{content:"";position:absolute;left:0;right:0;height:42px;z-index:2;pointer-events:none}
+.wheel:before{top:0;background:linear-gradient(180deg,var(--surface),rgba(0,0,0,0))}
+.wheel:after{bottom:0;background:linear-gradient(0deg,var(--surface),rgba(0,0,0,0))}
+.wheel .band{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:42px;background:var(--surface2);border-radius:10px}
+.wheel ul{list-style:none;margin:0;padding:0;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;font-size:18px;color:var(--secondary)}
+.wheel li.cur{color:var(--text);font-weight:650;font-size:20px}
+/* ---------- 代码查看 ---------- */
+.code{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;line-height:1.8;padding:12px 16px;white-space:pre-wrap;word-break:break-all}
+.code .k{color:#c2410c;font-weight:600}
+.code .s{color:#2e7d32}
+.code .c{color:#6d6a62;font-style:italic} /* 亮色注释 #8d8878 仅 3.54:1 不达标，改 on_surface_variant 5.87:1 */
+.code .n{color:#1f6fb2}
+.t-dark .code .k{color:#ff9e80}
+.t-dark .code .s{color:#a5d6a7}
+.t-dark .code .c{color:#8f8b7f}
+.t-dark .code .n{color:#82b1ff}
+/* ---------- 内置浏览器 ---------- */
+.tb{position:absolute;top:34px;left:0;right:0;z-index:8;background:var(--surface2);border-bottom:1px solid var(--divider);border-radius:0 0 20px 20px;padding:0 4px 10px}
+.tb .r1{display:flex;align-items:center;min-height:54px;padding:0 4px}
+.tb .tt{flex:1;min-width:0;text-align:center;font-size:16.5px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb .st{text-align:center;font-size:11.5px;color:var(--secondary);margin-top:-6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wprog{height:2px;background:var(--track);position:relative;margin:4px 20px 0;border-radius:1px;overflow:hidden}
+.wprog i{position:absolute;left:0;top:0;bottom:0;width:38%;background:var(--primary);border-radius:1px}
+.web{position:absolute;top:34px;left:0;right:0;bottom:0;z-index:1;padding:110px 22px 20px;font-size:15px;line-height:1.95;color:var(--text)}
+.web h5{font-size:18px;margin:4px 0 10px}
+.web p{margin:0 0 12px}
+.web a{color:var(--primary);text-decoration:underline}
+.web .img{width:100%;height:150px;border-radius:10px;background:linear-gradient(135deg,#b9c6d2,#8fa5b8);margin:2px 0 14px}
+/* ---------- 图片查看 ---------- */
+.photo{position:absolute;inset:34px 0 0;z-index:11;display:grid;place-items:center}
+.ph-img{width:296px;height:414px;border-radius:6px;background:linear-gradient(140deg,#8fa8bf,#54718a);box-shadow:0 8px 28px rgba(0,0,0,.25)}
+.t-dark .ph-img{background:linear-gradient(140deg,#4a5a6a,#2c3a48)}
+</style></head><body><div class="wrap">
+
+<header>
+  <div class="eyebrow">design-system: legado v2 · 屏幕组 12</div>
+  <h1 class="group">遗漏页面（二）· 弹窗与工具屏</h1>
+  <p class="lede">为 v3 八组之外从未设计的 29 个弹窗/工具屏补齐设计稿：分组选择、书签编辑、模拟追读、运行/崩溃日志、更新、主题列表、封面规则、校验与直链上传、点击区域与翻页按键、边距与提示信息、漫画滤镜/墨水屏/页脚、图片查看、加入书架、RSS 收藏、规则订阅编辑、背景虚化、内置浏览器，以及六类通用工具弹窗。全部功能块取自现有布局与 Kotlin（无虚构功能），延续 v3 视觉令牌；另含一节「亮色对比修复设计」。每屏明暗并排，右侧深色稿由脚本镜像生成。</p>
+  <nav class="sec-nav">
+    <a href="#s01"><b>01</b> 分组选择</a><a href="#s02"><b>02</b> 书签编辑</a><a href="#s03"><b>03</b> 模拟追读</a><a href="#s04"><b>04</b> 运行日志</a><a href="#s05"><b>05</b> 崩溃日志</a><a href="#s06"><b>06</b> 更新弹窗</a><a href="#s07"><b>07</b> 主题列表</a><a href="#s08"><b>08</b> 封面规则编辑</a><a href="#s09"><b>09</b> 校验书源配置</a><a href="#s10"><b>10</b> 直链上传配置</a><a href="#s11"><b>11</b> 点击区域设置</a><a href="#s12"><b>12</b> 自定义翻页按键</a><a href="#s13"><b>13</b> 边距设置</a><a href="#s14"><b>14</b> 提示信息设置</a><a href="#s15"><b>15</b> 漫画滤镜</a><a href="#s16"><b>16</b> 墨水屏设置</a><a href="#s17"><b>17</b> 漫画页脚配置</a><a href="#s18"><b>18</b> 图片查看</a><a href="#s19"><b>19</b> 加入书架确认</a><a href="#s20"><b>20</b> RSS 收藏配置</a><a href="#s21"><b>21</b> 规则订阅编辑</a><a href="#s22"><b>22</b> 背景图片虚化</a><a href="#s23"><b>23</b> 内置浏览器</a><a href="#s24"><b>24</b> 数字选择</a><a href="#s25"><b>25</b> 源变量</a><a href="#s26"><b>26</b> 链接选项</a><a href="#s27"><b>27</b> 代码查看/编辑</a><a href="#s28"><b>28</b> 辅助按键配置</a><a href="#s29"><b>29</b> 亮色对比修复设计</a>
+  </nav>
+</header>
+
+<!-- ============ 01 分组选择 ============ -->
+<section class="screen-sec" id="s01"><div class="sec-head"><span class="sec-no">01</span><h2>分组选择</h2></div>
+<p class="sec-sub">GroupSelectDialog · 书籍详情/书架整理将书移入分组时的多选弹窗（90%×90% 大窗）。Toolbar 顶栏 + 分组复选列表（长按拖拽排序）+ 右下取消/确定；顶栏「添加分组」直接新建。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="host"><div class="host-tb"><i></i>书籍详情<i></i><i></i></div><div class="sk" style="width:58%"></div><div class="sk" style="width:86%"></div><div class="sk" style="width:70%"></div><div class="sk" style="width:44%"></div><div class="sk" style="width:82%"></div></div>
+<div class="veil"></div>
+<div class="dlg wide dlg-tall">
+  <div class="dtb"><b>分组选择</b><button class="ico" type="button" aria-label="添加分组"><svg class="icon" style="width:22px;height:22px" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button></div>
+  <div class="dbody">
+    <div class="row" style="padding:8px 16px 2px"><span style="font-size:12.5px;color:var(--secondary)">勾选分组（可多选）· 长按拖动调整顺序</span></div>
+    <div class="cb on"><i></i>全部</div>
+    <div class="cb on"><i></i>追更中</div>
+    <div class="cb"><i></i>未分组</div>
+    <div class="cb"><i></i>网文</div>
+    <div class="cb"><i></i>出版图书</div>
+    <div class="cb"><i></i>完本待看</div>
+    <div class="lrow" style="background:var(--surface2);margin:2px 8px;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.08)">
+      <svg class="icon ic" viewBox="0 0 24 24" style="color:var(--primary)"><path d="M9 11.2V6a1.6 1.6 0 0 1 3.2 0v4.4l4.2 1.2c.9.26 1.6 1.1 1.6 2v2.2c0 .5-.1 1-.4 1.4l-1.4 2.3c-.3.5-.8.8-1.4.8h-4.9c-.5 0-1-.2-1.3-.6L5 16.5c-.5-.6-.4-1.5.2-2 .5-.4 1.2-.4 1.7 0l2.1 1.7"/></svg>
+      <div class="t1"><b>神豪从签到开始</b><small>拖拽排序中 · 松手保存顺序</small></div>
+    </div>
+    <div class="cb"><i></i>短篇合集</div>
+  </div>
+  <div class="dfoot"><span class="sp"></span><button class="dact mut" type="button">取消</button><button class="dact pri" type="button">确定</button></div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>容器</code> — dialog_book_group_picker.xml:9-50：Toolbar + RecyclerView(weight 1) + 底部取消/确定；setLayout(0.9f, 0.9f)（GroupSelectDialog.kt:55）→ 90% 大窗居中。</li>
+<li><code>列表项</code> — item_group_select.xml:10-25：ThemeCheckBox 分组名（checked 按 groupId 位掩码，GroupSelectDialog.kt:126,135-140）+ 「编辑」文字按钮 → GroupEditDialog（:143-147）；删除线视觉不需要。</li>
+<li><code>拖拽排序</code> — ItemTouchHelper isCanDrag=true（GroupSelectDialog.kt:76-78），onClearView 重排 order 并入库（:157-163）；稿面拖拽态用 surface2 浮起行表达。</li>
+<li><code>顶栏菜单</code> — menu/book_group_manage.xml 仅 menu_add（ic_add → GroupEditDialog 新建分组，GroupSelectDialog.kt:100-103）。</li>
+<li><code>动作</code> — 取消 dismiss；确定回调 upGroup(requestCode, groupId)（:79-86）；确定字色 accentColor（:82）→ 稿面主色文字按钮。</li>
+<li><code>修复</code> — 现 Kotlin:59 toolBar.setBackgroundColor(primaryColor)：亮色 actionBarStyle 深字压橙 5.48:1 达标但与 v3 blend 顶栏定稿不符，夜间 actionBarStyle 染白字压橙 2.84:1 不达标（详见 29 屏 A）。改为不设背景，弹窗卡 surface 底 + on_surface 标题/图标（同本稿），删一行代码即可。</li>
+</ul></section>
+
+<!-- ============ 02 书签编辑 ============ -->
+<section class="screen-sec" id="s02"><div class="sec-head"><span class="sec-no">02</span><h2>书签编辑</h2></div>
+<p class="sec-sub">BookmarkDialog · 目录页菜单「添加书签」或书签列表长按编辑。全屏窗口内居中卡片：Toolbar「书签」+ 章节名 + 原文/备注两个输入 + 删除（仅编辑态）/取消/确定。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="rhost"><h4>第三十二章 夜探藏书楼</h4><p>檐角的铜铃在夜风里轻响，他屏住呼吸，沿着书架的暗影一步步挪近那扇虚掩的雕花木门……</p><p>门后是一整面墙的孤本，烛火摇曳间，一册蓝皮旧书正摊在案上。</p></div>
+<div class="veil"></div>
+<div class="dlg wide" style="top:50%">
+  <div class="dtb"><b>书签</b></div>
+  <div class="row" style="padding:10px 16px 4px"><b style="font-weight:600;font-size:14px">第三十二章 夜探藏书楼</b></div>
+  <div class="hr" style="margin-top:2px"></div>
+  <div class="dbody" style="flex:none">
+    <div class="field multi" style="margin-top:6px"><label>内容（书内原文）</label><b>门后是一整面墙的孤本，烛火摇曳间，一册蓝皮旧书正摊在案上。</b></div>
+    <div class="field multi"><label>备注内容</label><b>下一卷线索：蓝皮旧书缺页，可能对应「藏书楼起火」伏笔。</b></div>
+  </div>
+  <div class="dfoot" style="border-top:1px solid var(--divider)">
+    <button class="dact danger" type="button">删除</button><span class="sp"></span>
+    <button class="dact mut" type="button">取消</button><button class="dact pri" type="button">确定</button>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>容器</code> — dialog_bookmark.xml:59-170：FrameLayout(16dp) 内 vw_bg 居中卡（shape_card_view）+ Toolbar（title=书签，:68-75）；setLayout(MATCH_PARENT, MATCH_PARENT)（BookmarkDialog.kt:33），视觉为全屏遮罩上的大卡。</li>
+<li><code>章节名</code> — tv_chapter_name（:77-83，primaryText），只读展示 bookmark.chapterName（BookmarkDialog.kt:52）。</li>
+<li><code>输入</code> — edit_book_text（hint=内容，存 bookText 原文，:97-109）与 edit_content（hint=备注内容，:111-123）；确定回写并 insert（:58-67）。</li>
+<li><code>删除</code> — tv_footer_left 仅编辑态可见（BookmarkDialog.kt:50 visible(editPos≥0)），点击 delete（:68-75）→ 稿面左侧红色文字按钮。</li>
+<li><code>修复</code> — 现 Kotlin:37 顶栏 primaryColor 背景（同 01 的问题）；删去该行，Toolbar 随弹窗卡 surface 底、on_surface 文字。</li>
+</ul></section>
+
+<!-- ============ 03 模拟追读 ============ -->
+<section class="screen-sec" id="s03"><div class="sec-head"><span class="sec-no">03</span><h2>模拟追读</h2></div>
+<p class="sec-sub">阅读菜单溢出「模拟阅读」（ReadBookActivity:515 → BaseReadBookActivity:290 showSimulatedReading）。标准 alert + 自定义视图：总开关、开始日期（点按弹日期选择器）、起始章节、日更章数。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="rhost"><h4>第三十二章 夜探藏书楼</h4><p>檐角的铜铃在夜风里轻响，他屏住呼吸，沿着书架的暗影一步步挪近那扇虚掩的雕花木门。门后是一整面墙的孤本……</p><p>烛火摇曳间，一册蓝皮旧书正摊在案上，纸页边缘还有火燎的焦痕。</p></div>
+<div class="veil"></div>
+<div class="dlg" style="width:320px">
+  <div class="dtb"><b>模拟追读</b></div>
+  <div class="dbody" style="flex:none;padding-top:2px">
+    <div class="row"><span class="lab">追读开关</span><span class="switch on" role="switch" aria-checked="true"></span></div>
+    <div class="field" style="margin-top:2px"><label>开始日期</label><b>2026-10-31 ▾</b></div>
+    <div style="display:flex;gap:10px;margin:2px 16px 8px">
+      <div class="field" style="flex:1;margin:0"><label>起始章节</label><b>32</b></div>
+      <div class="field" style="flex:1;margin:0"><label>日更章数</label><b>3</b></div>
+    </div>
+    <p style="margin:0 16px 6px;font-size:11.5px;color:var(--secondary);line-height:1.7">从起始章节开始，按开始日期与日更章数模拟每日更新。</p>
+  </div>
+  <div class="dfoot"><span class="sp"></span><button class="dact mut" type="button">取消</button><button class="dact pri" type="button">确定</button></div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>开关</code> — dialog_simulated_reading.xml:18-42「switch_on」+ SwitchCompat sr_enabled；初值 book.getReadSimulating()（BaseReadBookActivity.kt:294）。</li>
+<li><code>开始日期</code> — 「start_from」label（zh=开始日期）+ 只读 EditText startDate（:64-89），点击弹 DatePickerDialog（BaseReadBookActivity.kt:300-320），yyyy-MM-dd 格式回填。</li>
+<li><code>章节与日更</code> — edit_start（起始章节，number，:123-142）与 edit_num（日更章数，number，:160-180）；空值兜底 0 / 总章数（:321-330）。</li>
+<li><code>确定</code> — alert(okButton) 写回 setStartDate/setDailyChapters/setStartChapter/setReadSimulating 并存库、clearTextChapter 重新加载（BaseReadBookActivity.kt:318-341）；取消 cancelButton。</li>
+<li><code>设计调整</code> — 原布局 label 与输入框横向挤压（:57-96 margin-right 68dp 权重占位），改为「标签上、值下」的 field 卡与两列数字输入；提示行说明日更语义。均在同一 LinearLayout 内改排版，不动控件 id。</li>
+</ul></section>
+
+<!-- ============ 04 运行日志 ============ -->
+<section class="screen-sec" id="s04"><div class="sec-head"><span class="sec-no">04</span><h2>运行日志</h2></div>
+<p class="sec-sub">AppLogDialog · 书源调试、缓存导出、远程导入等页顶栏「日志」入口。90% 宽弹窗：Toolbar「日志」+ 清空；每条为时间 + 消息，含异常的条目点按进 TextDialog 看堆栈。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="host"><div class="host-tb"><i></i>书源调试<i></i><i></i></div><div class="sk" style="width:66%"></div><div class="sk" style="width:84%"></div><div class="sk" style="width:52%"></div></div>
+<div class="veil"></div>
+<div class="dlg wide dlg-tall">
+  <div class="dtb"><b>日志</b><button class="ico" type="button" aria-label="清空"><svg class="icon" style="width:20px;height:20px" viewBox="0 0 24 24"><path d="M5 7h14"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7"/><path d="M7 7l1 12.2A1.8 1.8 0 0 0 9.8 21h4.4A1.8 1.8 0 0 0 16 19.2L17 7"/><path d="M10 11v6M14 11v6"/></svg></button></div>
+  <div class="dbody">
+    <div class="lrow"><div class="t1"><small>2026-10-31 14:12:03</small><b>开始校验全部书源（6 个）…</b></div></div>
+    <div class="lrow"><div class="t1"><small>2026-10-31 14:12:31</small><b>笔趣阁：搜索成功，耗时 2.8s</b></div></div>
+    <div class="lrow"><div class="t1"><small>2026-10-31 14:12:44</small><b style="color:var(--err)">起点中文：获取目录失败 SocketTimeoutException</b><small style="color:var(--primary)">点按查看堆栈</small></div></div>
+    <div class="lrow"><div class="t1"><small>2026-10-31 14:13:02</small><b>缓存导出完成 → Download/legado/</b></div></div>
+    <div class="lrow"><div class="t1"><small>2026-10-31 14:13:10</small><b>远程导入 Wi-Fi 传书：已接收 3 个文件</b></div></div>
+  </div>
+  <div class="dfoot"><span class="sp"></span><button class="dact pri" type="button">确定</button></div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>容器</code> — dialog_recycler_view.xml:9-15 Toolbar + :22-27 FastScrollRecyclerView + :49-100 底部取消(默认隐藏)/确定；setLayout(0.9f, WRAP)（AppLogDialog.kt:36）。</li>
+<li><code>条目</code> — item_app_log.xml:78-89：text_time + text_message（textIsSelectable、autoLink=web）；数据 AppLog.logs（Triple&lt;时间,消息,Throwable?&gt;，AppLogDialog.kt:48,62）。</li>
+<li><code>堆栈</code> — 点按含 Throwable 的条目 → TextDialog("Log", stackTrace)（AppLogDialog.kt:79-85）；稿面以主色小字提示可点按（新增提示行，非功能变更）。</li>
+<li><code>菜单</code> — menu/app_log.xml menu_clear「清空」showAsAction=always → AppLog.clear()（AppLogDialog.kt:52-56）。</li>
+<li><code>修复</code> — 现 Kotlin:41 primaryColor 顶栏（01 同源问题）→ 改 surface 顶栏 + on_surface 文字；错误消息用 error 色 #BA1A1A（夜间 #FFB4AB）而非继承白字。</li>
+</ul></section>
+
+<!-- ============ 05 崩溃日志 ============ -->
+<section class="screen-sec" id="s05"><div class="sec-head"><span class="sec-no">05</span><h2>崩溃日志</h2></div>
+<p class="sec-sub">CrashLogsDialog · 关于页「崩溃日志」入口 + 启动崩溃检测弹窗。90% 宽弹窗：Toolbar「崩溃日志」+ 清空；单行文件名列表，点按进 TextDialog 看全文。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="host"><div class="host-tb"><i></i>关于<i></i><i></i></div><div class="sk" style="width:70%"></div><div class="sk" style="width:56%"></div></div>
+<div class="veil"></div>
+<div class="dlg wide">
+  <div class="dtb"><b>崩溃日志</b><button class="ico" type="button" aria-label="清空"><svg class="icon" style="width:20px;height:20px" viewBox="0 0 24 24"><path d="M5 7h14"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7"/><path d="M7 7l1 12.2A1.8 1.8 0 0 0 9.8 21h4.4A1.8 1.8 0 0 0 16 19.2L17 7"/></svg></button></div>
+  <div class="dbody" style="flex:none">
+    <div class="lrow"><div class="t1"><b>crash_20261028_210433.txt</b><small>外部缓存 /crash · 24 KB</small></div><svg class="icon ic" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div>
+    <div class="lrow"><div class="t1"><b>crash_20260918_081155.txt</b><small>备份目录 /crash · 19 KB</small></div><svg class="icon ic" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div>
+    <div class="lrow"><div class="t1"><b>crash_20260901_183247.txt</b><small>外部缓存 /crash · 31 KB</small></div><svg class="icon ic" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div>
+    <p style="margin:6px 16px 8px;font-size:11.5px;color:var(--secondary)">文件按名称倒序（新在上）；点按条目查看完整堆栈。</p>
+  </div>
+  <div class="dfoot"><span class="sp"></span><button class="dact pri" type="button">确定</button></div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>数据</code> — CrashViewModel.initData 收集 externalCacheDir/crash 与备份路径 /crash 下文件，按名称倒序去重（CrashLogsDialog.kt:107-131）。</li>
+<li><code>条目</code> — item_1line_text.xml 单行文件名（CrashLogsDialog.kt:98）；点按 readFile → TextDialog(文件名, 内容)（:69-76,84-89）；稿面副行（来源/大小）与右箭头为新增视觉提示，点按行为不变。</li>
+<li><code>菜单</code> — menu/crash_log.xml menu_clear → clearCrashLog() 删两处目录后刷新（CrashLogsDialog.kt:62-66,143-162）。</li>
+<li><code>入口</code> — AboutFragment 菜单行「崩溃日志」与 MainActivity 启动崩溃检测（本稿为弹窗本体；08 稿已画入口行）。</li>
+<li><code>修复</code> — 同 01/04：CrashLogsDialog.kt:50 primaryColor 顶栏 → surface 顶栏 + on_surface 文字/图标。</li>
+</ul></section>
+
+<!-- ============ 06 更新弹窗 ============ -->
+<section class="screen-sec" id="s06"><div class="sec-head"><span class="sec-no">06</span><h2>更新弹窗</h2></div>
+<p class="sec-sub">UpdateDialog · 关于页「检查更新」发现新版本时弹出。顶栏显示版本号，正文为 Markwon 渲染的 Markdown 更新说明（表格/图片/HTML 均支持），下载入口改为底部主按钮（保留原顶栏下载动作）。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="host"><div class="host-tb"><i></i>关于<i></i><i></i></div><div class="sk" style="width:64%"></div><div class="sk" style="width:80%"></div></div>
+<div class="veil"></div>
+<div class="dlg wide dlg-tall">
+  <div class="dtb"><b>v3.24.1010 · 更新说明</b><button class="ico" type="button" aria-label="下载"><svg class="icon" style="width:20px;height:20px" viewBox="0 0 24 24"><path d="M12 4v11"/><path d="m8 11.5 4 4 4-4"/><path d="M5 19.5h14"/></svg></button></div>
+  <div class="dbody" style="padding:0 16px">
+    <h5 style="font-size:16px;margin:10px 0 8px;font-weight:700">更新日志</h5>
+    <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:2;color:var(--text)">
+      <li>阅读：修复滚动模式偶发的段首重叠</li>
+      <li>书源：校验失败时输出完整 URL 便于排查</li>
+      <li>漫画：新增墨水屏阈值实时预览</li>
+      <li>替换规则支持 <code style="font-family:ui-monospace,Consolas,monospace;background:var(--surface2);padding:1px 5px;border-radius:5px;font-size:12px">regex</code> 修饰符</li>
+    </ul>
+    <p style="font-size:12.5px;color:var(--secondary);margin:10px 0 0;line-height:1.8">下载 APK 约 12 MB，将开始后台下载并通知安装。</p>
+  </div>
+  <div style="padding:10px 16px 16px;flex:none"><button class="btn pri" type="button" style="width:100%;display:block">下载 APK</button></div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>容器</code> — dialog_update.xml:2-15：Toolbar + ScrollTextView（12dp 内边距）；setLayout(0.9f, WRAP)（UpdateDialog.kt:35）。</li>
+<li><code>标题</code> — Toolbar title = updateInfo.tagName（版本号，:24 取参）；updateBody 为空时 toast「没有数据」并关闭（:43）。</li>
+<li><code>正文</code> — Markwon（GlideImages/Html/Table 插件）渲染 Markdown（:48）；稿面示例为列表+行内代码。</li>
+<li><code>下载</code> — menu/app_update.xml menu_download → Download.start(url, name) + toast「开始下载」（:58-62）。</li>
+<li><code>改进</code> — 图标式下载入口改为底部主按钮「下载 APK」（同触达 Download.start），48dp 高触控目标；顶栏图标保留兼容。</li>
+<li><code>修复</code> — 现 Kotlin:39 primaryColor 顶栏 → surface 顶栏 + on_surface 文字（同 01/04/05）。</li>
+</ul></section>
+
+
+<!-- ============ 07 主题列表 ============ -->
+<section class="screen-sec" id="s07"><div class="sec-head"><span class="sec-no">07</span><h2>主题列表</h2></div>
+<p class="sec-sub">ThemeListDialog · 主题设置 →「主题列表」。90%×90% 弹窗：Toolbar「主题列表」+ 剪贴板导入；行=主题名+分享+删除（36dp 图标钮）；点行应用主题，删除需确认。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="host"><div class="host-tb"><i></i>主题设置<i></i><i></i></div><div class="sk" style="width:58%"></div><div class="sk" style="width:76%"></div><div class="sk" style="width:40%"></div></div>
+<div class="veil"></div>
+<div class="dlg wide dlg-tall">
+  <div class="dtb"><b>主题列表</b><button class="ico" type="button" aria-label="剪贴板导入" style="font-size:13px;font-weight:600">导入</button></div>
+  <div class="dbody">
+    <div class="lrow"><div class="t1"><b>晨读暖纸（当前）</b></div><svg class="icon ic" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="m8.4 10.8 7.2-4.4M8.4 13.2l7.2 4.4"/></svg><svg class="icon ic" viewBox="0 0 24 24"><path d="M5 7h14"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7"/><path d="M7 7l1 12.2A1.8 1.8 0 0 0 9.8 21h4.4A1.8 1.8 0 0 0 16 19.2L17 7"/></svg></div>
+    <div class="lrow" style="border-top:1px solid var(--divider)"><div class="t1"><b>夜航暖黑</b></div><svg class="icon ic" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="m8.4 10.8 7.2-4.4M8.4 13.2l7.2 4.4"/></svg><svg class="icon ic" viewBox="0 0 24 24"><path d="M5 7h14"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7"/><path d="M7 7l1 12.2A1.8 1.8 0 0 0 9.8 21h4.4A1.8 1.8 0 0 0 16 19.2L17 7"/></svg></div>
+    <div class="lrow" style="border-top:1px solid var(--divider)"><div class="t1"><b>羊皮卷</b></div><svg class="icon ic" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="m8.4 10.8 7.2-4.4M8.4 13.2l7.2 4.4"/></svg><svg class="icon ic" viewBox="0 0 24 24"><path d="M5 7h14"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7"/><path d="M7 7l1 12.2A1.8 1.8 0 0 0 9.8 21h4.4A1.8 1.8 0 0 0 16 19.2L17 7"/></svg></div>
+    <div class="lrow" style="border-top:1px solid var(--divider)"><div class="t1"><b>墨青</b></div><svg class="icon ic" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="m8.4 10.8 7.2-4.4M8.4 13.2l7.2 4.4"/></svg><svg class="icon ic" viewBox="0 0 24 24"><path d="M5 7h14"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7"/><path d="M7 7l1 12.2A1.8 1.8 0 0 0 9.8 21h4.4A1.8 1.8 0 0 0 16 19.2L17 7"/></svg></div>
+  </div>
+  <div class="dfoot"><span class="sp"></span><button class="dact pri" type="button">确定</button></div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>容器</code> — dialog_recycler_view + setLayout(0.9f, 0.9f)（ThemeListDialog.kt:31）；Toolbar title=主题列表。</li>
+<li><code>条目</code> — item_theme_config.xml:36-68：tv_name + iv_share(36dp) + iv_delete(36dp)，均为 primaryText 色；点击行 applyConfig（:109），分享 share(json,"主题分享")（:83-85），删除 alert 确认后 delConfig（:76）。</li>
+<li><code>菜单</code> — menu/theme_list.xml menu_import「剪贴板导入」→ ThemeConfig.addConfig(clip)。</li>
+<li><code>列表分隔</code> — VerticalDivider → 稿面 1px 分割线。</li>
+<li><code>修复</code> — 现 Kotlin:35 primaryColor 顶栏 → surface 顶栏 + on_surface 文字（01 同源）。</li>
+</ul></section>
+
+<!-- ============ 08 封面规则编辑 ============ -->
+<section class="screen-sec" id="s08"><div class="sec-head"><span class="sec-no">08</span><h2>封面规则编辑</h2></div>
+<p class="sec-sub">CoverRuleConfigDialog · 封面设置 →「封面规则」。编辑通用取封面规则：启用开关 + 搜索 URL + CoverUrl 规则；左侧「恢复默认」，两规则非空校验。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="host"><div class="host-tb"><i></i>封面设置<i></i><i></i></div><div class="sk" style="width:52%"></div><div class="sk" style="width:74%"></div></div>
+<div class="veil"></div>
+<div class="dlg wide">
+  <div class="dtb"><b>封面设置</b></div>
+  <div class="dbody" style="flex:none;padding-top:4px">
+    <div class="cb on" style="padding-bottom:4px"><i></i>启用自定义封面规则</div>
+    <div class="field" style="margin-top:6px"><label>搜索url(url)</label><b>https://www.bing.com/search?q={{name}} {{author}}</b></div>
+    <div class="field multi"><label>CoverUrl(coverUrl)</label><b>&lt;js&gt;
+var lists = result.match(/&lt;img[^&gt;]*src="([^"]*)"/g)
+lists[1].replace(/.*src="([^"]*)".*/,"$1")
+&lt;/js&gt;</b></div>
+  </div>
+  <div class="dfoot" style="border-top:1px solid var(--divider)">
+    <button class="dact pri" type="button">恢复默认</button><span class="sp"></span>
+    <button class="dact mut" type="button">取消</button><button class="dact pri" type="button">确定</button>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>容器</code> — dialog_cover_rule_config.xml:9-16 Toolbar（title=封面设置）+ NestedScrollView(:18-65) + Flexbox 底栏(:67-107)。</li>
+<li><code>启用</code> — ThemeCheckBox cb_enable（:29-33）→ BookCover.CoverRule.enable。</li>
+<li><code>规则</code> — edit_search_url（hint=r_search_url「搜索url(url)」，:40-45）与 edit_cover_url_rule（hint=rule_cover_url「CoverUrl(coverUrl)」，:54-59）。</li>
+<li><code>动作</code> — 确定：两规则非空校验后 saveCoverRule（CoverRuleConfigDialog.kt:39-50）；恢复默认 tv_footer_left=btn_default_s → delCoverRule（:51-56）；取消 dismiss。</li>
+<li><code>修复</code> — 现 Kotlin:32 primaryColor 顶栏 → surface 顶栏（01 同源）；「恢复默认」原为 AccentTextView 主色，稿面保持主色文字按钮但删除时用确认 toast，不改行为。</li>
+</ul></section>
+
+<!-- ============ 09 校验书源配置 ============ -->
+<section class="screen-sec" id="s09"><div class="sec-head"><span class="sec-no">09</span><h2>校验书源配置</h2></div>
+<p class="sec-sub">CheckSourceConfig · 书源管理菜单「校验书源」与其它设置的校验项配置。单源超时（秒）+ 五个校验项复选，级联规则：搜索↔发现至少其一；详情关→章节列表禁用，章节列表关→正文禁用。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="host"><div class="host-tb"><i></i>书源管理<i></i><i></i></div><div class="sk" style="width:70%"></div><div class="sk" style="width:58%"></div><div class="sk" style="width:64%"></div></div>
+<div class="veil"></div>
+<div class="dlg">
+  <div class="dtb"><b>校验设置</b></div>
+  <div class="dbody" style="flex:none;padding-top:4px">
+    <div class="field" style="margin-top:4px"><label>单个书源校验超时（秒）</label><b>60</b></div>
+    <div class="sec-lab">校验项</div>
+    <div style="display:flex;flex-wrap:wrap;gap:2px 6px;padding:0 10px 4px">
+      <div class="cb on" style="flex:1 1 45%"><i></i>搜索</div>
+      <div class="cb on" style="flex:1 1 45%"><i></i>发现</div>
+      <div class="cb on" style="flex:1 1 45%"><i></i>详情</div>
+      <div class="cb on" style="flex:1 1 45%"><i></i>章节列表</div>
+      <div class="cb on" style="flex:1 1 45%"><i></i>正文</div>
+    </div>
+    <p style="margin:4px 16px 8px;font-size:11.5px;color:var(--secondary);line-height:1.7">级联：详情关闭时「章节列表/正文」一并停用；章节列表关闭时「正文」停用。</p>
+  </div>
+  <div class="dfoot"><span class="sp"></span><button class="dact mut" type="button">取消</button><button class="dact pri" type="button">确定</button></div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>超时</code> — TextInputLayout check_source_timeout（dialog_check_source_config.xml:203-218，digits=1234567890），空/≤0 时 toast 拦截（CheckSourceConfig.kt:153-170），×1000 存毫秒。</li>
+<li><code>校验项</code> — Flexbox 复选：搜索/发现/详情/章节列表/正文（:226-260）。</li>
+<li><code>级联</code> — 搜索与发现至少其一（:111-120）；详情关 → 章节列表、正文同时取消并禁用，详情开 → 章节列表恢复（:121-130）；章节列表关 → 正文取消并禁用（:131-138）；初值 isEnabled 按 CheckSource 状态（:147-148）。</li>
+<li><code>动作</code> — 取消 dismiss；确定写回 CheckSource 并 putPrefString(checkSource, summary)（:152-179）。</li>
+<li><code>修复</code> — 现 Kotlin:31 primaryColor 顶栏 → surface 顶栏（01 同源）；禁用项按 MASTER「禁用灰底灰字」用 45% 不透明度+次要文字色。</li>
+</ul></section>
+
+<!-- ============ 10 直链上传配置 ============ -->
+<section class="screen-sec" id="s10"><div class="sec-head"><span class="sec-no">10</span><h2>直链上传配置</h2></div>
+<p class="sec-sub">DirectLinkUploadConfig · 其它设置 → 直链上传。配置获取封面直链的 API：上传 URL、下载地址规则、备注、是否压缩；顶栏溢出「复制/粘贴/导入默认规则」，左下「测试」。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="host"><div class="host-tb"><i></i>其它设置<i></i><i></i></div><div class="sk" style="width:62%"></div><div class="sk" style="width:78%"></div></div>
+<div class="veil"></div>
+<div class="dlg wide">
+  <div class="dtb"><b>直链上传配置</b><button class="ico" type="button" aria-label="更多"><svg class="icon" style="width:20px;height:20px" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></g></svg></button></div>
+  <div class="dbody" style="flex:none;padding-top:6px">
+    <div class="field"><label>上传url</label><b>https://api.example.com/upload</b></div>
+    <div class="field multi"><label>downloadUrlRule(downloadUrls)</label><b>&lt;js&gt;
+JSON.parse(result).data.url
+&lt;/js&gt;</b></div>
+    <div class="field"><label>summary（备注）</label><b>示例图床 · 支持鉴权头</b></div>
+    <div class="cb on" style="margin-bottom:6px"><i></i>是否压缩上传图片</div>
+  </div>
+  <div class="dfoot" style="border-top:1px solid var(--divider)">
+    <button class="dact pri" type="button">测试</button><span class="sp"></span>
+    <button class="dact mut" type="button">取消</button><button class="dact pri" type="button">确定</button>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>容器</code> — dialog_direct_link_upload_config.xml:117-124 Toolbar + 滚动表单(:126-188) + Flexbox 底栏(:190-229)；setLayout(MATCH_PARENT, WRAP)（DirectLinkUploadConfig.kt:33）。</li>
+<li><code>字段</code> — edit_upload_url（upload_url，:142-147）、edit_download_url_rule（downloadUrlRule(downloadUrls)，:156-161）、edit_summary（summary，:170-175）、cb_compress（是否压缩，:179-184）。</li>
+<li><code>顶栏菜单</code> — menu/direct_link_upload_config.xml：复制规则/粘贴规则/导入默认规则（showAsAction=never，DirectLinkUploadConfig.kt:237-243）→ 稿面 ⋮ 溢出。</li>
+<li><code>动作</code> — 测试 tv_footer_left=test（:226-228）上传测试图校验直链；确定保存 putConfig 后关闭（:229-234）。</li>
+<li><code>修复</code> — 现 Kotlin:37 primaryColor 顶栏 → surface 顶栏（01 同源）；溢出菜单项文字用 on_surface。</li>
+</ul></section>
+
+<!-- ============ 11 点击区域设置 ============ -->
+<section class="screen-sec" id="s11"><div class="sec-head"><span class="sec-no">11</span><h2>点击区域设置</h2></div>
+<p class="sec-sub">ClickActionConfigDialog · 更多设置「点击区域设置」（pref_config_read）。全屏半透明覆盖：3×3 九宫格，每格显示当前动作，点按弹「选择操作」14 项选择器。本稿为亮色白字修复版（格面改用 surface 面板）。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="rhost"><h4>第三十二章 夜探藏书楼</h4><p>檐角的铜铃在夜风里轻响，他屏住呼吸，沿着书架的暗影一步步挪近那扇虚掩的雕花木门。门后是一整面墙的孤本……</p><p>烛火摇曳间，一册蓝皮旧书正摊在案上。</p></div>
+<div class="ca">
+  <div class="ca-head">点击区域设置<span class="sp"></span><span style="font-size:11.5px;color:var(--secondary);font-weight:400">点按格子选择动作</span><button class="x" type="button" aria-label="关闭"><svg class="icon" style="width:18px;height:18px" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+  <div class="ca-grid">
+    <div class="ca-cell">上一页</div><div class="ca-cell">上一页</div><div class="ca-cell">下一页</div>
+    <div class="ca-cell">上一页</div><div class="ca-cell mid">菜单</div><div class="ca-cell">下一页</div>
+    <div class="ca-cell">上一页</div><div class="ca-cell">下一页</div><div class="ca-cell">下一页</div>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>容器</code> — dialog_click_action_config.xml:2-11：全屏 root（translucent 半透明遮罩）+ 顶部标题栏（点击区域设置+关闭 :13-41）+ 3×3 等分九宫格（:43-165）；window 全屏无背景（ClickActionConfigDialog.kt:44-50）。</li>
+<li><code>九宫格</code> — tvTopLeft…tvBottomRight 九个 TextView，显示 AppConfig.clickActionTL/TC/TR/ML/MC/MR/BL/BC/BR 对应动作名（:64-74）。</li>
+<li><code>选择器</code> — 点格子弹 selector「选择操作」：无动作/菜单/下一页/上一页/下一章/上一章/朗读上一段/朗读下一段/添加书签/编辑内容/替换状态/目录/搜索内容/同步进度/暂停朗读，共 14 项（actions，:24-42,136-143）；关闭后 detectClickArea()（:145-148）。</li>
+<li><code>修复（亮色白字）</code> — 原格面 shape_translucent_card（solid=@color/translucent #99343434，drawable/shape_translucent_card.xml:5；colors.xml:118）+ 白字（dialog_click_action_config.xml:31,57 等全部格）：亮色正文上合成 ≈#838382，白字对比仅 3.79:1（&lt;4.5）。改法：格面 drawable 拆 values（#F0ECE9）/ values-night（#E8242220）两版 96% 不透明实色，文字 white → on_surface（合成底上 13.3:1，+关闭钮 tint :39）；外层遮罩保留 @color/translucent。中间「菜单」格主色虚线强调默认居中调菜单。<b>注（实施裁定）</b>：稿面 :117 .ca-cell.mid 的主色文字（color:var(--primary)）不落地——主色 #FF6B2C 压亮色格底 #F0ECE9 仅 2.42:1 违 MASTER §4 ≥4.5:1（夜间 5.58:1 达标但亮色失效，同 10-reader-prefs#08 注② 2.41:1 弃用先例）；强调语义由主色虚线描边单独承载，中格文字与各格一致维持 on_surface（13.3:1）。</li>
+</ul></section>
+
+<!-- ============ 12 自定义翻页按键 ============ -->
+<section class="screen-sec" id="s12"><div class="sec-head"><span class="sec-no">12</span><h2>自定义翻页按键</h2></div>
+<p class="sec-sub">PageKeyDialog · 更多设置「自定义翻页按键」。上一页/下一页按键码输入，聚焦输入框后按物理键自动记录键值（逗号分隔），底部重置/确定。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="rhost"><h4>第三十二章 夜探藏书楼</h4><p>檐角的铜铃在夜风里轻响，他屏住呼吸，沿着书架的暗影一步步挪近那扇虚掩的雕花木门……</p></div>
+<div class="veil"></div>
+<div class="dlg" style="width:344px">
+  <div class="dbody" style="flex:none;padding:14px 4px 8px">
+    <b style="display:block;padding:0 16px;font-size:18px;font-weight:700">自定义翻页按键</b>
+    <div class="field" style="margin-top:12px"><label>上一页按键</label><b>21, 92</b></div>
+    <div class="field" style="box-shadow:inset 0 0 0 1.5px var(--primary)"><label>下一页按键（聚焦后按物理键录入）</label><b>22, 93<span style="display:inline-block;width:1px;height:15px;background:var(--primary);margin-left:2px;vertical-align:-2px"></span></b></div>
+    <p style="margin:8px 16px 12px;font-size:12px;color:var(--secondary);line-height:1.8">聚焦输入框后按物理键会自动填入键值，多个按键自动以逗号分隔。</p>
+    <div style="display:flex;gap:10px;margin:0 16px 4px">
+      <button class="btn" type="button">重置</button><button class="btn pri" type="button">确定</button>
+    </div>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>容器</code> — dialog_page_key.xml:176-258：tv_title(18sp bold) + 两个 TextInputLayout（et_prev/et_next）+ page_key_set_help 帮助文字 + 重置/确定（selector_fillet_btn_bg）；setLayout(0.9f, WRAP)（PageKeyDialog.kt:23）。</li>
+<li><code>键值录入</code> — onKeyDown 拦截非 BACK/DEL 键，向聚焦的输入框追加 keyCode，逗号分隔（PageKeyDialog.kt:44-65）；初值 getPrefString(prevKeys/nextKeys)（:30-31）。</li>
+<li><code>动作</code> — 重置清空两框（:32-35）；确定 putPrefString 保存并 dismiss（:36-40）。</li>
+<li><code>设计调整</code> — 原按钮仅 5dp 上下 padding（触控不足，:235-237,252-254），稿面改为 44dp 高胶囊；输入聚焦态用 2dp 主色描边表达。</li>
+</ul></section>
+<!-- ============ 13 边距设置 ============ -->
+<section class="screen-sec" id="s13"><div class="sec-head"><span class="sec-no">13</span><h2>边距设置</h2></div>
+<p class="sec-sub">PaddingConfigDialog · 阅读界面设置「边距」入口（ReadStyleDialog 调起）的底部弹层。页眉/正文/页脚三组各上下左右四向滑杆实时生效；页眉/页脚可另开「显示分隔线」。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="rhost"><h4>第三十二章 夜探藏书楼</h4><p>檐角的铜铃在夜风里轻响，他屏住呼吸，沿着书架的暗影一步步挪近那扇虚掩的雕花木门。门后是一整面墙的孤本……</p></div>
+<div class="veil" style="background:rgba(0,0,0,.22)"></div>
+<div class="sheet" style="height:68%">
+  <div class="grab"></div>
+  <div class="body">
+    <div class="sec-lab">页眉</div>
+    <div class="cb spread" style="padding:2px 16px 6px"><span style="font-size:13.5px">显示分隔线</span><span class="switch on"></span></div>
+    <div class="dsb"><div class="t"><b>上边距</b><output>24</output></div><div class="ctl"><button class="pm" type="button">−</button><div class="bar"><i style="width:24%"></i><b style="left:24%"></b></div><button class="pm" type="button">＋</button></div></div>
+    <div class="dsb"><div class="t"><b>下边距</b><output>16</output></div><div class="ctl"><button class="pm" type="button">−</button><div class="bar"><i style="width:16%"></i><b style="left:16%"></b></div><button class="pm" type="button">＋</button></div></div>
+    <div class="dsb"><div class="t"><b>左边距</b><output>18</output></div><div class="ctl"><button class="pm" type="button">−</button><div class="bar"><i style="width:18%"></i><b style="left:18%"></b></div><button class="pm" type="button">＋</button></div></div>
+    <div class="dsb"><div class="t"><b>右边距</b><output>18</output></div><div class="ctl"><button class="pm" type="button">−</button><div class="bar"><i style="width:18%"></i><b style="left:18%"></b></div><button class="pm" type="button">＋</button></div></div>
+    <div class="sec-lab">正文</div>
+    <div class="dsb"><div class="t"><b>上边距</b><output>48</output></div><div class="ctl"><button class="pm" type="button">−</button><div class="bar"><i style="width:24%"></i><b style="left:24%"></b></div><button class="pm" type="button">＋</button></div></div>
+    <div class="dsb"><div class="t"><b>下边距</b><output>32</output></div><div class="ctl"><button class="pm" type="button">−</button><div class="bar"><i style="width:16%"></i><b style="left:16%"></b></div><button class="pm" type="button">＋</button></div></div>
+    <div class="dsb"><div class="t"><b>左边距</b><output>20</output></div><div class="ctl"><button class="pm" type="button">−</button><div class="bar"><i style="width:20%"></i><b style="left:20%"></b></div><button class="pm" type="button">＋</button></div></div>
+    <div class="dsb"><div class="t"><b>右边距</b><output>20</output></div><div class="ctl"><button class="pm" type="button">−</button><div class="bar"><i style="width:20%"></i><b style="left:20%"></b></div><button class="pm" type="button">＋</button></div></div>
+    <div class="sec-lab">页脚</div>
+    <div class="cb spread" style="padding:2px 16px 4px"><span style="font-size:13.5px">显示分隔线</span><span class="switch on"></span></div>
+    <div class="dsb"><div class="t"><b>上边距</b><output>12</output></div><div class="ctl"><button class="pm" type="button">−</button><div class="bar"><i style="width:12%"></i><b style="left:12%"></b></div><button class="pm" type="button">＋</button></div></div>
+    <div class="fade"></div>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>分组</code> — dialog_read_padding.xml：页眉组（ll_header_padding，:13-75）+ 正文（tv_body_padding，:77-84）+ 页脚组（:114-168），各含 DetailSeekBar 上/下/左/右（正文 top max=200，其余 max=100）。</li>
+<li><code>分隔线开关</code> — cb_show_top_line / cb_show_bottom_line（showLine=显示分隔线，:34-43,129-138）。</li>
+<li><code>实时生效</code> — onChanged 即写 ReadBookConfig 并 postEvent(UP_CONFIG) 局部刷新（PaddingConfigDialog.kt:75-124）；onDismiss 时 ReadBookConfig.save()（:40-44）→ 无确定按钮（即时生效）。</li>
+<li><code>组件</code> — DetailSeekBar（view_detail_seekbar）：标题+数值 + −/滑杆/+；稿面按此渲染，−/＋ 为 30dp 圆钮。</li>
+</ul></section>
+
+<!-- ============ 14 提示信息设置 ============ -->
+<section class="screen-sec" id="s14"><div class="sec-head"><span class="sec-no">14</span><h2>提示信息设置</h2></div>
+<p class="sec-sub">TipConfigDialog · 阅读界面设置「信息」入口（ReadBookActivity/ReadStyleDialog 调起）。章节标题样式 + 页眉/页脚各左中右三个提示位选择器 + 页眉页脚文字/分隔线颜色。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="rhost"><h4>第三十二章 夜探藏书楼</h4><p>檐角的铜铃在夜风里轻响，他屏住呼吸，沿着书架的暗影一步步挪近那扇虚掩的雕花木门……</p></div>
+<div class="veil" style="background:rgba(0,0,0,.22)"></div>
+<div class="sheet" style="height:70%">
+  <div class="grab"></div>
+  <div class="body">
+    <div class="sec-lab">正文标题</div>
+    <div style="display:flex;gap:4px;padding:0 10px 2px">
+      <div class="cb rd on" style="flex:1;padding:7px 12px"><i></i>居左</div>
+      <div class="cb rd" style="flex:1;padding:7px 12px;color:var(--secondary)"><i></i>居中</div>
+      <div class="cb rd" style="flex:1;padding:7px 12px;color:var(--secondary)"><i></i>隐藏</div>
+    </div>
+    <div class="dsb"><div class="t"><b>标题字号</b><output>+2</output></div><div class="ctl"><button class="pm" type="button">−</button><div class="bar"><i style="width:20%"></i><b style="left:20%"></b></div><button class="pm" type="button">＋</button></div></div>
+    <div class="dsb"><div class="t"><b>上边距</b><output>24</output></div><div class="ctl"><button class="pm" type="button">−</button><div class="bar"><i style="width:24%"></i><b style="left:24%"></b></div><button class="pm" type="button">＋</button></div></div>
+    <div class="dsb"><div class="t"><b>下边距</b><output>16</output></div><div class="ctl"><button class="pm" type="button">−</button><div class="bar"><i style="width:16%"></i><b style="left:16%"></b></div><button class="pm" type="button">＋</button></div></div>
+    <div class="sec-lab">页眉（左 / 中 / 右 提示位）</div>
+    <div class="row" style="padding-top:6px;padding-bottom:4px"><span class="lab">显示</span><span class="val">显示 <svg class="icon" style="width:15px;height:15px" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg></span></div>
+    <div class="row" style="padding-top:2px;padding-bottom:2px"><span class="lab">左</span><span class="val" style="color:var(--text)">章节标题 <svg class="icon" style="width:15px;height:15px;color:var(--secondary)" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg></span></div>
+    <div class="row" style="padding-top:2px;padding-bottom:2px"><span class="lab">中</span><span class="val" style="color:var(--text)">时间 <svg class="icon" style="width:15px;height:15px;color:var(--secondary)" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg></span></div>
+    <div class="row" style="padding-top:2px;padding-bottom:2px"><span class="lab">右</span><span class="val" style="color:var(--text)">电量 <svg class="icon" style="width:15px;height:15px;color:var(--secondary)" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg></span></div>
+    <div class="sec-lab">页脚（左 / 中 / 右 提示位）</div>
+    <div class="row" style="padding-top:6px;padding-bottom:2px"><span class="lab">左</span><span class="val" style="color:var(--text)">进度% <svg class="icon" style="width:15px;height:15px;color:var(--secondary)" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg></span></div>
+    <div class="row" style="padding-top:2px;padding-bottom:2px"><span class="lab">中</span><span class="val" style="color:var(--text)">页数 <svg class="icon" style="width:15px;height:15px;color:var(--secondary)" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg></span></div>
+    <div class="row" style="padding-top:2px;padding-bottom:2px"><span class="lab">右</span><span class="val" style="color:var(--text)">时间·电量 <svg class="icon" style="width:15px;height:15px;color:var(--secondary)" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg></span></div>
+    <div class="sec-lab">页眉页脚</div>
+    <div class="row" style="padding-top:2px;padding-bottom:2px"><span class="lab">提示文字颜色</span><span class="val" style="color:var(--text)">与正文同色</span></div>
+    <div class="row" style="padding-top:2px;padding-bottom:8px"><span class="lab">分隔线颜色</span><span class="val" style="color:var(--text)">默认</span></div>
+    <div class="fade"></div>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>正文标题</code> — dialog_tip_config.xml:186-242：RadioGroup rb_title_mode1/2/3（标题左/居中/隐藏，titleMode）+ dsb_title_size(max10)/dsb_title_top/dsb_title_bottom（字号/上/下边距）。</li>
+<li><code>页眉页脚提示位</code> — tv_header_show/tv_footer_show（显示/隐藏模式，ReadTipConfig.getHeaderModes/FooterModes，TipConfigDialog.kt:53-60,126-140）+ 左中右六行点按弹 tipNames 选择器（Blank/书名/标题/时间/电量/电量%/页数/进度%…，ReadTipConfig.kt:23-28，arrays.xml read_tip），clearRepeat 防重复占位（:141-147）。</li>
+<li><code>颜色</code> — tv_tip_color（与正文同色/自定义色值，TipConfigDialog.kt:88-97）、tv_tip_divider_color（默认/与正文同色/自定义，:99-110），监听 TIP_COLOR 事件刷新（:40-43）。</li>
+<li><code>实时生效</code> — 全部改动 postEvent(UP_CONFIG, [2/5/6/8]) 即时刷新页眉页脚（initEvent）。</li>
+<li><code>呈现</code> — 选择器行以「值 + 下拉箭头」行式呈现（原布局即 TextView 值，:259-275）；选择项弹层沿用系统 selector（与点击区域设置同组件）。</li>
+</ul></section>
+
+<!-- ============ 15 漫画滤镜 ============ -->
+<section class="screen-sec" id="s15"><div class="sec-head"><span class="sec-no">15</span><h2>漫画滤镜</h2></div>
+<p class="sec-sub">MangaColorFilterDialog · 漫画阅读溢出菜单「滤镜」。底部弹层（无遮罩，clearFlags FLAG_DIM_BEHIND）：亮度与 R/G/B/A 五路滑杆，拖动即时预览。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="mhost"><div class="pg" style="position:relative;overflow:hidden"><div style="position:absolute;inset:0;background:rgba(255,170,120,.18)"></div><span style="position:absolute;left:12px;bottom:10px;color:#fff;font-size:12px;text-shadow:0 1px 2px rgba(0,0,0,.6)">第 12 话 · 14/22</span></div></div>
+<div class="sheet" style="height:52%;border-top:1px solid var(--divider)">
+  <div class="grab"></div>
+  <h4>滤镜</h4>
+  <div class="body">
+    <div class="dsb"><div class="t"><b>亮度</b><output>128</output></div><div class="ctl"><button class="pm" type="button">−</button><div class="bar"><i style="width:50%"></i><b style="left:50%"></b></div><button class="pm" type="button">＋</button></div></div>
+    <div class="dsb"><div class="t"><b>R</b><output>0</output></div><div class="ctl"><button class="pm" type="button">−</button><div class="bar"><i style="width:0"></i><b style="left:0"></b></div><button class="pm" type="button">＋</button></div></div>
+    <div class="dsb"><div class="t"><b>G</b><output>0</output></div><div class="ctl"><button class="pm" type="button">−</button><div class="bar"><i style="width:0"></i><b style="left:0"></b></div><button class="pm" type="button">＋</button></div></div>
+    <div class="dsb"><div class="t"><b>B</b><output>24</output></div><div class="ctl"><button class="pm" type="button">−</button><div class="bar"><i style="width:9%"></i><b style="left:9%"></b></div><button class="pm" type="button">＋</button></div></div>
+    <div class="dsb"><div class="t"><b>A</b><output>64</output></div><div class="ctl"><button class="pm" type="button">−</button><div class="bar"><i style="width:25%"></i><b style="left:25%"></b></div><button class="pm" type="button">＋</button></div></div>
+    <p style="margin:6px 16px 8px;font-size:11.5px;color:var(--secondary)">R/G/B/A 为滤镜色叠加通道（0–255），拖动即时作用于当前漫画页。</p>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>滑杆</code> — dialog_manga_color_filter.xml:20-53：dsb_brightness/dsb_r/dsb_g/dsb_b/dsb_a，max 均 255，标题「滤镜」（:13-18）。</li>
+<li><code>实时</code> — onChanged 写 MangaConfig 并回调 activity 刷新（MangaColorFilterDialog.kt:47-67）。</li>
+<li><code>容器</code> — MATCH_PARENT×WRAP 底部弹层 + clearFlags(FLAG_DIM_BEHIND)（:25-27）→ 背景不加暗纱，漫画页保持可见预览。</li>
+<li><code>呈现</code> — R/G/B/A 滑杆进度与滑块可分别以对应色相着色（设计增强，实现为 DetailSeekBar progressThumbTint 一行；背景轨道保持主题色）。</li>
+</ul></section>
+
+<!-- ============ 16 墨水屏设置 ============ -->
+<section class="screen-sec" id="s16"><div class="sec-head"><span class="sec-no">16</span><h2>墨水屏设置（漫画）</h2></div>
+<p class="sec-sub">MangaEpaperDialog · 漫画溢出菜单「墨水屏设置」（menu_epaper_manga_setting，开启墨水屏模式后可见）。底部弹层单滑杆：二值化阈值 0–255。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="mhost"><div class="pg" style="position:relative;overflow:hidden;image-rendering:pixelated;background:
+linear-gradient(90deg,#2b2b2b 0 18%,#f2f2f2 18% 34%,#1d1d1d 34% 52%,#e9e9e9 52% 70%,#242424 70% 86%,#dedede 86%)"><span style="position:absolute;left:12px;bottom:10px;color:#111;font-size:12px">墨水屏二值化预览</span></div></div>
+<div class="sheet" style="height:40%;border-top:1px solid var(--divider)">
+  <div class="grab"></div>
+  <h4>墨水屏设置</h4>
+  <div class="body">
+    <div class="dsb" style="padding-top:12px"><div class="t"><b>阈值</b><output>128</output></div><div class="ctl"><button class="pm" type="button">−</button><div class="bar"><i style="width:50%"></i><b style="left:50%"></b></div><button class="pm" type="button">＋</button></div></div>
+    <p style="margin:10px 16px 8px;font-size:11.5px;color:var(--secondary)">阈值越高，画面越多像素归入黑色；配合「墨水屏」开关使用。</p>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>滑杆</code> — dialog_manga_epaper.xml:70-83：dsb_epaper max=255，标题「墨水屏设置」（:70-75）+ 值「阈值」（:77-82）。</li>
+<li><code>实时</code> — onChanged 写 AppConfig.mangaEInkThreshold 并回调刷新（MangaEpaperDialog.kt:108-115）；开关本体在溢出菜单 menu_epaper_manga（ReadMangaActivity.kt:580-589，开启后才显示本设置项 :588）。</li>
+<li><code>容器</code> — MATCH_PARENT×WRAP 底部弹层 + clearFlags(FLAG_DIM_BEHIND)（MangaEpaperDialog.kt:98-100）。</li>
+</ul></section>
+
+<!-- ============ 17 漫画页脚配置 ============ -->
+<section class="screen-sec" id="s17"><div class="sec-head"><span class="sec-no">17</span><h2>漫画页脚配置</h2></div>
+<p class="sec-sub">MangaFooterSettingDialog · 漫画溢出菜单「页脚配置」。按「章节 / 页数 / 总进度」三组控制元素与文案的显隐（勾选=隐藏），页脚可整体显示/隐藏并靠左或居中。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="mhost"><div class="pg" style="position:relative;overflow:hidden"><div style="position:absolute;left:12px;bottom:10px;display:flex;gap:12px;color:#fff;font-size:12px;text-shadow:0 1px 2px rgba(0,0,0,.6)"><span>第 12 话.</span><span>14/22</span><span>38%</span></div></div></div>
+<div class="veil" style="background:rgba(0,0,0,.22)"></div>
+<div class="sheet" style="height:74%">
+  <div class="grab"></div>
+  <h4>页脚配置</h4>
+  <div class="body">
+    <div class="sec-lab">《章节和文案》隐藏</div>
+    <div style="display:flex;flex-wrap:wrap;gap:2px 6px;padding:0 10px">
+      <div class="cb" style="flex:1 1 45%"><i></i>《章节.》文案</div>
+      <div class="cb on" style="flex:1 1 45%"><i></i>章节序号</div>
+      <div class="cb" style="flex:1 1 45%"><i></i>章节名称</div>
+    </div>
+    <div class="sec-lab">《页数和文案》隐藏</div>
+    <div style="display:flex;flex-wrap:wrap;gap:2px 6px;padding:0 10px">
+      <div class="cb" style="flex:1 1 45%"><i></i>《页数.》文案</div>
+      <div class="cb" style="flex:1 1 45%"><i></i>页数</div>
+    </div>
+    <div class="sec-lab">《总进度和文案》隐藏</div>
+    <div style="display:flex;flex-wrap:wrap;gap:2px 6px;padding:0 10px">
+      <div class="cb" style="flex:1 1 45%"><i></i>《总进度.》文案</div>
+      <div class="cb" style="flex:1 1 45%"><i></i>总进度</div>
+    </div>
+    <div class="sec-lab">页脚</div>
+    <div style="display:flex;gap:4px;padding:0 10px 2px">
+      <div class="cb rd on" style="flex:1;padding:7px 12px"><i></i>显示</div>
+      <div class="cb rd" style="flex:1;padding:7px 12px;color:var(--secondary)"><i></i>隐藏</div>
+    </div>
+    <div style="display:flex;gap:4px;padding:0 10px 10px">
+      <div class="cb rd on" style="flex:1;padding:7px 12px"><i></i>靠左</div>
+      <div class="cb rd" style="flex:1;padding:7px 12px;color:var(--secondary)"><i></i>居中</div>
+    </div>
+    <div class="fade"></div>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>分组标签</code> — dialog_manga_footer_setting.xml:104-110「manga_header_chapter」=《章节和文案》隐藏（zh strings），组内复选：cb_chapter_label《章节.》文案 / cb_chapter 章节 / cb_chapter_name 章节名称（:112-140）；页数组 :142-170；进度组 :172-200。</li>
+<li><code>语义</code> — 勾选=隐藏（config.hideChapterLabel/hideChapter/hidePageNumberLabel/hidePageNumber/hideProgressRatioLabel/hideProgressRatio，MangaFooterSettingDialog.kt:31-70）。</li>
+<li><code>页脚整体</code> — rg_footer 显示/隐藏（:210-232）+ rg_footer_orientation 靠左/居中（:234-256）。</li>
+<li><code>容器</code> — MATCH_PARENT×WRAP 底部弹层（MangaFooterSettingDialog.kt:26）；即时保存 config。</li>
+</ul></section>
+<!-- ============ 18 图片查看 ============ -->
+<section class="screen-sec" id="s18"><div class="sec-head"><span class="sec-no">18</span><h2>图片查看</h2></div>
+<p class="sec-sub">PhotoDialog · 书籍详情封面、正文插图、验证码图片的点击放大查看器。全屏 PhotoView（centerInside），图片支持双指缩放/拖动；来源依次为缓存图、本地章节图、网络加载（默认封面兜底）。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="host"><div class="host-tb"><i></i>书籍详情<i></i><i></i></div><div class="sk" style="width:60%"></div><div class="sk" style="width:82%"></div><div class="sk" style="width:48%"></div></div>
+<div class="veil"></div>
+<div class="photo"><div class="ph-img" style="transform:scale(1.06)"></div></div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>容器</code> — dialog_photo_view.xml:8-15：ConstraintLayout（background=@color/background）+ PhotoView（scaleType=centerInside）；setLayout(1f, MATCH_PARENT)（PhotoDialog.kt:198）全屏。</li>
+<li><code>图片来源</code> — ImageProvider.get 缓存位图优先（PhotoDialog.kt:205-208）；本地章节图 BookHelp.getImage（:209-218，加载失败图 image_loading_error）；网络图按 sourceOrigin 走书源请求（:219-228，失败回退默认封面 BookCover.defaultDrawable）。</li>
+<li><code>交互</code> — PhotoView 双指缩放/拖动；无工具栏、无按钮（与现实现一致，不加虚构功能）。</li>
+<li><code>呈现说明</code> — 亮色主题背景为暖纸 surface（@color/background）；放大比例 106% 表达「可缩放」状态仅示意。</li>
+</ul></section>
+
+<!-- ============ 19 加入书架确认 ============ -->
+<section class="screen-sec" id="s19"><div class="sec-head"><span class="sec-no">19</span><h2>加入书架确认</h2></div>
+<p class="sec-sub">AddToBookshelfDialog · 添加网址导入/文件关联导入完成后弹出：载入书籍信息（载入中为旋转 loading），展示书名/作者/来源后确认加入；确定后跳书籍详情。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="host"><div class="host-tb"><i></i>添加网址<i></i><i></i></div><div class="sk" style="width:64%"></div><div class="sk" style="width:38%"></div></div>
+<div class="veil"></div>
+<div class="dlg" style="width:320px">
+  <b style="display:block;padding:16px 18px 6px;font-size:16px;font-weight:700">加入书架</b>
+  <div class="dbody" style="flex:none;padding:4px 0 2px">
+    <div class="row" style="padding:8px 18px 2px"><b style="font-size:16px;font-weight:650">鬼吹灯</b></div>
+    <div class="row" style="padding:2px 18px"><svg class="icon" style="width:18px;height:18px;color:var(--secondary)" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg><span style="color:var(--secondary);font-size:13.5px">天下霸唱</span></div>
+    <div class="row" style="padding:2px 18px 10px"><svg class="icon" style="width:18px;height:18px;color:var(--secondary)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3.5 9h17M3.5 15h17M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span style="color:var(--secondary);font-size:13.5px">来源：千千小说网</span></div>
+  </div>
+  <div class="dfoot" style="border-top:1px solid var(--divider)">
+    <button class="dact pri" type="button">阅读</button><span class="sp"></span>
+    <button class="dact mut" type="button">取消</button><button class="dact pri" type="button">确定</button>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>标题</code> — tv_title「加入书架」16sp bold（dialog_add_to_bookshelf.xml:8-17）。</li>
+<li><code>书籍信息</code> — book_info 容器默认 invisible（:19-25）：tv_name + 作者行（ic_author + tv_author，:27-55）+ 来源行（ic_web_outline + tv_origin，:57-78）；载入中 RotateLoading 居中转圈（:83-90，loadStateLiveData 控制 AddToBookshelfDialog.kt:72-78），载入失败 toast 并关闭（:79-83）。</li>
+<li><code>数据流</code> — viewModel.load(bookUrl)：已在校验重名（「已在书架」），解析 baseUrl 后逐级匹配书源取详情（:86-140）；成功 saveSearchBook 后 startActivity(BookInfoActivity)（:82-88）。</li>
+<li><code>动作现状</code> — 当前仅 tv_cancel 接线（:92）；tv_ok(tv_read) 为预留控件（gone/invisible）。</li>
+<li><code>改进</code> — 确定态补「确定=加入并看详情 / 阅读=加入并直接进阅读」两动作（接线预留的 tv_ok/tv_read，改一行可见性+onClick），取消=放弃；finishOnDismiss 时关宿主页（:53-59）。</li>
+</ul></section>
+
+<!-- ============ 20 RSS 收藏配置 ============ -->
+<section class="screen-sec" id="s20"><div class="sec-head"><span class="sec-no">20</span><h2>RSS 收藏配置</h2></div>
+<p class="sec-sub">RssFavoritesDialog · RSS 阅读页菜单「收藏」→ 新建/编辑收藏的标题与分组。居中大卡：Toolbar「收藏」+ 标题/分组名两个填充输入 + 删除/取消/确定。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="host"><div class="host-tb"><i></i>订阅文章<i></i><i></i></div><div class="sk" style="width:72%"></div><div class="sk" style="width:84%"></div><div class="sk" style="width:56%"></div></div>
+<div class="veil"></div>
+<div class="dlg wide">
+  <div class="dtb"><b>收藏</b></div>
+  <div class="dbody" style="flex:none;padding-top:8px">
+    <div class="field"><label>标题</label><b>为什么大多数人都读不完长篇</b></div>
+    <div class="field"><label>分组名</label><b>写作方法</b></div>
+    <p style="margin:2px 16px 10px;font-size:11.5px;color:var(--secondary)">分组不存在时将自动创建，同名文章可归入不同分组。</p>
+  </div>
+  <div class="dfoot" style="border-top:1px solid var(--divider)">
+    <button class="dact danger" type="button">删除</button><span class="sp"></span>
+    <button class="dact mut" type="button">取消</button><button class="dact pri" type="button">确定</button>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>容器</code> — dialog_rss_favorite_config.xml:262-388：FrameLayout(16dp) 内 vw_bg 居中卡（bg_card）+ Toolbar「收藏」（:278-285）+ 滚动表单 + Flexbox 底栏；setLayout(MATCH_PARENT, MATCH_PARENT)（RssFavoritesDialog.kt:27），视觉为全屏遮罩大卡。</li>
+<li><code>输入</code> — edit_title（标题）与 edit_group（分组名），TextInputLayout filled 模式（boxBackgroundColor=surface_container_high、10dp 圆角、聚焦 2dp 主色描边，:300-342）—— v3 已定的 field 样式。</li>
+<li><code>动作</code> — 确定：非空回填并 callback.updateFavorite(title, group)（RssFavoritesDialog.kt:46-58）；删除 tv_footer_left → deleteFavorite()（:59-64）；取消 dismiss（:42-45）。</li>
+<li><code>说明行</code> — 稿面新增小字说明「分组自动创建」为编辑提示（非新功能，RssSourceHelp 已按组名建组）。</li>
+</ul></section>
+
+<!-- ============ 21 规则订阅编辑 ============ -->
+<section class="screen-sec" id="s21"><div class="sec-head"><span class="sec-no">21</span><h2>规则订阅编辑</h2></div>
+<p class="sec-sub">RuleSubActivity 内嵌 alert · 规则订阅页新建/编辑订阅规则。类型（书源/订阅源/替换规则）下拉 + 名称 + Url；保存时按 Url 查重。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="host"><div class="host-tb"><i></i>规则订阅<i></i><i></i></div><div class="sk" style="width:66%"></div><div class="sk" style="width:50%"></div></div>
+<div class="veil"></div>
+<div class="dlg">
+  <div class="dtb"><b>规则订阅</b></div>
+  <div class="dbody" style="flex:none;padding-top:6px">
+    <div class="row" style="padding:6px 16px 10px"><span style="font-size:14px;color:var(--primary);font-weight:600">类型：</span><span style="flex:1;font-size:14px;font-weight:600">书源</span><svg class="icon" style="width:16px;height:16px;color:var(--secondary)" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg></div>
+    <div class="field"><label>名称</label><b>精选书源合集</b></div>
+    <div class="field"><label>Url</label><b style="font-family:ui-monospace,Consolas,monospace;font-size:12.5px">https://example.com/legado/sources.json</b></div>
+    <p style="margin:2px 16px 8px;font-size:11.5px;color:var(--secondary)">打开订阅即按类型导入：书源 / 订阅源 / 替换规则。</p>
+  </div>
+  <div class="dfoot"><span class="sp"></span><button class="dact mut" type="button">取消</button><button class="dact pri" type="button">确定</button></div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>表单</code> — dialog_rule_sub_edit.xml:398-442：AccentTextView「类型：」+ AppCompatSpinner sp_type（entries=@array/rule_type：书源/订阅源/替换规则，values-zh/arrays.xml:100-106）+ TextInputLayout et_name / et_url。</li>
+<li><code>保存</code> — alert(okButton) 读 type/name/url，appDb.ruleSubDao.findByUrl 查重：同 Url 不同 id 时 toast「Url 已存在(名称)」（RuleSubActivity.kt:97-123）。</li>
+<li><code>入口</code> — 顶栏 menu_add 新建（customOrder=maxOrder+1，:53-61）；列表项长按/菜单编辑。</li>
+<li><code>呈现</code> — Spinner 行以「值 + 下拉箭头」呈现；六分之一稿面示例为已填态。</li>
+</ul></section>
+
+<!-- ============ 22 背景图片虚化 ============ -->
+<section class="screen-sec" id="s22"><div class="sec-head"><span class="sec-no">22</span><h2>背景图片虚化</h2></div>
+<p class="sec-sub">ThemeConfigFragment:270 alertImageBlurring · 主题设置中设置封面/背景虚化范围。标准 alert + 自定义视图：居中数值 + 0–25 滑杆 + 提示文字，0 为停用。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="host"><div class="host-tb"><i></i>主题设置<i></i><i></i></div><div class="sk" style="width:54%"></div><div class="sk" style="width:72%"></div></div>
+<div class="veil"></div>
+<div class="dlg" style="width:300px">
+  <div class="dtb"><b>背景图片虚化</b></div>
+  <div class="dbody" style="flex:none;padding-top:4px">
+    <output style="display:block;text-align:center;font-size:17px;color:var(--text);padding:10px 0 4px;font-variant-numeric:tabular-nums">8</output>
+    <div style="display:flex;align-items:center;gap:8px;margin:0 10px">
+      <span style="color:var(--secondary);font-size:12px">0</span>
+      <div class="bar" style="flex:1;height:4px;border-radius:2px;background:var(--track);position:relative"><i style="position:absolute;left:0;top:0;bottom:0;width:32%;background:var(--primary);border-radius:2px"></i><b style="position:absolute;top:50%;left:32%;width:14px;height:14px;border-radius:50%;background:var(--primary);transform:translate(-50%,-50%)"></b></div>
+      <span style="color:var(--secondary);font-size:12px">25</span>
+    </div>
+    <p style="margin:12px 10px 8px;padding:0 8px;font-size:11.5px;color:var(--secondary);line-height:1.8">0 为停用，启用范围 1~25。半径数值越大，虚化效果越高。</p>
+  </div>
+  <div class="dfoot"><span class="sp"></span><button class="dact mut" type="button">取消</button><button class="dact pri" type="button">确定</button></div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>数值</code> — dialog_image_blurring.xml:16-23：text_view_value 居中 17sp（primaryText）；初值 getPrefInt(preferKey, 0)（ThemeConfigFragment.kt:275-280）。</li>
+<li><code>滑杆</code> — AppCompatSeekBar max=25（:25-30），拖动实时回显数值（:283-291）。</li>
+<li><code>提示</code> — background_image_hint：「0 为停用，启用范围 1~25\n半径数值越大，虚化效果越高」（:32-36）。</li>
+<li><code>确定</code> — putPrefInt(preferKey, progress) 后重建主题（okButton :292-298）；取消 cancelButton。</li>
+<li><code>呈现</code> — 滑杆两端补 0/25 刻度小字（新增，纯文本），提示文字用次要色保证 ≥4.5:1。</li>
+</ul></section>
+
+<!-- ============ 23 内置浏览器 ============ -->
+<section class="screen-sec" id="s23"><div class="sec-head"><span class="sec-no">23</span><h2>内置浏览器</h2></div>
+<p class="sec-sub">WebViewActivity · 阅读/漫画菜单「浏览器打开」选中文本或链接、书源验证帮助等外链。blend 顶栏（标题=网页标题、副标题=书源名）+ 1dp 进度条 + WebView；菜单：确定✓ / 浏览器打开 / 复制URL / 全屏 /（书源验证时）停用·删除书源。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="web">
+  <h5>登录遇到问题？</h5>
+  <p>部分书源需要先在网页端完成验证，若提示「验证失败」：1. 点击下方按钮重新获取验证码；2. 输入图中字符后提交。</p>
+  <div class="img"></div>
+  <p>仍未解决可 <a>查看完整教程</a>，或复制当前链接到外部浏览器打开。</p>
+  <div style="display:inline-flex;align-items:center;gap:8px;border:1px solid var(--divider);border-radius:999px;padding:7px 16px;font-size:13.5px;color:var(--secondary)"><svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>example.com/captcha-help</div>
+</div>
+<div class="tb">
+  <div class="r1"><button class="ico" type="button" aria-label="返回" style="border:0;background:transparent;width:42px;height:42px;border-radius:21px;display:grid;place-items:center;color:var(--text)"><svg class="icon" style="width:22px;height:22px" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m11 18-6-6 6-6"/></svg></button><div class="tt">验证码获取帮助</div><button class="ico" type="button" aria-label="确定" style="border:0;background:transparent;width:42px;height:42px;border-radius:21px;display:grid;place-items:center;color:var(--primary)"><svg class="icon" style="width:22px;height:22px" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></button><button class="ico" type="button" aria-label="更多" style="border:0;background:transparent;width:42px;height:42px;border-radius:21px;display:grid;place-items:center;color:var(--text)"><svg class="icon" style="width:20px;height:20px" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></g></svg></button></div>
+  <div class="st">笔趣阁 · https://www.example.com/help/captcha</div>
+  <div class="wprog"><i></i></div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>顶栏</code> — activity_web_view.xml:457-462 TitleBar（themeMode=blend，无阴影）；title=intent「title」或「加载中…」，subtitle=书源名（WebViewActivity.kt:63-64）；返回键优先网页回退/退出全屏（:73-90）。</li>
+<li><code>进度</code> — RefreshProgressBar 1dp 置于 WebView 顶部（:471-476）；稿面以顶栏下 2px 进度表达。</li>
+<li><code>内容</code> — VisibleWebView；html 参数存在时 loadDataWithBaseURL 否则 loadUrl（:71-79）。</li>
+<li><code>菜单</code> — menu/web_view.xml：menu_ok✓（always，:115-123 确认选择）、在浏览器打开/复制URL（:113-114）、全屏 toggleFullScreen（:125）、menu_disable_source/menu_delete_source 仅书源验证场景可见（onPrepareOptionsMenu :103-108）。</li>
+<li><code>视频全屏</code> — custom_web_view 容器承载 HTML5 全屏（:480-483，WebChromeClient onShowCustomView）。</li>
+</ul></section>
+<!-- ============ 24 数字选择 ============ -->
+<section class="screen-sec" id="s24"><div class="sec-head"><span class="sec-no">24</span><h2>数字选择</h2></div>
+<p class="sec-sub">NumberPickerDialog · 各处共用的系统 NumberPicker 弹窗（滑动翻页阈值、换源延迟等）。标准 alert + 居中滚轮，支持最小/最大值与可选的第三个自定义按钮。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="rhost"><h4>第三十二章 夜探藏书楼</h4><p>檐角的铜铃在夜风里轻响，他屏住呼吸，沿着书架的暗影一步步挪近那扇虚掩的雕花木门……</p></div>
+<div class="veil"></div>
+<div class="dlg" style="width:280px">
+  <div class="dtb"><b>滑动翻页阈值</b></div>
+  <div class="wheel">
+    <div class="band"></div>
+    <ul><li>100</li><li style="margin-top:-2px">200</li><li class="cur" style="margin:-6px 0 -4px">500</li><li style="margin-top:-2px">800</li><li>1000</li></ul>
+  </div>
+  <div class="dfoot"><span class="sp"></span><button class="dact mut" type="button">取消</button><button class="dact pri" type="button">确定</button></div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>容器</code> — dialog_number_picker.xml:4-12：FrameLayout 居中一个系统 NumberPicker；title/确定/取消由 AlertDialog builder 提供（NumberPickerDialog.kt:66-73）。</li>
+<li><code>参数</code> — setMaxValue/setMinValue/setValue（:27-41）；setCustomButton(textId, listener) 可加第三个中性按钮（:43-50）。</li>
+<li><code>回调</code> — show(callBack) 在确定时 clearFocus/hideSoftInput 后回传 value（:52-63）。</li>
+<li><code>呈现</code> — 滚轮选中行以 surface2 圆角带 + on_surface 加粗、上下项次要色渐隐表达（系统 NumberPicker 的 selectionDivider 在 v3 语义下弱化为圆角带）。</li>
+</ul></section>
+
+<!-- ============ 25 源变量 ============ -->
+<section class="screen-sec" id="s25"><div class="sec-head"><span class="sec-no">25</span><h2>源变量</h2></div>
+<p class="sec-sub">VariableDialog · 各管理页「设置源变量」入口（rss_articles 菜单、书源登录等）。全屏窗口居中卡：Toolbar（标题=变量名，保存菜单）+ 变量输入 + 变量说明（可选只读）。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="host"><div class="host-tb"><i></i>订阅文章<i></i><i></i></div><div class="sk" style="width:58%"></div><div class="sk" style="width:74%"></div></div>
+<div class="veil"></div>
+<div class="dlg wide">
+  <div class="dtb"><b>searchUrl 变量</b><button class="ico" type="button" aria-label="保存" style="color:var(--primary)"><svg class="icon" style="width:20px;height:20px" viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg></button></div>
+  <div class="dbody" style="flex:none;padding-top:8px">
+    <div class="sec-lab" style="padding:0 16px 4px">变量</div>
+    <div class="field multi"><label>当前值（可编辑）</label><b>{"cookie":"Hm_lvt=17...","channel":"android"}</b></div>
+    <div class="sec-lab" style="padding:8px 16px 4px">变量说明</div>
+    <p style="margin:0 16px 12px;font-size:13px;color:var(--secondary);line-height:1.9">保存登录后的 Cookie；当变量不存在时书源会先请求登录页获取。可长按选择复制。</p>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>容器</code> — dialog_variable.xml:231-303：FrameLayout(16dp) 内 vw_bg 居中卡（shape_card_view）+ Toolbar（title=参数 title，displayHomeAsUp=false，:247-258）。</li>
+<li><code>标签</code> — AccentTextView「variable」（:260-265）与「变量说明(variableComment)」（:284-288）。</li>
+<li><code>输入</code> — ThemeEditText tv_variable（:267-271）；说明 tv_comment 只读可长按选择（:290-296）。</li>
+<li><code>保存</code> — menu/save.xml menu_save → callback.setVariable(key, value)（VariableDialog.kt:49-59）；数据由 arguments key/comment/variable 提供（:60-75）。</li>
+<li><code>修复</code> — 现 Kotlin:40 primaryColor 顶栏（01 同源）→ surface 顶栏 + on_surface 文字、主色保存图标。</li>
+</ul></section>
+
+<!-- ============ 26 链接选项 ============ -->
+<section class="screen-sec" id="s26"><div class="sec-head"><span class="sec-no">26</span><h2>链接选项（URL 参数）</h2></div>
+<p class="sec-sub">UrlOptionDialog · 编辑器长按链接「URL 参数」。全屏窗口居中卡：useWebView 开关 + method/charset/headers/body/type/retry/webJs/js 八个输入（method 仅 POST/GET、charset 过滤字符集），右上「确定」回写 JSON。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="host"><div class="host-tb"><i></i>书源编辑<i></i><i></i></div><div class="sk" style="width:70%"></div><div class="sk" style="width:52%"></div></div>
+<div class="veil"></div>
+<div class="dlg wide dlg-tall">
+  <div class="dbody" style="padding-top:10px">
+    <div style="display:flex;align-items:center;gap:4px;padding:0 16px 8px"><b style="flex:1;font-size:18px;font-weight:700">URL 参数</b><button class="dact pri" type="button" style="font-size:14px">确定</button></div>
+    <div class="cb on" style="padding-bottom:8px"><i></i>useWebView</div>
+    <div class="field"><label>method</label><b>GET</b></div>
+    <div class="field"><label>charset</label><b>utf-8</b></div>
+    <div class="field multi"><label>headers</label><b>{"User-Agent":"Mozilla/5.0","Referer":"https://example.com/"}</b></div>
+    <div class="field"><label>body</label><b style="color:var(--secondary)">未填写</b></div>
+    <div class="field"><label>type</label><b style="color:var(--secondary)">未填写</b></div>
+    <div class="field"><label>retry</label><b>1</b></div>
+    <div class="field"><label>webJs</label><b style="color:var(--secondary)">未填写</b></div>
+    <div class="field"><label>js</label><b style="color:var(--secondary)">未填写</b></div>
+    <div class="fade"></div>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>容器</code> — dialog_url_option_edit.xml:125-305：FrameLayout(16dp) 内 vw_bg 居中卡 + 头行（url_option 标题 18sp bold + tv_ok 确定钮，:141-168）+ 滚动表单；setLayout(1f, MATCH_PARENT)（UrlOptionDialog.kt:20）。</li>
+<li><code>开关</code> — cb_use_web_view（:180-185）。</li>
+<li><code>输入</code> — edit_method（setFilterValues("POST","GET")）、edit_charset（AppConst.charsets 过滤，UrlOptionDialog.kt:26-27）、edit_headers/body/type/retry(number)/web_js/js（layout :187-298）。</li>
+<li><code>确定</code> — 组装 AnalyzeUrl.UrlOption → GSON 回调 success（:28-35,37-49）；点空白处关闭（:24）。</li>
+<li><code>呈现</code> — 空值字段以「未填写」次要占位（原为空 hint，视觉增强不改行为）。</li>
+</ul></section>
+
+<!-- ============ 27 代码查看/编辑 ============ -->
+<section class="screen-sec" id="s27"><div class="sec-head"><span class="sec-no">27</span><h2>代码查看 / 编辑</h2></div>
+<p class="sec-sub">CodeDialog · 导入规则内容查看/编辑。全屏：Toolbar（只读为 code view，可编辑为 code edit + 保存菜单）+ CodeView（legado/JSON/JS 三种高亮）。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="host"><div class="host-tb"><i></i>替换净化<i></i><i></i></div><div class="sk" style="width:62%"></div></div>
+<div class="veil"></div>
+<div class="dlg wide dlg-tall">
+  <div class="dtb"><b>code edit</b><button class="ico" type="button" aria-label="保存" style="color:var(--primary)"><svg class="icon" style="width:20px;height:20px" viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg></button></div>
+  <div class="dbody">
+    <div class="code">[{
+  <span class="n">"replaceRegex"</span>: {
+    <span class="n">"pattern"</span>: <span class="s">"\\s*章节错误[^\\n]*\\n?"</span>,
+    <span class="n">"replacement"</span>: <span class="s">""</span>,
+    <span class="n">"isRegex"</span>: <span class="k">true</span>,
+    <span class="n">"scope"</span>: [<span class="s">"content"</span>]
+  }
+}]
+<span class="c">// legado 规则 · 支持 {{js}} 与 &lt;js&gt;…&lt;/js&gt;</span>
+<span class="n">ruleSearch</span> = {{ <span class="k">java.ajax</span>(url) }}</div>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>容器</code> — dialog_code_view.xml:275-297：Toolbar（title=code edit / code view）+ CodeView（12dp 内边距）；setLayout(1f, MATCH_PARENT)（CodeDialog.kt:33）。</li>
+<li><code>模式</code> — disableEdit=true → 只读无菜单（title=code view，CodeDialog.kt:37-40）；否则 menu/code_edit menu_save → callback.onCodeSave(code, requestId)（:42-62）。</li>
+<li><code>高亮</code> — addLegadoPattern/addJsonPattern/addJsPattern 三套着色（:50-53）；内容经 IntentData 传递（:14-19,54-56）。</li>
+<li><code>修复</code> — 现 Kotlin:37 primaryColor 顶栏 → surface 顶栏 + on_surface 标题（01 同源）；代码配色提供亮/暗两套（JSON 键蓝、字符串绿、关键字橙、注释灰，均 ≥4.5:1）。</li>
+</ul></section>
+
+<!-- ============ 28 辅助按键配置 ============ -->
+<section class="screen-sec" id="s28"><div class="sec-head"><span class="sec-no">28</span><h2>辅助按键配置</h2></div>
+<p class="sec-sub">KeyboardAssistsConfig · 更多设置「辅助按键配置」。90%×90% 弹窗：Toolbar「辅助按键配置」+ 添加；行=按键键值→动作，可拖拽排序，行内删除；添加/编辑为双输入 alert（key/value）。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="host"><div class="host-tb"><i></i>更多设置<i></i><i></i></div><div class="sk" style="width:64%"></div><div class="sk" style="width:44%"></div></div>
+<div class="veil"></div>
+<div class="dlg wide">
+  <div class="dtb"><b>辅助按键配置</b><button class="ico" type="button" aria-label="添加"><svg class="icon" style="width:22px;height:22px" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button></div>
+  <div class="dbody" style="flex:none">
+    <div class="lrow"><svg class="icon ic" style="color:var(--primary)" viewBox="0 0 24 24"><path d="M12 4v9"/><path d="m8 9.5 4 4 4-4"/><path d="M5 12v6.5h14V12"/></svg><div class="t1"><b>24 → 上一页</b><small>音量+ 键</small></div><svg class="icon ic" viewBox="0 0 24 24"><path d="M5 7h14"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7"/><path d="M7 7l1 12.2A1.8 1.8 0 0 0 9.8 21h4.4A1.8 1.8 0 0 0 16 19.2L17 7"/></svg></div>
+    <div class="lrow" style="border-top:1px solid var(--divider)"><svg class="icon ic" style="color:var(--primary)" viewBox="0 0 24 24"><path d="M12 4v9"/><path d="m8 9.5 4 4 4-4"/><path d="M5 12v6.5h14V12"/></svg><div class="t1"><b>25 → 下一页</b><small>音量− 键</small></div><svg class="icon ic" viewBox="0 0 24 24"><path d="M5 7h14"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7"/><path d="M7 7l1 12.2A1.8 1.8 0 0 0 9.8 21h4.4A1.8 1.8 0 0 0 16 19.2L17 7"/></svg></div>
+    <div class="lrow" style="border-top:1px solid var(--divider)"><svg class="icon ic" style="color:var(--primary)" viewBox="0 0 24 24"><path d="M12 4v9"/><path d="m8 9.5 4 4 4-4"/><path d="M5 12v6.5h14V12"/></svg><div class="t1"><b>85 → 播放/暂停朗读</b><small>蓝牙耳机播放键</small></div><svg class="icon ic" viewBox="0 0 24 24"><path d="M5 7h14"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7"/><path d="M7 7l1 12.2A1.8 1.8 0 0 0 9.8 21h4.4A1.8 1.8 0 0 0 16 19.2L17 7"/></svg></div>
+    <p style="margin:6px 16px 8px;font-size:11.5px;color:var(--secondary)">key=按键键值，value=动作；长按拖动调整优先级。</p>
+  </div>
+  <div class="dfoot"><span class="sp"></span><button class="dact pri" type="button">确定</button></div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>容器</code> — dialog_recycler_view + setLayout(0.9f, 0.9f)（KeyboardAssistsConfig.kt:52）；Toolbar title=辅助按键配置（:57）。</li>
+<li><code>数据</code> — appDb.keyboardAssistsDao.flowAll（:81）；KeyboardAssist 实体 = type/key/value/serialNo（entities/KeyboardAssist.kt），item_1line_text_and_del 单行+删除钮。</li>
+<li><code>菜单</code> — menu/keyboard_assists_config.xml menu_add「添加」（:92）。</li>
+<li><code>编辑</code> — editKey 弹 alert：DialogMultipleEditTextBinding 双输入 hint=key/value（:96-104）；保存 insert/delete+insert，serialNo 保持排序（:116-119）；ItemTouchHelper 拖拽（:69）。</li>
+<li><code>呈现</code> — 稿面副行（音量键等）与示例键值为示意；24/25/85 为 Android 真实键值。</li>
+</ul></section>
+
+<!-- ============ 29 亮色对比修复设计 ============ -->
+<section class="screen-sec" id="s29"><div class="sec-head"><span class="sec-no">29</span><h2>亮色对比修复设计（规格汇总）</h2></div>
+<p class="sec-sub">本轮专项要求：亮色主题下不得出现看不清的文字。排查员确认的三处白字问题均属 02/08 组（书籍详情、听书播放），不属于本稿 28 屏；但本稿弹窗群存在同源模式（primary 色顶栏、半透明卡白字），以下给出全部修复设计，含跨组两屏的可落地改法。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div style="position:absolute;top:34px;left:0;right:0;bottom:0;z-index:1;padding:18px 20px;overflow:hidden">
+  <b style="font-size:17px;font-weight:700;display:block;margin-bottom:10px">修复前后对照（示意）</b>
+  <div style="border-radius:12px;overflow:hidden;border:1px solid var(--divider);margin-bottom:12px">
+    <div style="background:#99343434;display:flex;align-items:center;gap:10px;padding:10px 14px"><span style="color:#fff;font-size:13.5px;text-decoration:line-through">点击区域设置（旧·白字 3.8:1）</span></div>
+    <div style="background:var(--surface2);display:flex;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid var(--divider)"><span style="color:var(--text);font-size:13.5px;font-weight:650">点击区域设置（新·on_surface 13.3:1）</span></div>
+  </div>
+  <div style="border-radius:12px;overflow:hidden;border:1px solid var(--divider)">
+    <div style="background:#ff6b2c;display:flex;align-items:center;padding:10px 14px"><span style="color:#20242b;font-size:13.5px;text-decoration:line-through">日志（旧·亮深字 5.5:1 达标 / 夜白字 2.8:1 失效）</span></div>
+    <div style="background:var(--surface);display:flex;align-items:center;padding:10px 14px;border-top:1px solid var(--divider)"><span style="color:var(--text);font-size:13.5px;font-weight:650">日志（新·surface底 on_surface 15.4:1）</span></div>
+  </div>
+  <p style="font-size:12px;color:var(--secondary);line-height:1.9;margin:14px 2px 0">对比度按 WCAG 相对亮度计算；旧值取亮色主题合成底色。修复后亮/暗两主题均 ≥4.5:1。</p>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>A · primary 顶栏（本稿 01/02/04/05/06/07/09/10/25/27 共 10 处）</code> — 现状：各 Kotlin <code>toolBar.setBackgroundColor(primaryColor)</code>（如 AppLogDialog.kt:41、UpdateDialog.kt:39）+ 布局 toolbar theme=actionBarStyle。<b>对比度实算（本轮核验）</b>：亮色主题 actionBarStyle=Light（styles.xml:43 ThemeOverlay.AppCompat.Light）给深字 #20242B，压主色橙 5.48:1 达标（但与 v3 blend 顶栏定稿不符）；<b>夜间</b> actionBarStyle=Dark（styles.xml:48 ThemeOverlay.AppCompat.Dark）染白字压主色橙 2.84:1 不达标；且换用户浅主色后两主题前景均不可控。修复：删除 setBackgroundColor 一行，让弹窗卡提供 surface 底；标题/图标走默认 on_surface（MenuExtensions.kt:21-36 已按 primaryText 着色，无需改）。涉及（行号已逐一对码核验）：GroupSelectDialog.kt:59、BookmarkDialog.kt:37、AppLogDialog.kt:41、CrashLogsDialog.kt:50、UpdateDialog.kt:39、ThemeListDialog.kt:35、CoverRuleConfigDialog.kt:32、CheckSourceConfig.kt:31、DirectLinkUploadConfig.kt:37、VariableDialog.kt:40、CodeDialog.kt:37。</li>
+<li><code>B · 点击区域九宫格白字</code> — 现状：shape_translucent_card（solid=@color/translucent #99343434，colors.xml:118）+ 文字/关闭钮 white（dialog_click_action_config.xml:31,39 及九格全部 textColor），亮色正文上合成 ≈#838382，白字 3.79:1。修复：格面 drawable 拆 values(#F0ECE9 96%)/values-night(#E8242220) 两版实色；textColor 与 tint white → @color/on_surface（新 values 双份已有，亮色合成底上 13.3:1）；外层根遮罩 @color/translucent 保留。见 11 屏。</li>
+<li><code>C · 听书播放页（08 组 activity_audio_play.xml，跨组修复设计 · ⚠ 与修复稿 11 冲突待裁定）</code> — 现状（排查员确认，本轮未实测）：tv_timer/tv_speed/tv_sub_title/tv_dur_time/tv_all_time 写死 md_white_1000（:44,:63,:95,:115,:134）、控制键 tint 白（:158,:174,:190,:237,:253,:269），iv_bg 无默认图时亮色底 ≈#ABA9A9，白字 2.3~2.7:1；bg_player_pill=#29FFFFFF 更糟。本稿方案：① iv_bg 默认色改 @color/surface_container_high（亮 #EEECE9/夜 #242220），vw_bg 黑纱保留；② 全部写死白色改 ?attr/on_surface 语义，胶囊底 bg_player_pill 改 surface_container 62% 圆角实底；③ 删除 :116,:135 的 tools:ignore="TextContrastCheck"；④ 标题栏 themeMode dark→auto（:29）。<b>⚠ 评审注</b>：本方案与 <a href="11-audio-light.html" target="_blank" rel="noopener">修复稿 11</a>（恒定暗播放面 player_surface #141312 + 暖黑纱 70/75/85）和 <a href="10-reader-prefs.html#fix1" target="_blank" rel="noopener">10-reader-prefs#09</a>（player_surface #201813 + 纯黑纱 70/60/80）三稿互斥；且本方案②在「亮色主题 × 深色模糊封面」时 on_surface 深字压暗纱会二次失效（对任意封面不稳健），与 08#s13「明暗共用同一播放器视觉」定稿亦相悖——听书页建议按修复稿 11 落地，本条仅存档。</li>
+<li><code>D · 书籍详情标题栏（02 组 activity_book_info.xml，跨组修复设计 · ⚠ 三稿互斥待裁定）</code> — 现状（排查员确认，本轮未实测）：themeMode=dark+透明（BookInfoActivity.kt:162），hero 渐变叠 31% 纱合成 #AA9F95~#A5907F，白标题/白返回键 2.59~3.05:1。本稿两案：案一 vw_bg scrim 提升并 TitleBar.kt 内按背景亮度自适应前景（亮度≥0.5 用 on_surface，否则 white，对任意封面稳健但需改 TitleBar）；案二最小改动 toolBarTheme 改 Theme.Auto + bg_book 顶部 25% 高白纱上衬。<b>⚠ 评审注</b>：另有 <a href="11-audio-light.html#s4" target="_blank" rel="noopener">修复稿 11#S4</a>（themeMode=auto，深字 6.01:1）与 <a href="10-reader-prefs.html#fix2" target="_blank" rel="noopener">10-reader-prefs#10</a>（顶部黑纱+Theme.Dark 白字，6.4:1@64dp）两案，四案方向互异——须设计负责人裁定其一后全局统一。</li>
+<li><code>E · 验证基线</code> — 修复后以 MASTER 第 4 节为验收：正文对比 ≥4.5:1、触控 ≥48dp、禁用态灰底灰字；lint TextContrastCheck 全量打开（不再 tools:ignore）。</li>
+</ul></section>
+
+<footer>
+  <div class="footnote">
+    <b>legado 全新界面设计 v3 · 屏幕组 12 · 遗漏页面（二）</b> — 29 屏（01–28 功能屏 + 29 修复规格），单文件自包含、无外部依赖；右侧深色稿由脚本镜像浅色稿并切换令牌生成。<br>
+    视觉令牌延续 v3：主色 #FF6B2C；亮色 #FAF9F7/#FFFFFF/#EEECE9，暗色 #141312/#1D1B19/#242220；圆角 面板 20/弹层 16/卡片 12；分割线 rgba(0,0,0,.07)/rgba(255,255,255,.08)；无阴影、blend 顶栏、Material 3。所有功能块与代码引用均来自 app/src/main 现有布局与 Kotlin。
+  </div>
+</footer>
+
+</div>
+<script>
+(function(){
+  document.querySelectorAll('.pair').forEach(function(pair){
+    var src=pair.querySelector('figure.phone-col');
+    if(!src)return;
+    var clone=src.cloneNode(true);
+    var ph=clone.querySelector('.phone');
+    ph.classList.remove('t-light');ph.classList.add('t-dark');
+    clone.querySelector('.phone-tag span').textContent='深色主题';
+    pair.appendChild(clone);
+  });
+})();
+</script>
+</body></html>

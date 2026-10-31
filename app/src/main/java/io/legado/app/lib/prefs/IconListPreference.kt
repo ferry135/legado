@@ -18,7 +18,6 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemIconPreferenceBinding
-import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.getCompatDrawable
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -53,12 +52,8 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
-        val v = Preference.bindView<ImageView>(
-            context,
+        val v = bindView<ImageView>(
             holder,
-            icon,
-            title,
-            summary,
             widgetLayoutResource,
             R.id.preview,
             50,
@@ -134,7 +129,8 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
         }
 
         override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-            binding.toolBar.setBackgroundColor(primaryColor)
+            // 09稿：与 ThemeListDialog 等一致，去 primaryColor 涂色工具栏——标题走 on_surface，
+            // 避免运行时主色偏浅/偏深时标题对比失守（09稿F区同类问题）
             binding.toolBar.setTitle(R.string.change_icon)
             binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
             val adapter = Adapter(requireContext())

@@ -66,13 +66,14 @@
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
+            android:minHeight="48dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:text="@string/reset"
             android:textColor="@color/primaryText" />
 
         <Space
-            android:layout_width="3dp"
+            android:layout_width="10dp"
             android:layout_height="wrap_content" />
 
         <TextView
@@ -84,8 +85,9 @@
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
+            android:minHeight="48dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:text="@string/ok"
             android:textColor="@color/primaryText" />
 

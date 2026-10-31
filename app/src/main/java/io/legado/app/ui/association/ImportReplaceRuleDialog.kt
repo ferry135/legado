@@ -21,7 +21,6 @@ import io.legado.app.databinding.DialogCustomGroupBinding
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemSourceImportBinding
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.dialog.CodeDialog
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.*
@@ -57,7 +56,6 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        binding.toolBar.setBackgroundColor(primaryColor)
         binding.toolBar.setTitle(R.string.import_replace_rule)
         binding.rotateLoading.visible()
         initMenu()
@@ -117,6 +115,7 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
     private fun initMenu() {
         binding.toolBar.setOnMenuItemClickListener(this)
         binding.toolBar.inflateMenu(R.menu.import_replace)
+        binding.toolBar.menu.applyTint(requireContext())
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {

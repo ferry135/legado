@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.bookmark
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
@@ -7,24 +8,28 @@ import android.text.TextPaint
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.legado.app.lib.theme.accentColor
+import io.legado.app.R
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.utils.dpToPx
+import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.spToPx
-import splitties.init.appCtx
 import kotlin.math.min
 
-class BookmarkDecoration(val adapter: BookmarkAdapter) : RecyclerView.ItemDecoration() {
+class BookmarkDecoration(context: Context, val adapter: BookmarkAdapter) :
+    RecyclerView.ItemDecoration() {
 
     private val headerLeft = 16f.dpToPx()
     private val headerHeight = 32f.dpToPx()
 
     private val headerPaint = Paint().apply {
-        color = appCtx.backgroundColor
+        color = context.backgroundColor
     }
     private val textPaint = TextPaint().apply {
         textSize = 16f.spToPx()
-        color = appCtx.accentColor
+        // 12-missed-1 #06：分组头文字用 on_surface_variant（primary 换肤浅色时亮底仅 2.70:1，不达标）
+        // 12-missed-2 #06：用界面自身 context 解析：appCtx 不带 AppCompatDelegate 夜间限定，
+        // 「系统浅色 + 应用内深色」会拿亮色 #60656D 压暗底、「系统深色 + 应用内浅色」拿 #B4B0AA 压亮底，均不达 4.5:1
+        color = context.getCompatColor(R.color.on_surface_variant)
         isAntiAlias = true
     }
     private val textRect = Rect()

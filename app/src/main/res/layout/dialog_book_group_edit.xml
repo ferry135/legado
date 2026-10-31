@@ -11,13 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/background_menu"
-        android:elevation="5dp"
         android:theme="?attr/actionBarStyle"
         app:displayHomeAsUp="false"
         app:fitStatusBar="false"
         app:popupTheme="@style/AppTheme.PopupOverlay"
         app:title="@string/group_edit"
-        app:titleTextAppearance="@style/ToolbarTitle" />
+        app:titleTextAppearance="@style/ToolbarTitle"
+        app:titleTextColor="@color/on_surface" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -57,13 +57,15 @@
                 tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
         </io.legado.app.ui.widget.text.TextInputLayout>
 
-        <io.legado.app.ui.widget.text.AccentTextView
+        <!-- 12-missed-1 #05：「排序」为次级标签，AccentTextView 运行时强染主色
+             （#FF6B2C on #EEECE9 实算 2.41:1 不达标），改 on_surface_variant -->
+        <TextView
             android:id="@+id/tv_sort"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="3dp"
             android:text="@string/sort"
-            android:textColor="@color/primaryText"
+            android:textColor="@color/on_surface_variant"
             app:layout_constraintLeft_toLeftOf="@id/til_group_name"
             app:layout_constraintTop_toBottomOf="@id/til_group_name" />
 

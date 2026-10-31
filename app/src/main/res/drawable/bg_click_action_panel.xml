@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 阅读页点击区域九宫格面板底（12-missed-2 #11/#29-B：半透明卡白字修复，实色面板 + on_surface 文字；色值 click_action_panel 明暗成对，替换 dialog_click_action_config 格面的 shape_translucent_card） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="@dimen/corner_radius_md" />
+    <stroke
+        android:width="1dp"
+        android:color="@color/divider_subtle" />
+    <solid android:color="@color/click_action_panel" />
+</shape>

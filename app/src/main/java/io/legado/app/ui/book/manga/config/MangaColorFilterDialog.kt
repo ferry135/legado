@@ -11,6 +11,7 @@ import io.legado.app.databinding.DialogMangaColorFilterBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
+import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -39,6 +40,11 @@ class MangaColorFilterDialog : BaseDialogFragment(R.layout.dialog_manga_color_fi
             dsbG.progress = mConfig.g
             dsbB.progress = mConfig.b
             dsbA.progress = mConfig.a
+            // 12-missed-2 #15：R/G/B/A 滑杆进度与滑块按通道色相着色（背景轨道保持主题色）
+            dsbR.progressThumbTint = getCompatColor(R.color.md_red_500)
+            dsbG.progressThumbTint = getCompatColor(R.color.md_green_500)
+            dsbB.progressThumbTint = getCompatColor(R.color.md_blue_500)
+            dsbA.progressThumbTint = getCompatColor(R.color.md_grey_500)
         }
     }
 

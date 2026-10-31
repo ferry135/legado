@@ -4,8 +4,11 @@ import android.content.Context
 import android.widget.NumberPicker
 import androidx.appcompat.app.AlertDialog
 import io.legado.app.R
+import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.utils.applyDialogScrim
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.hideSoftInput
+import io.legado.app.utils.sheetBackground
 
 
 class NumberPickerDialog(context: Context) {
@@ -60,6 +63,13 @@ class NumberPickerDialog(context: Context) {
         }
         builder.setNegativeButton(R.string.cancel, null)
         val dialog = builder.show().applyTint()
+        // 10-reader-prefs#03 注③：16dp 圆角卡片（applyTint 默认 3dp 直角）+ scrim_dialog 遮罩（50% 黑）
+        dialog.window?.let { window ->
+            window.setBackgroundDrawable(
+                window.context.sheetBackground(window.context.backgroundColor)
+            )
+            window.applyDialogScrim()
+        }
         numberPicker = dialog.findViewById(R.id.number_picker)
         numberPicker?.let { np ->
             minValue?.let {

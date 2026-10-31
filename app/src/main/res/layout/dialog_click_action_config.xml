@@ -13,7 +13,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_translucent_card"
+        android:background="@drawable/bg_click_action_panel"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:layout_margin="3dp"
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/click_regional_config"
-            android:textColor="@color/white" />
+            android:textColor="@color/on_surface" />
 
         <ImageView
             android:id="@+id/iv_close"
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/close"
             android:src="@drawable/ic_baseline_close"
-            app:tint="@color/white" />
+            app:tint="@color/on_surface" />
 
     </LinearLayout>
 
@@ -52,9 +52,9 @@
             android:layout_height="match_parent"
             android:layout_margin="3dp"
             android:layout_weight="1"
-            android:background="@drawable/shape_translucent_card"
+            android:background="@drawable/bg_click_action_panel"
             android:gravity="center"
-            android:textColor="@color/white"
+            android:textColor="@color/on_surface"
             tools:text="上一页" />
 
         <TextView
@@ -63,9 +63,9 @@
             android:layout_height="match_parent"
             android:layout_margin="3dp"
             android:layout_weight="1"
-            android:background="@drawable/shape_translucent_card"
+            android:background="@drawable/bg_click_action_panel"
             android:gravity="center"
-            android:textColor="@color/white"
+            android:textColor="@color/on_surface"
             tools:text="上一页" />
 
         <TextView
@@ -74,9 +74,9 @@
             android:layout_height="match_parent"
             android:layout_margin="3dp"
             android:layout_weight="1"
-            android:background="@drawable/shape_translucent_card"
+            android:background="@drawable/bg_click_action_panel"
             android:gravity="center"
-            android:textColor="@color/white"
+            android:textColor="@color/on_surface"
             tools:text="下一页" />
 
     </LinearLayout>
@@ -93,9 +93,9 @@
             android:layout_height="match_parent"
             android:layout_margin="3dp"
             android:layout_weight="1"
-            android:background="@drawable/shape_translucent_card"
+            android:background="@drawable/bg_click_action_panel"
             android:gravity="center"
-            android:textColor="@color/white"
+            android:textColor="@color/on_surface"
             tools:text="上一页" />
 
         <TextView
@@ -104,10 +104,10 @@
             android:layout_height="match_parent"
             android:layout_margin="3dp"
             android:layout_weight="1"
-            android:background="@drawable/shape_translucent_card"
+            android:background="@drawable/bg_click_action_panel_mid"
             android:gravity="center"
             android:text="@string/menu"
-            android:textColor="@color/white" />
+            android:textColor="@color/on_surface" />
 
         <TextView
             android:id="@+id/tv_middle_right"
@@ -115,9 +115,9 @@
             android:layout_height="match_parent"
             android:layout_margin="3dp"
             android:layout_weight="1"
-            android:background="@drawable/shape_translucent_card"
+            android:background="@drawable/bg_click_action_panel"
             android:gravity="center"
-            android:textColor="@color/white"
+            android:textColor="@color/on_surface"
             tools:text="下一页" />
 
     </LinearLayout>
@@ -134,9 +134,9 @@
             android:layout_height="match_parent"
             android:layout_margin="3dp"
             android:layout_weight="1"
-            android:background="@drawable/shape_translucent_card"
+            android:background="@drawable/bg_click_action_panel"
             android:gravity="center"
-            android:textColor="@color/white"
+            android:textColor="@color/on_surface"
             tools:ignore="NestedWeights"
             tools:text="上一页" />
 
@@ -146,9 +146,9 @@
             android:layout_height="match_parent"
             android:layout_margin="3dp"
             android:layout_weight="1"
-            android:background="@drawable/shape_translucent_card"
+            android:background="@drawable/bg_click_action_panel"
             android:gravity="center"
-            android:textColor="@color/white"
+            android:textColor="@color/on_surface"
             tools:text="下一页" />
 
         <TextView
@@ -157,9 +157,9 @@
             android:layout_height="match_parent"
             android:layout_margin="3dp"
             android:layout_weight="1"
-            android:background="@drawable/shape_translucent_card"
+            android:background="@drawable/bg_click_action_panel"
             android:gravity="center"
-            android:textColor="@color/white"
+            android:textColor="@color/on_surface"
             tools:text="下一页" />
 
     </LinearLayout>

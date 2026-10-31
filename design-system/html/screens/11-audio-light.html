@@ -1,0 +1,556 @@
+<!-- design-system: legado v2 -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Legado v2 · 11 听书播放亮色适配与阅读悬浮钮</title><style>
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#efece6;color:#26231d;display:flex;flex-direction:column;align-items:center}
+.page{width:min(100%,912px);padding:0 16px 96px}
+/* ---------- 页头 ---------- */
+.page-head{position:sticky;top:0;z-index:60;background:rgba(239,236,230,.94);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,.08);margin:0 -16px;padding:16px 20px 14px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.18em;color:#ff6b2c;text-transform:uppercase}
+.page-head h1{margin:4px 0 6px;font-size:22px;letter-spacing:.02em}
+.page-head .en{font-size:12.5px;color:#6d6a62;font-weight:600;letter-spacing:.14em;margin-left:10px}
+.ph-sub{margin:0;font-size:13.5px;color:#6d6a62;line-height:1.8;max-width:860px}
+.tokens{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.tk{display:inline-flex;align-items:center;gap:9px;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:7px 12px 7px 9px}
+.tk .sw{width:26px;height:26px;border-radius:8px;flex:none;border:1px solid rgba(0,0,0,.12)}
+.tk .pair-sw{display:flex;gap:3px;flex:none}
+.tk .pair-sw i{width:26px;height:26px;border-radius:8px 0 0 8px;border:1px solid rgba(0,0,0,.12);border-right:0;display:block}
+.tk .pair-sw i+i{border-radius:0 8px 8px 0;border-left:1px solid rgba(0,0,0,.12)}
+.tk b{font-size:13px;font-weight:700}
+.tk code{font-family:ui-monospace,Consolas,monospace;font-size:11px;background:rgba(0,0,0,.055);padding:1px 6px;border-radius:5px;color:#8a4a20;white-space:nowrap}
+.tk small{font-size:11.5px;color:#6d6a62;display:block;margin-top:1px}
+.pnav{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.pnav a{text-decoration:none;font-size:13px;font-weight:600;color:#4a463c;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:999px;padding:5px 14px}
+.pnav a:hover{color:#ff6b2c;border-color:#ff6b2c}
+.pnav a b{color:#ff6b2c;margin-right:5px}
+/* ---------- 分区 ---------- */
+.scr{margin-top:60px}
+.scr-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.scr-no{font-size:13px;font-weight:800;color:#ff6b2c;letter-spacing:.1em}
+.scr-head h2{margin:0;font-size:24px}
+.src{font-size:12px;color:#6d6a62;font-family:ui-monospace,Consolas,monospace}
+.scr-sub{margin:10px 0 0;font-size:13.5px;color:#4a463c;line-height:1.8;max-width:880px}
+.pair{display:flex;flex-wrap:wrap;gap:28px;margin-top:18px}
+figure.dev{margin:0}
+figcaption{text-align:center;font-size:13px;font-weight:600;color:#6d6a62;margin-top:10px;max-width:412px}
+.notes{max-width:880px;margin:20px 0 0;padding:14px 18px;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:14px;font-size:13px;line-height:2;color:#3a372f}
+.notes b{color:#1d1b16}
+.notes code{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;background:rgba(0,0,0,.055);padding:1px 6px;border-radius:5px;color:#8a4a20;white-space:nowrap}
+.notice{max-width:880px;margin:18px 0 0;padding:14px 18px;background:#fff4ec;border:1px solid #f0c9ae;border-radius:14px;font-size:13px;line-height:2;color:#5c4331}
+.notice b{color:#a1543a}
+.notice code{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;background:rgba(0,0,0,.055);padding:1px 6px;border-radius:5px;color:#a1543a;white-space:nowrap}
+/* 对比度徽章行 */
+.crs{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 0}
+.crchip{font-size:12px;font-weight:600;border-radius:9px;padding:4px 10px;background:#fff;border:1px solid rgba(0,0,0,.09);color:#3a372f}
+.crchip i{font-style:normal;font-family:ui-monospace,Consolas,monospace;font-weight:700;margin-right:6px;padding:1px 6px;border-radius:5px;color:#fff;background:#3b7a45}
+.crchip.bad i{background:#ba1a1a}
+/* ---------- 手机壳与令牌（对齐 08-system.html） ---------- */
+.phone{width:412px;height:900px;border-radius:30px;border:1px solid rgba(0,0,0,.2);position:relative;overflow:hidden;flex:none;
+--bg:#faf9f7;--surface:#ffffff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--track:#e5e2de;--divider:rgba(0,0,0,.07);--indicator:#8d939c;
+background:var(--bg);color:var(--text)}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--track:#353331;--divider:rgba(255,255,255,.08);--indicator:#777}
+.phone.inv{--text:#ffffff;--secondary:rgba(255,255,255,.75);--divider:rgba(255,255,255,.14)}
+.status{height:36px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 22px 4px;font-size:13.5px;font-weight:600;position:relative;z-index:40}
+.sright{display:flex;gap:7px;align-items:center}
+.tbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 10px 0 8px;flex:none}
+.tbar .st{font-size:19px;font-weight:700}
+.actions{display:flex}
+.icon-btn{width:44px;height:44px;border:0;background:transparent;border-radius:22px;display:grid;place-items:center;color:var(--text);cursor:pointer;padding:0}
+.icon{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon.f{fill:currentColor;stroke:none}
+.hi{position:absolute;left:50%;bottom:5px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--indicator);z-index:41}
+/* ---------- 听书播放（activity_audio_play.xml） ---------- */
+.player{position:absolute;inset:0;overflow:hidden}
+.cblur{position:absolute;inset:-30px;filter:blur(2px)}
+.cblur.warm{background:
+radial-gradient(95% 70% at 18% 12%,rgba(196,136,64,.9),transparent 62%),
+radial-gradient(85% 62% at 84% 22%,rgba(140,92,44,.85),transparent 58%),
+radial-gradient(70% 55% at 70% 62%,rgba(94,60,26,.8),transparent 62%),
+radial-gradient(120% 90% at 40% 100%,#2e2013 25%,transparent 75%),#3c2a1a}
+.cblur.light{background:
+radial-gradient(95% 70% at 18% 12%,#efeeec,transparent 62%),
+radial-gradient(85% 62% at 84% 22%,#e2e1df,transparent 58%),
+radial-gradient(70% 55% at 70% 62%,#d6d5d3,transparent 62%),
+radial-gradient(120% 90% at 40% 100%,#c4c3c1 25%,transparent 75%),#e5e5e6}
+/* 修复后：vw_bg 由 scrim_50(31% 黑) 改为 bg_player_scrim——暖黑 #0C0805 恒定渐变纱 70%→85%，与主题无关 */
+.scrim.new{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,8,5,.70) 0%,rgba(12,8,5,.75) 52%,rgba(12,8,5,.85) 100%)}
+.scrim.old{position:absolute;inset:0;background:rgba(0,0,0,.314)}
+.player .inner{position:relative;z-index:40;display:flex;flex-direction:column;height:100%}
+.pills{display:flex;justify-content:space-between;margin-top:6px;padding:0 16px}
+.pill{font-size:12.5px;color:#f3f0eb;background:rgba(255,255,255,.16);border-radius:999px;padding:4px 11px;display:flex;gap:5px;align-items:center}
+.pill .icon{width:15px;height:15px}
+.covcircle{width:240px;height:240px;border-radius:50%;margin:26px auto 0;border:2.5px solid var(--primary);overflow:hidden;position:relative;display:grid;place-items:center;color:rgba(255,255,255,.85);flex:none}
+.covcircle .ph{position:absolute;inset:0;background:linear-gradient(150deg,#7a4423,#3c2a1a 60%,#57351c)}
+.covcircle .icon{width:64px;height:64px;stroke-width:1.4;opacity:.9}
+.covcircle img{width:100%;height:100%;object-fit:cover;display:block}
+.subt{text-align:center;font-size:14.5px;color:#f3f0eb;margin-top:22px;padding:0 32px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;line-height:1.45}
+.progrow{display:flex;align-items:center;gap:12px;padding:0 26px;margin-top:16px;font-size:12px;color:#b4b0aa}
+.seek{flex:1;height:4px;border-radius:3px;background:rgba(255,255,255,.22);position:relative}
+.seek i{position:absolute;left:0;top:0;bottom:0;width:8%;border-radius:3px;background:var(--primary)}
+.seek b{position:absolute;left:8%;top:50%;transform:translate(-2px,-50%);width:12px;height:12px;border-radius:50%;background:#fff}
+.ctrls{margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding:0 18px 44px}
+.cbtn{width:48px;height:48px;border:0;background:rgba(255,255,255,.13);border-radius:50%;display:grid;place-items:center;color:#f3f0eb;cursor:pointer;padding:0}
+.fab{width:72px;height:72px;border:0;border-radius:50%;background:#f3f0eb;color:#141312;display:grid;place-items:center;cursor:pointer;position:relative;padding:0}
+/* ---------- 阅读菜单（view_read_menu.xml） ---------- */
+.rpage{position:absolute;inset:36px 0 0 0;padding:10px 22px 0;line-height:0}
+.rline{height:11px;border-radius:5px;margin-bottom:13px}
+.rpage.lite .rline{background:#d9d5cc}
+.rpage.lite .rline.t{background:#c8c3b8}
+.rpage.drk .rline{background:#3a372f}
+.rpage.drk .rline.t{background:#4a463c}
+.panel-top{position:absolute;top:36px;left:0;right:0;z-index:8;background:var(--surface2);border-bottom:1px solid var(--divider);border-radius:0 0 20px 20px;padding-bottom:10px}
+.panel-bottom{position:absolute;bottom:0;left:0;right:0;z-index:8;background:var(--surface2);border-top:1px solid var(--divider);border-radius:20px 20px 0 0;padding:8px 0 18px}
+.fab-row{display:flex;justify-content:space-between;padding:8px 22px}
+.rfab{width:46px;height:46px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;padding:0}
+.rfab.after{background:var(--surface);color:var(--text);box-shadow:0 0 0 1px var(--divider)}
+.rfab.before{background:transparent;color:var(--text);box-shadow:none}
+.chaprow{display:flex;align-items:center;gap:10px;padding:2px 16px 0;font-size:12px;color:var(--secondary)}
+.chaprow .srcpill{margin-left:auto;background:var(--primary-soft);color:#b34a15;font-weight:700;font-size:12px;border-radius:8px;padding:5px 12px}
+.chaprow .ct{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seekrow{display:flex;align-items:center;gap:12px;padding:6px 16px 2px;font-size:13px}
+.seekrow .rseek{flex:1;height:4px;border-radius:3px;background:var(--track);position:relative}
+.seekrow .rseek i{position:absolute;left:0;top:0;bottom:0;width:42%;border-radius:3px;background:var(--primary)}
+.seekrow .rseek b{position:absolute;left:42%;top:50%;transform:translate(-2px,-50%);width:12px;height:12px;border-radius:50%;background:var(--primary)}
+.macts{display:flex;justify-content:space-around;padding:8px 10px 0}
+.mact{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:12px;color:var(--text);width:64px}
+.mact .icon{width:23px;height:23px}
+/* ---------- 书籍详情（activity_book_info.xml，仅标题栏相关） ---------- */
+.hero{position:absolute;inset:0}
+/* 实机 hero 上还有 vw_bg scrim_50（31% 黑，activity_book_info.xml:20-22），壳内按合成后视觉绘制 */
+.hero.lite{background:linear-gradient(0deg,rgba(0,0,0,.31),rgba(0,0,0,.31)),linear-gradient(180deg,#f7e8d9,#f0d2b9)}
+.hero.drk{background:linear-gradient(0deg,rgba(0,0,0,.31),rgba(0,0,0,.31)),linear-gradient(180deg,#33261c,#221a14)}
+.bicard{position:absolute;left:14px;right:14px;top:190px;background:var(--surface);border:1px solid var(--divider);border-radius:20px;padding:18px;display:flex;gap:16px}
+.bicover{width:96px;height:134px;border-radius:9px;flex:none;background:linear-gradient(150deg,#7a4423,#3c2a1a 60%,#57351c);box-shadow:0 2px 8px rgba(0,0,0,.14)}
+.bit{flex:1;min-width:0}
+.bit .bt{font-size:20px;font-weight:700;line-height:1.3;margin:4px 0 8px}
+.bit .ba{font-size:13px;color:var(--secondary);margin-bottom:12px}
+.bit .brow{display:flex;gap:8px}
+.bit .btn1{flex:1;background:var(--primary);color:#fff;border:0;border-radius:12px;height:42px;font-size:14px;font-weight:700}
+.bit .btn2{flex:1;background:var(--primary-soft);color:#b34a15;border:0;border-radius:12px;height:42px;font-size:14px;font-weight:700}
+/* ---------- 修复前后对照条 ---------- */
+.cmp{max-width:880px;margin:16px 0 0;border:1px solid rgba(0,0,0,.08);border-radius:14px;background:#fff;padding:14px 18px;display:flex;gap:28px;flex-wrap:wrap}
+.cmp .col{flex:1;min-width:300px}
+.cmp .lab{font-size:12.5px;font-weight:700;margin-bottom:10px;color:#3a372f}
+.cmp .row{display:flex;gap:18px;align-items:center;padding:10px 14px;border-radius:12px}
+.cmp .row.on-paper{background:#f7f4ee}
+.cmp .row.on-dark{background:#141312}
+.cmp .dot{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex:none}
+.cmp .ghost-l{background:rgba(32,36,43,.1);color:#20242b;outline:1px dashed rgba(0,0,0,.25);outline-offset:-1px}
+.cmp .ghost-d{background:rgba(243,240,235,.1);color:#f3f0eb;outline:1px dashed rgba(255,255,255,.3);outline-offset:-1px}
+.cmp .solid-l{background:#ffffff;color:#20242b;box-shadow:0 0 0 1px rgba(0,0,0,.07)}
+.cmp .solid-d{background:#1d1b19;color:#f3f0eb;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
+.cmp .verdict{font-size:12px;font-weight:700;margin-left:auto}
+.cmp .ok{color:#3b7a45}.cmp .no{color:#ba1a1a}
+/* ---------- 落地改法代码块 ---------- */
+.code{max-width:880px;margin:14px 0 0;background:#1d1b19;border:1px solid rgba(0,0,0,.25);border-radius:14px;padding:14px 18px;font-family:ui-monospace,Consolas,monospace;font-size:12px;line-height:1.85;color:#e8e2d8;overflow-x:auto;white-space:pre}
+.code .f{color:#ffb185}
+.code .c{color:#8f8b7f}
+.code .k{color:#ff9d6b}
+.code .v{color:#c2e8ff}
+.code .del{color:#ff8a80}
+.code .add{color:#9fdfae}
+.code .path{display:block;color:#b4b0aa;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:6px;margin-bottom:8px;font-weight:600}
+ul.tight{margin:8px 0 0;padding-left:20px}
+ul.tight li{margin:2px 0}
+footer{max-width:912px;padding:0 16px 60px;font-size:12.5px;color:#6d6a62;line-height:2}
+footer b{color:#26231d}
+</style></head>
+<body>
+<div class="page">
+
+<header class="page-head">
+  <div class="eyebrow">Legado UI Design · v3 修复稿 11</div>
+  <h1>亮色主题修复：听书播放 + 阅读悬浮钮<span class="en">AUDIO PLAYER &amp; READ MENU FAB · LIGHT-THEME FIX</span></h1>
+  <p class="ph-sub">两处用户实测「亮色下看不清」的修复设计：① 听书播放页改为<b>恒定暗色播放面</b>（明暗主题共用同一播放器视觉，延续 08-system s13 定稿「暗色 scrim 上白字白控件，不随日夜间切换而异」）；② 阅读菜单 4 个悬浮钮由 10% ghost 半透明底改为 <b>surface 实心圆</b>（延续 03-reader 定稿）。顺带给出排查确认的书籍详情标题栏同源修复。全部方案可由布局 XML / 最小 Kotlin 改动落地。</p>
+  <div class="tokens">
+    <span class="tk"><span class="pair-sw"><i style="background:#141312"></i><i style="background:#1d1b19"></i></span><span><b>播放面（新增 · 与主题无关）</b> <code>player_surface #141312</code> <code>player_surface_container #1D1B19</code><small>明暗主题同值，values-night 不覆盖</small></span></span>
+    <span class="tk"><span class="pair-sw"><i style="background:#f3f0eb"></i><i style="background:#b4b0aa"></i></span><span><b>播放面文字（新增）</b> <code>player_on_surface #F3F0EB</code> <code>player_on_surface_variant #B4B0AA</code><small>主白字 / 次白字（计时）</small></span></span>
+    <span class="tk"><i class="sw" style="background:linear-gradient(180deg,rgba(12,8,5,.7),rgba(12,8,5,.85))"></i><span><b>播放纱（新增 drawable）</b> <code>bg_player_scrim #0C0805 70%→85%</code><small>替换 scrim_50（31% 黑，亮封面实测 2.7:1 不达标）</small></span></span>
+    <span class="tk"><i class="sw" style="background:#fff;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)"></i><span><b>阅读悬浮钮（引用现有）</b> <code>surface_container</code> 实心 + <code>on_surface</code> 图标<small>03-reader 定稿：不再用 10% ghost 底</small></span></span>
+  </div>
+  <nav class="pnav">
+    <a href="#s1"><b>S1</b>听书播放 · 修复后（明/暗）</a>
+    <a href="#s2"><b>S2</b>播放页状态与最坏情况</a>
+    <a href="#s3"><b>S3</b>阅读菜单 · 悬浮钮修复</a>
+    <a href="#s4"><b>S4</b>书籍详情 · 标题栏修复</a>
+    <a href="#s5"><b>S5</b>令牌与落地改法</a>
+  </nav>
+</header>
+
+<!-- ============ S1 听书播放 · 修复后 ============ -->
+<section class="scr" id="s1">
+  <div class="scr-head"><span class="scr-no">S1</span><h2>听书播放 · 修复后：亮色主题下保持暗色播放面</h2><span class="src">activity_audio_play.xml · AudioPlayActivity.kt</span></div>
+  <p class="scr-sub">根因：页面是暗色播放器设计（白字 + 白图标 + 白玻璃控件），根背景却用 <code>@color/background</code>（亮色 = surface #FAF9F7）；封面未加载时 iv_bg 无内容，白字直接压在纸白上。修复：根背景固定为 <b>player_surface #141312</b>（新增令牌，明暗主题同值），TitleBar 继续走 <code>themeMode="dark"</code> + 透明底 + <code>Theme.Dark</code>——在恒定暗面上，白标题 / 白返回键 / 白换源图标在两种主题下都正确。左右两壳即修复后的亮色与夜间主题：同一播放器视觉。</p>
+  <div class="pair">
+    <figure class="dev">
+      <div class="phone inv">
+        <div class="player">
+          <div class="cblur warm"></div>
+          <div class="scrim new"></div>
+          <div class="inner">
+            <div class="status" style="color:#fff"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+            <div class="tbar" style="color:#fff"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st" style="flex:1;text-align:center">斗罗大陆</div><div class="actions">
+              <button class="icon-btn" aria-label="换源"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h13m0 0-3-3m3 3-3 3M20 17H7m0 0 3-3m-3 3 3 3"/></svg></button>
+              <button class="icon-btn" aria-label="更多"><svg class="icon f" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+            </div></div>
+            <div class="pills">
+              <span class="pill"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.5 1.5M9 2h6"/></svg>30m</span>
+              <span class="pill">1.2X</span>
+            </div>
+            <div class="covcircle"><div class="ph"></div><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>
+            <div class="subt">第一千二百二十四章 · 龙神辉光照彻星海，斗气化马处再见故人</div>
+            <div class="progrow"><span>03:24</span><div class="seek"><i></i><b></b></div><span>45:00</span></div>
+            <div class="ctrls">
+              <button class="cbtn" aria-label="定时"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.5 1.5M9 2h6"/></svg></button>
+              <button class="cbtn" aria-label="减速"><svg class="icon f" viewBox="0 0 24 24"><path d="M11 12l8-5v10zM3 12l8-5v10z"/></svg></button>
+              <button class="cbtn" aria-label="上一章"><svg class="icon f" viewBox="0 0 24 24"><path d="M6 5v14M20 5l-11 7 11 7z"/></svg></button>
+              <button class="fab" aria-label="播放暂停"><svg class="icon f" viewBox="0 0 24 24" style="width:30px;height:30px"><path d="M8 5v14l11-7z"/></svg></button>
+              <button class="cbtn" aria-label="下一章"><svg class="icon f" viewBox="0 0 24 24"><path d="M18 5v14M4 5l11 7-11 7z"/></svg></button>
+              <button class="cbtn" aria-label="加速"><svg class="icon f" viewBox="0 0 24 24"><path d="M13 12 5 7v10zM21 12l-8-5v10z"/></svg></button>
+              <button class="cbtn" aria-label="目录"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h2M4 12h2M4 18h2M9 6h11M9 12h11M9 18h11"/></svg></button>
+            </div>
+          </div>
+          <i class="hi" style="--indicator:rgba(255,255,255,.75)"></i>
+        </div>
+      </div>
+      <figcaption>亮色主题（修复后）· 恒定暗色播放面 #141312，白字白控件全部可读</figcaption>
+    </figure>
+    <figure class="dev">
+      <div class="phone dark inv">
+        <div class="player">
+          <div class="cblur warm"></div>
+          <div class="scrim new"></div>
+          <div class="inner">
+            <div class="status" style="color:#fff"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+            <div class="tbar" style="color:#fff"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st" style="flex:1;text-align:center">斗罗大陆</div><div class="actions">
+              <button class="icon-btn" aria-label="换源"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h13m0 0-3-3m3 3-3 3M20 17H7m0 0 3-3m-3 3 3 3"/></svg></button>
+              <button class="icon-btn" aria-label="更多"><svg class="icon f" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+            </div></div>
+            <div class="pills">
+              <span class="pill"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.5 1.5M9 2h6"/></svg>30m</span>
+              <span class="pill">1.2X</span>
+            </div>
+            <div class="covcircle"><div class="ph"></div><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>
+            <div class="subt">第一千二百二十四章 · 龙神辉光照彻星海，斗气化马处再见故人</div>
+            <div class="progrow"><span>03:24</span><div class="seek"><i></i><b></b></div><span>45:00</span></div>
+            <div class="ctrls">
+              <button class="cbtn" aria-label="定时"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.5 1.5M9 2h6"/></svg></button>
+              <button class="cbtn" aria-label="减速"><svg class="icon f" viewBox="0 0 24 24"><path d="M11 12l8-5v10zM3 12l8-5v10z"/></svg></button>
+              <button class="cbtn" aria-label="上一章"><svg class="icon f" viewBox="0 0 24 24"><path d="M6 5v14M20 5l-11 7 11 7z"/></svg></button>
+              <button class="fab" aria-label="播放暂停"><svg class="icon f" viewBox="0 0 24 24" style="width:30px;height:30px"><path d="M8 5v14l11-7z"/></svg></button>
+              <button class="cbtn" aria-label="下一章"><svg class="icon f" viewBox="0 0 24 24"><path d="M18 5v14M4 5l11 7-11 7z"/></svg></button>
+              <button class="cbtn" aria-label="加速"><svg class="icon f" viewBox="0 0 24 24"><path d="M13 12 5 7v10zM21 12l-8-5v10z"/></svg></button>
+              <button class="cbtn" aria-label="目录"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h2M4 12h2M4 18h2M9 6h11M9 12h11M9 18h11"/></svg></button>
+            </div>
+          </div>
+          <i class="hi" style="--indicator:rgba(255,255,255,.75)"></i>
+        </div>
+      </div>
+      <figcaption>夜间主题 · 与亮色完全同一视觉（设计即恒定暗色，代码不做分支）</figcaption>
+    </figure>
+  </div>
+  <div class="crs">
+    <span class="crchip"><i>7.7:1</i>标题 / 章名 #F3F0EB @ 顶部纱 70%（状态栏纯白 8.8:1）</span>
+    <span class="crchip"><i>4.9:1</i>胶囊字 #F3F0EB 12.5sp（玻璃底叠 70% 纱；纯白 5.6:1）</span>
+    <span class="crchip"><i>6.7:1</i>计时次白 #B4B0AA 12sp @ 底部纱 85%</span>
+    <span class="crchip"><i>8.4:1</i>控制键图标 #F3F0EB（13% 玻璃底；纯白 9.5:1）</span>
+    <span class="crchip"><i>16.3:1</i>播放 FAB 深图标 #141312 @ #F3F0EB</span>
+  </div>
+  <ul class="notes">
+    <li><b>播放面令牌（新增，与主题无关）</b>：<code>player_surface=#141312</code>、<code>player_surface_container=#1D1B19</code>、<code>player_on_surface=#F3F0EB</code>、<code>player_on_surface_variant=#B4B0AA</code>——即夜间主题 surface 层级（MASTER.md Dark 表），只是不再放进 <code>values-night</code>，两种主题下取同值。声明一次即可（values/colors.xml），<b>values-night 不覆盖</b>。</li>
+    <li><b>根背景</b>：<code>activity_audio_play.xml:7</code> <code>@color/background</code> → <code>@color/player_surface</code>。封面未加载时（iv_bg 无默认内容，AudioPlayActivity.kt:190-195 仅回调后置图）页面就是纯播放面，白字 16.3:1。</li>
+    <li><b>封面纱</b>：<code>:22</code> vw_bg <code>@color/scrim_50</code>（31% 黑，亮封面 #E5E5E6 实测白字仅 2.71:1）→ <code>@drawable/bg_player_scrim</code>（暖黑 #0C0805 渐变纱 70%→85%，见 S2 最坏情况验证）。模糊封面透出 15~30%，仍是「毛玻璃封面背景」质感（08-system s13）。</li>
+    <li><b>文字与图标</b>：5 处白字（tv_timer :44 / tv_speed :63 / tv_sub_title :95 / tv_dur_time :115 / tv_all_time :134）与 6 处控制键 tint（:158 :174 :190 :237 :253 :269）由 <code>md_white_1000</code> 换为 <code>player_on_surface</code>（计时两处用 <code>player_on_surface_variant</code>，设计稿计时次白即同值 #B4B0AA）；播放 FAB 底 <code>:205</code> → <code>player_on_surface</code>、图标 <code>:204</code> → <code>player_surface</code>（设计稿 FAB 浅底 + 暖黑图标）。<code>tools:ignore="TextContrastCheck"</code>（:116 :135）随修复删除。</li>
+    <li><b>不动的</b>：<code>themeMode="dark"</code>（:29）、<code>toolBarTheme = Theme.Dark</code>（AudioPlayActivity.kt:60）、TitleBar 透明底（:60）与菜单 <code>menu_change_source</code> 白图标（MenuExtensions.kt:105 Theme.Dark → md_white_1000）——恒定暗面下全部由「错」转「对」，状态栏亮图标（BaseActivity.kt:195）同理；<code>bg_player_pill</code> / <code>bg_player_cbtn</code> 白玻璃底不动（其上 #F3F0EB 字/图标新纱实测 4.94 / 8.40:1，纯白对照 5.61 / 9.54:1）。</li>
+    <li><b>润色（可选）</b>：进度条轨道 <code>:126</code> <code>md_dark_secondary</code>（#B3FFFFFF 偏亮）→ <code>#38FFFFFF</code>（设计稿 .seek 轨道白 22%）；iv_cover 无封面时加暖棕占位 <code>bg_player_cover_placeholder</code>（对齐设计稿 .covcircle 渐变）。</li>
+  </ul>
+</section>
+
+<!-- ============ S2 播放页状态与最坏情况 ============ -->
+<section class="scr" id="s2">
+  <div class="scr-head"><span class="scr-no">S2</span><h2>播放页 · 默认无封面 与 亮色封面最坏情况</h2><span class="src">iv_bg 无默认内容 · 默认封面实测 #E5E5E6</span></div>
+  <p class="scr-sub">左：进入页面即所见（iv_bg 空，纯播放面 + 封面圆暖棕占位）。右：排查实测最坏情况——默认封面 #E5E5E6 模糊后铺满 + 新纱。修复前（scrim_50）该状态白字仅 2.71:1；修复后按落地令牌实算，最坏处为胶囊 4.94:1，其余 ≥ 6.7:1，全部 ≥ 4.5:1。</p>
+  <div class="pair">
+    <figure class="dev">
+      <div class="phone inv">
+        <div class="player" style="background:#141312">
+          <div class="inner">
+            <div class="status" style="color:#fff"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg></span></div>
+            <div class="tbar" style="color:#fff"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st" style="flex:1;text-align:center">斗罗大陆</div><div class="actions">
+              <button class="icon-btn" aria-label="换源"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h13m0 0-3-3m3 3-3 3M20 17H7m0 0 3-3m-3 3 3 3"/></svg></button>
+              <button class="icon-btn" aria-label="更多"><svg class="icon f" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+            </div></div>
+            <div class="pills"><span class="pill"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.5 1.5M9 2h6"/></svg>30m</span><span class="pill">1.0X</span></div>
+            <div class="covcircle"><div class="ph"></div><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>
+            <div class="subt">正在加载章节…</div>
+            <div class="progrow"><span>00:00</span><div class="seek"><i style="width:0"></i><b style="left:0"></b></div><span>00:00</span></div>
+            <div class="ctrls">
+              <button class="cbtn" aria-label="定时"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.5 1.5M9 2h6"/></svg></button>
+              <button class="cbtn" aria-label="减速"><svg class="icon f" viewBox="0 0 24 24"><path d="M11 12l8-5v10zM3 12l8-5v10z"/></svg></button>
+              <button class="cbtn" aria-label="上一章"><svg class="icon f" viewBox="0 0 24 24"><path d="M6 5v14M20 5l-11 7 11 7z"/></svg></button>
+              <button class="fab" aria-label="播放"><svg class="icon f" viewBox="0 0 24 24" style="width:30px;height:30px"><path d="M8 5v14l11-7z"/></svg></button>
+              <button class="cbtn" aria-label="下一章"><svg class="icon f" viewBox="0 0 24 24"><path d="M18 5v14M4 5l11 7-11 7z"/></svg></button>
+              <button class="cbtn" aria-label="加速"><svg class="icon f" viewBox="0 0 24 24"><path d="M13 12 5 7v10zM21 12l-8-5v10z"/></svg></button>
+              <button class="cbtn" aria-label="目录"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h2M4 12h2M4 18h2M9 6h11M9 12h11M9 18h11"/></svg></button>
+            </div>
+          </div>
+          <i class="hi" style="--indicator:rgba(255,255,255,.75)"></i>
+        </div>
+      </div>
+      <figcaption>默认态：iv_bg 空 → 根背景 player_surface 直接可见（此前是纸白）</figcaption>
+    </figure>
+    <figure class="dev">
+      <div class="phone inv">
+        <div class="player" style="background:#141312">
+          <div class="cblur light"></div>
+          <div class="scrim new"></div>
+          <div class="inner">
+            <div class="status" style="color:#fff"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg></span></div>
+            <div class="tbar" style="color:#fff"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st" style="flex:1;text-align:center">斗罗大陆</div><div class="actions">
+              <button class="icon-btn" aria-label="换源"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h13m0 0-3-3m3 3-3 3M20 17H7m0 0 3-3m-3 3 3 3"/></svg></button>
+              <button class="icon-btn" aria-label="更多"><svg class="icon f" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+            </div></div>
+            <div class="pills"><span class="pill"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.5 1.5M9 2h6"/></svg>30m</span><span class="pill">1.2X</span></div>
+            <div class="covcircle"><div class="ph" style="background:linear-gradient(150deg,#dcdcdd,#b9b9bb 60%,#cbcacb)"></div><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>
+            <div class="subt">第一千二百二十四章 · 龙神辉光照彻星海</div>
+            <div class="progrow"><span>03:24</span><div class="seek"><i></i><b></b></div><span>45:00</span></div>
+            <div class="ctrls">
+              <button class="cbtn" aria-label="定时"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.5 1.5M9 2h6"/></svg></button>
+              <button class="cbtn" aria-label="减速"><svg class="icon f" viewBox="0 0 24 24"><path d="M11 12l8-5v10zM3 12l8-5v10z"/></svg></button>
+              <button class="cbtn" aria-label="上一章"><svg class="icon f" viewBox="0 0 24 24"><path d="M6 5v14M20 5l-11 7 11 7z"/></svg></button>
+              <button class="fab" aria-label="播放暂停"><svg class="icon f" viewBox="0 0 24 24" style="width:30px;height:30px"><path d="M8 5v14l11-7z"/></svg></button>
+              <button class="cbtn" aria-label="下一章"><svg class="icon f" viewBox="0 0 24 24"><path d="M18 5v14M4 5l11 7-11 7z"/></svg></button>
+              <button class="cbtn" aria-label="加速"><svg class="icon f" viewBox="0 0 24 24"><path d="M13 12 5 7v10zM21 12l-8-5v10z"/></svg></button>
+              <button class="cbtn" aria-label="目录"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h2M4 12h2M4 18h2M9 6h11M9 12h11M9 18h11"/></svg></button>
+            </div>
+          </div>
+          <i class="hi" style="--indicator:rgba(255,255,255,.75)"></i>
+        </div>
+      </div>
+      <figcaption>最坏情况：亮封面 #E5E5E6 模糊铺满 + bg_player_scrim（70%→85% 暖黑）</figcaption>
+    </figure>
+  </div>
+  <div class="crs">
+    <span class="crchip bad"><i>2.71:1</i>修复前 · scrim_50 + 亮封面 → 白字（排查实测 2.3~2.7）</span>
+    <span class="crchip"><i>16.3:1</i>修复后 · 默认态 #F3F0EB 字 @ #141312</span>
+    <span class="crchip"><i>7.7:1</i>修复后 · 最坏亮封面顶部（标题/章名 #F3F0EB）</span>
+    <span class="crchip"><i>4.9:1</i>修复后 · 最坏亮封面胶囊字 #F3F0EB（纯白 5.6:1）</span>
+  </div>
+  <ul class="notes">
+    <li><b>bg_player_scrim 取值依据</b>：sRGB 合成后按 WCAG 实算——亮封面 #E5E5E6 叠 31% 黑（scrim_50）= #9D9D9E，白字 2.71:1；叠 70% 暖黑 = #4D4A48，#F3F0EB 7.73:1（纯白 8.79）；叠 85% = #2C2927，#F3F0EB 12.71:1（纯白 14.45）、次白 #B4B0AA 6.69:1。渐变（顶 70 / 中 75 / 底 85）让章节名与控制区最稳，封面暖光仍可感知，与 Spotify 类播放器的重纱做法一致。</li>
+    <li><b>为何不用设计稿原值 42%（rgba(12,8,5,.42)）</b>：08-system s13 的 .scrim 42% 是按默认深棕封面定的；排查已证明任意浅封面会击穿（2.3~2.7:1）。恒定暗面方案必须对「任意封面」兜底，故加深至 70~85%，方向与设计稿注记「暗色 scrim 上白字白控件，不随日夜间切换而异」一致。</li>
+    <li><b>计算口径</b>：Android alpha 合成发生在 sRGB 空间，再按 WCAG 2.x 相对亮度折算；本稿全部比值由 Node 脚本实算（见 S5 验证清单）。</li>
+  </ul>
+</section>
+
+<!-- ============ S3 阅读菜单悬浮钮 ============ -->
+<section class="scr" id="s3">
+  <div class="scr-head"><span class="scr-no">S3</span><h2>阅读菜单 · 悬浮钮修复：10% ghost 底 → surface 实心圆</h2><span class="src">ReadMenu.kt:197-205 · view_read_menu.xml:147-228</span></div>
+  <p class="scr-sub">根因：ReadMenu.kt:197 <code>fabTint = adjustAlpha(textColor, 0.1f)</code> 把 4 个 FAB 底染成 10% 半透明文字色，运行时又覆盖掉 XML 里本就正确的 <code>backgroundTint=@color/surface_container</code>（view_read_menu.xml:157/179/201/223）。修复后：实心 <code>surface_container</code> 圆钮（亮 #FFFFFF / 夜 #1D1B19），图标仍随菜单文字色 textColor；与 03-reader 定稿注记一致——「FAB 为 surface_container 实心圆，elevation 0，不再用半透明 ghost 底」。</p>
+  <div class="cmp">
+    <div class="col">
+      <div class="lab">修复前 · adjustAlpha(textColor, 0.1f)（亮色主题，纸面正文上）</div>
+      <div class="row on-paper">
+        <span class="dot ghost-l"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.2-4.2"/></svg></span>
+        <span class="dot ghost-l"><svg class="icon" viewBox="0 0 24 24"><path d="m13 3 3.5 3.5L13 10M6.5 6.5h9M17.5 17.5h-9M11 14l-3.5 3.5L11 21"/></svg></span>
+        <span class="dot ghost-l"><svg class="icon" viewBox="0 0 24 24"><path d="M20 14.7A8.3 8.3 0 0 1 9.3 4 8.3 8.3 0 1 0 20 14.7Z"/></svg></span>
+        <span class="dot ghost-l"><svg class="icon" viewBox="0 0 24 24"><path d="M13 5v14M9 5v14M4 8h4M4 16h4M20 8h-4M20 16h-4M4 12h16"/></svg></span>
+        <span class="verdict no">钮底 vs 纸面 1.21:1 · 形同隐形</span>
+      </div>
+    </div>
+    <div class="col">
+      <div class="lab">修复后 · 实心 surface_container（XML 形态即终态，Kotlin 不再覆盖）</div>
+      <div class="row on-paper">
+        <span class="dot solid-l"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.2-4.2"/></svg></span>
+        <span class="dot solid-l"><svg class="icon" viewBox="0 0 24 24"><path d="m13 3 3.5 3.5L13 10M6.5 6.5h9M17.5 17.5h-9M11 14l-3.5 3.5L11 21"/></svg></span>
+        <span class="dot solid-l"><svg class="icon" viewBox="0 0 24 24"><path d="M20 14.7A8.3 8.3 0 0 1 9.3 4 8.3 8.3 0 1 0 20 14.7Z"/></svg></span>
+        <span class="dot solid-l"><svg class="icon" viewBox="0 0 24 24"><path d="M13 5v14M9 5v14M4 8h4M4 16h4M20 8h-4M20 16h-4M4 12h16"/></svg></span>
+        <span class="verdict ok">图标 vs 钮底 15.57:1 ✓</span>
+      </div>
+      <div class="row on-dark" style="margin-top:8px">
+        <span class="dot solid-d"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.2-4.2"/></svg></span>
+        <span class="dot solid-d"><svg class="icon" viewBox="0 0 24 24"><path d="m13 3 3.5 3.5L13 10M6.5 6.5h9M17.5 17.5h-9M11 14l-3.5 3.5L11 21"/></svg></span>
+        <span class="dot solid-d"><svg class="icon" viewBox="0 0 24 24"><path d="M20 14.7A8.3 8.3 0 0 1 9.3 4 8.3 8.3 0 1 0 20 14.7Z"/></svg></span>
+        <span class="dot solid-d"><svg class="icon" viewBox="0 0 24 24"><path d="M13 5v14M9 5v14M4 8h4M4 16h4M20 8h-4M20 16h-4M4 12h16"/></svg></span>
+        <span class="verdict ok" style="color:#7fd891">夜间 15.11:1 ✓（ghost 旧值仅 1.28:1）</span>
+      </div>
+    </div>
+  </div>
+  <div class="pair" style="margin-top:22px">
+    <figure class="dev">
+      <div class="phone">
+        <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg></span></div>
+        <div class="rpage lite"><div class="rline t" style="width:86%"></div><div class="rline" style="width:100%"></div><div class="rline" style="width:96%"></div><div class="rline" style="width:100%"></div><div class="rline" style="width:72%"></div><div class="rline" style="width:100%"></div><div class="rline" style="width:94%"></div><div class="rline" style="width:100%"></div><div class="rline" style="width:88%"></div><div class="rline" style="width:100%"></div><div class="rline" style="width:60%"></div><div class="rline" style="width:100%"></div><div class="rline" style="width:97%"></div><div class="rline" style="width:92%"></div><div class="rline" style="width:100%"></div><div class="rline" style="width:76%"></div><div class="rline" style="width:100%"></div><div class="rline" style="width:95%"></div><div class="rline" style="width:100%"></div><div class="rline" style="width:64%"></div></div>
+        <div class="panel-top">
+          <div class="tbar" style="height:56px"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st" style="flex:1;font-size:17px">斗罗大陆</div><div class="actions"><button class="icon-btn" aria-label="搜索"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.2-4.2"/></svg></button></div></div>
+          <div class="chaprow"><span class="ct">第一千二百二十四章 · 龙神辉光照彻星海</span><span class="srcpill">书源</span></div>
+        </div>
+        <div class="panel-bottom">
+          <div class="fab-row">
+            <button class="rfab after" aria-label="全文搜索"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.2-4.2"/></svg></button>
+            <button class="rfab after" aria-label="自动翻页"><svg class="icon" viewBox="0 0 24 24"><path d="m6 5 6 7-6 7M13 5l6 7-6 7"/></svg></button>
+            <button class="rfab after" aria-label="替换净化"><svg class="icon" viewBox="0 0 24 24"><path d="M6.5 6.5h9M13 3l3.5 3.5L13 10M17.5 17.5h-9M11 14l-3.5 3.5L11 21"/></svg></button>
+            <button class="rfab after" aria-label="深色模式"><svg class="icon" viewBox="0 0 24 24"><path d="M20 14.7A8.3 8.3 0 0 1 9.3 4 8.3 8.3 0 1 0 20 14.7Z"/></svg></button>
+          </div>
+          <div class="seekrow"><span>上一章</span><div class="rseek"><i></i><b></b></div><span>下一章</span></div>
+          <div class="macts">
+            <span class="mact"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h2M4 12h2M4 18h2M9 6h11M9 12h11M9 18h11"/></svg>目录</span>
+            <span class="mact"><svg class="icon" viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6l-5 4H4zM16.5 9.5a4 4 0 0 1 0 5"/></svg>朗读</span>
+            <span class="mact"><svg class="icon f" viewBox="0 0 24 24" style="font-size:20px"><text x="4" y="17" style="font:700 16px system-ui">Aa</text></svg>界面</span>
+            <span class="mact"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3M6 6l2.1 2.1M15.9 15.9 18 18M18 6l-2.1 2.1M8.1 15.9 6 18"/></svg>设置</span>
+          </div>
+        </div>
+      </div>
+      <figcaption>亮色主题 · 4 钮实心 surface_container + on_surface 图标（XML 现形态）</figcaption>
+    </figure>
+    <figure class="dev">
+      <div class="phone dark">
+        <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg></span></div>
+        <div class="rpage drk"><div class="rline t" style="width:86%"></div><div class="rline" style="width:100%"></div><div class="rline" style="width:96%"></div><div class="rline" style="width:100%"></div><div class="rline" style="width:72%"></div><div class="rline" style="width:100%"></div><div class="rline" style="width:94%"></div><div class="rline" style="width:100%"></div><div class="rline" style="width:88%"></div><div class="rline" style="width:100%"></div><div class="rline" style="width:60%"></div><div class="rline" style="width:100%"></div><div class="rline" style="width:97%"></div><div class="rline" style="width:92%"></div><div class="rline" style="width:100%"></div><div class="rline" style="width:76%"></div><div class="rline" style="width:100%"></div><div class="rline" style="width:95%"></div><div class="rline" style="width:100%"></div><div class="rline" style="width:64%"></div></div>
+        <div class="panel-top">
+          <div class="tbar" style="height:56px"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st" style="flex:1;font-size:17px">斗罗大陆</div><div class="actions"><button class="icon-btn" aria-label="搜索"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.2-4.2"/></svg></button></div></div>
+          <div class="chaprow"><span class="ct">第一千二百二十四章 · 龙神辉光照彻星海</span><span class="srcpill">书源</span></div>
+        </div>
+        <div class="panel-bottom">
+          <div class="fab-row">
+            <button class="rfab after" aria-label="全文搜索"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4.2-4.2"/></svg></button>
+            <button class="rfab after" aria-label="自动翻页"><svg class="icon" viewBox="0 0 24 24"><path d="m6 5 6 7-6 7M13 5l6 7-6 7"/></svg></button>
+            <button class="rfab after" aria-label="替换净化"><svg class="icon" viewBox="0 0 24 24"><path d="M6.5 6.5h9M13 3l3.5 3.5L13 10M17.5 17.5h-9M11 14l-3.5 3.5L11 21"/></svg></button>
+            <button class="rfab after" aria-label="深色模式"><svg class="icon" viewBox="0 0 24 24"><path d="M20 14.7A8.3 8.3 0 0 1 9.3 4 8.3 8.3 0 1 0 20 14.7Z"/></svg></button>
+          </div>
+          <div class="seekrow"><span>上一章</span><div class="rseek"><i></i><b></b></div><span>下一章</span></div>
+          <div class="macts">
+            <span class="mact"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h2M4 12h2M4 18h2M9 6h11M9 12h11M9 18h11"/></svg>目录</span>
+            <span class="mact"><svg class="icon" viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6l-5 4H4zM16.5 9.5a4 4 0 0 1 0 5"/></svg>朗读</span>
+            <span class="mact"><svg class="icon f" viewBox="0 0 24 24"><text x="4" y="17" style="font:700 16px system-ui">Aa</text></svg>界面</span>
+            <span class="mact"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3M6 6l2.1 2.1M15.9 15.9 18 18M18 6l-2.1 2.1M8.1 15.9 6 18"/></svg>设置</span>
+          </div>
+        </div>
+      </div>
+      <figcaption>夜间主题 · #1D1B19 实心钮 + #F3F0EB 图标（15.11:1）</figcaption>
+    </figure>
+  </div>
+  <ul class="notes">
+    <li><b>ReadMenu.kt 最小修正（:197-205）</b>：仅改 fabTint 一行——<code>ColorStateList.valueOf(ColorUtils.adjustAlpha(textColor, 0.1f))</code> → <code>ColorStateList.valueOf(context.getCompatColor(R.color.surface_container))</code>；4 组 <code>backgroundTintList</code> 赋值保留，<code>setColorFilter(textColor)</code>（图标随菜单文字色）按定稿保留。需补一行 import <code>io.legado.app.utils.getCompatColor</code>。</li>
+    <li><b>view_read_menu.xml 无需改动</b>：4 个 FAB 现形态已是定稿形态——<code>app:backgroundTint="@color/surface_container"</code>（:157 :179 :201 :223）、<code>android:tint="@color/on_surface"</code>（XML 兜底）、<code>fabCustomSize=46dp</code> + <code>fabSize=mini</code>、<code>elevation=0dp</code> + <code>pressedTranslationZ=0dp</code>（无阴影实心圆）。问题只在 Kotlin 运行时覆盖。</li>
+    <li><b>为何图标可以继续随 textColor</b>：非沉浸菜单 textColor = 主题 primaryTextColor（亮 #20242B / 夜 #F3F0EB），与实心 surface_container 恒为高对比（15.57 / 15.11:1）；沉浸菜单 textColor = 正文色，浅色纸页时为深墨、同样成立。唯一破例见下条边界。</li>
+    <li><b>边界守护（建议，+5 行）</b>：亮色主题 × 暗色沉浸页（用户自选暗底正文、白字）时，textColor 为浅色、FAB 实心底却是 #FFFFFF → 白图标压白钮 1.14:1。守护：当 <code>ColorUtils.isColorLight(textColor) == isColorLight(fabBg)</code>（明暗冲突）时，FAB 图标退回主题 <code>on_surface</code>。ColorUtils.isColorLight 已在 ReadMenu.kt 导入，见 S5 代码。</li>
+    <li><b>实施裁定注（与上两条路径偏差，待设计负责人确认）</b>：实际落地未取 S5④ 一行式，而是删除 ReadMenu.kt 全部 8 行 FAB 运行时赋值（fabTint + 4×setColorFilter），终态完全交给 view_read_menu.xml 静态定稿形态（backgroundTint=surface_container + tint=on_surface + elevation 0，:157-160 等四处）——即本稿「XML 形态即终态，Kotlin 不再覆盖」；边界守护由静态 on_surface 无条件承担（等效本条建议守护的回退色，四明暗组合恒安全；非沉浸 textColor 与 on_surface 同值观感不变，差异仅沉浸模式下图标不随自定义纸墨色，对比仍达标）。偏差记录见 ReadMenu.kt:197-200 注释。</li>
+    <li><b>沉浸面板不冲突</b>：本修复只动 FAB 底色；沉浸模式下顶部/底部面板仍染正文背景色（ReadMenu.kt:185 :195 upPanelBackground），实心主题面圆钮浮于其上是刻意的层级对比（03-reader 稿面即如此）。</li>
+  </ul>
+</section>
+
+<!-- ============ S4 书籍详情标题栏 ============ -->
+<section class="scr" id="s4">
+  <div class="scr-head"><span class="scr-no">S4</span><h2>书籍详情 · 标题栏 themeMode 同源修复</h2><span class="src">activity_book_info.xml:30 · BookInfoActivity.kt:161</span></div>
+  <p class="scr-sub">排查确认的第三处：书详页 hero 是<b>亮暖渐变</b>（bg_book_hero_gradient #F7E8D9→#F0D2B9），标题栏却写死 <code>themeMode="dark"</code>（vw_bg scrim_50 的 31% 纱压亮 hero 后顶部 ≈ #AA9F95，白字 2.59:1）。修复 = 一个属性：<code>themeMode="dark"</code> → <code>"auto"</code>。auto 走浅色 TitleBar 布局 + <code>on_surface</code> 文字/图标（TitleBar.kt:83-85 浅色布局分支、:206-213 upTheme 浅色分支），颜色经资源解析自动随主题——亮色下深字（同纱上 6.0:1，渐变底最差 5.1:1 ✓），夜间 hero 换暗渐变时自动变 #F3F0EB 浅字（15.0:1 ✓）。菜单图标本就走 Auto → on_surface（MenuExtensions.kt:108），不受影响。</p>
+  <div class="pair">
+    <figure class="dev">
+      <div class="phone">
+        <div class="hero lite"></div>
+        <div class="status" style="position:relative;z-index:40"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg></span></div>
+        <div class="tbar" style="position:relative;z-index:40;height:56px"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st" style="flex:1;text-align:center">书籍详情</div><div class="actions">
+          <button class="icon-btn" aria-label="更多"><svg class="icon f" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+        </div></div>
+        <div class="bicard">
+          <div class="bicover"></div>
+          <div class="bit">
+            <div class="bt">斗罗大陆</div>
+            <div class="ba">唐家三少 · 全网来源 3 处</div>
+            <div class="brow"><button class="btn1" type="button">开始阅读</button><button class="btn2" type="button">加入书架</button></div>
+          </div>
+        </div>
+      </div>
+      <figcaption>亮色主题（修复后）· vw_bg 31% 纱后的 hero（#AA9F95→#A5907F）上深色标题/返回键（auto）</figcaption>
+    </figure>
+    <figure class="dev">
+      <div class="phone dark">
+        <div class="hero drk"></div>
+        <div class="status" style="position:relative;z-index:40"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg></span></div>
+        <div class="tbar" style="position:relative;z-index:40;height:56px"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st" style="flex:1;text-align:center">书籍详情</div><div class="actions">
+          <button class="icon-btn" aria-label="更多"><svg class="icon f" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+        </div></div>
+        <div class="bicard">
+          <div class="bicover"></div>
+          <div class="bit">
+            <div class="bt">斗罗大陆</div>
+            <div class="ba">唐家三少 · 全网来源 3 处</div>
+            <div class="brow"><button class="btn1" type="button">开始阅读</button><button class="btn2" type="button">加入书架</button></div>
+          </div>
+        </div>
+      </div>
+      <figcaption>夜间主题 · hero 自动切换暗渐变，on_surface 解析为浅字（15.0:1）</figcaption>
+    </figure>
+  </div>
+  <div class="crs">
+    <span class="crchip bad"><i>2.59:1</i>修复前 · 亮 hero 顶部 #AA9F95 上白字</span>
+    <span class="crchip"><i>6.01:1</i>修复后 · 同底深字 #20242B（渐变底最差 5.11:1）</span>
+    <span class="crchip"><i>15.04:1</i>夜间 · #F3F0EB on 暗渐变+纱</span>
+  </div>
+  <ul class="notes">
+    <li><b>改动清单</b>：<code>activity_book_info.xml:30</code> <code>app:themeMode="dark"</code> → <code>app:themeMode="auto"</code>。BookInfoActivity.kt:162 的透明底保留（auto 的 surface_container 底被其后置透明覆盖，文字/图标色不变）。</li>
+    <li><b>听书页不要照搬</b>：activity_audio_play.xml 的 <code>themeMode="dark"</code> 必须保留——S1 修复后播放面恒暗，dark 标题栏恰好正确；两页修复方向相反正源于「播放面恒暗 / 书详 hero 随主题」两种表面策略。</li>
+  </ul>
+</section>
+
+<!-- ============ S5 令牌与落地改法 ============ -->
+<section class="scr" id="s5">
+  <div class="scr-head"><span class="scr-no">S5</span><h2>令牌与落地改法（最小 diff）</h2><span class="src">values/colors.xml · drawable · 布局 XML · ReadMenu.kt</span></div>
+
+  <div class="code"><span class="path">① app/src/main/res/values/colors.xml —— 新增播放面令牌（只声明一次；values-night 不覆盖，即与主题无关）</span><span class="c">&lt;!-- 听书播放器恒定暗色播放面（08-system s13：明暗主题共用同一播放器视觉） --&gt;</span>
+<span class="add">&lt;color name="player_surface"&gt;#141312&lt;/color&gt;</span>            <span class="c">← 根背景（activity_audio_play.xml:7）</span>
+<span class="add">&lt;color name="player_surface_container"&gt;#1D1B19&lt;/color&gt;</span>  <span class="c">← 备用层级（本轮仅声明）</span>
+<span class="add">&lt;color name="player_on_surface"&gt;#F3F0EB&lt;/color&gt;</span>          <span class="c">← 主白字/白图标/播放FAB底</span>
+<span class="add">&lt;color name="player_on_surface_variant"&gt;#B4B0AA&lt;/color&gt;</span>  <span class="c">← 计时次白（tv_dur_time/tv_all_time）</span></div>
+
+  <div class="code"><span class="path">② app/src/main/res/drawable/bg_player_scrim.xml —— 新增（替换 vw_bg 的 scrim_50）</span><span class="c">&lt;!-- 封面模糊图上的恒定暖黑渐变纱：任意封面（含最坏 #E5E5E6）下白字 ≥5.6:1 --&gt;</span>
+&lt;shape xmlns:android="http://schemas.android.com/apk/res/android"&gt;
+    &lt;gradient android:angle="270"
+        <span class="v">android:startColor="#B30C0805"</span>   <span class="c">&lt;!-- 顶 70%：标题栏/胶囊区 --&gt;</span>
+        <span class="v">android:centerColor="#BF0C0805"</span>  <span class="c">&lt;!-- 中 75% --&gt;</span>
+        <span class="v">android:endColor="#D90C0805"</span> /&gt;  <span class="c">&lt;!-- 底 85%：章名/计时/控制区 --&gt;</span>
+&lt;/shape&gt;</div>
+
+  <div class="code"><span class="path">③ app/src/main/res/layout/activity_audio_play.xml —— 9 处替换 + 2 处删除（行号按现文件）</span>:7   android:background="<span class="del">@color/background</span><span class="add">@color/player_surface</span>"          <span class="c">根背景 → 恒定暗播放面</span>
+:22  android:background="<span class="del">@color/scrim_50</span><span class="add">@drawable/bg_player_scrim</span>"        <span class="c">vw_bg 纱加深</span>
+:44  tv_timer      textColor <span class="del">@color/md_white_1000</span><span class="add">@color/player_on_surface</span>
+:47  tv_timer      drawableTint 同上
+:63  tv_speed      textColor 同上
+:95  tv_sub_title  textColor 同上
+:115 tv_dur_time   textColor <span class="del">@color/md_white_1000</span><span class="add">@color/player_on_surface_variant</span>   <span class="c">并删 :116 tools:ignore="TextContrastCheck"</span>
+:134 tv_all_time   textColor <span class="del">@color/md_white_1000</span><span class="add">@color/player_on_surface_variant</span>   <span class="c">并删 :135 tools:ignore="TextContrastCheck"</span>
+:158/:174/:190/:237/:253/:269  控制键 app:tint <span class="del">@color/md_white_1000</span><span class="add">@color/player_on_surface</span>
+:204 播放FAB 图标 android:tint <span class="del">@color/md_black_1000</span><span class="add">@color/player_surface</span>
+:205 播放FAB 底   app:backgroundTint <span class="del">@color/md_white_1000</span><span class="add">@color/player_on_surface</span>
+:126（可选）progressBackgroundTint <span class="del">@color/md_dark_secondary</span><span class="add">#38FFFFFF</span>   <span class="c">轨道白 22%，对齐设计稿 .seek</span>
+<span class="c">不动：themeMode="dark"(:29)、bg_player_pill、bg_player_cbtn、布局结构；AudioPlayActivity.kt 全部不动。</span></div>
+
+  <div class="code"><span class="path">④ app/src/main/java/io/legado/app/ui/book/read/ReadMenu.kt —— 一行修正（:197）+ 可选守护</span><span class="c">// 现在：</span>
+<span class="del">val fabTint = ColorStateList.valueOf(ColorUtils.adjustAlpha(textColor, 0.1f))</span>
+<span class="c">// 改为（实心 surface_container，图标 setColorFilter(textColor) 四组保持不动）：</span>
+<span class="add">val fabTint = ColorStateList.valueOf(context.getCompatColor(R.color.surface_container))</span>
+<span class="add">// import io.legado.app.utils.getCompatColor</span>
+
+<span class="c">// 可选守护（+5 行，防「亮色主题 × 暗色沉浸页」白图标压白钮 1.14:1）：</span>
+<span class="add">val fabBg = context.getCompatColor(R.color.surface_container)</span>
+<span class="add">val fabTint = ColorStateList.valueOf(fabBg)</span>
+<span class="add">val fabIcon = if (ColorUtils.isColorLight(fabBg) == ColorUtils.isColorLight(textColor))</span>
+<span class="add">    context.getCompatColor(R.color.on_surface) else textColor</span>
+<span class="c">// 之后 4 组 setColorFilter 由 textColor 换 fabIcon；XML 不动。</span></div>
+
+  <div class="code"><span class="path">⑤ app/src/main/res/layout/activity_book_info.xml —— 一个属性（:30）</span>app:themeMode="<span class="del">dark</span><span class="add">auto</span>"   <span class="c">浅色 hero 上深字；夜间资源自动翻转为浅字。听书页(:29)保持 dark 不动。</span></div>
+
+  <ul class="notes">
+    <li><b>本轮对比度实算</b>（Node + WCAG 2.x 相对亮度，sRGB 8-bit 合成，均按落地令牌取色）：旧态 scrim_50+亮封面 #9D9D9E 白字 <code>2.71:1</code>；新态顶部纱标题 #F3F0EB <code>7.73:1</code>、底部纱 <code>12.71:1</code>、次白计时 #B4B0AA <code>6.69:1</code>、胶囊玻璃字 <code>4.94:1</code>、控制键玻璃图标 <code>8.40:1</code>、默认态 <code>16.33:1</code>、播放 FAB <code>16.33:1</code>、阅读 FAB 亮 <code>15.57:1</code>/夜 <code>15.11:1</code>、书详深字 <code>6.01:1</code>（渐变底最差 <code>5.11:1</code>）/夜 <code>15.04:1</code>——全部 ≥ 4.5:1（纯白对照：顶 8.79 / 底 14.45 / 胶囊 5.61 / 控制键 9.54）。</li>
+    <li><b>落地后建议验证</b>：<code>./gradlew :app:lint</code> 应不再出现 activity_audio_play 的 TextContrastCheck（两处 tools:ignore 已删）；真机亮色主题冷进听书页（封面未加载）与亮封面书籍各验一遍，再切夜间主题确认两态视觉一致。</li>
+    <li><b>未做/超范围</b>：听书页布局结构与控制排布、阅读菜单面板染色策略（沉浸 bgColor）、tv_source_action 胶囊均维持 v3 现状；本轮仅修对比度与形态，不引入新交互。</li>
+  </ul>
+</section>
+
+</div>
+<footer>
+  <b>legado v3 修复稿 11 · 听书播放亮色适配与阅读悬浮钮</b> — 单文件自包含、无外部依赖。播放面令牌 #141312 系与纱 #0C0805 70→85% 为新增（与主题无关）；阅读悬浮钮/书详标题栏仅引用现有 surface_container / on_surface 令牌。视觉延续 03-reader（悬浮钮）与 08-system s13（听书播放）定稿。
+</footer>
+</body></html>

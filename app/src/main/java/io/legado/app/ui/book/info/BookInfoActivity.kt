@@ -16,7 +16,6 @@ import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.BookType
-import io.legado.app.constant.Theme
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
@@ -81,7 +80,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class BookInfoActivity :
-    VMBaseActivity<ActivityBookInfoBinding, BookInfoViewModel>(toolBarTheme = Theme.Dark),
+    // 11-audio-light S4：标题栏 themeMode=auto 走 on_surface 深字后，toolBarTheme 恢复默认 Auto，
+    // 菜单图标经 MenuExtensions.kt:108 取 on_surface 与标题同色（原 Theme.Dark 白图标压亮 hero 2.6:1）
+    VMBaseActivity<ActivityBookInfoBinding, BookInfoViewModel>(),
     GroupSelectDialog.CallBack,
     ChangeBookSourceDialog.CallBack,
     ChangeCoverDialog.CallBack,

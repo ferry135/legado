@@ -9,7 +9,7 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Bookmark
 import io.legado.app.databinding.DialogBookmarkBinding
-import io.legado.app.lib.theme.primaryColor
+import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
@@ -34,7 +34,6 @@ class BookmarkDialog() : BaseDialogFragment(R.layout.dialog_bookmark, true) {
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        binding.toolBar.setBackgroundColor(primaryColor)
         val arguments = arguments ?: let {
             dismiss()
             return
@@ -48,6 +47,8 @@ class BookmarkDialog() : BaseDialogFragment(R.layout.dialog_bookmark, true) {
         }
         val editPos = arguments.getInt("editPos", -1)
         binding.tvFooterLeft.visible(editPos >= 0)
+        // 12-missed-2 #02：删除动作用 error 色（破坏性动作语义）
+        binding.tvFooterLeft.setTextColor(getCompatColor(R.color.error))
         binding.run {
             tvChapterName.text = bookmark.chapterName
             editBookText.setText(bookmark.bookText)

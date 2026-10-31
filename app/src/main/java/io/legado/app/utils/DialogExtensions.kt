@@ -1,15 +1,51 @@
 package io.legado.app.utils
 
 import android.app.Dialog
+import android.view.Gravity
+import android.view.ViewGroup
+import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.forEach
 import androidx.fragment.app.DialogFragment
+import io.legado.app.R
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.filletBackground
 import splitties.systemservices.windowManager
+
+/**
+ * 统一弹窗遮罩 scrim_dialog（#80000000 = 50% 黑）：dimAmount 单一出口，10-reader-prefs 全稿共用。
+ * EInk 模式下 BaseDialogFragment.onStart 已清除 FLAG_DIM_BEHIND，此值不生效。
+ */
+fun Window.applyDialogScrim() {
+    val attr = attributes
+    attr.dimAmount = 0.5f
+    attributes = attr
+}
+
+/**
+ * 透明窗口底 + decorView padding 清零 + scrim_dialog 统一遮罩，圆角弹窗共用收口。
+ * 窗口背景须透明：不透明底（与弹层近同色）会把 16dp 顶圆角的缺口填成直角，圆角不可见。
+ */
+fun Window.applyTransparentScrimWindow() {
+    setBackgroundDrawableResource(R.color.transparent)
+    decorView.setPadding(0, 0, 0, 0)
+    applyDialogScrim()
+}
+
+/**
+ * 底部弹层窗口形态：applyTransparentScrimWindow + 底部重力 + MATCH_PARENT × [height] 一处收口。
+ * [height] 传像素高度：固定高度（如 360.dpToPx()）或 WRAP_CONTENT 自适应。
+ */
+fun Window.applyBottomSheetWindow(height: Int) {
+    applyTransparentScrimWindow()
+    val attr = attributes
+    attr.gravity = Gravity.BOTTOM
+    attributes = attr
+    setLayout(ViewGroup.LayoutParams.MATCH_PARENT, height)
+}
 
 fun AlertDialog.applyTint(): AlertDialog {
     window?.setBackgroundDrawable(context.filletBackground)

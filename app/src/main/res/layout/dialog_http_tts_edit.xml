@@ -3,18 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/vw_bg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/shape_card_view"
+        android:background="@drawable/bg_dialog_card"
         android:orientation="vertical"
         tools:ignore="UselessParent">
 
+        <!-- 12-missed-1 #19：工具栏 surface 卡底 + on_surface 标题（本稿对比度注：同 01 屏修复项；
+             原主色底按 isColorLight 取白字在默认主色 #FF6B2C 下仅 2.84:1） -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/tool_bar"
             android:layout_width="match_parent"
@@ -22,20 +23,28 @@
             android:theme="?attr/actionBarStyle"
             app:title="@string/speak_engine"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:titleTextAppearance="@style/ToolbarTitle" />
+            app:titleTextAppearance="@style/ToolbarTitle"
+            app:titleTextColor="@color/on_surface" />
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:overScrollMode="ifContentScrolls">
 
+            <!-- .form：14dp 侧内边距 + 字段 10dp 间距（10-reader-prefs#06，同 activity_replace_edit） -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingLeft="14dp"
+                android:paddingTop="12dp"
+                android:paddingRight="14dp"
+                android:paddingBottom="12dp">
 
                 <io.legado.app.ui.widget.text.TextInputLayout
+                    style="@style/Widget.Legado.FilledField"
                     android:layout_width="match_parent"
+                    android:layout_marginBottom="10dp"
                     android:layout_height="wrap_content"
                     android:hint="@string/name">
 
@@ -48,7 +57,9 @@
                 </io.legado.app.ui.widget.text.TextInputLayout>
 
                 <io.legado.app.ui.widget.text.TextInputLayout
+                    style="@style/Widget.Legado.FilledField"
                     android:layout_width="match_parent"
+                    android:layout_marginBottom="10dp"
                     android:layout_height="wrap_content"
                     android:hint="url"
                     tools:ignore="HardcodedText">
@@ -62,7 +73,9 @@
                 </io.legado.app.ui.widget.text.TextInputLayout>
 
                 <io.legado.app.ui.widget.text.TextInputLayout
+                    style="@style/Widget.Legado.FilledField"
                     android:layout_width="match_parent"
+                    android:layout_marginBottom="10dp"
                     android:layout_height="wrap_content"
                     android:hint="Content-Type"
                     tools:ignore="HardcodedText">
@@ -76,7 +89,9 @@
                 </io.legado.app.ui.widget.text.TextInputLayout>
 
                 <io.legado.app.ui.widget.text.TextInputLayout
+                    style="@style/Widget.Legado.FilledField"
                     android:layout_width="match_parent"
+                    android:layout_marginBottom="10dp"
                     android:layout_height="wrap_content"
                     android:hint="@string/concurrent_rate"
                     tools:ignore="HardcodedText">
@@ -90,7 +105,9 @@
                 </io.legado.app.ui.widget.text.TextInputLayout>
 
                 <io.legado.app.ui.widget.text.TextInputLayout
+                    style="@style/Widget.Legado.FilledField"
                     android:layout_width="match_parent"
+                    android:layout_marginBottom="10dp"
                     android:layout_height="wrap_content"
                     android:hint="@string/login_url"
                     tools:ignore="HardcodedText">
@@ -104,7 +121,9 @@
                 </io.legado.app.ui.widget.text.TextInputLayout>
 
                 <io.legado.app.ui.widget.text.TextInputLayout
+                    style="@style/Widget.Legado.FilledField"
                     android:layout_width="match_parent"
+                    android:layout_marginBottom="10dp"
                     android:layout_height="wrap_content"
                     android:hint="@string/login_ui"
                     tools:ignore="HardcodedText">
@@ -118,7 +137,9 @@
                 </io.legado.app.ui.widget.text.TextInputLayout>
 
                 <io.legado.app.ui.widget.text.TextInputLayout
+                    style="@style/Widget.Legado.FilledField"
                     android:layout_width="match_parent"
+                    android:layout_marginBottom="10dp"
                     android:layout_height="wrap_content"
                     android:hint="@string/login_check_js"
                     tools:ignore="HardcodedText">
@@ -132,7 +153,9 @@
                 </io.legado.app.ui.widget.text.TextInputLayout>
 
                 <io.legado.app.ui.widget.text.TextInputLayout
+                    style="@style/Widget.Legado.FilledField"
                     android:layout_width="match_parent"
+                    android:layout_marginBottom="10dp"
                     android:layout_height="wrap_content"
                     android:hint="@string/source_http_header"
                     tools:ignore="HardcodedText">

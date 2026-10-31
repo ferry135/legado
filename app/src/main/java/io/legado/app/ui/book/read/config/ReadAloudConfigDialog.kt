@@ -24,10 +24,12 @@ import io.legado.app.model.ReadAloud
 import io.legado.app.service.BaseReadAloudService
 import io.legado.app.utils.GSON
 import io.legado.app.utils.StringUtils
+import io.legado.app.utils.applyTransparentScrimWindow
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.setLayout
+import io.legado.app.utils.setSheetBackground
 import io.legado.app.utils.showDialogFragment
 
 class ReadAloudConfigDialog : BasePrefDialogFragment() {
@@ -35,10 +37,9 @@ class ReadAloudConfigDialog : BasePrefDialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.run {
-            setBackgroundDrawableResource(R.color.transparent)
-            setLayout(0.9f, ViewGroup.LayoutParams.WRAP_CONTENT)
-        }
+        // 10-reader-prefs#04 注④：圆角卡片弹窗透明窗口底 + 遮罩对齐 scrim_dialog 令牌（50% 黑）
+        dialog?.window?.applyTransparentScrimWindow()
+        setLayout(0.9f, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     override fun onCreateView(
@@ -47,7 +48,8 @@ class ReadAloudConfigDialog : BasePrefDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         val view = LinearLayout(requireContext())
-        view.setBackgroundColor(requireContext().backgroundColor)
+        // 10-reader-prefs#04：0.9 宽浮动弹窗统一 16dp 圆角，底色随运行时换肤 backgroundColor
+        view.setSheetBackground(requireContext().backgroundColor)
         view.id = R.id.tag1
         container?.addView(view)
         return view

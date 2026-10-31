@@ -1,0 +1,1287 @@
+<!-- design-system: legado v2 -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>legado v2 · 12 遗漏页面 · 第一组</title><style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Noto Sans SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;background:#eae7e0;color:#3a3833}
+.wrap{max-width:1180px;margin:0 auto;padding:52px 24px 110px;display:flex;flex-direction:column;gap:60px;align-items:center}
+/* ---------- 页头 ---------- */
+.page-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:16px}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.14em;color:#a8623c}
+.h1{font-size:34px;font-weight:750;line-height:1.2;margin:0}
+.h1 small{font-size:15px;font-weight:600;color:#60656d;margin-left:12px}
+.desc{font-size:14px;line-height:1.8;color:#60656d;margin:0;max-width:800px}
+.nav{display:flex;flex-wrap:wrap;gap:10px}
+.nav a{text-decoration:none;font-size:13px;font-weight:600;color:#5a574e;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:999px;padding:9px 16px;transition:.15s}
+.nav a:hover{background:#ff6b2c;color:#fff;border-color:#ff6b2c}
+.nav a b{font-weight:750;color:inherit;opacity:.55;margin-right:6px}
+/* ---------- 屏幕区 ---------- */
+.screen{width:100%;display:flex;flex-direction:column;align-items:center;gap:24px;scroll-margin-top:20px}
+.screen-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:10px}
+.st-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.st-num{font-size:13px;font-weight:750;color:#ff6b2c;letter-spacing:.08em}
+.st-title{font-size:24px;font-weight:750;margin:0}
+.st-src{font-size:12px;color:#60656d}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{font-size:12px;color:#6d6a62;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:7px;padding:5px 10px}
+.pairs{display:flex;gap:30px;flex-wrap:wrap;justify-content:center}
+.pair{display:flex;flex-direction:column;gap:10px;align-items:center}
+.theme-tag{font-size:12px;font-weight:700;color:#60656d;letter-spacing:.1em}
+/* ---------- 手机壳 ---------- */
+.phone{width:412px;height:900px;border-radius:30px;position:relative;overflow:hidden;background:var(--bg);color:var(--text);border:1px solid rgba(0,0,0,.09);flex:none}
+.phone.light{--bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--feature:#fff1e8;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--on-primary:#fff;--track:#e5e2de;--divider:rgba(0,0,0,.07);--field:rgba(0,0,0,.06);--menu:#fff;--error:#ba1a1a;--ok:#3b7a45;--scrim:rgba(0,0,0,.5);--field-solid:#f1efe9}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--feature:#2b1d15;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--on-primary:#fff;--track:#353331;--divider:rgba(255,255,255,.08);--field:rgba(255,255,255,.08);--menu:#2a2824;--error:#ffb4ab;--ok:#7fd891;--scrim:rgba(0,0,0,.5);--field-solid:#2a2925}
+.status{height:34px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:14px;font-weight:600}
+.status-right{display:flex;gap:10px;align-items:center}
+.hi{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--text);opacity:.4;z-index:30;pointer-events:none}
+/* ---------- 顶栏（blend） ---------- */
+.tbar{padding:4px 8px 0}
+.trow{display:flex;align-items:center;gap:2px;min-height:50px}
+.tb-title{font-size:18px;font-weight:650;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tcol{flex:1;min-width:0}
+.icon-btn{width:44px;height:44px;border:0;background:transparent;border-radius:22px;display:grid;place-items:center;cursor:pointer;color:var(--text);flex:none}
+.icon{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon.f{fill:currentColor;stroke:none}
+.icon.s{width:20px;height:20px}
+.icon-btn.sm{width:40px;height:40px}
+/* 搜索药丸 */
+.searchwrap{padding:2px 8px 12px}
+.searchfield{height:40px;border-radius:20px;background:var(--field);display:flex;align-items:center;gap:10px;padding:0 16px;color:var(--secondary);font-size:14px}
+.searchfield .icon{width:19px;height:19px;flex:none}
+/* ---------- 分割线 ---------- */
+.vd{height:1px;background:var(--divider);margin-left:10px}
+.vr{height:1px;background:var(--divider)}
+/* ---------- 控件 ---------- */
+.cb{width:22px;height:22px;flex:none;display:grid;place-items:center;border-radius:6px;border:2px solid var(--secondary);color:transparent;background:transparent}
+.cb svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cb.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.rb{width:20px;height:20px;border-radius:50%;border:2px solid var(--secondary);flex:none;display:grid;place-items:center}
+.rb.on{border-color:var(--primary)}
+.rb.on:after{content:"";width:10px;height:10px;border-radius:50%;background:var(--primary)}
+.sw{width:40px;height:24px;border-radius:12px;background:var(--track);position:relative;flex:none}
+.sw::after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.sw.on{background:var(--primary)}.sw.on::after{left:19px}
+.txtbtn{border:0;background:transparent;font-size:14px;font-weight:650;color:var(--secondary);padding:10px 14px;border-radius:10px;cursor:pointer;font-family:inherit}
+.txtbtn.pri{color:var(--primary)}
+.ghost{border:1px solid var(--track);background:transparent;color:var(--text);border-radius:9px;padding:9px 16px;min-height:38px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:650;cursor:pointer;font-family:inherit;flex:none}
+.ghost.n{color:var(--secondary);border-color:var(--divider)}
+.ghost.pri{border-color:var(--primary);color:var(--primary)}
+.pillbg{border:0;background:var(--primary);color:var(--on-primary);font-size:14px;font-weight:650;border-radius:10px;padding:11px 0;cursor:pointer;font-family:inherit}
+/* ---------- 弹层容器 ---------- */
+.dim{position:absolute;inset:0;background:var(--scrim);z-index:5}
+.card{position:absolute;background:var(--surface);border-radius:16px;z-index:9;overflow:hidden;border:1px solid var(--divider)}
+.dlg{left:5%;right:5%;top:50%;transform:translateY(-50%)}
+.dlg.mid{top:38%}
+.dlg.tall{top:10%;bottom:10%;transform:none}
+.dlg.bottom{left:0;right:0;top:auto;bottom:0;transform:none;border-radius:16px 16px 0 0;border-left:0;border-right:0;border-bottom:0}
+.dlg.full{left:0;right:0;top:0;bottom:0;transform:none;border-radius:0;border:0}
+.dbar{display:flex;align-items:center;gap:2px;min-height:52px;padding:4px 6px 0}
+.dbar .tt{flex:1;font-size:17px;font-weight:650;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:6px}
+.dbar .sub{font-size:11.5px;color:var(--secondary);margin-top:2px}
+.dbody{padding:8px 0 4px}
+.dfoot{display:flex;align-items:center;gap:4px;padding:10px 12px 14px}
+.dfoot .sp{flex:1}
+/* 对话框内列表行 */
+.al{display:flex;align-items:center;gap:13px;padding:13px 20px;font-size:15px;color:var(--text)}
+.al .icon{width:21px;height:21px;color:var(--secondary);flex:none}
+.msg{padding:14px 20px 4px;font-size:14.5px;line-height:1.75;color:var(--text)}
+/* 一行文本行（item_1line_text / 换源列表 / 起效替换） */
+.one{display:flex;align-items:center;gap:12px;min-height:46px;padding:10px 18px;font-size:14.5px;color:var(--text)}
+.one .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.one .sub{font-size:12px;color:var(--secondary);flex:none}
+/* 填充输入域（TextInputLayout / bg_edit_filled） */
+.til{margin:9px 18px}
+.til .lab{font-size:12px;color:var(--secondary);margin:0 2px 4px}
+.til .inp{background:var(--field-solid);border-radius:10px;padding:11px 13px;font-size:14px;color:var(--text);border-bottom:2px solid transparent;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.til .inp.fo{border-bottom-color:var(--primary)}
+.til .inp.ph{color:var(--secondary)}
+.til .inp.mono{font-family:ui-monospace,Consolas,monospace;font-size:12.5px}
+/* 弹出菜单 */
+.menu{position:absolute;background:var(--menu);border:1px solid var(--divider);border-radius:12px;padding:6px;min-width:190px;z-index:12}
+.menu .mi{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:9px;font-size:14px;color:var(--text);white-space:nowrap}
+.menu .mi .icon{width:19px;height:19px;color:var(--secondary)}
+.menu .mi.danger{color:var(--error)}
+.menu .mi.ck{justify-content:space-between;gap:16px}
+.menu .ckc{color:var(--primary)}
+/* 阅读正文（同 03 组） */
+.read{position:absolute;top:34px;left:0;right:0;bottom:0;display:flex;flex-direction:column;padding:12px 18px 14px}
+.read-head,.read-foot{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--secondary)}
+.read-head>span:first-child,.read-foot>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.read-head>span:last-child,.read-foot>span:last-child{flex:none;white-space:nowrap;padding-left:12px}
+.read-body{flex:1;overflow:hidden;margin:12px 2px 10px;font-size:16.5px;line-height:2.05;color:var(--text)}
+.read-body h3{font-size:18.5px;font-weight:700;margin:4px 0 12px;line-height:1.6}
+.read-body p{margin:0 0 10px;text-indent:2em;text-align:justify}
+.mark{background:var(--primary-soft);border-left:2.5px solid var(--primary);border-right:2.5px solid var(--primary);border-radius:2px;padding:0 1px}
+.phone.dark .mark{background:rgba(255,107,44,.26)}
+/* 数字输入（离线缓存） */
+.numrow{display:flex;align-items:center;justify-content:center;gap:10px;padding:16px 18px 6px;font-size:15.5px;color:var(--text)}
+.num{width:72px;background:var(--field-solid);border-radius:9px;padding:10px 6px;text-align:center;font-size:15.5px;color:var(--text);font-variant-numeric:tabular-nums}
+.num.ph{color:var(--secondary)}
+/* 词典 tabs */
+.tabs{display:flex;border-bottom:1px solid var(--divider)}
+.tab{flex:1;padding:12px 0 10px;font-size:14px;color:var(--secondary);text-align:center;position:relative;white-space:nowrap}
+.tab.on{color:var(--primary);font-weight:650}
+.tab.on:after{content:"";position:absolute;left:24%;right:24%;bottom:0;height:2.5px;border-radius:2px;background:var(--primary)}
+.dicthtml{padding:14px 20px 18px;font-size:14px;line-height:1.95;color:var(--secondary);overflow:hidden}
+.dicthtml b{color:var(--text);font-size:16px}
+.dicthtml .py{color:var(--primary);font-weight:650}
+.dicthtml ol{margin:6px 0 0 18px;padding:0}
+.dicthtml li{margin:2px 0}
+/* 书签 */
+.stick{padding:9px 16px 5px;font-size:14px;font-weight:700;color:var(--secondary);background:var(--bg)}
+.bmark{padding:9px 16px 11px;border-bottom:1px solid var(--divider)}
+.bmark .ch{font-size:13.5px;font-weight:650;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bmark .note{font-size:12.5px;color:var(--text);margin-top:5px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bmark .src{font-size:12px;color:var(--secondary);margin-top:5px;border-left:2px solid var(--divider);padding-left:8px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+/* 阅读记录行 */
+.krow{display:flex;align-items:flex-start;gap:10px;padding:10px 14px}
+.krow .kinfo{flex:1;min-width:0}
+.krow .kn{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.krow .kv{font-size:12.5px;color:var(--secondary);margin-top:4px}
+.krow .kv b{color:var(--secondary);font-weight:500}
+.krow .kclr{border:0;background:transparent;color:var(--text);font-size:12.5px;padding:10px 6px;border-radius:8px;cursor:pointer;font-family:inherit;flex:none}
+/* 阅读内搜索导航条 */
+.sminfo{position:absolute;left:0;right:0;bottom:96px;background:var(--surface2);border-top:1px solid var(--divider);height:38px;display:flex;align-items:center;padding:0 4px;z-index:9}
+.sminfo .icon{width:22px;height:22px;flex:none}
+.sminfo .cur{flex:1;min-width:0;font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-overflow:ellipsis;padding:0 10px}
+.sminfo .cur b{color:var(--primary);font-weight:650}
+.smbot{position:absolute;left:0;right:0;bottom:0;background:var(--surface2);border-top:1px solid var(--divider);display:flex;justify-content:center;gap:38px;padding:9px 0 24px;z-index:9}
+.sm-it{width:60px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;color:var(--text);cursor:pointer}
+.sm-it .icon{width:22px;height:22px}
+.fabmini{position:absolute;width:40px;height:40px;border-radius:20px;background:var(--surface2);border:1px solid var(--divider);display:grid;place-items:center;color:var(--text);z-index:9}
+/* 朗读配置 pref 行 */
+.pref{display:flex;align-items:center;gap:12px;min-height:52px;padding:4px 18px;font-size:14.5px}
+.pref .p-lab{flex:1;min-width:0}
+.pref .p-val{color:var(--secondary);font-size:13px;display:flex;align-items:center;gap:2px;white-space:nowrap}
+.pref .p-sum{display:block;font-size:11.5px;color:var(--secondary);margin-top:2px}
+.pref.dis{opacity:.42}
+.pcat{font-size:12px;font-weight:700;color:var(--secondary);padding:12px 18px 4px;letter-spacing:.04em}
+/* TTS 行 */
+.trow2{display:flex;align-items:center;gap:8px;padding:9px 14px;min-height:50px}
+.trow2 .nm{flex:1;min-width:0;font-size:14.5px;color:var(--text);display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.syslab{font-size:9.5px;font-weight:800;letter-spacing:.05em;color:var(--secondary);border:1px solid var(--secondary);border-radius:4px 4px 4px 0;padding:1px 5px;flex:none}
+.icbtn{width:38px;height:38px;border:0;background:transparent;border-radius:19px;display:grid;place-items:center;color:var(--secondary);cursor:pointer;flex:none}
+.icbtn .icon{width:20px;height:20px}
+.icbtn.del{color:var(--secondary)}
+/* 背景图缩略 */
+.bgtwrap{display:flex;gap:10px;padding:4px 16px 6px;overflow:hidden}
+.bgt{width:64px;height:86px;border-radius:9px;border:1px solid var(--divider);flex:none;position:relative;display:grid;place-items:center;font-size:11px;color:var(--on-primary)}
+.bgt.on:after{content:"";position:absolute;inset:-4px;border:2px solid var(--primary);border-radius:11px}
+.seek{flex:1;height:4px;border-radius:2px;background:var(--track);position:relative;margin:0 16px}
+.seek i{position:absolute;left:0;top:0;bottom:0;background:var(--primary);border-radius:2px;font-style:normal}
+.seek b{position:absolute;top:50%;width:16px;height:16px;border-radius:50%;background:var(--primary);transform:translate(-50%,-50%);font-style:normal}
+/* 分组编辑封面 */
+.cov{width:90px;height:126px;border-radius:9px;background:var(--field-solid);display:grid;place-items:center;color:var(--secondary);flex:none;overflow:hidden}
+/* spinner 胶囊 */
+.spn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--divider);border-radius:9px;padding:7px 11px;font-size:13.5px;color:var(--text);white-space:nowrap}
+.spn .icon{width:15px;height:15px;color:var(--secondary)}
+/* 数字选择器（换源间隔） */
+.picker{width:120px;margin:4px auto 0;border-radius:12px;background:var(--field-solid);overflow:hidden;padding:2px 0}
+.pk{height:38px;display:grid;place-items:center;font-size:15px;color:var(--secondary)}
+.pk.on{color:var(--text);font-weight:700;font-size:19px;background:var(--surface)}
+/* 文件选择器 */
+.pathbar2{display:flex;align-items:center;gap:2px;padding:6px 12px;background:var(--surface);border-bottom:1px solid var(--divider);overflow:hidden}
+.pathbar2 .p{font-size:12.5px;color:var(--secondary);white-space:nowrap}
+.pathbar2 .sep{color:var(--secondary);font-size:12px;flex:none}
+.pathbar2 .p.cur{color:var(--primary);font-weight:650}
+.frow2{display:flex;align-items:center;gap:13px;padding:11px 16px;min-height:46px}
+.frow2 .icon{width:21px;height:21px;color:var(--primary);flex:none}
+.frow2 .fn{flex:1;min-width:0;font-size:14.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.frow2.dis .fn{color:var(--secondary)}
+.frow2.sel{background:var(--primary-soft)}
+/* 透明宿主（文件关联） */
+.hostbg{position:absolute;inset:0;padding:44px 26px;background:#e7e4dd;z-index:1}
+.phone.dark .hostbg{background:#232120}
+.hostbg .hr1{height:14px;border-radius:7px;background:rgba(0,0,0,.08);margin-bottom:12px;width:46%}
+.hostbg .hr2{height:56px;border-radius:12px;background:rgba(0,0,0,.06);margin-bottom:10px}
+.hostbg .hr3{height:56px;border-radius:12px;background:rgba(0,0,0,.05);margin-bottom:10px;width:88%}
+.spinner{width:40px;height:40px;border-radius:50%;border:2.5px solid var(--divider);border-top-color:var(--primary);animation:rot 1.1s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+/* 空态/消息 */
+.tvm{padding:18px 22px;font-size:13.5px;color:var(--secondary);text-align:center;line-height:1.8}
+/* 注释 */
+.notes{width:100%;max-width:1080px;font-size:12.5px;line-height:1.9;color:#60656d;border-top:1px dashed rgba(0,0,0,.12);padding-top:12px}
+.notes code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px}
+.notes b{color:#45423a}
+.foot{font-size:12px;color:#60656d;text-align:center;line-height:2}
+</style></head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+<symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></symbol>
+<symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 8a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+<symbol id="i-folder-new" viewBox="0 0 24 24"><path d="M3 8a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 10v6"/><path d="M9 13h6"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"/><path d="M14 3v4h4"/></symbol>
+<symbol id="i-arr-r" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+<symbol id="i-arr-u" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></symbol>
+<symbol id="i-arr-d" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></symbol>
+<symbol id="i-sort" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M7 12h10"/><path d="M10 17h4"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.6 3.8 5.6 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></symbol>
+<symbol id="i-server" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="7" rx="2"/><rect x="4" y="13" width="16" height="7" rx="2"/><path d="M8 7.5h.01"/><path d="M8 16.5h.01"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19.5 8.5a2.12 2.12 0 0 0-3-3L5 17z"/><path d="m13.5 6.5 3 3"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="m7 7 1 13h8l1-13"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12"/><path d="M18 6 6 18"/></symbol>
+<symbol id="i-bmk" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-3-6 3z"/></symbol>
+<symbol id="i-toc" viewBox="0 0 24 24"><path d="M8 6h12"/><path d="M8 12h12"/><path d="M8 18h12"/><path d="M4 6h.01"/><path d="M4 12h.01"/><path d="M4 18h.01"/></symbol>
+<symbol id="i-save" viewBox="0 0 24 24"><path d="M6 4h9l4 4v12H6z"/><path d="M9 4v5h6"/><path d="M9 14h6"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.4 9.4a2.6 2.6 0 1 1 3.6 2.4c-.8.35-1 .95-1 1.8"/><path d="M12 17h.01"/></symbol>
+<symbol id="i-vol" viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10H4z"/><path d="M16.5 9a4.5 4.5 0 0 1 0 6"/></symbol>
+<symbol id="i-cog" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 4v2.4M12 17.6V20M4 12h2.4M17.6 12H20M6.4 6.4l1.7 1.7M15.9 15.9l1.7 1.7M17.6 6.4l-1.7 1.7M8.1 15.9l-1.7 1.7"/></symbol>
+<symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18a4 4 0 0 1 0-8 5.5 5.5 0 0 1 10.6 1.5A3.5 3.5 0 0 1 17 18H7z"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></symbol>
+<symbol id="i-swap" viewBox="0 0 24 24"><path d="M8 3 4 7l4 4"/><path d="M4 7h12a4 4 0 0 1 4 4v1"/><path d="m16 21 4-4-4-4"/><path d="M20 17H8a4 4 0 0 1-4-4v-1"/></symbol>
+<symbol id="i-restore" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.6-5.9"/><path d="M4 4v5h5"/></symbol>
+<symbol id="i-image" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m5 17 5-5 4 4 2.5-2.5L20 16"/></symbol>
+<symbol id="i-type" viewBox="0 0 24 24"><path d="M5 19 10.5 5h1.2L17 19"/><path d="M7.4 14h7.2"/><path d="M19 19h.01"/></symbol>
+<symbol id="i-menu2" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></symbol>
+<symbol id="i-stop" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z"/></symbol>
+<symbol id="i-tag" viewBox="0 0 24 24"><path d="M12.6 3H4v8.6l8.7 8.7a1.6 1.6 0 0 0 2.3 0l6.3-6.3a1.6 1.6 0 0 0 0-2.3z"/><circle cx="8.2" cy="7.2" r="1.4"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 2.8V11c0 4.6-3 8.2-7 10-4-1.8-7-5.4-7-10V5.8z"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+</defs></svg>
+
+<div class="wrap">
+
+<header class="page-head">
+  <div class="kicker">LEGADO V2 · DESIGN SCREENS</div>
+  <h1 class="h1">遗漏页面 · 第一组<small>12 · Missed Screens 1 · 20 屏 · 浅色 / 深色</small></h1>
+  <p class="desc">v3 八组定稿后仍从未画过的 20 个页面：通用文件选择与导出、文件关联分发、URL 导入确认、跳转确认、分组编辑、全部书签、阅读记录、批量换源、搜索范围、WebDAV 服务器、离线缓存范围、起效替换、编辑章节内容、词典、阅读内搜索导航、背景文字自定义、朗读引擎、朗读设置、在线 TTS 编辑、字体管理。全部功能块取自现有布局与 Activity/Dialog 代码（每屏下方来源注释），视觉令牌延续 07/08 组：主色 #FF6B2C、暖纸白/暖黑表面、7%/8% 弱分割线、弹层 16dp 圆角、无阴影。</p>
+  <nav class="nav">
+    <a href="#s1"><b>01</b>文件选择与导出</a><a href="#s2"><b>02</b>文件关联导入</a><a href="#s3"><b>03</b>URL 导入确认列表</a><a href="#s4"><b>04</b>打开链接确认</a><a href="#s5"><b>05</b>分组编辑</a><a href="#s6"><b>06</b>全部书签</a><a href="#s7"><b>07</b>阅读记录</a><a href="#s8"><b>08</b>批量换源</a><a href="#s9"><b>09</b>搜索范围</a><a href="#s10"><b>10</b>WebDAV 服务器</a><a href="#s11"><b>11</b>离线缓存范围</a><a href="#s12"><b>12</b>起效的替换</a><a href="#s13"><b>13</b>编辑章节内容</a><a href="#s14"><b>14</b>词典查询</a><a href="#s15"><b>15</b>阅读内搜索导航条</a><a href="#s16"><b>16</b>背景文字自定义</a><a href="#s17"><b>17</b>朗读引擎管理</a><a href="#s18"><b>18</b>朗读设置</a><a href="#s19"><b>19</b>在线 TTS 编辑</a><a href="#s20"><b>20</b>字体管理</a>
+  </nav>
+</header>
+
+<!-- ================= 01 文件选择与导出 ================= -->
+<section class="screen" id="s1">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">01</span><h2 class="st-title">文件选择与导出</h2><span class="st-src">HandleFileActivity · FilePickerDialog · HandleFileContract · dialog_file_chooser.xml · item_file_picker.xml</span></div>
+    <div class="chips"><span>DIR_SYS / DIR / FILE / EXPORT 四模式</span><span>系统选择器 / 自带选择器 / 手动输入路径</span><span>EXPORT 增加上传 URL</span><span>路径面包屑可点回跳</span><span>新建文件夹</span><span>扩展名不符置灰</span><span>单选文件高亮</span><span>底部确认按钮</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：模式选择列表（HandleFileActivity alert） -->
+    <div class="pair"><div class="theme-tag">浅色 · 入口选择列表（FILE 模式）</div>
+    <div class="phone light">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div><div class="hr3"></div><div class="hr2"></div><div class="hr3"></div></div>
+      <div class="dim"></div>
+      <div class="card dlg mid">
+        <div class="dbar" style="padding-bottom:4px"><div class="tt">选择文件</div></div>
+        <div class="vr"></div>
+        <div class="al"><svg class="icon"><use href="#i-globe"/></svg>系统文件选择器</div>
+        <div class="al"><svg class="icon"><use href="#i-folder"/></svg>自带文件选择器</div>
+        <div class="vr" style="margin:4px 0"></div>
+        <div class="msg" style="font-size:12.5px;color:var(--secondary)">DIR 模式增加「手动输入」；EXPORT 模式在列表头增加「上传 URL」。</div>
+        <div style="height:10px"></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：自带文件选择器（FilePickerDialog） -->
+    <div class="pair"><div class="theme-tag">深色 · 自带文件选择器</div>
+    <div class="phone dark">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div><div class="hr3"></div><div class="hr2"></div></div>
+      <div class="dim"></div>
+      <div class="card dlg tall">
+        <div class="dbar"><div class="tt">文件夹选择</div><button class="icon-btn sm" title="创建文件夹"><svg class="icon"><use href="#i-folder-new"/></svg></button><button class="icon-btn sm" title="更多"><svg class="icon"><use href="#i-more"/></svg></button></div>
+        <div class="pathbar2"><span class="p">root</span><span class="sep">›</span><span class="p">storage</span><span class="sep">›</span><span class="p">emulated</span><span class="sep">›</span><span class="p">0</span><span class="sep">›</span><span class="p cur">Fonts</span></div>
+        <div class="frow2"><svg class="icon"><use href="#i-up"/></svg><span class="fn">..</span></div>
+        <div class="vd"></div>
+        <div class="frow2"><svg class="icon"><use href="#i-folder"/></svg><span class="fn">Download</span></div>
+        <div class="vd"></div>
+        <div class="frow2 sel"><svg class="icon"><use href="#i-file"/></svg><span class="fn">SourceHanSerif.otf</span><svg class="icon s" style="color:var(--primary)"><use href="#i-check"/></svg></div>
+        <div class="vd"></div>
+        <div class="frow2 dis"><svg class="icon" style="color:var(--secondary)"><use href="#i-file"/></svg><span class="fn">notes.md</span></div>
+        <div class="vd"></div>
+        <div class="frow2"><svg class="icon"><use href="#i-file"/></svg><span class="fn">霞鹜文楷.ttf</span></div>
+        <div style="padding:8px 10px 10px"><button class="pillbg" style="width:100%">确定</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>模式与标题</code> — mode ∈ DIR_SYS(2)/DIR(0)/FILE(1)/EXPORT(3)（HandleFileContract.kt:56-59），按模式生成选择列表与默认标题「选择文件/选择文件夹/导出」（HandleFileActivity.kt:69-90）。</li>
+    <li><code>入口列表项</code> — FILE=系统文件选择器+自带文件选择器；DIR=系统文件夹选择器+自带文件夹选择器+手动输入；EXPORT 先加「上传 URL」再拼 DIR 项（HandleFileActivity.kt:73-77, 231-251）。手动输入弹出路径输入框，校验存在/可写/外部存储（:169-197）。</li>
+    <li><code>自带选择器</code> — 0.9×0.8 对话框（FilePickerDialog.kt:76-79）；横滑路径面包屑（root ▸ 各级目录，点击回跳 :164-207）；「..」上级、目录/文件图标（:256-265）；目录与匹配扩展名用主文字色、不匹配置灰（:266-278）；选中文件整行高亮（:282-287）；底部 AccentBgTextView「确定」整宽（dialog_file_chooser.xml:46-53）；菜单「创建文件夹」（FilePickerDialog.kt:132-151）。</li>
+    <li><code>对比度修复（本组预防项）</code> — FilePickerDialog.kt:82 将工具栏染成 primaryColor 实底、标题色随 actionBarStyle 主题走，换肤浅主色时会复现排查员确认的白字问题。本稿统一为：<b>去掉 setBackgroundColor(primaryColor)，工具栏透明置于 surface 卡底上，titleTextColor/text tint 用 on_surface</b>（dialog_file_chooser.xml:9-15 补 app:titleTextColor/@color/on_surface，菜单图标经 applyTint 用 on_surface）。其余「选择/文件夹」次级文字用 on_surface_variant；置灰不匹配文件用 on_surface_variant 全色、<b>不额外降透明度</b>——实算亮 5.87:1 / 暗 7.96:1，若再叠 62% 透明度则亮色跌至 2.63:1，不采用。</li>
+    <li><code>EXPORT 流程</code> — 选目标后 saveToLocal 写入所选目录/上传 URL，回传 uri 并 finish（HandleFileActivity.kt:290-308, 140-146）。</li>
+  </ul>
+</section>
+
+<!-- ================= 02 文件关联导入 ================= -->
+<section class="screen" id="s2">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">02</span><h2 class="st-title">文件关联导入（透明宿主）</h2><span class="st-src">FileAssociationActivity · FileAssociationViewModel · activity_translucence.xml</span></div>
+    <div class="chips"><span>ACTION_VIEW 打开方式的透明宿主</span><span>50% 黑纱 + 转圈</span><span>按 uri/MIME 分发</span><span>导入书籍（含书籍保存位置选择）</span><span>分发到 7 个导入对话框</span><span>不支持文件提醒</span><span>错误 toast 后 2s 自动退出</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：分发中 -->
+    <div class="pair"><div class="theme-tag">浅色 · 正在分发</div>
+    <div class="phone light">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div><div class="hr3"></div><div class="hr2"></div><div class="hr3"></div></div>
+      <div style="position:absolute;inset:0;background:rgba(0,0,0,.31);z-index:3"></div>
+      <div style="position:absolute;inset:0;display:grid;place-items:center;z-index:4"><div class="spinner"></div></div>
+      <div class="hi" style="z-index:6"></div>
+    </div></div>
+    <!-- 深色：不支持的文件 -->
+    <div class="pair"><div class="theme-tag">深色 · 文件不受支持</div>
+    <div class="phone dark">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div><div class="hr3"></div></div>
+      <div style="position:absolute;inset:0;background:rgba(0,0,0,.55);z-index:3"></div>
+      <div class="card dlg mid">
+        <div class="dbar"><div class="tt">提醒</div></div>
+        <div class="msg">文件 my_rules.abc 不受支持，是否继续打开？</div>
+        <div class="dfoot" style="justify-content:flex-end"><button class="txtbtn">否</button><button class="txtbtn pri">是</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>宿主页</code> — activity_translucence.xml 仅 50% 黑纱（@color/transparent50）+ 居中 RotateLoading（:3-24）；背后为系统文件管理器（示意灰块）。浅色纱用 rgba(0,0,0,.31) 仅示意分发中，实际布局为 50%；本屏无任何文字压纱，无对比度风险。</li>
+    <li><code>分发</code> — content Scheme 且可读直接 dispatchIntent，否则请求存储权限（FileAssociationActivity.kt:94-102）；结果分流：导入书籍成功→打开书籍（:67-70）、书源/rssSource/replaceRule/httpTts/theme/txtRule/dictRule→对应 ImportXxxDialog（:48-56）、错误→toast 后 2 秒退出（:57-66）。</li>
+    <li><code>不支持提醒</code> — alert「提醒 / 文件 %s 不受支持，是否继续打开？」，是→继续按书籍导入，否/取消→退出（:81-93，strings.xml:1015）。</li>
+    <li><code>书籍保存位置</code> — 首次导入书籍或书籍目录失效时经 HandleFileContract(DIR_SYS) 选「选择保存书籍的文件夹」（:38-47, 205-222）。</li>
+  </ul>
+</section>
+
+<!-- ================= 03 URL 导入确认列表 ================= -->
+<section class="screen" id="s3">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">03</span><h2 class="st-title">URL 导入确认列表（7 个 ImportXxxDialog 共用模板）</h2><span class="st-src">ImportBookSourceDialog / ImportRssSourceDialog / ImportReplaceRuleDialog / ImportHttpTtsDialog / ImportThemeDialog / ImportTxtTocRuleDialog / ImportDictRuleDialog · dialog_recycler_view.xml · item_source_import.xml</span></div>
+    <div class="chips"><span>勾选确认列表</span><span>状态标注 新增/更新/已有</span><span>行内打开详情</span><span>全选（n/m）/ 取消全选</span><span>新建分组（书源/订阅源）</span><span>保留原名/保留分组/保留启用</span><span>格式错误空态</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：导入书源 -->
+    <div class="pair"><div class="theme-tag">浅色 · 导入书源</div>
+    <div class="phone light">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div><div class="hr3"></div></div>
+      <div class="dim"></div>
+      <div class="card dlg full">
+        <div class="dbar"><div class="tt">导入书源</div><button class="icon-btn sm" title="自定义源分组"><svg class="icon"><use href="#i-tag"/></svg></button><button class="icon-btn sm" title="更多"><svg class="icon"><use href="#i-more"/></svg></button></div>
+        <div class="vr"></div>
+        <div class="one"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm" style="font-size:14.5px">笔趣阁精品源</span><span class="sub">新增</span><button class="txtbtn" style="padding:10px 4px">打开</button></div>
+        <div class="one"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm" style="font-size:14.5px">起点精校源</span><span class="sub">已有</span><button class="txtbtn" style="padding:10px 4px">打开</button></div>
+        <div class="one"><span class="cb"></span><span class="nm" style="font-size:14.5px">番茄免费小说源</span><span class="sub">更新</span><button class="txtbtn" style="padding:10px 4px">打开</button></div>
+        <div class="one"><span class="cb"></span><span class="nm" style="font-size:14.5px">天籁小说源</span><span class="sub">新增</span><button class="txtbtn" style="padding:10px 4px">打开</button></div>
+        <div class="one"><span class="cb"></span><span class="nm" style="font-size:14.5px">七猫兼容源</span><span class="sub">新增</span><button class="txtbtn" style="padding:10px 4px">打开</button></div>
+        <div class="vr"></div>
+        <div class="dfoot"><button class="txtbtn pri">全选（2/5）</button><span class="sp"></span><button class="txtbtn">取消</button><button class="txtbtn pri">确认</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：导入字典规则 · 格式错误 -->
+    <div class="pair"><div class="theme-tag">深色 · 导入字典规则 · 格式错误</div>
+    <div class="phone dark">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div></div>
+      <div class="dim"></div>
+      <div class="card dlg full">
+        <div class="dbar"><div class="tt">导入字典规则</div><button class="icon-btn sm" title="更多"><svg class="icon"><use href="#i-more"/></svg></button></div>
+        <div class="vr"></div>
+        <div style="height:180px"></div>
+        <div class="tvm">格式错误<br>确认链接返回内容为字典规则 JSON</div>
+        <div style="height:200px"></div>
+        <div class="vr"></div>
+        <div class="dfoot" style="justify-content:flex-end"><button class="txtbtn">取消</button><button class="txtbtn pri">确认</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>共用模板</code> — 7 个对话框均继承 dialog_recycler_view.xml（工具栏 + 列表 + 底部按钮条），仅标题与菜单不同：导入书源/导入订阅源/导入替换规则/导入在线 TTS(engine 名称)/导入主题/导入 TXT 目录规则/导入字典规则（各 ImportXxxDialog 均传 R.layout.dialog_recycler_view，ImportBookSourceDialog.kt:36,66）。</li>
+    <li><code>行内状态</code> — 与本地比对：无→「新增」、更新时间更新→「更新」、否则「已有」（ImportBookSourceDialog.kt:248-254）；「打开」预览源详情（item_source_import.xml:28-45）。</li>
+    <li><code>底部按钮</code> — 左「全选（n/m）/取消全选（n/m）」（ImportBookSourceDialog.kt:153-163, strings.xml:223-224），右「取消 / 确认」，确认即导入勾选项（:71-78）。</li>
+    <li><code>菜单</code> — 书源：自定义源分组 / 选中新增源 / 选中更新源 / 保留原名 / 保留分组 / 保留启用状态（menu/import_source.xml）；其余类型仅保留适用的勾选项。</li>
+    <li><code>空态</code> — 解析结果为空显示「格式错误」（ImportBookSourceDialog.kt:188-196），转圈在列表中央（dialog_recycler_view.xml RotateLoading）。</li>
+    <li><code>对比度</code> — 状态/打开为 on_surface_variant（#60656D/#B4B0AA），浅色 5.87:1、深色 7.96:1，均 ≥4.5:1；卡片工具栏按 01 屏同一修复：surface 底 + on_surface 标题。</li>
+  </ul>
+</section>
+
+<!-- ================= 04 打开链接确认 ================= -->
+<section class="screen" id="s4">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">04</span><h2 class="st-title">打开链接确认</h2><span class="st-src">OpenUrlConfirmActivity/Dialog · OpenUrlConfirmViewModel · dialog_open_url_confirm.xml · menu/open_url_confirm.xml</span></div>
+    <div class="chips"><span>JsExtensions.openUrl 触发</span><span>显示来源源名（副标题）</span><span>浏览器打开</span><span>溢出菜单：禁用源 / 删除源（二次确认）</span><span>整宽底部对话框</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：确认 -->
+    <div class="pair"><div class="theme-tag">浅色 · 确认跳转</div>
+    <div class="phone light">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div><div class="hr3"></div></div>
+      <div class="dim"></div>
+      <div class="card dlg bottom">
+        <div class="dbar"><div class="tt">跳转确认<div class="sub">起点中文网书源</div></div><button class="icon-btn sm" title="禁用源/删除源"><svg class="icon"><use href="#i-more"/></svg></button></div>
+        <div class="msg">起点中文网书源 正在请求跳转链接/应用，是否跳转？</div>
+        <div style="margin:10px 20px 4px;padding:9px 13px;border-radius:9px;background:var(--field-solid);font-size:12.5px;color:var(--secondary);font-family:ui-monospace,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">https://www.example.com/book/1284793.html</div>
+        <div class="dfoot" style="justify-content:flex-end;padding-top:14px"><button class="txtbtn">取消</button><button class="txtbtn pri">确认</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：溢出菜单 -->
+    <div class="pair"><div class="theme-tag">深色 · 溢出菜单</div>
+    <div class="phone dark">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div></div>
+      <div class="dim"></div>
+      <div class="card dlg bottom">
+        <div class="dbar"><div class="tt">跳转确认<div class="sub">起点中文网书源</div></div><button class="icon-btn sm"><svg class="icon"><use href="#i-more"/></svg></button></div>
+        <div class="msg">起点中文网书源 正在请求跳转链接/应用，是否跳转？</div>
+        <div style="margin:10px 20px 4px;padding:9px 13px;border-radius:9px;background:var(--field-solid);font-size:12.5px;color:var(--secondary);font-family:ui-monospace,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">https://www.example.com/book/1284793.html</div>
+        <div class="dfoot" style="justify-content:flex-end;padding-top:14px"><button class="txtbtn">取消</button><button class="txtbtn pri">确认</button></div>
+      </div>
+      <div class="menu" style="right:22px;top:86px"><div class="mi danger"><svg class="icon"><use href="#i-close"/></svg>禁用源</div><div class="mi danger"><svg class="icon"><use href="#i-trash"/></svg>删除源</div></div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>触发</code> — 书源/RSS/规则脚本调用 openUrl（JsExtensions.kt:994）或点规则内链接时弹出；宿主 OpenUrlConfirmActivity 为透明页仅挂此对话框（OpenUrlConfirmActivity.kt:15-26），对话框销毁时宿主 finish（OpenUrlConfirmDialog.kt onDestroy）。</li>
+    <li><code>标题与副标题</code> — 工具栏标题「跳转确认」（dialog_open_url_confirm.xml:14 硬编码），副标题=来源名（OpenUrlConfirmDialog.kt:53）。</li>
+    <li><code>确认行为</code> — 确认→ACTION_VIEW 打开（带 mimeType 则 setDataAndType），无处理应用 toast「无法打开」；取消→关闭（:63-91）。</li>
+    <li><code>安全出口</code> — 溢出菜单「禁用源」「删除源」（menu/open_url_confirm.xml），删除源需二次确认 alert（:94-104）。</li>
+    <li><code>对比度</code> — 原布局工具栏 elevation 阴影+主题染白色，本稿改 surface 卡底 + on_surface；链接地址用 field-solid 实底 + on_surface_variant 单色，不再渲染蓝色 HTML 链接色，明暗皆 ≥4.5:1。</li>
+  </ul>
+</section>
+
+<!-- ================= 05 分组编辑 ================= -->
+<section class="screen" id="s5">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">05</span><h2 class="st-title">分组编辑</h2><span class="st-src">GroupEditDialog · dialog_book_group_edit.xml（07 组规格明示不在其 8 屏范围，本稿补画）</span></div>
+    <div class="chips"><span>编辑分组 / 添加分组双态</span><span>分组封面（点选图片）</span><span>分组名称必填</span><span>排序 Spinner</span><span>允许下拉刷新</span><span>编辑态可删除（二次确认）</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：编辑分组 -->
+    <div class="pair"><div class="theme-tag">浅色 · 编辑分组</div>
+    <div class="phone light">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div></div>
+      <div class="dim"></div>
+      <div class="card dlg mid" style="left:2.5%;right:2.5%">
+        <div class="dbar"><div class="tt">编辑分组</div></div>
+        <div style="display:flex;gap:12px;padding:8px 18px 4px;background:var(--surface2)">
+          <div class="cov"><svg class="icon" style="width:28px;height:28px"><use href="#i-image"/></svg></div>
+          <div style="flex:1;min-width:0">
+            <div class="til" style="margin:2px 0 8px"><div class="lab">分组名称</div><div class="inp">追更</div></div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span style="font-size:13px;color:var(--secondary)">排序</span><span class="spn">手动排序<svg class="icon"><use href="#i-arr-d"/></svg></span></div>
+            <label style="display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--text);margin-top:12px"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span>允许下拉刷新</label>
+          </div>
+        </div>
+        <div class="dfoot"><button class="txtbtn" style="color:var(--error)">删除</button><span class="sp"></span><button class="txtbtn">取消</button><button class="txtbtn pri">确认</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：添加分组 -->
+    <div class="pair"><div class="theme-tag">深色 · 添加分组</div>
+    <div class="phone dark">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div></div>
+      <div class="dim"></div>
+      <div class="card dlg mid" style="left:2.5%;right:2.5%">
+        <div class="dbar"><div class="tt">添加分组</div></div>
+        <div style="display:flex;gap:12px;padding:8px 18px 4px;background:var(--surface2)">
+          <div class="cov"><svg class="icon" style="width:28px;height:28px"><use href="#i-image"/></svg></div>
+          <div style="flex:1;min-width:0">
+            <div class="til" style="margin:2px 0 8px"><div class="lab">分组名称</div><div class="inp ph">请输入分组名称</div></div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span style="font-size:13px;color:var(--secondary)">排序</span><span class="spn">不排序<svg class="icon"><use href="#i-arr-d"/></svg></span></div>
+            <label style="display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--text);margin-top:12px"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span>允许下拉刷新</label>
+          </div>
+        </div>
+        <div class="dfoot" style="justify-content:flex-end"><button class="txtbtn">取消</button><button class="txtbtn pri">确认</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>双态</code> — 有 group 入参：标题「编辑分组」，删除按钮按 groupId&gt;0 显示，回填名称/封面/排序/允许下拉刷新（GroupEditDialog.kt:64-75）；无入参：标题「添加分组」，删除隐藏，封面默认（:76-80）。</li>
+    <li><code>字段</code> — 封面 90×126 点击选图（dialog_book_group_edit.xml:36-52, GroupEditDialog.kt:82-84）；名称空校验「分组名称不能为空」（:101-114）；排序 Spinner 取 @array/book_sort（dialog_book_group_edit.xml:81-92）；允许下拉刷新复选默认勾选（:95-103）。</li>
+    <li><code>删除</code> — alert「删除 / 确认要删除吗」二次确认后删组（:128-134）。</li>
+    <li><code>对比度</code> — 原布局工具栏与表单区 background_menu 实底，本稿维持 surface2 实底 + on_surface 文字（排查项同 01：titleTextColor 显式 on_surface，不依赖 actionBarStyle 染色）。</li>
+  </ul>
+</section>
+
+<!-- ================= 06 全部书签 ================= -->
+<section class="screen" id="s6">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">06</span><h2 class="st-title">全部书签</h2><span class="st-src">AllBookmarkActivity · BookmarkAdapter · BookmarkDecoration · activity_all_bookmark.xml（02 组只画了单书目录·书签页，本稿补画跨书聚合页）</span></div>
+    <div class="chips"><span>跨书聚合书签</span><span>吸顶书名(作者)分组头</span><span>章节名 + 书摘 + 原文</span><span>点击编辑书签</span><span>菜单 导出 / 导出(MD)</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：列表 -->
+    <div class="pair"><div class="theme-tag">浅色 · 聚合列表</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="tbar"><div class="trow"><button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button><div class="tb-title">所有书签</div><button class="icon-btn" title="导出/导出(MD)"><svg class="icon"><use href="#i-more"/></svg></button></div></div>
+      <div class="stick">斗破苍穹（天蚕土豆）</div>
+      <div class="bmark"><div class="ch">第五章 加冕</div><div class="note">三十年河东，三十年河西，莫欺少年穷！</div><div class="src">原著：萧炎负手立于萧家坡前……</div></div>
+      <div class="bmark"><div class="ch">第十二章 兄弟</div><div class="note">萧家坡上，少年负手而立。</div></div>
+      <div class="stick" style="margin-top:6px">诡秘之主（爱潜水的乌贼）</div>
+      <div class="bmark"><div class="ch">第一章 绯红</div><div class="note">值得反复品读的开篇。</div><div class="src">原著：甜味冰镇果汁里，兑着一小杯烈酒……</div></div>
+      <div class="bmark"><div class="ch">第二章 占卜家</div><div class="note">灰雾之上，古老宫殿。</div></div>
+      <div class="bmark"><div class="ch">第十三章 队长</div><div class="note">值夜者小队的日常。</div></div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：导出菜单 -->
+    <div class="pair"><div class="theme-tag">深色 · 导出菜单</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="tbar"><div class="trow"><button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button><div class="tb-title">所有书签</div><button class="icon-btn"><svg class="icon"><use href="#i-more"/></svg></button></div></div>
+      <div class="stick">斗破苍穹（天蚕土豆）</div>
+      <div class="bmark"><div class="ch">第五章 加冕</div><div class="note">三十年河东，三十年河西，莫欺少年穷！</div><div class="src">原著：萧炎负手立于萧家坡前……</div></div>
+      <div class="bmark"><div class="ch">第十二章 兄弟</div><div class="note">萧家坡上，少年负手而立。</div></div>
+      <div class="menu" style="right:16px;top:84px"><div class="mi"><svg class="icon"><use href="#i-up"/></svg>导出</div><div class="mi"><svg class="icon"><use href="#i-up"/></svg>导出(MD)</div></div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>入口</code> — 「我的」→书签（MyFragment.kt:151 "bookmark" → AllBookmarkActivity）。</li>
+    <li><code>列表</code> — TitleBar themeMode="blend"（activity_all_bookmark.xml:9-14）；数据 flowAll 全表（AllBookmarkActivity.kt:46-55）；行=章节名 + 书签内容（可空隐藏）+ 原文 bookText（可空隐藏）（BookmarkAdapter.kt:24-31）。</li>
+    <li><code>吸顶分组头</code> — 书名(作者) 变化时绘制 32dp 头（BookmarkAdapter.kt:34-44 isItemHeader；BookmarkDecoration.kt:22-29, 88-100 onDrawOver 滚动吸顶）。头文字原用 accentColor 画布直绘（BookmarkDecoration.kt:27），换肤浅主色存在与白字同类的风险——本稿规则：分组头文字用 <b>on_surface_variant</b>（#60656D on #FAF9F7 = 5.58:1；primary #FF6B2C 实算仅 2.70:1，14px 粗体不属大文本，弃用），与 09#settings 组题令牌同规。头底色=backgroundColor 与正文一致（BookmarkDecoration.kt:24-26）。</li>
+    <li><code>交互</code> — 点击行打开 BookmarkDialog 编辑该书签（AllBookmarkActivity.kt:87-89）；菜单「导出」「导出(MD)」经 HandleFileContract(DIR) 选目录导出（menu/bookmark.xml; :52-60 requestCode 1/2）。</li>
+  </ul>
+</section>
+
+<!-- ================= 07 阅读记录 ================= -->
+<section class="screen" id="s7">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">07</span><h2 class="st-title">阅读记录</h2><span class="st-src">ReadRecordActivity · activity_read_record.xml · item_read_record.xml · menu/book_read_record.xml（08 组仅画出「我的」菜单行，本稿补画统计页本身）</span></div>
+    <div class="chips"><span>搜索书名</span><span>总阅读时间 + 清空</span><span>按书：时长 / 最后阅读</span><span>排序：名称 / 阅读时长 / 阅读时间</span><span>开启记录开关</span><span>行点击进书 / 行内清除</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：列表 -->
+    <div class="pair"><div class="theme-tag">浅色 · 时长列表</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="tbar"><div class="trow"><button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button><div class="tb-title">阅读记录</div><button class="icon-btn" title="排序"><svg class="icon"><use href="#i-sort"/></svg></button><button class="icon-btn" title="更多"><svg class="icon"><use href="#i-more"/></svg></button></div>
+      <div class="searchwrap"><div class="searchfield"><svg class="icon"><use href="#i-search"/></svg>搜索</div></div></div>
+      <div style="display:flex;align-items:center;gap:10px;padding:4px 16px 8px">
+        <div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:650">总阅读时间</div><div style="font-size:12.5px;color:var(--secondary);margin-top:3px">183天6小时42分钟</div></div>
+        <button class="tbtn" style="border:0;background:transparent;color:var(--text);font-size:12.5px;padding:10px 10px;border-radius:8px;cursor:pointer;font-family:inherit">清空</button>
+      </div>
+      <div class="vr"></div>
+      <div class="krow"><div class="kinfo"><div class="kn">国民法医</div><div class="kv">阅读时长: 23小时48分钟</div><div class="kv">最后阅读时间: 2026-10-30</div></div><button class="kclr">清除</button></div>
+      <div class="krow"><div class="kinfo"><div class="kn">大奉打更人</div><div class="kv">阅读时长: 96小时05分钟</div><div class="kv">最后阅读时间: 2026-10-27</div></div><button class="kclr">清除</button></div>
+      <div class="krow"><div class="kinfo"><div class="kn">十日终焉</div><div class="kv">阅读时长: 41小时13分钟</div><div class="kv">最后阅读时间: 2026-10-21</div></div><button class="kclr">清除</button></div>
+      <div class="krow"><div class="kinfo"><div class="kn">深空彼岸</div><div class="kv">阅读时长: 12小时57分钟</div><div class="kv">最后阅读时间: 2026-09-18</div></div><button class="kclr">清除</button></div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：排序菜单 -->
+    <div class="pair"><div class="theme-tag">深色 · 排序菜单</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="tbar"><div class="trow"><button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button><div class="tb-title">阅读记录</div><button class="icon-btn"><svg class="icon"><use href="#i-sort"/></svg></button><button class="icon-btn"><svg class="icon"><use href="#i-more"/></svg></button></div>
+      <div class="searchwrap"><div class="searchfield"><svg class="icon"><use href="#i-search"/></svg>国民</div></div></div>
+      <div style="display:flex;align-items:center;gap:10px;padding:4px 16px 8px">
+        <div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:650">总阅读时间</div><div style="font-size:12.5px;color:var(--secondary);margin-top:3px">183天6小时42分钟</div></div>
+        <button class="tbtn" style="border:0;background:transparent;color:var(--text);font-size:12.5px;padding:10px 10px;border-radius:8px;cursor:pointer;font-family:inherit">清空</button>
+      </div>
+      <div class="vr"></div>
+      <div class="krow"><div class="kinfo"><div class="kn">国民法医</div><div class="kv">阅读时长: 23小时48分钟</div><div class="kv">最后阅读时间: 2026-10-30</div></div><button class="kclr">清除</button></div>
+      <div class="menu" style="right:16px;top:84px;min-width:210px">
+        <div class="mi ck"><svg class="icon"><use href="#i-sort"/></svg>名称排序<span class="ckc"><svg class="icon s"><use href="#i-check"/></svg></span></div>
+        <div class="mi ck"><svg class="icon"><use href="#i-clock"/></svg>阅读时长排序</div>
+        <div class="mi ck"><svg class="icon"><use href="#i-refresh"/></svg>阅读时间排序</div>
+        <div class="vd" style="margin:2px 6px"></div>
+        <div class="mi ck"><svg class="icon"><use href="#i-check"/></svg>开启记录<span class="ckc"><svg class="icon s"><use href="#i-check"/></svg></span></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>入口</code> — 「我的」→阅读记录（MyFragment.kt:165 "readRecord" → ReadRecordActivity）。</li>
+    <li><code>口径澄清</code> — 任务描述为「按日历展示每日阅读时长」，但真实布局 activity_read_record.xml + ReadRecordActivity.kt 无任何日历控件：页=搜索顶栏（contentLayout=view_search :16-25）+「总阅读时间/时长/清空」头部（:28-71）+ 按书的「阅读时长:/最后阅读时间:/清除」列表（item_read_record.xml）。本稿按真实布局设计，未虚构日历。</li>
+    <li><code>排序与开关</code> — 菜单子项单选 名称/阅读时长/阅读时间排序（ReadRecordActivity.kt:53-72, LocalConfig readRecordSort :40-42），「开启记录」勾选 AppConfig.enableReadRecord（:62/:92）。</li>
+    <li><code>交互</code> — 行点击→有该书直接打开、否则带书名去搜索（:146-159）；行内「清除」删除单书记录（:160-176）；头部「清空」alert 二次确认后 clear()（:76-83）。</li>
+    <li><code>对比度</code> — 全部文字用 on_surface / on_surface_variant（原布局已是 @color/on_surface，保持）；无图片/纱底白字。</li>
+  </ul>
+</section>
+
+<!-- ================= 08 批量换源 ================= -->
+<section class="screen" id="s8">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">08</span><h2 class="st-title">批量换源（选择书源）</h2><span class="st-src">SourcePickerDialog · dialog_source_picker.xml · menu/source_picker.xml（书架整理 menu_change_source，BookshelfManageActivity.kt:330）</span></div>
+    <div class="chips"><span>为选中书籍批量指定书源</span><span>搜索书源</span><span>仅列出启用源</span><span>点击即换</span><span>换源间隔（0-9999ms 数字选择）</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：源列表 -->
+    <div class="pair"><div class="theme-tag">浅色 · 启用源列表</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="tbar"><div class="trow"><button class="icon-btn"><svg class="icon"><use href="#i-close"/></svg></button><div class="tb-title">选择书源</div><button class="icon-btn" title="换源间隔"><svg class="icon"><use href="#i-clock"/></svg></button></div>
+      <div class="searchwrap"><div class="searchfield"><svg class="icon"><use href="#i-search"/></svg>搜索书源</div></div></div>
+      <div class="one"><span class="nm">起点中文网官方 · 精校</span></div>
+      <div class="vd"></div>
+      <div class="one"><span class="nm">笔趣阁精品源 · 综合</span></div>
+      <div class="vd"></div>
+      <div class="one"><span class="nm">番茄免费小说 · 免费</span></div>
+      <div class="vd"></div>
+      <div class="one"><span class="nm">七猫兼容源 · 免费</span></div>
+      <div class="vd"></div>
+      <div class="one"><span class="nm">天籁小说源 · 音频</span></div>
+      <div class="vd"></div>
+      <div class="one"><span class="nm">纵横中文网 · 正版</span></div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：换源间隔数字选择 -->
+    <div class="pair"><div class="theme-tag">深色 · 换源间隔</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="tbar"><div class="trow"><button class="icon-btn"><svg class="icon"><use href="#i-close"/></svg></button><div class="tb-title">选择书源</div><button class="icon-btn"><svg class="icon"><use href="#i-clock"/></svg></button></div>
+      <div class="searchwrap"><div class="searchfield"><svg class="icon"><use href="#i-search"/></svg>搜索书源</div></div></div>
+      <div class="one"><span class="nm">起点中文网官方 · 精校</span></div>
+      <div class="dim"></div>
+      <div class="card dlg mid" style="width:280px;left:50%;transform:translate(-50%,-50%)">
+        <div class="dbar"><div class="tt">换源间隔</div></div>
+        <div class="msg" style="padding-top:4px">每本书换源间隔（毫秒），0 为不延迟。</div>
+        <div class="picker"><div class="pk">0</div><div class="pk on">100</div><div class="pk">500</div></div>
+        <div class="dfoot" style="justify-content:flex-end"><button class="txtbtn">取消</button><button class="txtbtn pri">确认</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>入口</code> — 书架整理页菜单「换源」（BookshelfManageActivity.kt:330 menu_change_source）→ 为选中书籍批量换源。</li>
+    <li><code>列表</code> — 整宽整高对话框（SourcePickerDialog.kt:60 setLayout(1f, MATCH_PARENT)）；TitleBar 内嵌搜索（dialog_source_picker.xml:10-21 contentLayout=view_search）；仅列启用书源（flowEnabled :93 / flowSearchEnabled :94）；行=item_1line_text 一行「显示名 · 分组」，点击即选并关闭（:127-159）。</li>
+    <li><code>换源间隔</code> — 菜单「换源间隔」打开 NumberPickerDialog，0-9999，存 AppConfig.batchChangeSourceDelay（:112-118）。</li>
+  </ul>
+</section>
+
+<!-- ================= 09 搜索范围 ================= -->
+<section class="screen" id="s9">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">09</span><h2 class="st-title">搜索范围</h2><span class="st-src">SearchScopeDialog · dialog_search_scope.xml · menu/book_search_scope.xml（04 组未画，本稿补画）</span></div>
+    <div class="chips"><span>分组 / 书源 两种模式</span><span>分组多选（复选）</span><span>书源单选（单选）+ 筛选搜索</span><span>全部书源一键</span><span>取消 / 确认</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：分组多选 -->
+    <div class="pair"><div class="theme-tag">浅色 · 按分组</div>
+    <div class="phone light">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div></div>
+      <div class="dim"></div>
+      <div class="card dlg tall" style="left:5%;right:5%">
+        <div class="dbar"><div class="tt">搜索范围</div></div>
+        <div style="display:flex;gap:8px;padding:4px 16px 10px">
+          <span class="spn" style="border-color:var(--primary);color:var(--primary);font-weight:650;flex:1;justify-content:center">分组</span>
+          <span class="spn" style="flex:1;justify-content:center;color:var(--secondary)">书源</span>
+        </div>
+        <div class="one"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">追更</span><span class="sub">12 本</span></div>
+        <div class="one"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">完结</span><span class="sub">23 本</span></div>
+        <div class="one"><span class="cb"></span><span class="nm">养肥</span><span class="sub">5 本</span></div>
+        <div class="one"><span class="cb"></span><span class="nm">未分组</span><span class="sub">8 本</span></div>
+        <div class="vr"></div>
+        <div class="dfoot"><button class="txtbtn pri">全部书源</button><span class="sp"></span><button class="txtbtn">取消</button><button class="txtbtn pri">确认</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：按书源 -->
+    <div class="pair"><div class="theme-tag">深色 · 按书源</div>
+    <div class="phone dark">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div></div>
+      <div class="dim"></div>
+      <div class="card dlg tall" style="left:5%;right:5%">
+        <div class="dbar"><div class="tt">搜索范围</div><button class="icon-btn sm" title="筛选"><svg class="icon"><use href="#i-search"/></svg></button></div>
+        <div style="display:flex;gap:8px;padding:4px 16px 10px">
+          <span class="spn" style="flex:1;justify-content:center;color:var(--secondary)">分组</span>
+          <span class="spn" style="border-color:var(--primary);color:var(--primary);font-weight:650;flex:1;justify-content:center">书源</span>
+        </div>
+        <div class="one"><span class="rb on"></span><span class="nm">起点中文网官方</span></div>
+        <div class="one"><span class="rb"></span><span class="nm">笔趣阁精品源</span></div>
+        <div class="one"><span class="rb"></span><span class="nm">番茄免费小说</span></div>
+        <div class="one"><span class="rb"></span><span class="nm">七猫兼容源</span></div>
+        <div class="vr"></div>
+        <div class="dfoot"><button class="txtbtn pri">全部书源</button><span class="sp"></span><button class="txtbtn">取消</button><button class="txtbtn pri">确认</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>模式切换</code> — RadioGroup「分组 / 书源」（dialog_search_scope.xml:29-62 ThemeRadioNoButton）；仅书源模式显示筛选 SearchView（SearchScopeDialog.kt:66-70）。</li>
+    <li><code>选择语义</code> — 分组=复选多选（ItemCheckBoxBinding），书源=单选（ItemRadioButtonBinding）；确认回传 SearchScope(selectGroups / selectSource / "")（:96-100）。</li>
+    <li><code>全部书源</code> — 左下「全部书源」等价于清空范围并关闭（SearchScope("") :91）。</li>
+    <li><code>入口</code> — 搜索页顶栏范围胶囊（04 组书籍搜索屏），04 未画本弹窗。</li>
+  </ul>
+</section>
+
+<!-- ================= 10 WebDAV 服务器管理 ================= -->
+<section class="screen" id="s10">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">10</span><h2 class="st-title">WebDAV 服务器管理（列表 + 编辑表单）</h2><span class="st-src">ServersDialog · ServerConfigDialog · ServersViewModel · ServerConfigViewModel · dialog_webdav_server.xml · item_server_select.xml（07 组远程导入规格仅注明指向，本稿补画两屏）</span></div>
+    <div class="chips"><span>服务器列表（单选用）</span><span>行内 编辑 / 删除（二次确认）</span><span>菜单 新建</span><span>表单：名称 + TYPE(WEBDAV) + 动态字段</span><span>字段 filled 输入域</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：列表 -->
+    <div class="pair"><div class="theme-tag">浅色 · 服务器列表</div>
+    <div class="phone light">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div></div>
+      <div class="dim"></div>
+      <div class="card dlg mid" style="left:2.5%;right:2.5%">
+        <div class="dbar"><div class="tt">服务器配置</div><button class="icon-btn sm" title="新建"><svg class="icon"><use href="#i-plus"/></svg></button><button class="icon-btn sm" title="更多"><svg class="icon"><use href="#i-more"/></svg></button></div>
+        <div class="vr"></div>
+        <div class="trow2"><span class="rb on"></span><span class="nm">坚果云</span><button class="icbtn" title="编辑"><svg class="icon"><use href="#i-edit"/></svg></button><button class="icbtn del" title="删除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+        <div class="vd"></div>
+        <div class="trow2"><span class="rb"></span><span class="nm">群晖 NAS</span><button class="icbtn" title="编辑"><svg class="icon"><use href="#i-edit"/></svg></button><button class="icbtn del" title="删除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+        <div class="vd"></div>
+        <div class="trow2"><span class="rb"></span><span class="nm">InfiniCloud</span><button class="icbtn" title="编辑"><svg class="icon"><use href="#i-edit"/></svg></button><button class="icbtn del" title="删除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+        <div style="height:8px"></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：编辑表单 -->
+    <div class="pair"><div class="theme-tag">深色 · 编辑表单</div>
+    <div class="phone dark">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div></div>
+      <div class="dim"></div>
+      <div class="card dlg mid" style="left:2.5%;right:2.5%">
+        <div class="dbar"><div class="tt">服务器配置</div><button class="icon-btn sm" title="保存"><svg class="icon"><use href="#i-save"/></svg></button><button class="icon-btn sm" title="更多"><svg class="icon"><use href="#i-more"/></svg></button></div>
+        <div class="til" style="margin-top:2px"><div class="lab">名称</div><div class="inp">坚果云</div></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:2px 18px 6px"><span style="font-size:13px;font-weight:650;color:var(--primary)">TYPE</span><span class="spn">WEBDAV<svg class="icon"><use href="#i-arr-d"/></svg></span></div>
+        <div class="til"><div class="lab">url</div><div class="inp mono">https://dav.jianguoyun.com/dav/</div></div>
+        <div class="til"><div class="lab">账号</div><div class="inp">reader@example.com</div></div>
+        <div class="til"><div class="lab">密码</div><div class="inp">••••••••••</div></div>
+        <div style="height:6px"></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>入口</code> — 远程管理页（RemoteBookActivity 顶栏）「服务器配置」菜单 → ServersDialog。</li>
+    <li><code>列表</code> — dialog_recycler_view 模板；菜单「新建」（menu/servers.xml showAsAction=always）；行=item_server_select：单选即启用（selectServerId 存 AppConfig.remoteServerId, ServersDialog.kt:118-123）+ 编辑 + 删除（alert 二次确认 :131-141）。</li>
+    <li><code>表单</code> — dialog_webdav_server.xml：名称 TextInputLayout + TYPE Spinner（@array/server_type 目前仅 WEBDAV）+ Flexbox 动态字段（按 ServerTemplate 行数生成 item_source_edit：filled、10dp 圆角、聚焦 2dp 主色下划线）；菜单「保存」（menu/server_config.xml, ServerConfigDialog.kt:48-49）。字段名随模板（url/账号/密码等）。</li>
+  </ul>
+</section>
+<!-- ================= 11 离线缓存范围 ================= -->
+<section class="screen" id="s11">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">11</span><h2 class="st-title">离线缓存 · 章节范围</h2><span class="st-src">BaseReadBookActivity.showDownloadDialog（:266-289）· ReadBookActivity menu_download（:513）· dialog_download_choice.xml（03 组只画了菜单图标，本稿补画弹窗）</span></div>
+    <div class="chips"><span>输入起止章节号</span><span>默认 当前章 ~ 总章数</span><span>数字键盘 · 最长 5 位</span><span>空=按 总章数 处理</span><span>确认后 CacheBook.start</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：默认范围 -->
+    <div class="pair"><div class="theme-tag">浅色 · 默认 当前章~总章</div>
+    <div class="phone light">
+      <div class="read"><div class="read-head"><span>第一百零三章 山腰小憩</span><span>14:18</span></div>
+      <div class="read-body"><p>陈平安背着剑匣，沿着青石阶一路向上。山间的雾气还未散尽，石阶两侧的野竹被夜露压得低垂。</p><p>他数着步子，一里一段路，走到山腰时，天边刚好泛起鱼肚白。</p><p>他在界碑旁坐下，灌了口水，把剑匣横在膝上，山风掠过檐角。</p></div>
+      <div class="read-foot"><span>3/24 · 12%</span><span>14:18 · 85%</span></div></div>
+      <div class="dim"></div>
+      <div class="card dlg mid" style="width:300px;left:50%;transform:translate(-50%,-50%)">
+        <div class="dbar"><div class="tt">离线缓存</div></div>
+        <div class="numrow">第 <span class="num">3</span> 章 到 <span class="num">1204</span> 章</div>
+        <div class="dfoot" style="justify-content:flex-end"><button class="txtbtn">取消</button><button class="txtbtn pri">确认</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：自定义范围 -->
+    <div class="pair"><div class="theme-tag">深色 · 自定义范围</div>
+    <div class="phone dark">
+      <div class="read"><div class="read-head"><span>第一百零三章 山腰小憩</span><span>14:18</span></div>
+      <div class="read-body"><p>陈平安背着剑匣，沿着青石阶一路向上。山间的雾气还未散尽，石阶两侧的野竹被夜露压得低垂。</p><p>他数着步子，一里一段路，走到山腰时，天边刚好泛起鱼肚白。</p><p>他在界碑旁坐下，灌了口水，把剑匣横在膝上，山风掠过檐角。</p></div>
+      <div class="read-foot"><span>3/24 · 12%</span><span>14:18 · 85%</span></div></div>
+      <div class="dim"></div>
+      <div class="card dlg mid" style="width:300px;left:50%;transform:translate(-50%,-50%)">
+        <div class="dbar"><div class="tt">离线缓存</div></div>
+        <div class="numrow">第 <span class="num">40</span> 章 到 <span class="num ph">结束</span> 章</div>
+        <div class="dfoot" style="justify-content:flex-end"><button class="txtbtn">取消</button><button class="txtbtn pri">确认</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>默认值</code> — 起点=当前章 +1（durChapterIndex+1），终点=totalChapterNum（BaseReadBookActivity.kt:272-274）。</li>
+    <li><code>输入</code> — 两个数字输入框 bg_edit 实底、maxLength=5、inputType=number（dialog_download_choice.xml:26-76）；起点留空按 0、终点留空按总章数处理（:277-283）。</li>
+    <li><code>确认</code> — CacheBook.start(context, book, start-1, end-1) 进入缓存任务（:284），进度在 07 组「缓存导出」屏（m8）查看。</li>
+    <li><code>对比度</code> — 弹窗为 surface 实底卡 + on_surface 文字，纱底仅 50% 黑无文字；数字框 field-solid 实底 on_surface，未命中 hint 用 on_surface_variant，明暗皆 ≥4.5:1。</li>
+  </ul>
+</section>
+
+<!-- ================= 12 起效的替换 ================= -->
+<section class="screen" id="s12">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">12</span><h2 class="st-title">起效的替换（当前书生效规则清单）</h2><span class="st-src">EffectiveReplacesDialog · dialog_recycler_view 模板 · item_1line_text.xml（ReadBookActivity.kt:622 menu_effective_replaces；05 组「替换净化」是全局管理页，本稿补画书内弹窗）</span></div>
+    <div class="chips"><span>当前章节生效的替换规则</span><span>繁简转换附加行</span><span>点击进替换编辑</span><span>繁简转换点击选模式</span><span>关闭后刷新正文</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：清单 -->
+    <div class="pair"><div class="theme-tag">浅色 · 生效清单</div>
+    <div class="phone light">
+      <div class="read"><div class="read-head"><span>第一百零三章 山腰小憩</span><span>14:18</span></div>
+      <div class="read-body"><p>陈平安背着剑匣，沿着青石阶一路向上。山间的雾气还未散尽。</p><p>他数着步子，一里一段路，走到山腰时，天边刚好泛起鱼肚白。</p></div>
+      <div class="read-foot"><span>3/24 · 12%</span><span>14:18 · 85%</span></div></div>
+      <div class="dim"></div>
+      <div class="card dlg mid" style="left:5%;right:5%">
+        <div class="dbar"><div class="tt">起效的替换</div></div>
+        <div class="one"><svg class="icon s" style="color:var(--ok)"><use href="#i-shield"/></svg><span class="nm">去广告净化 · 书源内置</span></div>
+        <div class="one"><svg class="icon s" style="color:var(--ok)"><use href="#i-shield"/></svg><span class="nm">章节名修正</span></div>
+        <div class="one"><svg class="icon s" style="color:var(--ok)"><use href="#i-shield"/></svg><span class="nm">错别字修正</span></div>
+        <div class="one"><svg class="icon s" style="color:var(--primary)"><use href="#i-swap"/></svg><span class="nm">繁简转换</span></div>
+        <div style="height:8px"></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：繁简转换模式 -->
+    <div class="pair"><div class="theme-tag">深色 · 繁简转换模式</div>
+    <div class="phone dark">
+      <div class="read"><div class="read-head"><span>第一百零三章 山腰小憩</span><span>14:18</span></div>
+      <div class="read-body"><p>陈平安背着剑匣，沿着青石阶一路向上。山间的雾气还未散尽。</p><p>他数着步子，一里一段路，走到山腰时，天边刚好泛起鱼肚白。</p></div>
+      <div class="read-foot"><span>3/24 · 12%</span><span>14:18 · 85%</span></div></div>
+      <div class="dim"></div>
+      <div class="card dlg mid" style="width:300px;left:50%;transform:translate(-50%,-50%)">
+        <div class="dbar"><div class="tt">繁简转换</div></div>
+        <div class="one"><span class="nm">关闭</span></div>
+        <div class="one"><svg class="icon s" style="color:var(--primary)"><use href="#i-check"/></svg><span class="nm">繁体转简体</span></div>
+        <div class="one"><span class="nm">简体转繁体</span></div>
+        <div style="height:6px"></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>数据</code> — 取当前章节 effectiveReplaceRules（EffectiveReplacesDialog.kt:57-60）；开启简繁转换时附加一行「繁简转换」（AppConfig.chineseConverterType &gt; 0，:55-60）。</li>
+    <li><code>交互</code> — 点击规则行 → ReplaceEditActivity 编辑（:85-99），返回 RESULT_OK 后关闭时 replaceRuleChanged() 刷新正文（:62-66, 75-77）；点击「繁简转换」→ chinese_mode 三选一 alert（关闭/繁体转简体/简体转繁体，:68-74，values-zh/arrays.xml:60-64）。</li>
+    <li><code>规格</code> — 0.9 宽 × 自增高（:40-42 setLayout(0.9f, WRAP_CONTENT)）。</li>
+  </ul>
+</section>
+
+<!-- ================= 13 编辑章节内容 ================= -->
+<section class="screen" id="s13">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">13</span><h2 class="st-title">编辑章节内容</h2><span class="st-src">ContentEditDialog · dialog_content_edit.xml · menu/content_edit.xml（ReadBookActivity.kt:516 menu_edit_content；ReadView.kt:446 长按快捷入口）</span></div>
+    <div class="chips"><span>整屏编辑器</span><span>标题=章节名（点标题可改）</span><span>打开定位到当前阅读位置</span><span>保存 / 重置 / 拷贝所有</span><span>保存后重载正文</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：编辑 -->
+    <div class="pair"><div class="theme-tag">浅色 · 编辑态</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="tbar"><div class="trow"><button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button><div class="tb-title" style="color:var(--text)">第一百零三章 山腰小憩</div><button class="icon-btn" title="保存"><svg class="icon"><use href="#i-save"/></svg></button><button class="icon-btn" title="重置/拷贝所有"><svg class="icon"><use href="#i-more"/></svg></button></div></div>
+      <div class="vd"></div>
+      <div style="padding:14px 16px 0;font-size:15px;line-height:1.95;color:var(--text)">陈平安背着剑匣，沿着青石阶一路向上。山间的雾气还未散尽，石阶两侧的野竹被夜露压得低垂。<br><br>他数着步子，一里一段路，走到山腰时，天边刚好泛起鱼肚白。<br><br>他在界碑旁坐下，灌了口水，把剑匣横在膝上。</div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：溢出菜单 -->
+    <div class="pair"><div class="theme-tag">深色 · 溢出菜单</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="tbar"><div class="trow"><button class="icon-btn"><svg class="icon"><use href="#i-back"/></svg></button><div class="tb-title" style="color:var(--text)">第一百零三章 山腰小憩</div><button class="icon-btn" title="保存"><svg class="icon"><use href="#i-save"/></svg></button><button class="icon-btn"><svg class="icon"><use href="#i-more"/></svg></button></div></div>
+      <div class="vd"></div>
+      <div style="padding:14px 16px 0;font-size:15px;line-height:1.95;color:var(--text)">陈平安背着剑匣，沿着青石阶一路向上。山间的雾气还未散尽，石阶两侧的野竹被夜露压得低垂。<br><br>他数着步子，一里一段路，走到山腰时，天边刚好泛起鱼肚白。</div>
+      <div class="menu" style="right:16px;top:84px"><div class="mi"><svg class="icon"><use href="#i-refresh"/></svg>重置</div><div class="mi"><svg class="icon"><use href="#i-copy"/></svg>拷贝所有</div></div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>打开</code> — 阅读菜单溢出「编辑书籍内容」（ReadBookActivity.kt:516）或正文长按快捷入口（ReadView.kt:446）；整屏对话框（setLayout(1f, MATCH_PARENT)，ContentEditDialog.kt:38-41）。</li>
+    <li><code>标题</code> — 工具栏标题=当前章节名（:44-45），点击标题弹出编辑章节名输入框（:46-56）。</li>
+    <li><code>定位</code> — 内容载入后滚动到当前阅读段落（getLineForOffset(durChapterPos)，:69-76）。</li>
+    <li><code>菜单</code> — 保存（showAsAction=always）/ 重置（拉回源文本并 loadContent）/ 拷贝所有（menu/content_edit.xml; :59-77）；保存成功后关闭并重载正文。</li>
+    <li><code>对比度</code> — 页面 @color/background + ThemeEditText（dialog_content_edit.xml:2-7），本稿 on_surface 正文；标题保持 on_surface（#20242B on #FAF9F7 ≈14:1；primary #FF6B2C 实算 2.70:1 不达标，弃用），编辑态以 2dp primary 下划线/焦点色提示。</li>
+  </ul>
+</section>
+
+<!-- ================= 14 词典查询 ================= -->
+<section class="screen" id="s14">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">14</span><h2 class="st-title">词典查询</h2><span class="st-src">DictDialog · DictViewModel · dialog_dict.xml（ReadBookActivity.kt:893 选择菜单「词典」；03 组只画了按钮，本稿补画结果弹窗）</span></div>
+    <div class="chips"><span>词典 Tab 切换</span><span>≤4 个固定均分，&gt;4 可滑动</span><span>HTML 结果渲染（链接可点）</span><span>加载转圈</span><span>整宽底部弹窗</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：结果 -->
+    <div class="pair"><div class="theme-tag">浅色 · 查询结果</div>
+    <div class="phone light">
+      <div class="read"><div class="read-head"><span>第一百零三章 山腰小憩</span><span>14:18</span></div>
+      <div class="read-body"><p>陈平安背着剑匣，沿着青石阶一路向上。</p><p>渡口的乌篷船<b style="font-weight:650;border-bottom:2px solid var(--primary)">泊</b>在岸边，艄公收了长篓。</p></div>
+      <div class="read-foot"><span>3/24 · 12%</span><span>14:18 · 85%</span></div></div>
+      <div class="dim"></div>
+      <div class="card dlg bottom" style="max-height:520px">
+        <div class="tabs"><div class="tab on">汉典</div><div class="tab">百度汉语</div><div class="tab">必应词典</div></div>
+        <div class="dicthtml">
+          <b>泊</b>　<span class="py">bó / pō</span>
+          <ol>
+            <li>停船靠岸：~船。~位。停~。</li>
+            <li>停留：漂~。淡~（不追求名利）。</li>
+            <li>安静：淡~。恬~。</li>
+          </ol>
+          <div style="margin-top:8px">组词：停泊、淡泊、泊位、漂泊。</div>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：加载中 -->
+    <div class="pair"><div class="theme-tag">深色 · 加载中</div>
+    <div class="phone dark">
+      <div class="read"><div class="read-head"><span>第一百零三章 山腰小憩</span><span>14:18</span></div>
+      <div class="read-body"><p>陈平安背着剑匣，沿着青石阶一路向上。</p><p>渡口的乌篷船泊在岸边，艄公收了长篓。</p></div>
+      <div class="read-foot"><span>3/24 · 12%</span><span>14:18 · 85%</span></div></div>
+      <div class="dim"></div>
+      <div class="card dlg bottom" style="max-height:520px">
+        <div class="tabs"><div class="tab">汉典</div><div class="tab on">百度汉语</div><div class="tab">必应词典</div><div class="tab">维基词典</div></div>
+        <div style="height:150px;display:grid;place-items:center"><div class="spinner"></div></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>入口</code> — 阅读长按选词 → 选择菜单「词典」（03 组选择菜单屏；ReadBookActivity.kt:893）。</li>
+    <li><code>Tab</code> — TabLayout 背景跟随主题 backgroundColor、选中指示条 accentColor（DictDialog.kt:43-55）；启用词典 ≤4 固定均分，&gt;4 可滑动居中（:75-83）。Tab 由 DictRuleActivity 启用的词典生成（viewModel.initData :68-73）。</li>
+    <li><code>结果</code> — dictRule 请求结果以 HTML 渲染（setHtml，LinkMovementMethod 链接可点，:43, 56-66）；请求期间 RotateLoading 居中（dialog_dict.xml:19-26）。</li>
+    <li><code>对比度</code> — 结果正文 on_surface_variant（#60656D/#B4B0AA ≥4.5:1），词条头 on_surface，标音 primary；Tab 未选中 on_surface_variant、选中 primary+2.5dp 指示条，避免原 TabLayout 主题染色不确定性。</li>
+  </ul>
+</section>
+
+<!-- ================= 15 阅读内搜索导航条 ================= -->
+<section class="screen" id="s15">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">15</span><h2 class="st-title">阅读内搜索导航条（SearchMenu）</h2><span class="st-src">SearchMenu · view_search_menu.xml（ReadBookActivity.kt:187-191；全文搜索结果点回正文后出现，各稿均未画）</span></div>
+    <div class="chips"><span>上一处 / 下一处 结果 FAB</span><span>36dp 信息条：↑ ↓ + 当前结果上下文</span><span>底部 结果 / 主菜单 / 退出</span><span>命中处高亮</span><span>点空白收起</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色 -->
+    <div class="pair"><div class="theme-tag">浅色 · 导航条展开</div>
+    <div class="phone light">
+      <div class="read"><div class="read-head"><span>第一百零三章 山腰小憩</span><span>14:18</span></div>
+      <div class="read-body"><p>陈平安背着剑匣，沿着青石阶一路向上。山间的雾气还未散尽。</p><p>他数着步子，一里一段路，走到山腰时，天边刚好泛起<mark class="mark">鱼肚白</mark>。</p><p>他在界碑旁坐下，灌了口水，把剑匣横在膝上，山风掠过檐角。</p></div>
+      <div class="read-foot"><span>3/24 · 12%</span><span>14:18 · 85%</span></div></div>
+      <div class="fabmini" style="left:16px;top:430px"><svg class="icon" style="transform:rotate(180deg)"><use href="#i-arr-r"/></svg></div>
+      <div class="fabmini" style="right:16px;top:430px"><svg class="icon"><use href="#i-arr-r"/></svg></div>
+      <div class="sminfo"><button class="icon-btn sm" style="width:36px;height:36px"><svg class="icon"><use href="#i-arr-u"/></svg></button><button class="icon-btn sm" style="width:36px;height:36px"><svg class="icon"><use href="#i-arr-d"/></svg></button><div class="cur">第 <b>2/5</b> 处 · ……走到山腰时，天边刚好泛起鱼肚白……</div></div>
+      <div class="smbot">
+        <div class="sm-it"><svg class="icon"><use href="#i-toc"/></svg>结果</div>
+        <div class="sm-it"><svg class="icon"><use href="#i-menu2"/></svg>主菜单</div>
+        <div class="sm-it"><svg class="icon"><use href="#i-stop"/></svg>退出</div>
+      </div>
+      <div class="hi" style="z-index:40"></div>
+    </div></div>
+    <!-- 深色 -->
+    <div class="pair"><div class="theme-tag">深色 · 末处结果</div>
+    <div class="phone dark">
+      <div class="read"><div class="read-head"><span>第一百零三章 山腰小憩</span><span>14:18</span></div>
+      <div class="read-body"><p>陈平安背着剑匣，沿着青石阶一路向上。山间的雾气还未散尽。</p><p>他数着步子，一里一段路，走到山腰时，天边刚好泛起<mark class="mark">鱼肚白</mark>。</p></div>
+      <div class="read-foot"><span>3/24 · 12%</span><span>14:18 · 85%</span></div></div>
+      <div class="fabmini" style="left:16px;top:430px"><svg class="icon" style="transform:rotate(180deg)"><use href="#i-arr-r"/></svg></div>
+      <div class="fabmini" style="right:16px;top:430px"><svg class="icon"><use href="#i-arr-r"/></svg></div>
+      <div class="sminfo"><button class="icon-btn sm" style="width:36px;height:36px"><svg class="icon"><use href="#i-arr-u"/></svg></button><button class="icon-btn sm" style="width:36px;height:36px"><svg class="icon"><use href="#i-arr-d"/></svg></button><div class="cur">第 <b>5/5</b> 处 · ……天边刚好泛起鱼肚白……（已是最后一处）</div></div>
+      <div class="smbot">
+        <div class="sm-it"><svg class="icon"><use href="#i-toc"/></svg>结果</div>
+        <div class="sm-it"><svg class="icon"><use href="#i-menu2"/></svg>主菜单</div>
+        <div class="sm-it"><svg class="icon"><use href="#i-stop"/></svg>退出</div>
+      </div>
+      <div class="hi" style="z-index:40"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>结构</code> — fabLeft/fabRight 两侧 mini FAB（上一处/下一处，view_search_menu.xml:14-52）+ 36dp 信息条 ll_search_base_info（↑ ↓ + tv_current_search_info 12sp，:67-95）+ 底部菜单 结果/主菜单/退出（60dp 竖排三项，:97-末尾）。</li>
+    <li><code>随主题自适应</code> — 底栏色取 bottomBackground（当前阅读背景），文字取 getPrimaryTextColor(isColorLight(bg))（SearchMenu.kt:32-36）——正文换任何自定义背景都不会出现白字压白底；本稿按标准暖纸白/暖黑正文底展示 surface2 实底 + on_surface。</li>
+    <li><code>交互</code> — 上/下 FAB 与信息条 ↑↓ 均跳转上/下一处命中；「结果」呼出全文搜索结果列表（04 组搜索内容屏），「主菜单」=阅读菜单，「退出」结束搜索回正文；点 vw_menu_bg 空白收起（:16-22）。</li>
+    <li><code>命中高亮</code> — 当前命中两侧游标 + 主色淡底（03 组 .mark 令牌，ReadView 高亮渲染）。</li>
+  </ul>
+</section>
+<!-- ================= 16 背景文字自定义 ================= -->
+<section class="screen" id="s16">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">16</span><h2 class="st-title">背景文字自定义（长按背景色块）</h2><span class="st-src">BgTextConfigDialog · dialog_read_bg_text.xml · item_bg_image.xml（03 组界面设置规格仅文字提及，本稿补画面板）</span></div>
+    <div class="chips"><span>样式名称 + 恢复默认</span><span>深色状态栏图标 / 文字下划线开关</span><span>文字颜色 / 背景颜色 取色器</span><span>导入 / 导出 / 删除</span><span>背景透明度滑杆</span><span>背景图片横滑选择</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色 -->
+    <div class="pair"><div class="theme-tag">浅色 · 自定义面板</div>
+    <div class="phone light">
+      <div class="read"><div class="read-head"><span>第一百零三章 山腰小憩</span><span>14:18</span></div>
+      <div class="read-body"><p>陈平安背着剑匣，沿着青石阶一路向上。山间的雾气还未散尽。</p><p>他数着步子，一里一段路，走到山腰时，天边刚好泛起鱼肚白。</p></div>
+      <div class="read-foot"><span>3/24 · 12%</span><span>14:18 · 85%</span></div></div>
+      <div class="card dlg bottom">
+        <div style="display:flex;align-items:center;gap:8px;padding:12px 16px 4px">
+          <span style="font-size:15px;font-weight:650">样式名称：</span><span style="font-size:14px;color:var(--secondary)">山腰 · 纸白</span>
+          <svg class="icon s" style="color:var(--secondary)"><use href="#i-edit"/></svg>
+          <span style="flex:1"></span>
+          <button class="txtbtn" style="color:var(--primary)">恢复</button>
+        </div>
+        <div class="vr"></div>
+        <div class="pref"><span class="p-lab">深色状态栏图标</span><span class="sw on"></span></div>
+        <div class="pref"><span class="p-lab">文字下划线</span><span class="sw"></span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 16px">
+          <span class="spn" style="flex:1;justify-content:center;color:var(--secondary);border-color:var(--primary)">文字颜色</span>
+          <span class="spn" style="flex:1;justify-content:center;color:var(--secondary);border-color:var(--primary)">背景颜色</span>
+          <button class="icbtn" title="导入"><svg class="icon"><use href="#i-down"/></svg></button>
+          <button class="icbtn" title="导出"><svg class="icon"><use href="#i-up"/></svg></button>
+          <button class="icbtn" title="删除"><svg class="icon"><use href="#i-trash"/></svg></button>
+        </div>
+        <div style="padding:6px 16px 0;font-size:12.5px;color:var(--secondary)">背景透明度</div>
+        <div style="display:flex;align-items:center;padding:6px 0 2px"><div class="seek"><i style="width:31%"></i><b style="left:31%"></b></div><span style="width:44px;text-align:center;font-size:12.5px;color:var(--secondary)">31%</span></div>
+        <div style="padding:8px 16px 0;font-size:12.5px;color:var(--secondary)">背景图片</div>
+        <div class="bgtwrap" style="padding-bottom:16px">
+          <div class="bgt on" style="background:#f7f2e7;color:#6d6a62">纯色</div>
+          <div class="bgt" style="background:linear-gradient(160deg,#f3e2c9,#e8cfa9);color:#7a5c33">羊皮</div>
+          <div class="bgt" style="background:linear-gradient(160deg,#2c3440,#171c24);color:#cfd6e2">夜航</div>
+          <div class="bgt" style="background:linear-gradient(160deg,#e7e2d6,#cfc9ba);color:#6d6a62">宣纸</div>
+        </div>
+      </div>
+      <div class="hi" style="z-index:40"></div>
+    </div></div>
+    <!-- 深色 -->
+    <div class="pair"><div class="theme-tag">深色 · 下划线开</div>
+    <div class="phone dark">
+      <div class="read"><div class="read-head"><span>第一百零三章 山腰小憩</span><span>14:18</span></div>
+      <div class="read-body"><p style="text-decoration:underline;text-decoration-color:rgba(255,255,255,.25);text-underline-offset:6px">陈平安背着剑匣，沿着青石阶一路向上。山间的雾气还未散尽。</p><p>他数着步子，一里一段路，走到山腰时，天边刚好泛起鱼肚白。</p></div>
+      <div class="read-foot"><span>3/24 · 12%</span><span>14:18 · 85%</span></div></div>
+      <div class="card dlg bottom">
+        <div style="display:flex;align-items:center;gap:8px;padding:12px 16px 4px">
+          <span style="font-size:15px;font-weight:650">样式名称：</span><span style="font-size:14px;color:var(--secondary)">夜航 · 暖黑</span>
+          <svg class="icon s" style="color:var(--secondary)"><use href="#i-edit"/></svg>
+          <span style="flex:1"></span>
+          <button class="txtbtn" style="color:var(--primary)">恢复</button>
+        </div>
+        <div class="vr"></div>
+        <div class="pref"><span class="p-lab">深色状态栏图标</span><span class="sw"></span></div>
+        <div class="pref"><span class="p-lab">文字下划线</span><span class="sw on"></span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 16px">
+          <span class="spn" style="flex:1;justify-content:center;color:var(--secondary);border-color:var(--primary)">文字颜色</span>
+          <span class="spn" style="flex:1;justify-content:center;color:var(--secondary);border-color:var(--primary)">背景颜色</span>
+          <button class="icbtn" title="导入"><svg class="icon"><use href="#i-down"/></svg></button>
+          <button class="icbtn" title="导出"><svg class="icon"><use href="#i-up"/></svg></button>
+          <button class="icbtn" title="删除"><svg class="icon"><use href="#i-trash"/></svg></button>
+        </div>
+        <div style="padding:6px 16px 0;font-size:12.5px;color:var(--secondary)">背景透明度</div>
+        <div style="display:flex;align-items:center;padding:6px 0 2px"><div class="seek"><i style="width:78%"></i><b style="left:78%"></b></div><span style="width:44px;text-align:center;font-size:12.5px;color:var(--secondary)">78%</span></div>
+        <div style="padding:8px 16px 0;font-size:12.5px;color:var(--secondary)">背景图片</div>
+        <div class="bgtwrap" style="padding-bottom:16px">
+          <div class="bgt" style="background:#141312;color:#b4b0aa">纯色</div>
+          <div class="bgt on" style="background:linear-gradient(160deg,#2c3440,#171c24);color:#cfd6e2">夜航</div>
+          <div class="bgt" style="background:linear-gradient(160deg,#332a20,#1c1712);color:#cfc4b2">檀木</div>
+          <div class="bgt" style="background:linear-gradient(160deg,#24303a,#10161c);color:#c3cedd">深海</div>
+        </div>
+      </div>
+      <div class="hi" style="z-index:40"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>布局块</code> — 样式名称+编辑+恢复（dialog_read_bg_text.xml:18-52）；sw_dark_status_icon / sw_underline（:54-66）；tv_text_color / tv_bg_color StrokeTextView 描边按钮（:68-116）→ ColorPickerDialog 取色（BgTextConfigDialog.kt:17）；iv_import / iv_export / iv_delete（:118-160）经 HandleFileContract 分享/导入 JSON 配置；背景透明度 SeekBar 0-100（:162-176）；背景图片横滑 RecyclerView 高 100dp（:178-190）。</li>
+    <li><code>实时预览</code> — 修改即时作用于当前阅读页（postEvent RefreshContent，BgTextConfigDialog.kt），面板浮于正文之上。</li>
+    <li><code>对比度</code> — 面板 surface 实底 + on_surface；取色按钮为主色描边 + on_surface_variant 文字（13px 短标签不属大文本，须 4.5:1，主色文字实算 2.84:1 弃用；主色描边保留作为点击暗示）；正文/数值均 on_surface / on_surface_variant ≥4.5:1。</li>
+  </ul>
+</section>
+
+<!-- ================= 17 朗读引擎管理 ================= -->
+<section class="screen" id="s17">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">17</span><h2 class="st-title">朗读引擎管理（SpeakEngineDialog）</h2><span class="st-src">SpeakEngineDialog · SpeakEngineViewModel · dialog_recycler_view 模板 · item_http_tts.xml · menu/speak_engine.xml（设计稿全文无 TTS 屏，本稿补画）</span></div>
+    <div class="chips"><span>系统默认 + 系统 TTS（SYS）</span><span>在线 TTS 引擎单选</span><span>行内 编辑 / 删除</span><span>菜单 新增 / 导入默认规则 / 本地导入 / 网络导入 / 导出</span><span>底部 本书 / 全局 / 取消</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：列表 -->
+    <div class="pair"><div class="theme-tag">浅色 · 引擎列表</div>
+    <div class="phone light">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div></div>
+      <div class="dim"></div>
+      <div class="card dlg full">
+        <div class="dbar"><div class="tt">朗读引擎</div><button class="icon-btn sm" title="新增"><svg class="icon"><use href="#i-plus"/></svg></button><button class="icon-btn sm" title="导入/导出"><svg class="icon"><use href="#i-more"/></svg></button></div>
+        <div class="vr"></div>
+        <div class="trow2"><span class="rb on"></span><span class="nm">系统默认<span class="syslab">SYS</span></span></div>
+        <div class="trow2"><span class="rb"></span><span class="nm">讯飞语记 · 系统 TTS<span class="syslab">SYS</span></span></div>
+        <div class="trow2"><span class="rb"></span><span class="nm">阿里云在线 TTS</span><button class="icbtn" title="编辑"><svg class="icon"><use href="#i-edit"/></svg></button><button class="icbtn del" title="删除"><svg class="icon"><use href="#i-close"/></svg></button></div>
+        <div class="trow2"><span class="rb"></span><span class="nm">微软 Edge TTS</span><button class="icbtn" title="编辑"><svg class="icon"><use href="#i-edit"/></svg></button><button class="icbtn del" title="删除"><svg class="icon"><use href="#i-close"/></svg></button></div>
+        <div class="trow2"><span class="rb"></span><span class="nm">OTTS · 蜡笔小说</span><button class="icbtn" title="编辑"><svg class="icon"><use href="#i-edit"/></svg></button><button class="icbtn del" title="删除"><svg class="icon"><use href="#i-close"/></svg></button></div>
+        <div class="vr"></div>
+        <div class="dfoot"><button class="txtbtn pri">本书</button><span class="sp"></span><button class="txtbtn">取消</button><button class="txtbtn pri">全局</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：网络导入 -->
+    <div class="pair"><div class="theme-tag">深色 · 网络导入</div>
+    <div class="phone dark">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div></div>
+      <div class="dim"></div>
+      <div class="card dlg full">
+        <div class="dbar"><div class="tt">朗读引擎</div><button class="icon-btn sm" title="新增"><svg class="icon"><use href="#i-plus"/></svg></button><button class="icon-btn sm"><svg class="icon"><use href="#i-more"/></svg></button></div>
+        <div class="vr"></div>
+        <div class="trow2"><span class="rb on"></span><span class="nm">系统默认<span class="syslab">SYS</span></span></div>
+        <div class="trow2"><span class="rb"></span><span class="nm">阿里云在线 TTS</span><button class="icbtn"><svg class="icon"><use href="#i-edit"/></svg></button><button class="icbtn del"><svg class="icon"><use href="#i-close"/></svg></button></div>
+        <div class="dim" style="z-index:10"></div>
+        <div class="card dlg mid" style="z-index:11;width:320px;left:50%;transform:translate(-50%,-50%)">
+          <div class="dbar"><div class="tt">网络导入</div></div>
+          <div class="til"><div class="inp ph fo">url（历史记录可下拉）</div></div>
+          <div class="dfoot" style="justify-content:flex-end"><button class="txtbtn">取消</button><button class="txtbtn pri">确认</button></div>
+        </div>
+        <div class="dfoot" style="position:absolute;left:0;right:0;bottom:0;z-index:12;background:var(--surface);border-top:1px solid var(--divider)"><button class="txtbtn pri">本书</button><span class="sp"></span><button class="txtbtn">取消</button><button class="txtbtn pri">全局</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>入口</code> — 朗读配置页「朗读引擎」行（ReadAloudConfigDialog.kt:104-106）与朗读面板长按朗读按钮；整宽×0.9 高对话框（SpeakEngineDialog.kt:92-95）。</li>
+    <li><code>表头</code> — 固定「系统默认」+ 系统已装 TTS 引擎列表（右上 SYS 斜角标签 BevelLabelView，iv_edit/删除隐藏，单选互斥，:109-141）；下方为 httpTTS 在线引擎（radio + 编辑 + 删除，item_http_tts.xml）。</li>
+    <li><code>底部按钮</code> — 「本书」= 仅当前书生效（book.setTtsEngine），「全局」= AppConfig.ttsEngine，取消关闭（:142-162）。左「书」右「取消 · 全局」（dialog_recycler_view.xml Flexbox space_between）。</li>
+    <li><code>菜单</code> — 新增（→19 在线 TTS 编辑）/ 导入默认规则 / 本地导入（txt/json）/ 网络导入（URL 输入 → ImportHttpTtsDialog）/ 导出（EXPORT 模式选目录或上传，成功后回填路径可拷贝，:168-191, 40-53）。</li>
+    <li><code>对比度</code> — SYS 标签 on_surface_variant 描边小徽标（9.5px 加粗，亮 5.87:1 / 暗 7.96:1；主色实算仅 2.84:1 弃用，与 10-reader-prefs#05 同规）；名称/按钮 on_surface，编辑/删除 on_surface_variant 20px 图标 + 38dp 触控目标。</li>
+  </ul>
+</section>
+
+<!-- ================= 18 朗读设置 ================= -->
+<section class="screen" id="s18">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">18</span><h2 class="st-title">朗读设置（ReadAloudConfigDialog）</h2><span class="st-src">ReadAloudConfigDialog · pref_config_aloud.xml（03 组朗读面板规格仅注明「设置」导航，本稿补画偏好页）</span></div>
+    <div class="chips"><span>忽略音频焦点</span><span>来电期间暂停朗读（依赖上一项）</span><span>朗读服务唤醒锁</span><span>系统媒体控件兼容性更改</span><span>媒体按钮 上一首|下一首</span><span>按页朗读 / 流式播放音频</span><span>朗读引擎 TTS 入口</span><span>系统 TTS 设置</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色 -->
+    <div class="pair"><div class="theme-tag">浅色 · 联动禁用</div>
+    <div class="phone light">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div></div>
+      <div class="dim"></div>
+      <div class="card dlg tall" style="left:2.5%;right:2.5%;transform:none;top:14%">
+        <div class="dbar"><div class="tt">朗读设置</div><button class="icon-btn sm" title="关闭"><svg class="icon"><use href="#i-close"/></svg></button></div>
+        <div class="vr"></div>
+        <div class="pref"><span class="p-lab">忽略音频焦点<span class="p-sum">不被其它应用打断朗读</span></span><span class="sw"></span></div>
+        <div class="pref dis"><span class="p-lab">来电期间暂停朗读<span class="p-sum">需先开启忽略音频焦点</span></span><span class="sw"></span></div>
+        <div class="pref"><span class="p-lab">朗读服务唤醒锁<span class="p-sum">朗读时保持屏幕常亮</span></span><span class="sw on"></span></div>
+        <div class="pref"><span class="p-lab">系统媒体控件兼容性更改</span><span class="sw"></span></div>
+        <div class="pref"><span class="p-lab">媒体按钮•上一首|下一首</span><span class="sw"></span></div>
+        <div class="pref"><span class="p-lab">按页朗读<span class="p-sum">逐页朗读自动翻页</span></span><span class="sw"></span></div>
+        <div class="pref"><span class="p-lab">流式播放音频<span class="p-sum">边下边播，减少等待</span></span><span class="sw on"></span></div>
+        <div class="pcat">引擎</div>
+        <div class="pref"><span class="p-lab">朗读引擎</span><span class="p-val">系统 TTS<svg class="icon s"><use href="#i-chev"/></svg></span></div>
+        <div class="pref"><span class="p-lab">系统 TTS 设置<span class="p-sum">跳转系统文字转语音设置</span></span><span class="p-val"><svg class="icon s"><use href="#i-chev"/></svg></span></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：全开 -->
+    <div class="pair"><div class="theme-tag">深色 · 联动启用</div>
+    <div class="phone dark">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div></div>
+      <div class="dim"></div>
+      <div class="card dlg tall" style="left:2.5%;right:2.5%;transform:none;top:14%">
+        <div class="dbar"><div class="tt">朗读设置</div><button class="icon-btn sm" title="关闭"><svg class="icon"><use href="#i-close"/></svg></button></div>
+        <div class="vr"></div>
+        <div class="pref"><span class="p-lab">忽略音频焦点<span class="p-sum">不被其它应用打断朗读</span></span><span class="sw on"></span></div>
+        <div class="pref"><span class="p-lab">来电期间暂停朗读</span><span class="sw on"></span></div>
+        <div class="pref"><span class="p-lab">朗读服务唤醒锁</span><span class="sw on"></span></div>
+        <div class="pref"><span class="p-lab">系统媒体控件兼容性更改</span><span class="sw"></span></div>
+        <div class="pref"><span class="p-lab">媒体按钮•上一首|下一首</span><span class="sw on"></span></div>
+        <div class="pref"><span class="p-lab">按页朗读</span><span class="sw"></span></div>
+        <div class="pref"><span class="p-lab">流式播放音频</span><span class="sw on"></span></div>
+        <div class="pcat">引擎</div>
+        <div class="pref"><span class="p-lab">朗读引擎</span><span class="p-val">阿里云在线 TTS<svg class="icon s"><use href="#i-chev"/></svg></span></div>
+        <div class="pref"><span class="p-lab">系统 TTS 设置<span class="p-sum">跳转系统文字转语音设置</span></span><span class="p-val"><svg class="icon s"><use href="#i-chev"/></svg></span></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>容器</code> — 0.9 宽底部对话框，内嵌 PreferenceFragment 加载 pref_config_aloud（ReadAloudConfigDialog.kt:26-36, 61-63）。</li>
+    <li><code>开关项</code> — ignoreAudioFocus / pauseReadAloudWhilePhoneCalls / readAloudWakeLock / systemMediaControlCompatibilityChange / mediaButtonPerNext / readAloudByPage / streamReadAloudAudio，默认全关（pref_config_aloud.xml:9-71）。</li>
+    <li><code>联动</code> — 「来电期间暂停朗读」仅在 ignoreAudioFocus 开启时可用（ReadAloudConfigDialog.kt:98-101），禁用态整体 42% 透明度置灰（MASTER 禁用灰底灰字规则）。</li>
+    <li><code>入口项</code> — 「朗读引擎」值动态显示 系统 TTS / 已选在线 TTS 名（speakEngineSummary :70-82），点击 → 17 朗读引擎管理；「系统 TTS 设置」跳系统 TTS 页（:107-108）。</li>
+    <li><code>对比度</code> — 列表行 on_surface + 辅助说明 on_surface_variant；开关轨道 on 为 primary、off 为 track 灰（亮 #E5E2DE / 暗 #353331），无文字压低对比。</li>
+  </ul>
+</section>
+
+<!-- ================= 19 在线 TTS 编辑 ================= -->
+<section class="screen" id="s19">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">19</span><h2 class="st-title">在线 TTS 编辑（HttpTtsEditDialog）</h2><span class="st-src">HttpTtsEditDialog · HttpTtsEditViewModel · dialog_http_tts_edit.xml · menu/speak_engine_edit.xml（朗读引擎管理「新增/编辑」调起）</span></div>
+    <div class="chips"><span>名称 / url / Content-Type / 并发率</span><span>登录 URL / 登录 UI / 登录检查 JS / 请求头</span><span>保存（校验登录 URL）</span><span>溢出：登录 / 显示·删除登录头 / 拷贝·粘贴源 / 日志 / 帮助</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：表单 -->
+    <div class="pair"><div class="theme-tag">浅色 · 表单</div>
+    <div class="phone light">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div></div>
+      <div class="dim"></div>
+      <div class="card dlg full">
+        <div class="dbar"><div class="tt">朗读引擎</div><button class="icon-btn sm" title="保存"><svg class="icon"><use href="#i-save"/></svg></button><button class="icon-btn sm" title="更多"><svg class="icon"><use href="#i-more"/></svg></button></div>
+        <div class="vr"></div>
+        <div class="til" style="margin-top:10px"><div class="lab">名称</div><div class="inp">阿里云在线 TTS</div></div>
+        <div class="til"><div class="lab">url</div><div class="inp mono fo">https://tts.example.com/api?text={{speakText}}</div></div>
+        <div class="til"><div class="lab">Content-Type</div><div class="inp mono">application/json</div></div>
+        <div class="til"><div class="lab">并发率（concurrentRate）</div><div class="inp mono">1</div></div>
+        <div class="til"><div class="lab">登录 URL(loginUrl)</div><div class="inp mono ph">可空</div></div>
+        <div class="til"><div class="lab">登录 UI（loginUi）</div><div class="inp mono ph">可空</div></div>
+        <div class="til"><div class="lab">登录检查 JS（loginCheckJs）</div><div class="inp mono ph">可空</div></div>
+        <div class="til"><div class="lab">请求头（header）</div><div class="inp mono ph">{"Authorization":"Bearer …"}</div></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：溢出菜单 -->
+    <div class="pair"><div class="theme-tag">深色 · 溢出菜单</div>
+    <div class="phone dark">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div></div>
+      <div class="dim"></div>
+      <div class="card dlg full">
+        <div class="dbar"><div class="tt">朗读引擎</div><button class="icon-btn sm" title="保存"><svg class="icon"><use href="#i-save"/></svg></button><button class="icon-btn sm"><svg class="icon"><use href="#i-more"/></svg></button></div>
+        <div class="vr"></div>
+        <div class="til" style="margin-top:10px"><div class="lab">名称</div><div class="inp">阿里云在线 TTS</div></div>
+        <div class="til"><div class="lab">url</div><div class="inp mono">https://tts.example.com/api?text={{speakText}}</div></div>
+        <div class="til"><div class="lab">登录 URL(loginUrl)</div><div class="inp mono">https://tts.example.com/login</div></div>
+        <div class="menu" style="right:16px;top:78px;min-width:210px">
+          <div class="mi"><svg class="icon"><use href="#i-server"/></svg>登录</div>
+          <div class="mi"><svg class="icon"><use href="#i-check"/></svg>显示登录头</div>
+          <div class="mi"><svg class="icon"><use href="#i-close"/></svg>删除登录头</div>
+          <div class="mi"><svg class="icon"><use href="#i-copy"/></svg>拷贝源</div>
+          <div class="mi"><svg class="icon"><use href="#i-save"/></svg>粘贴源</div>
+          <div class="mi"><svg class="icon"><use href="#i-toc"/></svg>日志</div>
+          <div class="mi"><svg class="icon"><use href="#i-help"/></svg>帮助</div>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>字段</code> — 8 个 TextInputLayout：名称 / url / Content-Type / 并发率（concurrentRate）/ 登录 URL(loginUrl) / 登录 UI（loginUi）/ 登录检查 JS（loginCheckJs）/ 请求头（header）（dialog_http_tts_edit.xml:29-末尾，strings.xml:406-410,476）；CodeView 代码输入域。</li>
+    <li><code>保存</code> — 工具栏「保存」always；登录 URL 非空但登录信息缺失时提示「登录url不能为空」（HttpTtsEditDialog.kt:81-95）。</li>
+    <li><code>溢出菜单</code> — 登录 / 显示登录头 / 删除登录头 / 拷贝源 / 粘贴源 / 日志 / 帮助（menu/speak_engine_edit.xml）。</li>
+    <li><code>对比度</code> — 填充式输入域 field-solid 实底（surface_container_high）+ on_surface 内容 + on_surface_variant 浮动标签/占位；聚焦域 2dp primary 下划线（与 05 组书源编辑 .field 令牌一致）。工具栏改 surface 卡底 + on_surface（同 01 屏修复项，去掉原 actionBarStyle 主题染白风险）。</li>
+  </ul>
+</section>
+
+<!-- ================= 20 字体管理 ================= -->
+<section class="screen" id="s20">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">20</span><h2 class="st-title">字体管理（FontSelectDialog）</h2><span class="st-src">FontSelectDialog · FontAdapter · dialog_font_select.xml · item_font.xml · menu/font_select.xml（03 组界面设置只画了「字体」入口按钮，本稿补画选择列表）</span></div>
+    <div class="chips"><span>内置 font 目录 + 所选目录合并</span><span>默认字体（系统三种）</span><span>其它目录（默认 SD/Fonts）</span><span>当前字体对勾</span><span>字体名以实际字形预览</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：字体列表 -->
+    <div class="pair"><div class="theme-tag">浅色 · 字体列表</div>
+    <div class="phone light">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div></div>
+      <div class="dim"></div>
+      <div class="card dlg tall" style="left:5%;right:5%">
+        <div class="dbar"><div class="tt">选择字体</div><button class="icon-btn sm" title="默认字体"><svg class="icon"><use href="#i-type"/></svg></button><button class="icon-btn sm" title="其它目录"><svg class="icon"><use href="#i-more"/></svg></button></div>
+        <div class="vr"></div>
+        <div class="one" style="min-height:56px"><span class="nm" style="font-size:17px;font-weight:650">思源黑体.ttf</span><svg class="icon" style="color:var(--primary)"><use href="#i-check"/></svg></div>
+        <div class="one" style="min-height:56px"><span class="nm" style="font-family:'Noto Serif SC','SimSun',serif;font-size:17px">霞鹜文楷-Regular.ttf</span></div>
+        <div class="one" style="min-height:56px"><span class="nm" style="font-family:'Noto Serif SC','SimSun',serif;font-size:17px;font-weight:600">思源宋体.otf</span></div>
+        <div class="one" style="min-height:56px"><span class="nm" style="font-family:ui-monospace,Consolas,monospace;font-size:16px">SarasaMonoSC.ttf</span></div>
+        <div class="one" style="min-height:56px"><span class="nm" style="font-size:17px;font-weight:600">仓耳今楷.ttf</span></div>
+        <div style="height:8px"></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：默认字体 -->
+    <div class="pair"><div class="theme-tag">深色 · 默认字体</div>
+    <div class="phone dark">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div></div>
+      <div class="dim"></div>
+      <div class="card dlg mid" style="width:300px;left:50%;transform:translate(-50%,-50%)">
+        <div class="dbar"><div class="tt">默认字体</div></div>
+        <div class="one"><span class="nm">系统默认字体</span><svg class="icon s" style="color:var(--primary)"><use href="#i-check"/></svg></div>
+        <div class="one"><span class="nm" style="font-family:'Noto Serif SC','SimSun',serif">系统衬线字体</span></div>
+        <div class="one"><span class="nm" style="font-family:ui-monospace,Consolas,monospace">系统等宽字体</span></div>
+        <div style="height:6px"></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>入口</code> — 阅读界面设置（ReadStyleDialog）顶部「字体」按钮（03 组界面设置屏）；0.9×0.9 对话框（FontSelectDialog.kt:76-79）。</li>
+    <li><code>数据</code> — 所选字体目录（fontFolder 预置，首次打开即弹目录选择）与内置 externalFiles/font 目录合并去重（:87-95, 129-136, 138-160）；仅匹配 .ttf/.otf（fontRegex :41）。</li>
+    <li><code>菜单</code> — 「默认字体」→ 系统字体三选（系统默认/衬线/等宽字体，values-zh/arrays.xml:66-70），选定后关闭并刷新阅读页（:99-117）；「其它目录」→ HandleFileContract 选目录，附「SD/Fonts」快捷项（:119-125）。</li>
+    <li><code>行样式</code> — 字体名以该字体渲染预览（FontAdapter），当前字体右侧 24dp 对勾（item_font.xml:12-22）；本稿把对勾色从 primaryText 改为 primary，选中态更明确。</li>
+  </ul>
+</section>
+
+<div class="foot">legado 全新界面设计 v2 · 12 遗漏页面 · 第一组 · 20 屏（明暗双主题）· 单文件自包含，无外部依赖。<br>
+视觉令牌：主色 <b>#FF6B2C</b>；亮色表面 #FAF9F7 / #FFFFFF / #EEECE9，暗色表面 #141312 / #1D1B19 / #242220；弹层圆角 16dp；分割线 rgba(0,0,0,.07) / rgba(255,255,255,.08)；无阴影、blend 顶栏。<br>
+对比度基线：正文 ≥4.5:1（on_surface / on_surface_variant），弹层一律实底 surface/surface2，不依赖 actionBarStyle 主题染色的工具栏文字。</div>
+
+
+</div>
+</body></html>

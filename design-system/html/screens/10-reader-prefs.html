@@ -1,0 +1,697 @@
+<!-- design-system: legado v2 -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Legado v2 · 10 阅读偏好与对话框</title><style>
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#efece6;color:#26231d;display:flex;flex-direction:column;align-items:center}
+.page{width:min(100%,912px);padding:0 16px 96px}
+/* ---------- 页头 ---------- */
+.page-head{position:sticky;top:0;z-index:60;background:rgba(239,236,230,.94);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,.08);margin:0 -16px;padding:16px 20px 14px}
+.page-head h1{margin:0;font-size:22px;letter-spacing:.02em}
+.page-head .en{font-size:12.5px;color:#6d6a62;font-weight:600;letter-spacing:.14em;margin-left:10px}
+.pnav{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.pnav a{text-decoration:none;font-size:13px;font-weight:600;color:#4a463c;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:999px;padding:5px 14px}
+.pnav a:hover{color:#ff6b2c;border-color:#ff6b2c}
+.pnav a.cut{color:#a1543a;background:#fff4ec;border-color:#f0c9ae}
+/* ---------- 分区 ---------- */
+.scr{margin-top:60px}
+.scr-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.scr-no{font-size:13px;font-weight:800;color:#ff6b2c;letter-spacing:.1em}
+.scr-head h2{margin:0;font-size:24px}
+.src{font-size:12px;color:#6d6a62;font-family:ui-monospace,Consolas,monospace}
+.pair{display:flex;flex-wrap:wrap;gap:28px;margin-top:18px}
+figure.dev{margin:0}
+figcaption{text-align:center;font-size:13px;font-weight:600;color:#6d6a62;margin-top:10px}
+.notes{max-width:880px;margin:20px 0 0;padding:14px 18px;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:14px;font-size:13px;line-height:2;color:#3a372f}
+.notes b{color:#1d1b16}
+.notes code{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;background:rgba(0,0,0,.055);padding:1px 6px;border-radius:5px;color:#8a4a20;white-space:nowrap}
+.notice{max-width:880px;margin:18px 0 0;padding:14px 18px;background:#fff4ec;border:1px solid #f0c9ae;border-radius:14px;font-size:13px;line-height:2;color:#5c4331}
+.notice b{color:#a1543a}
+.notice code{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;background:rgba(0,0,0,.055);padding:1px 6px;border-radius:5px;color:#a1543a;white-space:nowrap}
+/* ---------- 手机壳与令牌（对齐 08-system.html） ---------- */
+.phone{width:412px;height:900px;border-radius:30px;border:1px solid rgba(0,0,0,.2);position:relative;overflow:hidden;flex:none;
+--bg:#faf9f7;--surface:#ffffff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--on-accent:#211f1c;--track:#e5e2de;--divider:rgba(0,0,0,.07);--indicator:#8d939c;
+background:var(--bg);color:var(--text)}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--on-accent:#211f1c;--track:#353331;--divider:rgba(255,255,255,.08);--indicator:#777}
+.status{height:36px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 22px 4px;font-size:13.5px;font-weight:600;position:relative;z-index:40}
+.sright{display:flex;gap:7px;align-items:center}
+/* ---------- 阅读页底衬（对话框背后的正文，简化示意） ---------- */
+.rg{position:absolute;inset:36px 0 0 0;padding:14px 24px;overflow:hidden;background:var(--bg)}
+.rg .rh{font-size:13.5px;font-weight:700;color:var(--text);opacity:.85;margin:6px 0 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rg p{margin:0 0 11px;font-size:12.5px;line-height:1.9;color:var(--text);opacity:.72}
+.rg .rf{position:absolute;left:24px;right:24px;bottom:10px;display:flex;justify-content:space-between;font-size:10.5px;color:var(--secondary)}
+/* ---------- 统一遮罩：scrim_dialog #80000000 ---------- */
+.scrim{position:absolute;inset:36px 0 0 0;background:rgba(0,0,0,.5);z-index:5}
+/* ---------- 底部弹层（MoreConfig/ReadAloud/AutoRead：bg_read_sheet_top 16dp 顶圆角） ---------- */
+.sheet{position:absolute;left:0;right:0;bottom:0;height:360px;background:var(--surface2);border-radius:16px 16px 0 0;z-index:8;overflow:hidden;display:flex;flex-direction:column}
+.sheet .plist{flex:1;overflow:hidden;position:relative}
+.sheet .prow{padding:0 18px}
+.sheet .vchip{background:var(--surface)}
+.sfade{position:absolute;left:0;right:0;bottom:0;height:52px;background:linear-gradient(180deg,rgba(0,0,0,0),var(--surface2));border-radius:0 0 16px 16px;z-index:9;pointer-events:none}
+.tfade{position:absolute;left:0;right:0;top:0;height:46px;background:linear-gradient(0deg,rgba(0,0,0,0),var(--surface2));z-index:9;pointer-events:none}
+/* ---------- 偏好行（对齐 08-system .prow / view_preference） ---------- */
+.prow{display:flex;align-items:center;gap:14px;padding:0 24px;min-height:48px;position:relative}
+.prow+.prow::before{content:"";position:absolute;left:18px;right:0;top:0;height:1px;background:var(--divider)}
+.prow .ic{flex:none;width:21px;height:21px;color:var(--secondary)}
+.pbody{flex:1;min-width:0}
+.pt{font-size:15px;font-weight:600;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ps{font-size:13px;color:var(--secondary);line-height:1.45;margin-top:2px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.pend{flex:none;display:flex;align-items:center;gap:7px;color:var(--secondary)}
+.vchip{flex:none;max-width:148px;background:var(--surface2);border-radius:8px;padding:7px 14px;font-size:14px;line-height:1.2;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.caret{width:14px;height:14px;stroke:currentColor;opacity:.55}
+.sw{flex:none;width:38px;height:22px;border-radius:11px;background:var(--track);position:relative}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.18)}
+.sw.on{background:var(--primary)}
+.sw.on::after{left:19px}
+.pdiv{display:block;height:1px;background:var(--divider);margin-left:24px}
+/* 动态行高亮（MoreConfigDialog 动态行注记） */
+.prow.hot{background:var(--primary-soft)}
+.prow.ghost{outline:1.5px dashed var(--secondary);outline-offset:-6px;border-radius:10px;opacity:.55}
+/* ---------- 居中对话框（0.9 宽 / 16dp 圆角 / shape 卡片） ---------- */
+.dlg{position:absolute;left:20px;right:20px;top:50%;transform:translateY(-50%);background:var(--surface);border-radius:16px;z-index:12;overflow:hidden;display:flex;flex-direction:column;max-height:760px}
+.dlg.tall{top:64px;bottom:64px;transform:none}
+.dlgbar{flex:none;height:56px;background:var(--primary);color:var(--on-accent);display:flex;align-items:center;gap:2px;padding:0 8px 0 20px}
+.dlgbar .t{font-size:17.5px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.icon-btn{width:44px;height:44px;border:0;background:transparent;border-radius:22px;display:grid;place-items:center;color:inherit;cursor:pointer;padding:0}
+.icon{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon.f{fill:currentColor;stroke:none}
+.dlgbody{flex:1;overflow:hidden;position:relative}
+.dfoot{flex:none;display:flex;align-items:center;gap:8px;padding:10px 16px 14px}
+.dfoot .sp{flex:1}
+.tbtn{border:0;background:transparent;color:var(--secondary);font-size:14px;font-weight:600;padding:9px 14px;border-radius:8px;cursor:pointer}
+.abtn{border:0;background:var(--primary);color:var(--on-accent);font-size:14px;font-weight:700;padding:9px 20px;border-radius:999px;cursor:pointer}
+.tonal{border:0;background:var(--primary-soft);color:#b34a15;font-size:13.5px;font-weight:700;padding:8px 16px;border-radius:999px;cursor:pointer}
+.phone.dark .tonal{color:#ff8a50}
+/* ---------- 列表对话框行（朗读引擎 / 字体） ---------- */
+.lrow{display:flex;align-items:center;gap:12px;min-height:48px;padding:0 18px;position:relative}
+.lrow+.lrow::before{content:"";position:absolute;left:18px;right:0;top:0;height:1px;background:var(--divider)}
+.rdo{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--secondary);position:relative}
+.rdo.on{border-color:var(--primary)}
+.rdo.on::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--primary)}
+.lname{flex:1;min-width:0;font-size:14.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lrow .act{flex:none;width:36px;height:36px;border-radius:18px;display:grid;place-items:center;color:var(--secondary)}
+.lrow .act .icon{width:19px;height:19px}
+.sys{flex:none;font-size:9.5px;font-weight:800;letter-spacing:.08em;color:var(--secondary);border:1px solid var(--secondary);border-radius:6px;padding:2px 5px;opacity:.8}
+/* ---------- 表单字段（0.9 卡片内， TextInputLayout filled 10dp） ---------- */
+.form{padding:16px 18px 6px}
+.field{background:var(--surface2);border-radius:10px;padding:7px 14px 9px;margin-bottom:10px}
+.field .hint{font-size:11px;color:var(--secondary);margin-bottom:2px}
+.field .val{font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.field .val.mono{font-family:ui-monospace,Consolas,monospace;font-size:12.5px}
+.field .val.ph{color:var(--secondary)}
+.ckrow{display:flex;align-items:center;gap:16px;padding:2px 2px 10px;font-size:13.5px;color:var(--text)}
+.ck{width:18px;height:18px;border-radius:5px;border:2px solid var(--secondary);display:inline-grid;place-items:center;flex:none}
+.ck.on{background:var(--primary);border-color:var(--primary)}
+.ck svg{width:12px;height:12px;stroke:var(--on-accent);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+/* ---------- 数字选择弹窗（NumberPickerDialog） ---------- */
+.npd{position:absolute;left:96px;right:96px;top:250px;z-index:14;background:var(--surface);border-radius:16px;padding:18px 16px 10px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.22)}
+.npd .nt{font-size:14.5px;font-weight:700;text-align:left;margin:0 0 12px}
+.nprow{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px}
+.npcol{display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--secondary)}
+.npcol .nv{font-size:26px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;background:var(--surface2);border-radius:10px;padding:6px 16px}
+.npcol .icon{width:18px;height:18px}
+/* ---------- 滑条（ThemeSeekBar 示意） ---------- */
+.seekrow{display:flex;align-items:center;gap:12px;padding:4px 18px 12px}
+.seek{flex:1;height:4px;border-radius:3px;background:var(--track);position:relative}
+.seek i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--primary)}
+.seek b{position:absolute;top:50%;transform:translate(-50%,-50%);width:13px;height:13px;border-radius:50%;background:#fff;border:2px solid var(--primary);box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.slab{flex:none;font-size:12.5px;color:var(--secondary);font-variant-numeric:tabular-nums}
+/* ---------- 面板四联按钮（目录/主菜单/…） ---------- */
+.mb-row{display:flex;padding:4px 10px 12px}
+.mb{flex:1;border:0;background:transparent;color:var(--text);display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11.5px;cursor:pointer;padding:4px 0}
+.mb .icon{width:22px;height:22px}
+/* ---------- 修复组对比徽标 ---------- */
+.cmark{position:absolute;display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;border-radius:7px;padding:2px 7px;z-index:30;pointer-events:none}
+.cmark.bad{background:#b3261e;color:#fff;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.cmark.good{background:#2e6b39;color:#fff;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.cmark code{font-family:ui-monospace,Consolas,monospace;font-weight:600}
+/* ---------- 播放器（修复组） ---------- */
+.pl-old{position:absolute;inset:36px 0 0 0;background:linear-gradient(180deg,#aba9a9,#9d9d9e)}
+.pl-new{position:absolute;inset:36px 0 0 0;background:linear-gradient(180deg,#241d18,#201813 45%,#181210)}
+.pl-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.7),rgba(0,0,0,.6) 38%,rgba(0,0,0,.6) 62%,rgba(0,0,0,.8))}
+.ptxt{position:relative;z-index:10;color:#fff}
+.pl-head{display:flex;align-items:center;height:64px;padding:0 10px 0 8px;color:#fff;position:relative;z-index:10}
+.pl-head .t{flex:1;text-align:center;font-size:19px;font-weight:700}
+.pill{font-size:12.5px;color:#fff;background:rgba(255,255,255,.16);border-radius:999px;padding:4px 11px;display:inline-flex;gap:5px;align-items:center}
+.pill.dk{background:rgba(36,31,27,.72)}
+.pill.old{background:rgba(255,255,255,.29)}
+.pills{position:absolute;top:104px;left:0;right:0;display:flex;justify-content:space-between;padding:0 16px;z-index:10}
+.pl-sub{text-align:center;font-size:14.5px;color:rgba(255,255,255,.95);margin-top:200px;padding:0 32px;z-index:10;position:relative}
+.pl-prog{display:flex;align-items:center;gap:12px;padding:0 26px;margin-top:14px;font-size:12px;color:rgba(255,255,255,.85);z-index:10;position:relative}
+.pl-prog .seek{background:rgba(255,255,255,.25)}
+.pl-prog .seek i{background:#fff}
+.pl-prog .seek b{border-color:#fff}
+.ctrls{position:absolute;left:0;right:0;bottom:44px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:10}
+.cbtn{width:48px;height:48px;border:0;background:rgba(255,255,255,.14);border-radius:50%;display:grid;place-items:center;color:#fff;cursor:pointer}
+.cbtn.old{background:rgba(255,255,255,.22)}
+.fab{width:72px;height:72px;border:0;border-radius:50%;background:#fff;color:#211f1c;display:grid;place-items:center;cursor:pointer;position:relative}
+.hero-old{position:absolute;inset:36px 0 0 0;background:linear-gradient(160deg,#f7e8d9,#f0d2b9)}
+.hero-new{position:absolute;inset:36px 0 0 0;background:linear-gradient(160deg,#f7e8d9,#f0d2b9)}
+.hero-new::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.72),rgba(0,0,0,.55) 84px,rgba(0,0,0,0) 150px),rgba(0,0,0,.31)}
+.hero-cover{position:absolute;left:50%;top:216px;transform:translateX(-50%);width:148px;height:200px;border-radius:10px;background:linear-gradient(150deg,#7a4423,#3c2a1a 60%,#57351c);box-shadow:0 6px 18px rgba(0,0,0,.3);z-index:6}
+.hero-title{position:relative;z-index:10;color:#fff;font-size:17px;font-weight:700;padding:0 56px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tagcut{display:inline-block;font-size:11px;font-weight:700;color:#a1543a;background:#ffe9d8;border:1px solid #f0c9ae;border-radius:6px;padding:1px 8px;vertical-align:3px;margin-left:8px}
+</style></head>
+<body>
+<div class="page">
+
+<header class="page-head">
+  <h1>Legado v2 · 阅读偏好与对话框<span class="en">10 READER PREFS &amp; DIALOGS</span></h1>
+  <nav class="pnav">
+    <a href="#s1">01 阅读设置·上</a><a href="#s2">02 阅读设置·下</a><a href="#s3">03 更多设置·动态行</a><a href="#s4">04 朗读设置</a><a href="#s5">05 朗读引擎</a><a href="#s6">06 HTTP TTS 编辑</a><a href="#s7">07 字体选择</a><a href="#s8">08 自动翻页</a><a href="#fix1">09 修复·听书播放</a><a href="#fix2">10 修复·书籍详情</a><a href="#cut" class="cut">✕ 替换编辑（05 已定稿）</a>
+  </nav>
+</header>
+
+<div class="notice" id="cut">
+  <b>材料对照与去向说明（如实记录，先看这里）：</b><br>
+  ① <b>项数</b>：任务书称「阅读设置 25 项」，逐条清点 <code>xml/pref_config_read.xml</code> 实为 <b>28 项</b>（7 个 NameListPreference/Preference + 21 个 SwitchPreference），本稿按 28 项全覆盖。<br>
+  ② <b>宿主</b>：<code>pref_config_read.xml</code> 在代码中仅被 <code>MoreConfigDialog</code> 挂载（<code>MoreConfigDialog.kt:86</code>）；<code>ConfigActivity.kt:19-24</code> 只路由 OTHER/THEME/BACKUP/COVER/WELCOME 五个 Fragment，<b>不存在独立「阅读设置」全屏页</b>。故 01/02 两屏以真实的 360dp 底板（<code>MoreConfigDialog.kt:48</code>）两个滚动位呈现全部 28 项，不虚构新页面。<br>
+  ③ <b>类名对照</b>：任务书中的 <code>TtsEngineDialog / SelectTtsEngineDialog</code> 在本仓库不存在，TTS 引擎管理实为 <code>SpeakEngineDialog</code>（注释即「tts引擎管理」，SpeakEngineDialog.kt:56-57）+ <code>HttpTtsEditDialog</code>；<code>FontFileDialog</code> 不存在，字体管理实为 <code>FontSelectDialog</code>；「朗读设置」= <code>ReadAloudConfigDialog</code>（挂载 <code>pref_config_aloud.xml</code>，字符串 <code>aloud_config</code> 即「朗读设置」values-zh/strings.xml:583/661）；<code>ReplaceEditDialog</code> 不存在，替换编辑是全屏 <code>ReplaceEditActivity</code>，已定稿于 <a href="05-source-rules.html#s06" target="_blank" rel="noopener">05-source-rules.html#s06</a>（其布局 <code>activity_replace_edit.xml</code> 已带 v3 样式：blend 顶栏 :17、filled 输入框 10dp 圆角 :40-47），本组不重复出稿。<br>
+  ④ <b>与 03 稿的承接</b>：ReadAloudDialog 播控面板、AutoReadDialog 面板已定稿于 <a href="03-reader.html#aloud" target="_blank" rel="noopener">03-reader.html#aloud/#auto</a>；本组 08 收自动翻页的统一规范版（值胶囊 + 统一遮罩），播控结构不变。<br>
+  ⑤ <b>遮罩规范</b>：本轮要求「对话框统一 16dp 圆角与 scrim_dialog 遮罩」（<code>scrim_dialog=#80000000</code>，values/colors.xml:33）。阅读内三张底板当前刻意无遮罩（<code>MoreConfigDialog.kt:41-47</code>、<code>ReadAloudDialog.kt:37-46</code>、<code>AutoReadDialog.kt:34-44</code> 均 clearFlags(FLAG_DIM_BEHIND)+dimAmount=0），03 稿亦为无遮罩形态；本稿按新规范统一补 scrim_dialog，落地需删除三处 dim 清除（一行级改动，见各屏注记）。<br>
+  ⑥ <b>⚠ 与修复稿 11 平行冲突（落地前必须二选一）</b>：本稿 09/10 两屏与 <a href="11-audio-light.html" target="_blank" rel="noopener">11-audio-light.html</a>（修复稿 11，S1–S5 含逐行落地 diff）针对<b>同两处缺陷</b>，关键取值不同，不可双规格并存——① 播放面令牌：本稿 <code>player_surface #201813</code> vs 修复稿 11 <code>#141312</code>（即 MASTER Dark surface 层级；08#s13 .player 实为 <code>#1A120C</code>，两稿均未直接取用）；② 封面纱：本稿纯黑 70/60/80 vs 修复稿 11 暖黑 <code>#0C0805 70/75/85</code>（对浅封面余量更大）；③ 胶囊：本稿新增深底 <code>bg_player_pill_dark</code> vs 修复稿 11 保留白玻璃 <code>bg_player_pill</code>（其新纱上 4.94:1）；④ 书籍详情：本稿「顶部黑纱 + toolBarTheme=Theme.Dark 白字」（对任意封面素材稳健，含用户自定义暗色封面）vs 修复稿 11「themeMode=auto 深字」（默认态 hero 达标，封面加载后明暗不可控）。评审结论：听书播放页建议按修复稿 11 取值（专项稿、数字已复核）；书籍详情两种策略各有依据（本稿的封面鲁棒性论证更强，修复稿 11 的 auto 更贴合 02 定稿默认态），须由设计负责人裁定后全局统一。
+</div>
+
+<!-- ============ 01 阅读设置·上 ============ -->
+<section class="scr" id="s1">
+  <div class="scr-head"><span class="scr-no">01</span><h2>阅读设置 · 上（底板滚动位 0）</h2><span class="src">MoreConfigDialog.kt · xml/pref_config_read.xml:5-67 · bg_read_sheet_top.xml</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="rg"><div class="rh">第一回 灵根育孕源流出 心性修持大道生</div><p>诗曰：混沌未分天地乱，茫茫渺渺无人间。自从盘古破鸿蒙，开辟从兹清浊辨。</p><p>盖闻天地之数，有十二万九千六百岁为一元。将一元分为十二会，乃子、丑、寅、卯之十二支也。</p><p>欲知造化会元功，须看西游释厄传。</p><div class="rf"><span>3/24 · 12%</span><span>9:41 · 85%</span></div></div>
+      <div class="scrim"></div>
+      <div class="sheet">
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">屏幕方向</div></div><div class="pend"><span class="vchip">跟随系统</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">屏幕超时</div></div><div class="pend"><span class="vchip">常亮</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">隐藏状态栏</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">隐藏导航栏</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">扩展到刘海</div></div><div class="pend"><i class="sw on"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">填充刘海区域</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">平板/横屏双页</div></div><div class="pend"><span class="vchip">全局单页</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">进度条行为</div></div><div class="pend"><span class="vchip">调整本章页数</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">使用自定义中文分行</div></div><div class="pend"><i class="sw"></i></div></div>
+        </div>
+        <div class="sfade"></div>
+      </div>
+    </div><figcaption>浅色 · 列表头部（第 1–9 项）</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="rg"><div class="rh">第一回 灵根育孕源流出 心性修持大道生</div><p>诗曰：混沌未分天地乱，茫茫渺渺无人间。自从盘古破鸿蒙，开辟从兹清浊辨。</p><p>盖闻天地之数，有十二万九千六百岁为一元。将一元分为十二会，乃子、丑、寅、卯之十二支也。</p><p>欲知造化会元功，须看西游释厄传。</p><div class="rf"><span>3/24 · 12%</span><span>9:41 · 85%</span></div></div>
+      <div class="scrim"></div>
+      <div class="sheet">
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">屏幕方向</div></div><div class="pend"><span class="vchip">跟随系统</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">屏幕超时</div></div><div class="pend"><span class="vchip">常亮</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">隐藏状态栏</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">隐藏导航栏</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">扩展到刘海</div></div><div class="pend"><i class="sw on"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">填充刘海区域</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">平板/横屏双页</div></div><div class="pend"><span class="vchip">全局单页</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">进度条行为</div></div><div class="pend"><span class="vchip">调整本章页数</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">使用自定义中文分行</div></div><div class="pend"><i class="sw"></i></div></div>
+        </div>
+        <div class="sfade"></div>
+      </div>
+    </div><figcaption>深色 · 列表头部（第 1–9 项）</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>形态</b>：阅读页上方 360dp 底部弹层（<code>MoreConfigDialog.kt:48 setLayout(MATCH_PARENT, 360.dpToPx())</code>），顶部 16dp 圆角 <code>drawable/bg_read_sheet_top.xml</code>（background_menu=surface_container_high 底）；列表即 <code>xml/pref_config_read.xml</code> 原序，无标题行（弹层内容由代码动态创建，MoreConfigDialog.kt:58-63）。</li>
+    <li><b>遮罩改动</b>：现状 dimAmount=0（MoreConfigDialog.kt:41-47）；本稿统一加 <code>scrim_dialog</code>（#80000000）——落地删除 onStart 中的 <code>clearFlags(FLAG_DIM_BEHIND)</code> 与 <code>dimAmount = 0.0f</code> 两行即可，Window 默认 dim 会以FLAG_DIM_BEHIND 渲染。</li>
+    <li><b>行样式</b>：行高 48dp、标题 15sp on_surface、摘要 13sp on_surface_variant（与 09#settings 改动①②一致：共用的 <code>view_preference.xml</code> 全局升 15/13sp，弹层内行同布局自动生效）、值胶囊 <code>.vchip</code>（surface 底 8dp 圆角 14sp on_surface，压在 surface2 弹层上改用 surface 底保持层级）、开关 38×22dp 主色轨道（ThemeSwitch 运行时取 primaryColor，布局不固化 primary，符合 MASTER §4）；值项行按实现无尾部箭头（同 08#s1 的 vchip 处理）。</li>
+    <li><b>样本值</b>：屏幕方向=跟随系统（default 0，entries values/arrays.xml:72-78）、屏幕超时=常亮（样本，entries values-zh/arrays.xml:42-48）、平板/横屏双页=全局单页（default 0，values-zh/arrays.xml:28-33）、进度条行为=调整本章页数（default "page"，values/arrays.xml:87-90）；开关默认值逐项取自 pref_config_read.xml 的 android:defaultValue（扩展到刘海 true，其余如图）。</li>
+    <li><b>改后即时生效</b>：所有行变更经 <code>onSharedPreferenceChanged</code> 直接 postEvent 生效（MoreConfigDialog.kt:113-176），无确定按钮，弹层无底部操作条——本稿不加「确定/取消」，与实现一致。</li>
+  </ul>
+</section>
+
+<!-- ============ 02 阅读设置·下 ============ -->
+<section class="scr" id="s2">
+  <div class="scr-head"><span class="scr-no">02</span><h2>阅读设置 · 下（底板滚动至尾）</h2><span class="src">xml/pref_config_read.xml:104-201</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="rg"><div class="rh">第一回 灵根育孕源流出 心性修持大道生</div><p>诗曰：混沌未分天地乱，茫茫渺渺无人间。自从盘古破鸿蒙，开辟从兹清浊辨。</p><p>且说那座山，名唤花果山。此山乃十洲之祖脉，三岛之来龙，自开清浊而立，鸿蒙判后而成。</p><p>真个好山！有词赋为证。势镇汪洋，威宁瑶海。</p><div class="rf"><span>3/24 · 12%</span><span>9:41 · 85%</span></div></div>
+      <div class="scrim"></div>
+      <div class="sheet">
+        <div class="plist">
+          <div class="tfade"></div>
+          <div style="height:26px;flex:none"></div>
+          <div class="prow"><div class="pbody"><div class="pt">点击预览图片</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">启用绘制优化</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">点击区域设置</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">禁用返回键</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">自定义翻页按键</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">展开文本选择菜单</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">展示顶部工具栏附加区域</div></div><div class="pend"><i class="sw on"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">工具栏样式跟随页面</div></div><div class="pend"><i class="sw"></i></div></div>
+        </div>
+      </div>
+    </div><figcaption>浅色 · 列表尾部（第 21–28 项，第 28 项无分割线收尾）</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="rg"><div class="rh">第一回 灵根育孕源流出 心性修持大道生</div><p>诗曰：混沌未分天地乱，茫茫渺渺无人间。自从盘古破鸿蒙，开辟从兹清浊辨。</p><p>且说那座山，名唤花果山。此山乃十洲之祖脉，三岛之来龙，自开清浊而立，鸿蒙判后而成。</p><p>真个好山！有词赋为证。势镇汪洋，威宁瑶海。</p><div class="rf"><span>3/24 · 12%</span><span>9:41 · 85%</span></div></div>
+      <div class="scrim"></div>
+      <div class="sheet">
+        <div class="plist">
+          <div class="tfade"></div>
+          <div style="height:26px;flex:none"></div>
+          <div class="prow"><div class="pbody"><div class="pt">点击预览图片</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">启用绘制优化</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">点击区域设置</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">禁用返回键</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">自定义翻页按键</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">展开文本选择菜单</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">展示顶部工具栏附加区域</div></div><div class="pend"><i class="sw on"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">工具栏样式跟随页面</div></div><div class="pend"><i class="sw"></i></div></div>
+        </div>
+      </div>
+    </div><figcaption>深色 · 列表尾部</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>跳转行</b>：「点击区域设置」→ <code>ClickActionConfigDialog</code>（MoreConfigDialog.kt:182-184，经 BaseReadBookActivity.kt:136-138）；「自定义翻页按键」→ <code>PageKeyDialog</code>（MoreConfigDialog.kt:181，dialog_page_key.xml：上一页/下一页按键输入 + 帮助文案 values-zh/strings.xml:814 + 重置/确认）。两行本组不展开出稿（对话框形态简单，行样式与 03 界面设置同规）。</li>
+    <li><b>尾部两项</b>：「展示顶部工具栏附加区域」默认 true（pref_config_read.xml:193-196）、「工具栏样式跟随页面」默认 false（:198-201）——这两项在 XML 中无 <code>app:isBottomBackground="true"</code>，与前 26 项（有该标记、isBottomBackground 控制弹层底部背景着色）存在属性不一致，实施时建议补齐以免弹层内底色不统一。</li>
+    <li><b>完整 28 项清单</b>（上屏 1–9：屏幕方向/屏幕超时/隐藏状态栏/隐藏导航栏/扩展到刘海/填充刘海区域/平板横屏双页/进度条行为/使用自定义中文分行；中段 10–20 见 03#more 与本组 03 屏：文字两端对齐/文字底部对齐/鼠标滚轮翻页/音量键翻页/朗读时音量键翻页/按键长按翻页/滑动翻页阈值/自动换源/长按选择文本/显示亮度调节控件/禁用滚动点击动画；本屏 21–28：点击预览图片/启用绘制优化/点击区域设置/禁用返回键/自定义翻页按键/展开文本选择菜单/展示顶部工具栏附加区域/工具栏样式跟随页面）。</li>
+    <li><b>可选分组建议</b>（不改功能，纯 XML 增 PreferenceCategory）：排版（中文分行/两端对齐/底部对齐/双页/进度条行为）、按键与手势（滚轮/音量键×2/长按翻页/滑动阈值/点击区域/自定义按键/禁用返回键）、界面（状态栏/导航栏/刘海/亮度控件/工具栏两项）、行为（自动换源/选择文本/预览图片/绘制优化/展开菜单）。若采纳，用 <code>view_preference_category</code> 目标样式（标题 13sp bold on_surface_variant，勿用 accent，同 09#settings 改动③④）。</li>
+  </ul>
+</section>
+
+<!-- ============ 03 更多设置·动态行 ============ -->
+<section class="scr" id="s3">
+  <div class="scr-head"><span class="scr-no">03</span><h2>更多设置 · 动态行</h2><span class="src">MoreConfigDialog.kt:82-92,179-208 · NumberPickerDialog · CanvasRecorderFactory</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="rg"><div class="rh">第一回 灵根育孕源流出 心性修持大道生</div><p>诗曰：混沌未分天地乱，茫茫渺渺无人间。</p><p>盖闻天地之数，有十二万九千六百岁为一元。</p><div class="rf"><span>3/24 · 12%</span><span>9:41 · 85%</span></div></div>
+      <div class="scrim"></div>
+      <div class="sheet">
+        <div class="plist">
+          <div class="tfade"></div>
+          <div style="height:22px;flex:none"></div>
+          <div class="prow"><div class="pbody"><div class="pt">按键长按翻页</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow hot"><div class="pbody"><div class="pt">滑动翻页阈值</div><div class="ps">滑动多长距离才会触发滑动翻页（系统默认值 9 px）</div></div><div class="pend"><span class="vchip">9</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">自动换源</div></div><div class="pend"><i class="sw on"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">长按选择文本</div></div><div class="pend"><i class="sw on"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示亮度调节控件</div></div><div class="pend"><i class="sw on"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">禁用滚动点击动画</div></div><div class="pend"><i class="sw"></i></div></div>
+        </div>
+        <div class="sfade"></div>
+      </div>
+      <div class="scrim" style="z-index:13"></div>
+      <div class="npd">
+        <div class="nt">滑动翻页阈值（0 = 系统默认值）</div>
+        <div class="nprow">
+          <div class="npcol"><svg class="icon" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></svg><div class="nv">9</div><svg class="icon" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div>
+          <div class="npcol"><svg class="icon" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></svg><div class="nv" style="opacity:.4">–</div><svg class="icon" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div>
+          <div class="npcol"><svg class="icon" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></svg><div class="nv" style="opacity:.4">–</div><svg class="icon" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div>
+        </div>
+        <div class="dfoot" style="padding:2px 0 6px;justify-content:flex-end"><button class="tbtn" type="button">取消</button><button class="abtn" type="button">确认</button></div>
+      </div>
+    </div><figcaption>浅色 · 「滑动翻页阈值」点击后 NumberPickerDialog（动态 summary 行高亮）</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="rg"><div class="rh">第一回 灵根育孕源流出 心性修持大道生</div><p>诗曰：混沌未分天地乱，茫茫渺渺无人间。</p><p>盖闻天地之数，有十二万九千六百岁为一元。</p><div class="rf"><span>3/24 · 12%</span><span>9:41 · 85%</span></div></div>
+      <div class="scrim"></div>
+      <div class="sheet">
+        <div class="plist">
+          <div class="tfade"></div>
+          <div style="height:22px;flex:none"></div>
+          <div class="prow"><div class="pbody"><div class="pt">点击预览图片</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow ghost"><div class="pbody"><div class="pt" style="color:var(--secondary)">启用绘制优化</div><div class="ps">不支持 CanvasRecorder 的设备：此行整行移除，不留空位</div></div><div class="pend" style="opacity:.55"><svg class="icon caret" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">点击区域设置</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">禁用返回键</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">自定义翻页按键</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">展开文本选择菜单</div></div><div class="pend"><i class="sw"></i></div></div>
+        </div>
+        <div class="sfade"></div>
+      </div>
+    </div><figcaption>深色 · 条件移除行示意（无 CanvasRecorder 设备 → 「启用绘制优化」不出现）</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>动态行 ① 滑动翻页阈值</b>：summary 运行时拼接 <code>「系统默认值 %s px」</code>，值取 <code>ViewConfiguration.scaledTouchSlop</code>（MoreConfigDialog.kt:82,87,202-208；样本 9 px 与 03#more 一致）；点击弹 <code>NumberPickerDialog</code>（0–9999，MoreConfigDialog.kt:186-196），确认后 summary 即时刷新——实施注意：desc 两行 + 值胶囊同排，需 <code>view_preference.xml</code> 的 desc 补 <code>maxLines=2</code>（同 08#s1 建议）。</li>
+    <li><b>动态行 ② 启用绘制优化</b>：<code>CanvasRecorderFactory.isSupport == false</code> 时 removePref 整行移除（MoreConfigDialog.kt:88-91），列表少一项、不留空位——稿内以虚线占位示意「被移除的行」。</li>
+    <li><b>NumberPickerDialog 样式</b>：16dp 圆角卡片（现状为旧式对话框，建议落地时对齐 <code>bg_read_sheet_top</code> 同族 16dp radius + scrim_dialog 遮罩）；选择器沿用系统 NumberPicker 控件（本稿以 −/值/+ 三列示意），标题 <code>滑动翻页阈值（0 = 系统默认值）</code>（values-zh/strings.xml:1043）。</li>
+    <li><b>行高亮</b>：hot 行仅为标注动态行用途（primary-soft #FFF0E6 底），实现中不需要——正式界面无此高亮。</li>
+    <li><b>遮罩</b>：本屏两张壳均叠加 scrim_dialog（弹层 + 数字弹窗各自一层时以最上层为准，实现中 Dialog 各自带 dim 即可）。</li>
+  </ul>
+</section>
+
+<!-- ============ 04 朗读设置 ============ -->
+<section class="scr" id="s4">
+  <div class="scr-head"><span class="scr-no">04</span><h2>朗读设置</h2><span class="src">ReadAloudConfigDialog.kt · xml/pref_config_aloud.xml（入口：ReadAloudDialog「设置」ReadAloudDialog.kt:104-106）</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="rg"><div class="rh">第一回 灵根育孕源流出 心性修持大道生</div><p>诗曰：混沌未分天地乱，茫茫渺渺无人间。自从盘古破鸿蒙，开辟从兹清浊辨。</p><div class="rf"><span>3/24 · 12%</span><span>9:41 · 85%</span></div></div>
+      <div class="scrim"></div>
+      <div class="dlg">
+        <div style="padding:16px 20px 4px;font-size:11.5px;font-weight:700;letter-spacing:.12em;color:var(--secondary)">朗读设置</div>
+        <div class="dlgbody">
+          <div class="prow"><div class="pbody"><div class="pt">忽略音频焦点</div><div class="ps">允许与其他应用同时播放音频</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt" style="opacity:.45">来电期间暂停朗读</div><div class="ps" style="opacity:.6">需先开启「忽略音频焦点」（联动禁用中）</div></div><div class="pend" style="opacity:.45"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">朗读服务唤醒锁</div><div class="ps">开启朗读的时候启用唤醒锁，有些手机开启唤醒锁会被杀后台</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">系统媒体控件兼容性更改</div><div class="ps">当锁屏不显示系统媒体控件时可以尝试开启，比如oneui7.0或vivo等</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">媒体按钮•上一首|下一首</div><div class="ps">上一段|下一段/上一章|下一章</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">按页朗读</div><div class="ps">及时翻页，翻页时会停顿一下</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">流式播放音频</div><div class="ps">即边下边播，网络不好时播放会断断续续，仅TTS源有效</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">朗读引擎</div></div><div class="pend"><span class="vchip">系统默认</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">系统 TTS 设置</div><div class="ps">打开系统 TTS 设置界面</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+        </div>
+      </div>
+    </div><figcaption>浅色 · 0.9 宽居中弹窗（即时生效，无确定按钮）</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="rg"><div class="rh">第一回 灵根育孕源流出 心性修持大道生</div><p>诗曰：混沌未分天地乱，茫茫渺渺无人间。自从盘古破鸿蒙，开辟从兹清浊辨。</p><div class="rf"><span>3/24 · 12%</span><span>9:41 · 85%</span></div></div>
+      <div class="scrim"></div>
+      <div class="dlg">
+        <div style="padding:16px 20px 4px;font-size:11.5px;font-weight:700;letter-spacing:.12em;color:var(--secondary)">朗读设置</div>
+        <div class="dlgbody">
+          <div class="prow"><div class="pbody"><div class="pt">忽略音频焦点</div><div class="ps">允许与其他应用同时播放音频</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt" style="opacity:.45">来电期间暂停朗读</div><div class="ps" style="opacity:.6">需先开启「忽略音频焦点」（联动禁用中）</div></div><div class="pend" style="opacity:.45"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">朗读服务唤醒锁</div><div class="ps">开启朗读的时候启用唤醒锁，有些手机开启唤醒锁会被杀后台</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">系统媒体控件兼容性更改</div><div class="ps">当锁屏不显示系统媒体控件时可以尝试开启，比如oneui7.0或vivo等</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">媒体按钮•上一首|下一首</div><div class="ps">上一段|下一段/上一章|下一章</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">按页朗读</div><div class="ps">及时翻页，翻页时会停顿一下</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">流式播放音频</div><div class="ps">即边下边播，网络不好时播放会断断续续，仅TTS源有效</div></div><div class="pend"><i class="sw"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">朗读引擎</div></div><div class="pend"><span class="vchip">系统默认</span><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">系统 TTS 设置</div><div class="ps">打开系统 TTS 设置界面</div></div><div class="pend"><svg class="icon caret" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div></div>
+        </div>
+      </div>
+    </div><figcaption>深色 · 同上</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>入口与形态</b>：ReadAloudDialog 底部「设置」打开（ReadAloudDialog.kt:104-106），0.9 宽浮动弹窗（ReadAloudConfigDialog.kt:38-41）；列表 = <code>xml/pref_config_aloud.xml</code> 单一 PreferenceCategory「朗读设置」9 项，全部开关即时生效、无底部按钮（BasePrefDialogFragment 无确认栏，本稿不加）。任务书的「朗读设置（ReadAloudDialog）」：播控面板本体已定稿于 03#aloud，本稿收其二级设置弹窗。</li>
+    <li><b>动态行</b>：「来电期间暂停朗读」仅在「忽略音频焦点」开启时可用（ReadAloudConfigDialog.kt:84-86 初始化 + :123-127 联动）——稿内以禁用态呈现（45% 透明 + 说明文案）。实施：SwitchPreference.isEnabled 联动已存在，视觉上确认禁用态为 灰开关+45% 标题（对齐 MASTER「禁用灰底灰字」，勿用低对比灰字新样式）。</li>
+    <li><b>动态值</b>：「朗读引擎」summary 动态显示当前引擎名（系统默认 / 系统引擎名 / HttpTTS 名，ReadAloudConfigDialog.kt:69-79,144-149），本稿以值胶囊呈现；点击打开 05 朗读引擎弹层（:106）。「系统 TTS 设置」跳系统 TTS 设置页（:107 IntentHelp.openTTSSetting）。</li>
+    <li><b>样式落地</b>：弹层底色现状 <code>backgroundColor</code>（ReadAloudConfigDialog.kt:50）→ 对齐 surface；16dp 圆角需为弹窗 window 挂 <code>bg_read_sheet_top</code> 同族圆角 drawable（或 rounded 16dp 四角）；遮罩：现状未清 dim（默认 dim 存在），统一为 scrim_dialog 即 <code>window.setBackgroundDrawableResource</code> 之外把 dimAmount 调至 0.5 对齐令牌。</li>
+  </ul>
+</section>
+
+<!-- ============ 05 朗读引擎 ============ -->
+<section class="scr" id="s5">
+  <div class="scr-head"><span class="scr-no">05</span><h2>朗读引擎</h2><span class="src">SpeakEngineDialog.kt（注释「tts引擎管理」） · dialog_recycler_view.xml · item_http_tts.xml · menu/speak_engine.xml</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="rg"><div class="rh">第一回 灵根育孕源流出 心性修持大道生</div><p>诗曰：混沌未分天地乱，茫茫渺渺无人间。</p><div class="rf"><span>3/24 · 12%</span><span>9:41 · 85%</span></div></div>
+      <div class="scrim"></div>
+      <div class="dlg tall">
+        <div class="dlgbar"><div class="t">朗读引擎</div>
+          <button class="icon-btn" aria-label="添加"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+          <button class="icon-btn" aria-label="更多"><svg class="icon f" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+        </div>
+        <div class="dlgbody">
+          <div class="lrow"><i class="rdo on"></i><div class="lname">系统默认</div><span class="sys">SYS</span></div>
+          <div class="lrow"><i class="rdo"></i><div class="lname">小米语音引擎</div><span class="sys">SYS</span></div>
+          <div class="lrow"><i class="rdo"></i><div class="lname">微软 EdgeTTS · 晓晓</div><button class="act" aria-label="编辑"><svg class="icon" viewBox="0 0 24 24"><path d="m4.5 17.5 12-12 3 3-12 12H5v-3z"/><path d="m14 8 3 3"/></svg></button><button class="act" aria-label="删除"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5h6v2M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg></button></div>
+          <div class="lrow"><i class="rdo on"></i><div class="lname">在线配音 · 云希</div><button class="act" aria-label="编辑"><svg class="icon" viewBox="0 0 24 24"><path d="m4.5 17.5 12-12 3 3-12 12H5v-3z"/><path d="m14 8 3 3"/></svg></button><button class="act" aria-label="删除"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5h6v2M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg></button></div>
+          <div class="lrow"><i class="rdo"></i><div class="lname">Azure TTS（需登录）</div><button class="act" aria-label="编辑"><svg class="icon" viewBox="0 0 24 24"><path d="m4.5 17.5 12-12 3 3-12 12H5v-3z"/><path d="m14 8 3 3"/></svg></button><button class="act" aria-label="删除"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5h6v2M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg></button></div>
+        </div>
+        <div class="dfoot"><button class="tonal" type="button">书</button><span class="sp"></span><button class="tbtn" type="button">取消</button><button class="abtn" type="button">全局</button></div>
+      </div>
+    </div><figcaption>浅色 · 0.9 全屏弹层（含工具栏 + 书/全局双作用域）</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="rg"><div class="rh">第一回 灵根育孕源流出 心性修持大道生</div><p>诗曰：混沌未分天地乱，茫茫渺渺无人间。</p><div class="rf"><span>3/24 · 12%</span><span>9:41 · 85%</span></div></div>
+      <div class="scrim"></div>
+      <div class="dlg tall">
+        <div class="dlgbar"><div class="t">朗读引擎</div>
+          <button class="icon-btn" aria-label="添加"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+          <button class="icon-btn" aria-label="更多"><svg class="icon f" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+        </div>
+        <div class="dlgbody">
+          <div class="lrow"><i class="rdo on"></i><div class="lname">系统默认</div><span class="sys">SYS</span></div>
+          <div class="lrow"><i class="rdo"></i><div class="lname">小米语音引擎</div><span class="sys">SYS</span></div>
+          <div class="lrow"><i class="rdo"></i><div class="lname">微软 EdgeTTS · 晓晓</div><button class="act" aria-label="编辑"><svg class="icon" viewBox="0 0 24 24"><path d="m4.5 17.5 12-12 3 3-12 12H5v-3z"/><path d="m14 8 3 3"/></svg></button><button class="act" aria-label="删除"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5h6v2M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg></button></div>
+          <div class="lrow"><i class="rdo on"></i><div class="lname">在线配音 · 云希</div><button class="act" aria-label="编辑"><svg class="icon" viewBox="0 0 24 24"><path d="m4.5 17.5 12-12 3 3-12 12H5v-3z"/><path d="m14 8 3 3"/></svg></button><button class="act" aria-label="删除"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5h6v2M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg></button></div>
+          <div class="lrow"><i class="rdo"></i><div class="lname">Azure TTS（需登录）</div><button class="act" aria-label="编辑"><svg class="icon" viewBox="0 0 24 24"><path d="m4.5 17.5 12-12 3 3-12 12H5v-3z"/><path d="m14 8 3 3"/></svg></button><button class="act" aria-label="删除"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5h6v2M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg></button></div>
+        </div>
+        <div class="dfoot"><button class="tonal" type="button">书</button><span class="sp"></span><button class="tbtn" type="button">取消</button><button class="abtn" type="button">全局</button></div>
+      </div>
+    </div><figcaption>深色 · 同上</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>结构</b>：0.9 高近全屏弹层（SpeakEngineDialog.kt:92-95），布局 <code>dialog_recycler_view.xml</code>（Toolbar + FastScrollRecyclerView + 底部按钮条）；列表头部两行系统项（「系统默认」+ 设备已装 TTS 引擎，SpeakEngineDialog.kt:109-141，均带 BevelLabelView「SYS」角标、无编辑/删除），数据项为 HttpTTS（单选圆钮 + 编辑 + 删除，item_http_tts.xml）。</li>
+    <li><b>工具栏</b>：主色底（SpeakEngineDialog.kt:104 toolBar.setBackgroundColor(primaryColor)）——主色为运行时 ThemeStore 值，标题/图标色须按主色明暗取黑/白（<code>#211F1C on #FF6B2C = 5.79:1 ✓</code>；勿用白字，白 on 主色仅 2.84:1，同 ReadAloudDialog.kt:189-193 的 isColorLight 逻辑）；「添加」常驻（menu/speak_engine.xml showAsAction=always），⋮：导入默认规则/本地导入/网络导入/导出。</li>
+    <li><b>底部双作用域</b>：左「书」= 仅当前书生效（tvFooterLeft，SpeakEngineDialog.kt:142-148）、右「全局」= 写入 AppConfig（tvOk，:150-157）、「取消」（tvCancel，:158-162）——文案取 values-zh strings（book=书、general=全局、ok 实际文字是「确认」:120，但 tvOk 复用 general 显示「全局」）。落地：「全局」为填充主色胶囊 + 按主色明暗取黑字（5.79:1 ✓）；「书」为 tonal 胶囊（primary-soft 底 + 深主色字，亮色 4.83:1 ✓）；「取消」on_surface_variant 文字按钮（5.87:1 ✓）。</li>
+    <li><b>选中态</b>：单选圆钮取主色（ThemeRadioButton 运行时着色）；点未登录的 HttpTTS 项先跳 SourceLoginActivity（SpeakEngineDialog.kt:266-272，如样本「Azure TTS（需登录）」）。</li>
+    <li><b>遮罩/圆角</b>：现状 0.9×0.9 弹窗无统一圆角 → 统一 16dp 圆角 + scrim_dialog。</li>
+  </ul>
+</section>
+
+<!-- ============ 06 HTTP TTS 编辑 ============ -->
+<section class="scr" id="s6">
+  <div class="scr-head"><span class="scr-no">06</span><h2>HTTP TTS 编辑</h2><span class="src">HttpTtsEditDialog.kt · dialog_http_tts_edit.xml · menu/speak_engine_edit.xml</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="rg"><div class="rh">第一回 灵根育孕源流出 心性修持大道生</div><p>诗曰：混沌未分天地乱。</p><div class="rf"><span>3/24 · 12%</span><span>9:41 · 85%</span></div></div>
+      <div class="scrim"></div>
+      <div class="dlg tall">
+        <div class="dlgbar"><div class="t">朗读引擎</div>
+          <button class="icon-btn" aria-label="保存"><svg class="icon" viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z"/><path d="M8 3v5h7V3M8 21v-7h8v7"/></svg></button>
+          <button class="icon-btn" aria-label="更多"><svg class="icon f" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+        </div>
+        <div class="dlgbody"><div class="form">
+          <div class="field"><div class="hint">名称</div><div class="val">微软 EdgeTTS · 晓晓</div></div>
+          <div class="field"><div class="hint">url</div><div class="val mono">https://api.msedgesvc.com/tts?text={{speakText}}</div></div>
+          <div class="field"><div class="hint">Content-Type</div><div class="val mono">application/json</div></div>
+          <div class="field"><div class="hint">并发率（concurrentRate）</div><div class="val ph">未设置</div></div>
+          <div class="field"><div class="hint">登录 URL(loginUrl)</div><div class="val ph">选填</div></div>
+          <div class="field"><div class="hint">登录 UI（loginUi）</div><div class="val ph">选填，JSON 数组</div></div>
+          <div class="field"><div class="hint">登录检查 JS（loginCheckJs）</div><div class="val ph">选填</div></div>
+          <div class="field"><div class="hint">请求头（header）</div><div class="val mono ph">{"User-Agent":"Mozilla/5.0"}</div></div>
+        </div></div>
+      </div>
+    </div><figcaption>浅色 · 表单卡片（Toolbar 保存常驻）</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="rg"><div class="rh">第一回 灵根育孕源流出 心性修持大道生</div><p>诗曰：混沌未分天地乱。</p><div class="rf"><span>3/24 · 12%</span><span>9:41 · 85%</span></div></div>
+      <div class="scrim"></div>
+      <div class="dlg tall">
+        <div class="dlgbar"><div class="t">朗读引擎</div>
+          <button class="icon-btn" aria-label="保存"><svg class="icon" viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z"/><path d="M8 3v5h7V3M8 21v-7h8v7"/></svg></button>
+          <button class="icon-btn" aria-label="更多"><svg class="icon f" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+        </div>
+        <div class="dlgbody"><div class="form">
+          <div class="field"><div class="hint">名称</div><div class="val">微软 EdgeTTS · 晓晓</div></div>
+          <div class="field"><div class="hint">url</div><div class="val mono">https://api.msedgesvc.com/tts?text={{speakText}}</div></div>
+          <div class="field"><div class="hint">Content-Type</div><div class="val mono">application/json</div></div>
+          <div class="field"><div class="hint">并发率（concurrentRate）</div><div class="val ph">未设置</div></div>
+          <div class="field"><div class="hint">登录 URL(loginUrl)</div><div class="val ph">选填</div></div>
+          <div class="field"><div class="hint">登录 UI（loginUi）</div><div class="val ph">选填，JSON 数组</div></div>
+          <div class="field"><div class="hint">登录检查 JS（loginCheckJs）</div><div class="val ph">选填</div></div>
+          <div class="field"><div class="hint">请求头（header）</div><div class="val mono ph">{"User-Agent":"Mozilla/5.0"}</div></div>
+        </div></div>
+      </div>
+    </div><figcaption>深色 · 同上</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>字段清单</b>（dialog_http_tts_edit.xml 逐一对应）：名称 / url（CodeView）/ Content-Type / 并发率（concurrentRate）/ 登录 URL(loginUrl) / 登录 UI（loginUi）/ 登录检查 JS（loginCheckJs）/ 请求头（header），NestedScrollView 竖滚。</li>
+    <li><b>工具栏</b>：保存常驻（menu_save showAsAction=always，menu/speak_engine_edit.xml）；⋮：登录 / 查看登录头 / 删除登录头 / 拷贝源 / 粘贴源 / 日志 / 帮助（HttpTtsEditDialog.kt:91-119）。</li>
+    <li><b>样式改动</b>：现状外卡片 <code>shape_card_view</code> 仅 3dp 圆角（drawable/shape_card_view.xml:4）→ 统一 16dp 圆角；输入框建议复用 <code>activity_replace_edit.xml:34-47</code> 的 filled TextInputLayout（surface_container_high 底 + 10dp 四角圆角 + 焦点 2dp 主色描边），代码字段同型可直接搬；url/JS 类字段等宽字体（CodeView 保留）。</li>
+    <li><b>遮罩</b>：scrim_dialog + 16dp 圆角统一。</li>
+  </ul>
+</section>
+
+<!-- ============ 07 字体选择 ============ -->
+<section class="scr" id="s7">
+  <div class="scr-head"><span class="scr-no">07</span><h2>字体选择</h2><span class="src">FontSelectDialog.kt · dialog_font_select.xml · item_font.xml · menu/font_select.xml（入口：ReadStyleDialog「字体」）</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="rg"><div class="rh">第一回 灵根育孕源流出 心性修持大道生</div><p>诗曰：混沌未分天地乱。</p><div class="rf"><span>3/24 · 12%</span><span>9:41 · 85%</span></div></div>
+      <div class="scrim"></div>
+      <div class="dlg tall">
+        <div class="dlgbar"><div class="t">选择字体</div>
+          <button class="icon-btn" style="width:auto;padding:0 12px;font-size:14px;font-weight:700" aria-label="默认字体">默认字体</button>
+          <button class="icon-btn" aria-label="其它目录"><svg class="icon f" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+        </div>
+        <div class="dlgbody" style="padding:0 0 8px">
+          <div style="padding:10px 18px 6px;font-size:11.5px;color:var(--secondary)">字体目录：/storage/emulated/0/Fonts</div>
+          <div class="lrow"><div class="lname" style="font-weight:600">思源黑体</div><svg class="icon" style="color:var(--primary)" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7"/></svg></div>
+          <div class="lrow"><div class="lname">霞鹜文楷</div><span style="width:23px"></span></div>
+          <div class="lrow"><div class="lname">思源宋体 Medium</div><span style="width:23px"></span></div>
+          <div class="lrow"><div class="lname">LXGW WenKai GB Screen</div><span style="width:23px"></span></div>
+          <div class="lrow"><div class="lname">站酷快乐体</div><span style="width:23px"></span></div>
+          <div class="lrow"><div class="lname">HarmonyOS Sans SC Bold</div><span style="width:23px"></span></div>
+        </div>
+      </div>
+    </div><figcaption>浅色 · 0.9×0.9 弹层，勾选项为主色对勾</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="rg"><div class="rh">第一回 灵根育孕源流出 心性修持大道生</div><p>诗曰：混沌未分天地乱。</p><div class="rf"><span>3/24 · 12%</span><span>9:41 · 85%</span></div></div>
+      <div class="scrim"></div>
+      <div class="dlg tall">
+        <div class="dlgbar"><div class="t">选择字体</div>
+          <button class="icon-btn" style="width:auto;padding:0 12px;font-size:14px;font-weight:700" aria-label="默认字体">默认字体</button>
+          <button class="icon-btn" aria-label="其它目录"><svg class="icon f" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+        </div>
+        <div class="dlgbody" style="padding:0 0 8px">
+          <div style="padding:10px 18px 6px;font-size:11.5px;color:var(--secondary)">字体目录：/storage/emulated/0/Fonts</div>
+          <div class="lrow"><div class="lname" style="font-weight:600">思源黑体</div><svg class="icon" style="color:var(--primary)" viewBox="0 0 24 24"><path d="M5 12.5 10 17.5 19 7"/></svg></div>
+          <div class="lrow"><div class="lname">霞鹜文楷</div><span style="width:23px"></span></div>
+          <div class="lrow"><div class="lname">思源宋体 Medium</div><span style="width:23px"></span></div>
+          <div class="lrow"><div class="lname">LXGW WenKai GB Screen</div><span style="width:23px"></span></div>
+          <div class="lrow"><div class="lname">站酷快乐体</div><span style="width:23px"></span></div>
+          <div class="lrow"><div class="lname">HarmonyOS Sans SC Bold</div><span style="width:23px"></span></div>
+        </div>
+      </div>
+    </div><figcaption>深色 · 同上</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>任务书名对照</b>：<code>FontFileDialog</code> 不存在，字体管理即 <code>FontSelectDialog</code>（标题「选择字体」，FontSelectDialog.kt:44-81）；无底部按钮条（dialog_font_select.xml 仅 Toolbar+RecyclerView），点行即选中并关闭（:190-196）。</li>
+    <li><b>列表行</b>：字体文件名 14.5sp on_surface + 24dp 对勾（item_font.xml tv_font/iv_checked，选中时 tint 主色）；文件名按中文拼音排序（cnCompare，:185-188）。</li>
+    <li><b>数据源</b>：所选目录（默认 SD/Fonts，:128）+ 内置目录 <code>externalFiles/font</code> 合并去重（:135-166 mergeFontItems）；目录项经 HandleFileContract 选择，SAF 路径记入 PreferKey.fontFolder。</li>
+    <li><b>工具栏菜单</b>：「默认字体」（menu_default，ifRoom）弹系统字型三选 Default/Serif/Monospaced（:107-117，values/arrays.xml:108-112 system_typefaces）；「其它目录」（menu_other）换目录（本稿目录路径条为新增视觉元素，实现可由 Toolbar 副标题或列表头 TextView 承载，TextView+11.5sp on_surface_variant 即可）。工具栏主色底 + 黑字规则同 05 屏。</li>
+    <li><b>遮罩</b>：现状 0.9×0.9（:74-77）→ 统一 16dp 圆角 + scrim_dialog。</li>
+  </ul>
+</section>
+
+<!-- ============ 08 自动翻页 ============ -->
+<section class="scr" id="s8">
+  <div class="scr-head"><span class="scr-no">08</span><h2>自动翻页 · 统一规范版</h2><span class="src">AutoReadDialog.kt · dialog_auto_read.xml（对照 03-reader.html#auto 定稿版式）</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="rg"><div class="rh">第一回 灵根育孕源流出 心性修持大道生</div><p>诗曰：混沌未分天地乱，茫茫渺渺无人间。自从盘古破鸿蒙，开辟从兹清浊辨。</p><p>盖闻天地之数，有十二万九千六百岁为一元。</p><div class="rf"><span>3/24 · 12%</span><span>9:41 · 85%</span></div></div>
+      <div class="scrim"></div>
+      <div class="sheet" style="height:auto;padding-bottom:6px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px 6px">
+          <div style="flex:1;font-size:14px;font-weight:700">自动翻页速度</div>
+          <span class="vchip">3s</span>
+        </div>
+        <div class="seekrow"><span class="slab">1s</span><div class="seek"><i style="width:2.5%"></i><b style="left:2.5%"></b></div><span class="slab">120s</span></div>
+        <div style="height:1px;background:var(--divider);margin:4px 18px 6px"></div>
+        <div class="mb-row">
+          <button class="mb" type="button"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h2M4 12h2M4 18h2M9 6h11M9 12h11M9 18h11"/></svg><span>目录</span></button>
+          <button class="mb" type="button"><svg class="icon" viewBox="0 0 24 24"><path d="M4.5 7h15M4.5 12h15M4.5 17h15"/></svg><span>主菜单</span></button>
+          <button class="mb" type="button"><svg class="icon" viewBox="0 0 24 24"><rect x="6.4" y="6.4" width="11.2" height="11.2" rx="2"/></svg><span>停止</span></button>
+          <button class="mb" type="button"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.1"/><path d="M12 2.8v2.7M12 18.5v2.7M21.2 12h-2.7M5.5 12H2.8M18.5 5.5l-1.9 1.9M7.4 16.6l-1.9 1.9M18.5 18.5l-1.9-1.9M7.4 7.4 5.5 5.5"/></svg><span>设置</span></button>
+        </div>
+      </div>
+    </div><figcaption>浅色 · 速度值改值胶囊（primary 文字→on_surface）</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="rg"><div class="rh">第一回 灵根育孕源流出 心性修持大道生</div><p>诗曰：混沌未分天地乱，茫茫渺渺无人间。自从盘古破鸿蒙，开辟从兹清浊辨。</p><p>盖闻天地之数，有十二万九千六百岁为一元。</p><div class="rf"><span>3/24 · 12%</span><span>9:41 · 85%</span></div></div>
+      <div class="scrim"></div>
+      <div class="sheet" style="height:auto;padding-bottom:6px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px 6px">
+          <div style="flex:1;font-size:14px;font-weight:700">自动翻页速度</div>
+          <span class="vchip">3s</span>
+        </div>
+        <div class="seekrow"><span class="slab">1s</span><div class="seek"><i style="width:2.5%"></i><b style="left:2.5%"></b></div><span class="slab">120s</span></div>
+        <div style="height:1px;background:var(--divider);margin:4px 18px 6px"></div>
+        <div class="mb-row">
+          <button class="mb" type="button"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h2M4 12h2M4 18h2M9 6h11M9 12h11M9 18h11"/></svg><span>目录</span></button>
+          <button class="mb" type="button"><svg class="icon" viewBox="0 0 24 24"><path d="M4.5 7h15M4.5 12h15M4.5 17h15"/></svg><span>主菜单</span></button>
+          <button class="mb" type="button"><svg class="icon" viewBox="0 0 24 24"><rect x="6.4" y="6.4" width="11.2" height="11.2" rx="2"/></svg><span>停止</span></button>
+          <button class="mb" type="button"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.1"/><path d="M12 2.8v2.7M12 18.5v2.7M21.2 12h-2.7M5.5 12H2.8M18.5 5.5l-1.9 1.9M7.4 16.6l-1.9 1.9M18.5 18.5l-1.9-1.9M7.4 7.4 5.5 5.5"/></svg><span>设置</span></button>
+        </div>
+      </div>
+    </div><figcaption>深色 · 同上</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>结构不变</b>：速度滑条（1–120s，min=1 max=120，dialog_auto_read.xml:48-56）+ 四联按钮 目录/主菜单/停止/设置（:68-227）；「设置」弹翻页动画五选 selector（默认/覆盖/滑动/仿真/滚动/无动画，BaseReadBookActivity.kt:363-374）；「停止」后自动关层（AutoReadDialog.kt:110-115）。版式对照 03#auto 定稿，不重复画播控差异。</li>
+    <li><b>对比修复（本组改动点）</b>：速度值 <code>tv_read_speed</code> XML 写死 <code>@color/primary</code>（dialog_auto_read.xml:42，主色 on surface2 亮色仅 2.41:1，违 MASTER §4），运行时又被 AutoReadDialog.kt:63 覆盖为 primaryText 丢失强调 → 统一改<b>值胶囊</b>（surface 底 + on_surface 14sp，亮/暗对比 13.2:1 / 12+:1），XML 删 <code>android:textColor</code>、Kotlin 改为设置 vchip 背景或复用 item_fillet_text 胶囊；ReadAloudDialog 的 <code>tv_tts_speed_value</code> 同样问题（dialog_read_aloud.xml:196 @color/primary；ReadAloudDialog.kt:75 覆盖为 textColor），建议同步值胶囊化。</li>
+    <li><b>遮罩</b>：统一 scrim_dialog（现状 dimAmount=0，AutoReadDialog.kt:34-44，落地删两行）；顶部 16dp 圆角沿用 bg_read_sheet_top。</li>
+    <li><b>触控</b>：四联按钮整块 64dp 宽 + 图标 24dp + 文字 12sp，热区 ≥48dp；速度滑条两侧 1s/120s 边界值用 12.5sp on_surface_variant（压 surface2 弹层底 4.98:1 ✓，压页面 bg 为 5.58:1）。</li>
+  </ul>
+</section>
+
+<!-- ============ 09 修复·听书播放 ============ -->
+<section class="scr" id="fix1">
+  <div class="scr-head"><span class="scr-no">09</span><h2>修复 · 听书播放页（亮色白字）</h2><span class="src">activity_audio_play.xml:7,22,38,57,44,63,95,115,134,158-269 · AudioPlayActivity.kt:190-195</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status" style="color:#fff"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="pl-old">
+        <div class="pl-head"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="t">斗罗大陆</div><button class="icon-btn" aria-label="换源"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h13m0 0-3-3m3 3-3 3M20 17H7m0 0 3-3m-3 3 3 3"/></svg></button><button class="icon-btn" aria-label="更多"><svg class="icon f" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button></div>
+        <div class="pills"><span class="pill old">30m</span><span class="pill old">1.2X</span></div>
+        <div style="width:240px;height:240px;border-radius:50%;margin:26px auto 0;border:2.5px solid #fff;background:#e5e5e6;display:grid;place-items:center;color:#fff;position:relative;z-index:10"><svg class="icon" style="width:56px;height:56px;stroke-width:1.4" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>
+        <div class="pl-sub">第一千二百二十四章 · 龙神辉光照彻星海</div>
+        <div class="pl-prog"><span>03:24</span><div class="seek"><i style="width:11%"></i><b style="left:11%"></b></div><span>45:00</span></div>
+        <div class="ctrls">
+          <button class="cbtn old" aria-label="定时"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.5 1.5M9 2h6"/></svg></button>
+          <button class="cbtn old" aria-label="上一个"><svg class="icon f" viewBox="0 0 24 24"><path d="M6 5v14M20 5l-11 7 11 7z"/></svg></button>
+          <button class="fab" aria-label="播放暂停"><svg class="icon f" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+          <button class="cbtn old" aria-label="下一个"><svg class="icon f" viewBox="0 0 24 18"><path d="M18 5v14M4 5l11 7-11 7z"/></svg></button>
+          <button class="cbtn old" aria-label="目录"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h2M4 12h2M4 18h2M9 6h11M9 12h11M9 18h11"/></svg></button>
+        </div>
+        <div class="cmark bad" style="top:56px;right:14px"><code>2.7:1</code> 白字失效区</div>
+        <div class="cmark bad" style="top:112px;left:14px"><code>2.5:1</code> 胶囊 #29FFFFFF</div>
+        <div class="cmark bad" style="top:392px;right:14px"><code>2.6:1</code> 14.5sp 章节名</div>
+        <div class="cmark bad" style="bottom:150px;left:14px"><code>2.7:1</code> 计时 12sp</div>
+      </div>
+    </div><figcaption>修复前 · 亮色主题默认态（无封面：底≈#9D9D9E，白字 2.3–2.7:1 全部不达标）</figcaption></figure>
+    <figure class="dev"><div class="phone">
+      <div class="status" style="color:#fff"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="pl-new">
+        <div class="pl-scrim"></div>
+        <div class="pl-head"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="t">斗罗大陆</div><button class="icon-btn" aria-label="换源"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h13m0 0-3-3m3 3-3 3M20 17H7m0 0 3-3m-3 3 3 3"/></svg></button><button class="icon-btn" aria-label="更多"><svg class="icon f" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button></div>
+        <div class="pills"><span class="pill dk">30m</span><span class="pill dk">1.2X</span></div>
+        <div style="width:240px;height:240px;border-radius:50%;margin:26px auto 0;border:2.5px solid #ff6b2c;background:linear-gradient(150deg,#7a4423,#3c2a1a 60%,#57351c);display:grid;place-items:center;color:rgba(255,255,255,.9);position:relative;z-index:10"><svg class="icon" style="width:56px;height:56px;stroke-width:1.4" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>
+        <div class="pl-sub">第一千二百二十四章 · 龙神辉光照彻星海</div>
+        <div class="pl-prog"><span>03:24</span><div class="seek"><i style="width:11%;background:#ff6b2c"></i><b style="left:11%;border-color:#ff6b2c"></b></div><span>45:00</span></div>
+        <div class="ctrls">
+          <button class="cbtn" aria-label="定时"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.5 1.5M9 2h6"/></svg></button>
+          <button class="cbtn" aria-label="上一个"><svg class="icon f" viewBox="0 0 24 24"><path d="M6 5v14M20 5l-11 7 11 7z"/></svg></button>
+          <button class="fab" aria-label="播放暂停"><svg class="icon f" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+          <button class="cbtn" aria-label="下一个"><svg class="icon f" viewBox="0 0 24 18"><path d="M18 5v14M4 5l11 7-11 7z"/></svg></button>
+          <button class="cbtn" aria-label="目录"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h2M4 12h2M4 18h2M9 6h11M9 12h11M9 18h11"/></svg></button>
+        </div>
+        <div class="cmark good" style="top:56px;right:14px"><code>17.5:1</code> 标题/返回键</div>
+        <div class="cmark good" style="top:112px;left:14px"><code>≥9.5:1</code> 深色胶囊</div>
+        <div class="cmark good" style="top:392px;right:14px"><code>≥9.9:1</code> 章节名</div>
+        <div class="cmark good" style="bottom:150px;left:14px"><code>≥9.9:1</code> 计时/时长</div>
+      </div>
+    </div><figcaption>修复后 · 播放器表面恒定暗色（亮色主题同款视觉，与 08#s13 定稿一致）</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>根因</b>（排查员确认 + 本地复核）：根背景 <code>@color/background</code>（activity_audio_play.xml:7）亮色=表面 #FAF9F7；iv_bg 无默认内容、封面回调后才有模糊图（AudioPlayActivity.kt:190-195）；默认封面均色 #E5E5E6 + scrim_50（:22，#50000000）≈ <code>#9D9D9E</code>，白字 2.71:1（本机按 WCAG 公式实算）；五处 <code>md_white_1000</code> 文字（:44,:63,:95,:115,:134）+ 六处控制键 tint（:158-269）与两处 <code>tools:ignore="TextContrastCheck"</code>（:116,:135）全部依赖「背景足够暗」这一不成立前提；<code>bg_player_pill</code>=#29FFFFFF 半透明白更糟。夜间 surface=#141312 正常。</li>
+    <li><b>修复 ①（根治，纯 XML）</b>：播放器表面恒定暗色，明暗主题同一视觉——新增 <code>&lt;color name="player_surface"&gt;#201813&lt;/color&gt;</code>（values 与 values-night 同值，基调取 08#s13 .player 暖黑），<code>activity_audio_play.xml:7</code> 改 <code>android:background="@color/player_surface"</code>；白字 on #201813 = <b>17.5:1</b>（实算）。设计依据：08#s13 已定稿「深浅主题共用同一播放器视觉，不随日夜间切换而异」，本次是把代码对齐到定稿。</li>
+    <li><b>修复 ②（兜底，防浅色封面）</b>：<code>:22</code> 的 <code>@color/scrim_50</code> 换 <code>bg_player_scrim</code>（layer-list 纵向：上 70%→中 60%→下 80% 黑渐变，直接替换不叠加旧纱）——纯白封面最浅处（中部 60% 区，无文字）白字 5.74:1（实算 white on #666666）；文字所在的顶部 70% 区：纯白封面 8.45:1、默认封面 #E5E5E6 合成 #454545 后 9.59:1，全部 ≥4.5:1。</li>
+    <li><b>修复 ③（胶囊）</b>：新增 <code>bg_player_pill_dark</code>（&lt;solid #B3241F1B&gt; + 999dp 圆角）替换 :38/:57 的 bg_player_pill——按替换后的纱实算：深胶囊压默认封面+顶部纱（合成 ≈#2E2A28）白字 14.2:1、压纯白封面+顶部纱 13.7:1（纱恒在，胶囊不会落在裸白封面上），同时删除 :116/:135 两处 <code>tools:ignore="TextContrastCheck"</code>（lint 告警恢复即回归门禁）。</li>
+    <li><b>标题栏不动</b>：themeMode="dark"（:29）+ 白标题/白换源图标在恒定暗表面上正确，无需改 AudioPlayActivity.kt:60/:93。</li>
+    <li><b>验证口径</b>：上机核验命令建议 <code>adb shell uiautomator</code> 截屏取色 + 本稿同款 WCAG 公式（L=0.2126R+0.7152G+0.0722B，阈值 4.5:1 正文/3:1 图形）；全部数字为本机 python 实算（本轮运行记录），非引用值。</li>
+  </ul>
+</section>
+
+<!-- ============ 10 修复·书籍详情 ============ -->
+<section class="scr" id="fix2">
+  <div class="scr-head"><span class="scr-no">10</span><h2>修复 · 书籍详情标题栏（亮色白字）</h2><span class="src">activity_book_info.xml:13,22,30 · BookInfoActivity.kt:162,373-380 · TitleBar.kt:195-197 · MenuExtensions.kt:105</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="hero-old">
+        <div class="pl-head" style="position:relative;z-index:10;color:#fff"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="hero-title" style="padding:0;text-align:center;flex:1">书籍详情</div><span style="width:88px"></span></div>
+        <div class="cmark bad" style="top:56px;right:14px"><code>2.6:1</code> 白标题「书籍详情」</div>
+        <div class="cmark bad" style="top:100px;left:14px"><code>2.6:1</code> 白返回键</div>
+        <div class="cmark good" style="top:150px;left:14px"><code>不受影响</code> 菜单图标=on_surface 深色</div>
+        <div class="hero-cover"></div>
+        <div style="position:absolute;left:0;right:0;top:430px;text-align:center;z-index:10"><div style="color:#20242b;font-size:17px;font-weight:700">诡秘之主</div><div style="color:#60656d;font-size:12px;margin-top:4px">爱潜水的乌贼 · 玄幻 · 连载</div></div>
+      </div>
+    </div><figcaption>修复前 · 亮色 hero 渐变 #AA9F95~#A5907F 上白标题 2.59~3.05:1</figcaption></figure>
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="hero-new">
+        <div class="pl-head" style="position:relative;z-index:10;color:#fff"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="hero-title" style="padding:0;text-align:center;flex:1">书籍详情</div><button class="icon-btn" style="color:#fff" aria-label="更多"><svg class="icon f" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button><button class="icon-btn" style="color:#fff" aria-label="刷新"><svg class="icon" viewBox="0 0 24 24"><path d="M20.5 11.5A8.5 8.5 0 1 0 18 17"/><path d="M20.5 4.5v7h-7"/></svg></button></div>
+        <div class="cmark good" style="top:56px;right:14px"><code>13.1:1</code> 白标题</div>
+        <div class="cmark good" style="top:100px;left:14px"><code>6.4:1</code> 白返回键@64dp</div>
+        <div class="cmark good" style="top:150px;left:14px"><code>同步改</code> 菜单图标→白（toolBarTheme=Dark）</div>
+        <div class="hero-cover"></div>
+        <div style="position:absolute;left:0;right:0;top:430px;text-align:center;z-index:10"><div style="color:#20242b;font-size:17px;font-weight:700">诡秘之主</div><div style="color:#60656d;font-size:12px;margin-top:4px">爱潜水的乌贼 · 玄幻 · 连载</div></div>
+      </div>
+    </div><figcaption>修复后 · hero 上加顶部黑纱渐变，标题带恒为暗区；白标题/白返回键/白菜单图标全部达标</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>根因</b>（排查员确认 + 本地复核）：标题栏 themeMode="dark"（activity_book_info.xml:30）→ inflate 暗色 Toolbar（白标题/白返回键）+ upTheme 对 mode 1 设透明底（TitleBar.kt:195-197）+ BookInfoActivity.kt:162 再设透明；背景为亮暖 hero 渐变 #F7E8D9→#F0D2B9（:13）叠 31% 黑纱（:22 scrim_50）→ 白字压 ≈#AA9F95~#A5907F，2.59~3.05:1（实算）；封面加载后换模糊封面（BookInfoActivity.kt:373-380）明暗不可控。菜单图标走 auto→on_surface 深色不受影响（MenuExtensions.kt:108 的 else 分支）。</li>
+    <li><b>修复（纯 XML + 一行 Kotlin）</b>：<code>activity_book_info.xml:22</code> vw_bg 背景由 <code>@color/scrim_50</code> 换 <code>bg_book_scrim</code>（layer-list：原 scrim_50 全屏 + 顶部 150dp <code>#B8000000→#00000000</code> 纵向渐变）。标题带顶部≈70% 黑 → 白标题 13.1:1；64dp 处总遮光 ≈59%（顶纱 41% + 全屏 31% 复合）→ 白返回键 6.4:1，仍 ≥4.5:1（9.1:1 需 ≈70% 总遮光，对应 ≈30dp 处）；hero 中下段视觉不变（封面、书名、按钮区仍是亮暖纸感，02 定稿不受影响）。</li>
+    <li><b>菜单图标联动（一行 Kotlin）</b>：顶部纱加深后 on_surface 深色菜单图标会失效（深压深）→ <code>BookInfoActivity</code> 的 <code>toolBarTheme</code> 由默认改 <code>Theme.Dark</code>，菜单图标经 BaseActivity.kt:129 applyTint → MenuExtensions.kt:105 取 md_white_1000，与白标题一致；换源/更多等动作图标随纱变白（3:1 图形对比度以 55%+ 黑纱保证）。</li>
+    <li><b>为何不选 themeMode=light/auto</b>：标题文字改 on_surface 只能救「默认亮 hero」这一帧；封面模糊图加载后（含用户自定义封面）背景明暗不可控，任何固定深字都会二次翻车——「暗字+无纱」与「白字+恒定暗标题纱」二选一，后者对全部封面素材稳健，且与听书播放页（09 修复）同一策略：媒体/封面表面恒暗 + 白前景。</li>
+    <li><b>夜间主题</b>：values-night surface=#141312，hero 区域逻辑同亮色（封面+纱），修复后明暗一致，无需 values-night 例外。</li>
+  </ul>
+</section>
+
+</div>
+</body></html>

@@ -39,6 +39,20 @@
     <!-- 扫码取景辅助提示（08，相机预览上白 60%，设计 08:103 rgba(255,255,255,.6)，明暗同值） -->
     <color name="scan_hint_text">#99FFFFFF</color>
 
+    //**设计稿 v3 补充令牌（design-system/html/screens 09-12）**//
+    <!-- 听书播放器恒定暗色播放面（11-audio-light S5：明暗主题共用同一播放器视觉，取夜间 surface 层级值，有意不做 values-night 覆盖） -->
+    <color name="player_surface">#141312</color>
+    <!-- 备用层级：11-audio-light:503 明示「本轮仅声明」，播放面后续迭代取用；勿删 -->
+    <color name="player_surface_container">#1D1B19</color>
+    <color name="player_on_surface">#F3F0EB</color>
+    <color name="player_on_surface_variant">#B4B0AA</color>
+    <!-- 阅读页点击区域九宫格面板底（12-missed-2 #11/#29-B：96% 实色替换半透明卡白字，格面文字 on_surface，明暗成对） -->
+    <color name="click_action_panel">#F0ECE9</color>
+    <!-- 代码查看/编辑高亮（12-missed-2 #27：关键字橙/JSON 键蓝/注释灰，明暗两套均 ≥4.5:1） -->
+    <color name="code_keyword">#C2410C</color>
+    <color name="code_key">#1F6FB2</color>
+    <color name="code_comment">#60656D</color>
+
     //**程序化写主题用固定色（无日夜变体，applyTheme 按分支直接取值，避免随启动时 configuration 漂移）**//
     <color name="day_surface">#FAF9F7</color>
     <color name="day_surface_container">#FFFFFF</color>

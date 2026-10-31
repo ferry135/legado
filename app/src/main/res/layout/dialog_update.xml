@@ -13,12 +13,37 @@
         app:popupTheme="@style/AppTheme.PopupOverlay"
         app:titleTextAppearance="@style/ToolbarTitle" />
 
+    <!-- 正文自适应高：wrap_content + maxHeight 480dp 封顶（长日志内部滚动，ScrollTextView 自带滚动）。
+         不用 0dp+weight：WRAP_CONTENT 窗口（setLayout(0.9f, WRAP_CONTENT)）下竖向 weight 按可用高分配，
+         短日志也会把弹窗撑到近全屏（同 dialog_recycler_view 运行日志弹窗形态），偏离紧凑弹窗稿 -->
     <io.legado.app.ui.widget.text.ScrollTextView
         android:id="@+id/text_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="480dp"
         android:padding="12dp"
-        android:textColor="@color/secondaryText"
+        android:textColor="@color/primaryText"
         android:textIsSelectable="true" />
+
+    <!-- 12-missed-2 #06：下载入口改底部主按钮（顶栏下载菜单保留兼容）；
+         不用 AccentBgTextView：主色填充白字压默认主色橙仅 2.84:1（亮色压白同源缺陷），
+         改仿 SpeakEngineDialog tonal 胶囊运行时配色，见 UpdateDialog -->
+    <TextView
+        android:id="@+id/btn_download"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:minHeight="48dp"
+        android:paddingLeft="16dp"
+        android:paddingTop="10dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="10dp"
+        android:text="@string/download_apk"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
 </LinearLayout>

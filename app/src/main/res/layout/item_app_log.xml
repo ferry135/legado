@@ -1,22 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 运行日志条目（12-missed-2 #04）：时间次要小字 + 消息 on_surface；含异常条目由 Kotlin 置 error 色并显示「点按查看堆栈」提示 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="6dp"
+    android:paddingLeft="16dp"
+    android:paddingTop="10dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="10dp"
     android:background="?android:attr/selectableItemBackground"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/text_time"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textColor="@color/secondaryText"
+        android:textSize="11.5sp" />
 
     <TextView
         android:id="@+id/text_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
         android:contentDescription="@string/log"
+        android:textColor="@color/primaryText"
+        android:textSize="14sp"
         android:textIsSelectable="true"
         android:autoLink="web" />
+
+    <!-- 11.5sp 小字不用 AccentTextView：运行时 accent 亮色压白卡仅 2.84:1，按 12-missed-2 #29-A 用深主色 on_primary_soft -->
+    <TextView
+        android:id="@+id/text_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text="@string/app_log_stack_hint"
+        android:textColor="@color/on_primary_soft"
+        android:textSize="11.5sp"
+        android:visibility="gone" />
 
 </LinearLayout>

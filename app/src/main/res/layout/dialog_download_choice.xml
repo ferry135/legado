@@ -23,26 +23,28 @@
         android:textSize="16sp"
         tools:ignore="RtlHardcoded" />
 
+    <!-- 12-missed-1 #11：数字框改 bg_edit_filled 实底，hint 次要文字色（≥4.5:1） -->
     <EditText
         android:id="@+id/edit_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:background="@drawable/bg_edit"
+        android:background="@drawable/bg_edit_filled"
         android:hint="@string/start"
         android:importantForAutofill="no"
         android:inputType="number"
         android:lines="1"
         android:maxLength="5"
         android:minWidth="60dp"
-        android:paddingLeft="5dp"
-        android:paddingTop="4dp"
-        android:paddingRight="5dp"
-        android:paddingBottom="4dp"
+        android:paddingLeft="9dp"
+        android:paddingTop="6dp"
+        android:paddingRight="9dp"
+        android:paddingBottom="6dp"
         android:textColor="@color/primaryText"
+        android:textColorHint="@color/secondaryText"
         android:textCursorDrawable="@drawable/shape_text_cursor"
         android:textSize="14sp"
-        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
+        tools:ignore="TouchTargetSizeCheck" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -59,21 +61,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:background="@drawable/bg_edit"
+        android:background="@drawable/bg_edit_filled"
         android:hint="@string/end"
         android:importantForAutofill="no"
         android:inputType="number"
         android:lines="1"
         android:maxLength="5"
         android:minWidth="60dp"
-        android:paddingLeft="5dp"
-        android:paddingTop="4dp"
-        android:paddingRight="5dp"
-        android:paddingBottom="4dp"
+        android:paddingLeft="9dp"
+        android:paddingTop="6dp"
+        android:paddingRight="9dp"
+        android:paddingBottom="6dp"
         android:textColor="@color/primaryText"
+        android:textColorHint="@color/secondaryText"
         android:textCursorDrawable="@drawable/shape_text_cursor"
         android:textSize="14sp"
-        tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck,TextContrastCheck" />
+        tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
     <View
         android:layout_width="0dp"

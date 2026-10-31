@@ -1,0 +1,636 @@
+<!-- design-system: legado v2 -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Legado v2 · 09 设置体系重设计</title><style>
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#efece6;color:#26231d;display:flex;flex-direction:column;align-items:center}
+.page{width:min(100%,912px);padding:0 16px 96px}
+/* ---------- 页头 ---------- */
+.page-head{position:sticky;top:0;z-index:60;background:rgba(239,236,230,.94);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,.08);margin:0 -16px;padding:16px 20px 14px}
+.page-head h1{margin:0;font-size:22px;letter-spacing:.02em}
+.page-head .en{font-size:12.5px;color:#6d6a62;font-weight:600;letter-spacing:.14em;margin-left:10px}
+.pnav{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.pnav a{text-decoration:none;font-size:13px;font-weight:600;color:#4a463c;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:999px;padding:5px 14px}
+.pnav a:hover{color:#ff6b2c;border-color:#ff6b2c}
+/* ---------- 分区 ---------- */
+.scr{margin-top:60px}
+.scr-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.scr-no{font-size:13px;font-weight:800;color:#ff6b2c;letter-spacing:.1em}
+.scr-head h2{margin:0;font-size:24px}
+.src{font-size:12px;color:#6d6a62;font-family:ui-monospace,Consolas,monospace}
+.pair{display:flex;flex-wrap:wrap;gap:28px;margin-top:18px}
+figure.dev{margin:0}
+figcaption{text-align:center;font-size:13px;font-weight:600;color:#6d6a62;margin-top:10px}
+.notes{max-width:880px;margin:20px 0 0;padding:14px 18px;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:14px;font-size:13px;line-height:2;color:#3a372f;list-style:none}
+.notes li{margin:2px 0}
+.notes b{color:#1d1b16}
+.notes code{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;background:rgba(0,0,0,.055);padding:1px 6px;border-radius:5px;color:#8a4a20;white-space:nowrap}
+.notice{max-width:880px;margin:18px 0 0;padding:14px 18px;background:#fff4ec;border:1px solid #f0c9ae;border-radius:14px;font-size:13px;line-height:2;color:#5c4331}
+.notice b{color:#a1543a}
+.notice code{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;background:rgba(0,0,0,.055);padding:1px 6px;border-radius:5px;color:#a1543a;white-space:nowrap}
+/* ---------- 规格区 ---------- */
+.spec{max-width:880px;margin:18px 0 0;padding:18px 20px;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:14px}
+.spec h3{margin:0 0 10px;font-size:15px}
+.spec h3 .no{color:#ff6b2c;font-weight:800;margin-right:8px;font-size:12.5px;letter-spacing:.08em}
+pre.x{margin:10px 0 0;padding:14px 16px;background:#faf9f7;border:1px solid rgba(0,0,0,.08);border-radius:10px;font-family:ui-monospace,Consolas,monospace;font-size:11.5px;line-height:1.8;color:#33302a;overflow-x:auto}
+pre.x b{color:#a1543a;font-weight:600}
+pre.x i{color:#8a8577;font-style:normal}
+table.sp{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px}
+table.sp th,table.sp td{border-bottom:1px solid rgba(0,0,0,.07);padding:7px 10px;text-align:left;vertical-align:top;line-height:1.7}
+table.sp th{color:#6d6a62;font-weight:700;white-space:nowrap}
+table.sp code{font-family:ui-monospace,Consolas,monospace;font-size:11px;background:rgba(0,0,0,.055);padding:1px 6px;border-radius:5px;color:#8a4a20;white-space:nowrap}
+.ok{color:#3b7a45;font-weight:700}
+.rhythm{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.rhythm .rr{border:1px dashed #b9b4a8;border-radius:8px;padding:6px 10px;font-size:11.5px;color:#4a463c;text-align:center}
+.rhythm .rr i{display:block;font-style:normal;font-weight:800;color:#a1543a;margin-bottom:3px}
+/* ---------- 手机壳与令牌（对齐 novel_reader_light/dark.html 与 08 稿） ---------- */
+.phone{width:412px;height:900px;border-radius:30px;border:1px solid rgba(0,0,0,.2);position:relative;overflow:hidden;flex:none;
+--bg:#faf9f7;--surface:#ffffff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--track:#e5e2de;--divider:rgba(0,0,0,.07);
+background:var(--bg);color:var(--text)}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--track:#353331;--divider:rgba(255,255,255,.08)}
+.status{height:36px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 22px 4px;font-size:13.5px;font-weight:600;position:relative;z-index:40}
+.sright{display:flex;gap:7px;align-items:center}
+.main{position:absolute;inset:36px 0 0 0;display:flex;flex-direction:column}
+/* ---------- 顶栏（activity_config.xml:8-14 TitleBar themeMode="blend"：与页面同色、无边框无阴影） ---------- */
+.tbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 10px 0 8px;flex:none}
+.tbar .st{font-size:19px;font-weight:700}
+.actions{display:flex}
+.icon-btn{width:44px;height:44px;border:0;background:transparent;border-radius:22px;display:grid;place-items:center;color:var(--text);cursor:pointer;padding:0}
+.icon{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* ---------- 偏好列表 · 目标形态（09 稿升级：15/13sp、48-56dp、24dp 组顶距、去逐行分割线） ---------- */
+.plist{flex:1;overflow:hidden;padding:8px 0 12px}
+.prow{display:flex;align-items:center;gap:14px;padding:0 24px;min-height:48px}
+.pbody{flex:1;min-width:0}
+.pt{font-size:15px;font-weight:600;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ps{font-size:13px;color:var(--secondary);line-height:1.4;margin-top:2px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.pend{flex:none;display:flex;align-items:center;gap:8px;color:var(--secondary)}
+/* .pcat：13sp bold on_surface_variant + 24dp 组顶距 + 右侧 1dp 弱线（view_preference_category.xml 目标形态） */
+.pcat{display:flex;align-items:center;gap:10px;margin-top:24px;padding:6px 24px;font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--secondary)}
+.pcat:first-child{margin-top:4px}
+.pcat::after{content:"";flex:1;height:1px;background:var(--divider)}
+/* .vchip：NameListPreference 选中值胶囊（item_pref_value_chip.xml 复用不变：surface2 底、8dp 圆角、7/14 内边距、14sp on_surface、max-width 148dp） */
+.vchip{flex:none;max-width:148px;background:var(--surface2);border-radius:8px;padding:7px 14px;font-size:14px;line-height:1.2;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* .licon：IconListPreference 桌面图标预览（view_icon.xml，44-50dp 圆角预览） */
+.licon{flex:none;width:48px;height:48px;border-radius:12px;background:linear-gradient(150deg,#ffb185,#ff6b2c 65%,#e85d2a);display:grid;place-items:center;color:#fff;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+/* .chip：ColorPreference 取色预览（cpv_preference_circle，28dp 圆形；描边为库 ColorPanelView 默认 #6E6E6E，对亮底 4.85:1） */
+.chip{width:28px;height:28px;border-radius:50%;border:1px solid #6e6e6e;flex:none}
+/* .sw：SwitchCompat + applyTint(accentColor)（SwitchPreference.kt:33，主色开关，开态轨道主色+白 thumb） */
+.sw{flex:none;width:38px;height:22px;border-radius:11px;background:var(--track);position:relative}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.18);transition:.2s}
+.sw.on{background:var(--primary)}
+.sw.on::after{left:19px}
+/* 禁用态：Preference.kt bindView 增加 itemView.alpha = 0.38（M3 禁用 38%） */
+.prow.dis{opacity:.38}
+</style></head>
+<body>
+<div class="page">
+
+<header class="page-head">
+  <h1>Legado v2 · 设置体系重设计<span class="en">09 SETTINGS SYSTEM · M3 LIST</span></h1>
+  <nav class="pnav">
+    <a href="#spec">00 规格与目标 XML</a><a href="#s1">01 容器·其它 上</a><a href="#s2">02 其它 中</a><a href="#s3">03 其它 尾</a><a href="#s4">04 主题 上</a><a href="#s5">05 主题 下</a><a href="#s6">06 备份与恢复</a><a href="#s7">07 封面设置</a><a href="#s8">08 欢迎页设置</a>
+  </nav>
+</header>
+
+<!-- ============ 00 规格与目标 XML ============ -->
+<section class="scr" id="spec">
+  <div class="scr-head"><span class="scr-no">00</span><h2>规格与目标形态</h2><span class="src">view_preference.xml · view_preference_category.xml · lib/prefs/* · activity_config.xml</span></div>
+  <p class="notice" style="max-width:880px"><b>范围说明</b>：本稿重设计「设置体系」——容器 <code>ConfigActivity</code>（<code>app/src/main/res/layout/activity_config.xml</code>）与 5 个分页（<code>pref_config_other/theme/backup/cover/welcome.xml</code>），行样式落点为 <code>view_preference.xml</code> 与 <code>view_preference_category.xml</code>，控件为 <code>lib/prefs</code> 的 SwitchPreference / NameListPreference / IconListPreference / ColorPreference。风格延续 v3 已定稿 8 组（暖纸白/暖黑、主色 <code>#FF6B2C</code>、blend 顶栏、无阴影），并按 M3 列表规范升级行度量。排查员三条亮色白字问题（<code>activity_audio_play.xml:44/:29</code>、<code>activity_book_info.xml:30</code>）均<b>不在</b>设置体系内，关系见下方「排查与修复」。</p>
+
+  <div class="spec">
+    <h3><span class="no">A</span>行样式目标形态 · view_preference.xml（改动①②，其余不动）</h3>
+    <p style="margin:0;font-size:13px;line-height:2;color:#3a372f">标题 14.5sp→<b>15sp</b>、摘要 11.5sp→<b>13sp</b>；行高由 <code>minHeight=48dp</code> + 上下 8dp padding 自然落位 <b>48–56dp</b>（单行 48dp、双行 56dp），无逐行定制。图标 21dp 与按压态 <code>bg_prefs_color</code>（<code>btn_bg_press</code>，TV 焦点可见性）保持。</p>
+<pre class="x">&lt;LinearLayout
+    android:background="@drawable/bg_prefs_color"   <i>/* 按压/聚焦态着色，静止透明 */</i>
+    android:paddingLeft="24dp" android:paddingTop="8dp"
+    android:paddingRight="24dp" android:paddingBottom="8dp"
+    android:minHeight="48dp" android:gravity="center_vertical" &gt;
+
+    &lt;ImageView android:id="@+id/preference_icon"
+        android:layout_width="21dp" android:layout_height="21dp"
+        android:layout_marginRight="14dp"
+        android:scaleType="fitCenter" /&gt;            <i>/* pref_config_* 各页无 icon → 运行态隐藏（Preference.kt:70）；pref_main 有图标页着色 on_surface_variant（Preference.kt:74，v3 已改） */</i>
+
+    &lt;LinearLayout vertical weight=1 &gt;
+        &lt;TextView android:id="@+id/preference_title"
+            android:singleLine="true"
+            <b>android:textSize="15sp"</b>                <i>/* 改动① 14.5sp → 15sp */</i>
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/on_surface" /&gt;
+        &lt;TextView android:id="@+id/preference_desc"
+            <b>android:textSize="13sp"</b>                <i>/* 改动② 11.5sp → 13sp */</i>
+            android:textColor="@color/on_surface_variant"
+            android:maxLines="2" android:ellipsize="end"
+            android:layout_marginTop="2dp" /&gt;
+    &lt;/LinearLayout&gt;
+
+    &lt;FrameLayout android:id="@+id/preference_widget"   <i>/* widget 挂载点，marginLeft 14dp */</i>
+        android:visibility="gone" /&gt;
+&lt;/LinearLayout&gt;</pre>
+    <div class="rhythm">
+      <span class="rr"><i>48dp</i>单行（无摘要）<br>21dp 内容 + 8+8 padding，minHeight 兜底</span>
+      <span class="rr"><i>56dp</i>双行（标题+摘要）<br>20+2+18 内容 + 8+8 padding</span>
+      <span class="rr"><i>24dp</i>组间顶距<br>divider_above 8dp → 24dp 留白</span>
+      <span class="rr"><i>38×22dp</i>开关胶囊<br>16dp 白 thumb，主色轨道</span>
+      <span class="rr"><i>28dp</i>取色圆 / <i>48dp</i>图标预览<br>ColorPreference / IconListPreference</span>
+    </div>
+  </div>
+
+  <div class="spec">
+    <h3><span class="no">B</span>分组标题目标形态 · view_preference_category.xml（改动③④）</h3>
+    <p style="margin:0;font-size:13px;line-height:2;color:#3a372f">组题 11.5sp→<b>13sp bold</b>，色值回归 XML 的 <code>on_surface_variant</code>（Kotlin 不再覆盖）；组间顶距 8dp 色带→<b>24dp 纯留白</b>；组题右侧 1dp <code>outline_variant</code> 弱线保留（v3 视觉记忆）。</p>
+<pre class="x">&lt;LinearLayout vertical&gt;
+    &lt;View android:id="@+id/preference_divider_above"
+        <b>android:layout_height="24dp"</b> /&gt;          <i>/* 改动③ 8dp → 24dp：组间留白（原由 PreferenceCategory.kt:34-54 涂 shiftColor 色带，一并删除） */</i>
+
+    &lt;LinearLayout horizontal paddingTop="6dp" paddingBottom="6dp" paddingH="24dp"&gt;
+        &lt;TextView android:id="@+id/preference_title"
+            <b>android:textSize="13sp" android:textStyle="bold"</b>   <i>/* 改动④ 11.5sp → 13sp */</i>
+            android:letterSpacing="0.12"
+            <b>android:textColor="@color/on_surface_variant"</b>      <i>/* XML 值生效：删除 PreferenceCategory.kt:31 的 setTextColor(accentColor) */</i> /&gt;
+        &lt;View android:layout_width="0dp" android:layout_height="1dp"
+            android:layout_weight="1" android:layout_marginStart="10dp"
+            android:background="@color/outline_variant" /&gt;      <i>/* 组题右侧延伸弱线，保留（现值 10dp 不动） */</i>
+    &lt;/LinearLayout&gt;
+
+    &lt;View android:id="@+id/preference_divider_below"
+        android:visibility="gone" android:layout_height="8dp" /&gt;
+&lt;/LinearLayout&gt;</pre>
+    <p style="margin:10px 0 0;font-size:13px;line-height:2;color:#3a372f"><b>Kotlin 改动（2 处，<code>app/src/main/java/io/legado/app/lib/prefs/PreferenceCategory.kt</code>）</b>：<br>
+    1) 删 <code>:31</code> <code>view.setTextColor(context.accentColor)</code> —— 组题色回归 XML 语义令牌，同时消除「用户把强调色选成浅色时 13sp 组题在亮底上看不清」的隐患（accentColor 是运行时换肤值，无对比度保证）；<br>
+    2) 删 <code>:34-54</code> 对 divider_above/below 的 <code>shiftColor</code> 涂色块 —— 24dp 留白透明，不再需要按背景算色带（<code>isVisible</code> 逻辑保留以兼容 divider_below gone）。<br>
+    <b>可选一行</b>：<code>Preference.kt</code> bindView 末尾加 <code>holder.itemView.alpha = if (isEnabled) 1f else 0.38f</code> —— M3 禁用态 38%，依赖项（如 <code>pref_config_backup.xml:58</code> 的 <code>android:dependency="syncBookProgress"</code>）自动生效。</p>
+  </div>
+
+  <div class="spec">
+    <h3><span class="no">C</span>容器与去分割线 · activity_config.xml + pref_config_*.xml（各 1 行）</h3>
+    <p style="margin:0;font-size:13px;line-height:2;color:#3a372f"><b>容器</b>：<code>activity_config.xml:8-14</code> 的 TitleBar 已是 <code>themeMode="blend"</code>（TitleBar.kt:198-206：surface 底 + on_surface 标题/返回键，亮色对比 14.80:1），<b>不改</b>；页面底色 = <code>@color/background</code>（别名 surface，亮 <code>#FAF9F7</code> / 暗 <code>#141312</code>，<code>values/colors.xml:77</code>），由 <code>BaseActivity.initTheme()</code> 涂在 decorView（<code>BaseActivity.kt:155-169</code>）。<b>容器不加不透明底</b>：保留用户自定义背景图透出（<code>BaseActivity.kt:176-178</code> upBackgroundImage 会把 decorView 背景整幅换成图片，行与组题的 <code>bg_prefs_color</code> 静止态透明，天然透出）。<br>
+    <b>去逐行分割线（留白分组）</b>：5 个 <code>pref_config_*.xml</code> 根节点各加 1 行 <code>android:divider="@color/transparent"</code>（机制与 <code>pref_main.xml:4</code> 相同）；行间分组改由 24dp 组顶距 + 13sp 组题承担。若未来需要行线，用 24dp 内缩 1dp <code>outline_variant</code> 的 DividerItemDecoration 一处即可（本稿默认不画）。</p>
+<pre class="x">&lt;androidx.preference.PreferenceScreen …
+    <b>android:divider="@color/transparent"</b>&gt;   <i>/* 5 个 pref_config_*.xml 根节点各加 1 行（同 pref_main.xml:4） */</i></pre>
+  </div>
+
+  <div class="spec">
+    <h3><span class="no">D</span>控件规格（widget 挂载点，均为现有实现或零改动复用）</h3>
+    <table class="sp">
+      <tr><th>控件</th><th>落点</th><th>规格</th></tr>
+      <tr><td>SwitchPreference</td><td><code>SwitchCompat</code> + <code>applyTint(accentColor)</code><br><code>SwitchPreference.kt:33</code></td><td>开态轨道主色（默认 <code>#FF6B2C</code>，随主题换肤）+ 白 thumb 16dp；关态轨道 <code>track</code> 灰。38×22dp 胶囊。<b>「开关用主色」即保持此行不动</b>。</td></tr>
+      <tr><td>NameListPreference</td><td><code>item_pref_value_chip.xml</code><br><code>NameListPreference.kt:21</code></td><td>值胶囊<b>复用不变</b>：<code>bg_chip</code> = <code>surface_container_high</code> 底、8dp 圆角、7/14dp 内边距、14sp <code>on_surface</code>、maxWidth 148dp 单行省略。</td></tr>
+      <tr><td>IconListPreference</td><td><code>view_icon.xml</code>（48dp ImageView）<br><code>IconListPreference.kt:33/56-66</code></td><td>48dp 桌面图标预览（bindView 上限 50，圆角随图标资源自身），切换图标行右侧。</td></tr>
+      <tr><td>ColorPreference</td><td><code>cpv_preference_circle</code>（库自带，<code>cpv_color_preference_normal=28dp</code>）<br><code>ColorPreference.kt:65-66/119-127</code></td><td>28dp 圆形色板，1dp 库默认描边 <code>#6E6E6E</code>（ColorPanelView DEFAULT_BORDER_COLOR，亮底 4.85:1），主题色四行（主色调/强调色/背景色/底栏色）右端展示当前值。</td></tr>
+      <tr><td>Preference / EditTextPreference</td><td>无 widget</td><td>值与输入内容走 13sp 摘要行（如 WebDav 服务器地址）；<b>无 caret</b>——<code>view_preference.xml</code> 本就没有尾箭头，本稿不虚构；入口感由分组留白 + 摘要文案承担（与 08 稿「我的」页 vchip 去 caret 同理）。</td></tr>
+      <tr><td>禁用态</td><td><code>Preference.kt</code>（可选一行）</td><td>整行 alpha 38%（文字/开关同步淡出），M3 禁用规范。</td></tr>
+    </table>
+  </div>
+
+  <div class="spec">
+    <h3><span class="no">E</span>对比度核算（本会话 python 实跑，WCAG 2.x）</h3>
+    <table class="sp">
+      <tr><th>项目</th><th>前景 / 背景</th><th>比值</th><th>判定</th></tr>
+      <tr><td>标题 15sp on_surface · 亮</td><td><code>#20242B</code> / <code>#FAF9F7</code></td><td>14.80:1</td><td class="ok">≥4.5 ✓</td></tr>
+      <tr><td>摘要/组题 13sp on_surface_variant · 亮</td><td><code>#60656D</code> / <code>#FAF9F7</code></td><td>5.58:1</td><td class="ok">≥4.5 ✓</td></tr>
+      <tr><td>值胶囊字 14sp on_surface · 亮</td><td><code>#20242B</code> / <code>#EEECE9</code></td><td>13.21:1</td><td class="ok">≥4.5 ✓</td></tr>
+      <tr><td>标题 on_surface · 暗</td><td><code>#F3F0EB</code> / <code>#141312</code></td><td>16.33:1</td><td class="ok">≥4.5 ✓</td></tr>
+      <tr><td>摘要/组题 on_surface_variant · 暗</td><td><code>#B4B0AA</code> / <code>#141312</code></td><td>8.60:1</td><td class="ok">≥4.5 ✓</td></tr>
+      <tr><td>值胶囊字 · 暗</td><td><code>#F3F0EB</code> / <code>#242220</code></td><td>13.95:1</td><td class="ok">≥4.5 ✓</td></tr>
+      <tr><td>分割线 outline_variant · 亮（装饰性，无 3:1 约束）</td><td><code>#E4E1D8</code> / <code>#FAF9F7</code></td><td>1.24:1</td><td>装饰 ✓（刻意弱化）</td></tr>
+      <tr><td>开关开态轨道 primary（非文字，thumb 位置+轨道色双通道表意，thumb 带 1dp 投影）</td><td><code>#FF6B2C</code> / <code>#FAF9F7</code></td><td>2.70:1</td><td>状态色，与 08 稿一致</td></tr>
+    </table>
+  </div>
+
+  <div class="spec">
+    <h3><span class="no">F</span>排查与修复 · 亮色可读性</h3>
+    <p style="margin:0;font-size:13px;line-height:2;color:#3a372f"><b>排查员三条问题的核对</b>：三条分别位于 <code>activity_audio_play.xml:44/:29</code>（听书播放）与 <code>activity_book_info.xml:30</code>（书籍详情），均为 <code>themeMode="dark"</code> 大图穿透页，<b>不涉及本组任何布局/控件</b>。已在本会话对设置体系 7 个相关布局执行 <code>grep -rn "md_white|@android:color/white|#fff|#FFF|ffffff"</code>（view_preference / view_preference_category / item_pref_value_chip / item_icon_preference / view_icon / dialog_recycler_view / activity_config）：<b>0 命中</b>（exit=1），设置行全部走语义令牌，亮色下不存在同类白字。<br>
+    <b>设置体系内部的真实同类隐患与修复</b>：<code>PreferenceCategory.kt:31</code> 把 13sp 组题涂成运行时 <code>accentColor</code>——用户强调色偏浅时亮底对比必然失守（例如浅橙 <code>#FFB74D</code> 对 <code>#FAF9F7</code> 约 1.6:1）。本稿改动④删除该行，组题固定 <code>on_surface_variant</code>（5.58:1），见 B 区。<br>
+    <b>容器顶栏</b>：<code>activity_config.xml:14</code> 为 <code>themeMode="blend"</code>，标题/返回键/菜单走 on_surface（14.80:1），天然规避「暗顶栏白字压亮底」问题，无需改动。</p>
+  </div>
+
+  <div class="spec">
+    <h3><span class="no">G</span>与 08 稿（已定稿）的差异——4 项升级，其余延续</h3>
+    <table class="sp">
+      <tr><th>项</th><th>08 稿</th><th>09 稿（本稿）</th><th>理由</th></tr>
+      <tr><td>标题/摘要/组题字号</td><td>14.5 / 11.5 / 11.5sp</td><td><b>15 / 13 / 13sp</b></td><td>M3 列表规范，长列表可读性（13sp 摘要对比 5.58:1）</td></tr>
+      <tr><td>组间分隔</td><td>8dp shiftColor 色带</td><td><b>24dp 纯留白</b></td><td>去掉 Kotlin 按背景算色，组节奏更 M3</td></tr>
+      <tr><td>行间分割线</td><td>24dp 内缩 1dp 弱线（稿面 CSS 示意）</td><td><b>不画</b>（divider 透明，留白分组）</td><td>「其它设置」35+ 行逐行画线放大噪声；如需可一处加回</td></tr>
+      <tr><td>组题颜色</td><td>运行时 accentColor</td><td><b>on_surface_variant</b></td><td>可读性兜底（F 区）</td></tr>
+    </table>
+    <p style="margin:10px 0 0;font-size:13px;line-height:2;color:#3a372f">延续不变：blend 顶栏（无分割无阴影）、暖纸白/暖黑表面、主色 <code>#FF6B2C</code> 开关、<code>item_pref_value_chip</code> 值胶囊、28dp 色圆、48dp 图标预览、按压态 <code>bg_prefs_color</code>、无卡片堆叠。</p>
+  </div>
+</section>
+
+<!-- ============ 01 容器·其它 上 ============ -->
+<section class="scr" id="s1">
+  <div class="scr-head"><span class="scr-no">01</span><h2>设置容器 · 其它设置（上）</h2><span class="src">activity_config.xml · ConfigActivity.kt:18-27 · pref_config_other.xml:5-69</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">其它设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">语言</div></div><div class="pend"><span class="vchip">简体中文</span></div></div>
+          <div class="pcat">主界面</div>
+          <div class="prow"><div class="pbody"><div class="pt">自动刷新</div><div class="ps">打开软件时自动更新书籍</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">自动跳转最近阅读</div><div class="ps">默认打开书架</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示发现</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示订阅</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">默认主页</div></div><div class="pend"><span class="vchip">书架</span></div></div>
+          <div class="pcat">其它设置</div>
+          <div class="prow"><div class="pbody"><div class="pt">设置本地密码</div><div class="ps">本地密码用来对备份的敏感信息加密和解密，如需在不同设备之间同步，本地密码需一致</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">用户代理</div></div></div>
+        </div>
+      </div>
+    </div><figcaption>浅色 Light · 首屏（可滚动）</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">其它设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">语言</div></div><div class="pend"><span class="vchip">简体中文</span></div></div>
+          <div class="pcat">主界面</div>
+          <div class="prow"><div class="pbody"><div class="pt">自动刷新</div><div class="ps">打开软件时自动更新书籍</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">自动跳转最近阅读</div><div class="ps">默认打开书架</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示发现</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示订阅</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">默认主页</div></div><div class="pend"><span class="vchip">书架</span></div></div>
+          <div class="pcat">其它设置</div>
+          <div class="prow"><div class="pbody"><div class="pt">设置本地密码</div><div class="ps">本地密码用来对备份的敏感信息加密和解密，如需在不同设备之间同步，本地密码需一致</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">用户代理</div></div></div>
+        </div>
+      </div>
+    </div><figcaption>深色 Dark</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>容器</b>：<code>ConfigActivity</code> 按 configTag 换入 5 个分页（<code>ConfigActivity.kt:19-26</code>）；TitleBar <code>themeMode="blend"</code>（<code>activity_config.xml:14</code>）→ surface 底 + on_surface 标题（亮色 14.80:1），无白字风险；列表底色 <code>@color/background</code> 由 decorView 承担（<code>BaseActivity.kt:155-169</code>），不加不透明底以保留用户背景图。</li>
+    <li><b>行内容即 XML 权威</b>：语言（NameListPreference，chip「简体中文」为运行态样本）、主界面组 5 行、其它设置组开头（<code>pref_config_other.xml:5-69</code>）；各页无 <code>android:icon</code> → 行首无图标、24dp 直达文字。</li>
+    <li><b>本屏演示的行型</b>：值胶囊行（语言/默认主页）、开关行（带摘要 56dp / 无摘要 48dp）、入口行（设置本地密码：2 行摘要省略 maxLines=2、用户代理：单行 48dp）。</li>
+    <li><b>分组节奏</b>：组题「主界面」「其它设置」13sp bold on_surface_variant + 右侧 1dp 弱线，组间 24dp 留白；行间无分割线（<code>pref_config_other.xml</code> 根加 <code>android:divider="@color/transparent"</code>）。</li>
+  </ul>
+</section>
+
+<!-- ============ 02 其它 中 ============ -->
+<section class="scr" id="s2">
+  <div class="scr-head"><span class="scr-no">02</span><h2>其它设置（中）</h2><span class="src">pref_config_other.xml:67-121（视口自列表中部起）</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">其它设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">WebService唤醒锁</div><div class="ps">开启web服务的时候启用唤醒锁，有些手机开启唤醒锁会被杀后台</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">书籍保存位置</div><div class="ps">从其它应用打开的书籍保存位置</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">源编辑框最大行数</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">校验设置</div><div class="ps">校验超时：60秒<br>校验项目：书源、阅读</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">直链上传规则</div><div class="ps">用于导出书源书单时生成直链 URL</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">Cronet</div><div class="ps">使用 Cronet 网络组件</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">抗锯齿</div><div class="ps">绘制图片时抗锯齿</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">图片绘制缓存</div><div class="ps">当前最大缓存 100 MB</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">漫画保留数量</div><div class="ps">保留已读章节数量 6</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">预下载</div><div class="ps">预先下载 20 章正文</div></div></div>
+        </div>
+      </div>
+    </div><figcaption>浅色 Light · 列表中段（可滚动）</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">其它设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">WebService唤醒锁</div><div class="ps">开启web服务的时候启用唤醒锁，有些手机开启唤醒锁会被杀后台</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">书籍保存位置</div><div class="ps">从其它应用打开的书籍保存位置</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">源编辑框最大行数</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">校验设置</div><div class="ps">校验超时：60秒<br>校验项目：书源、阅读</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">直链上传规则</div><div class="ps">用于导出书源书单时生成直链 URL</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">Cronet</div><div class="ps">使用 Cronet 网络组件</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">抗锯齿</div><div class="ps">绘制图片时抗锯齿</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">图片绘制缓存</div><div class="ps">当前最大缓存 100 MB</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">漫画保留数量</div><div class="ps">保留已读章节数量 6</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">预下载</div><div class="ps">预先下载 20 章正文</div></div></div>
+        </div>
+      </div>
+    </div><figcaption>深色 Dark</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>同组视口续段</b>：真实页面是一条可滚动长列表，本屏取列表中部展示「去行线后的行间节奏」——无摘要行 48dp、带摘要行 56dp，仅靠字重与色阶（on_surface / on_surface_variant）分层。</li>
+    <li><b>值不在行尾、在摘要</b>：<code>bitmapCacheSize/imageRetainNum/preDownloadNum/checkSource/sourceEditMaxLine</code> 等是普通 Preference（弹对话框），当前值经 13sp 摘要呈现（<code>pref_config_other.xml:107-120</code>），不占用行尾胶囊——行尾胶囊仅 NameListPreference 使用，避免两种值样式混用。</li>
+    <li><b>开关行</b>：Cronet / 抗锯齿 / 唤醒锁默认关，轨道灰 <code>track</code>；开态为主色（规格 D）。</li>
+  </ul>
+</section>
+
+<!-- ============ 03 其它 尾 ============ -->
+<section class="scr" id="s3">
+  <div class="scr-head"><span class="scr-no">03</span><h2>其它设置（尾）</h2><span class="src">pref_config_other.xml:122-232（视口至列表尾）</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">其它设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">默认启用替换净化</div><div class="ps">新加入书架的书是否启用替换净化</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">全程响应耳机按键</div><div class="ps">即使退出软件也响应耳机按键</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">耳机按键启动朗读</div><div class="ps">通过耳机按键来启动朗读</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">忽略音频焦点</div><div class="ps">允许与其他应用同时播放音频</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">自动清除过期搜索数据</div><div class="ps">超过一天的搜索数据</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">返回时提示放入书架</div><div class="ps">阅读未放入书架的书籍在返回时提示放入书架</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">检查更新查找版本</div><div class="ps">检查更新时查找其他签名版本</div></div><div class="pend"><span class="vchip">正式版</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">漫画浏览</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">Web 端口</div><div class="ps">当前端口 1122</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">Web 服务访问令牌</div><div class="ps">配置后局域网访问需携带令牌，留空则不校验</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">清理缓存</div><div class="ps">清除已下载书籍和字体缓存</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">清除 WebView 数据</div><div class="ps">清除内置浏览器所有数据</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">压缩数据库</div><div class="ps">减小数据库文件的大小</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">更新和搜索线程数（太多会卡顿）</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">文字操作显示搜索</div><div class="ps">长按文字在操作菜单中显示阅读·搜索</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">记录日志</div><div class="ps">记录调试日志</div></div><i class="sw"></i></div>
+        </div>
+      </div>
+    </div><figcaption>浅色 Light · 列表尾段（可滚动）</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">其它设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">默认启用替换净化</div><div class="ps">新加入书架的书是否启用替换净化</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">全程响应耳机按键</div><div class="ps">即使退出软件也响应耳机按键</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">耳机按键启动朗读</div><div class="ps">通过耳机按键来启动朗读</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">忽略音频焦点</div><div class="ps">允许与其他应用同时播放音频</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">自动清除过期搜索数据</div><div class="ps">超过一天的搜索数据</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">返回时提示放入书架</div><div class="ps">阅读未放入书架的书籍在返回时提示放入书架</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">检查更新查找版本</div><div class="ps">检查更新时查找其他签名版本</div></div><div class="pend"><span class="vchip">正式版</span></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">漫画浏览</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">Web 端口</div><div class="ps">当前端口 1122</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">Web 服务访问令牌</div><div class="ps">配置后局域网访问需携带令牌，留空则不校验</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">清理缓存</div><div class="ps">清除已下载书籍和字体缓存</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">清除 WebView 数据</div><div class="ps">清除内置浏览器所有数据</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">压缩数据库</div><div class="ps">减小数据库文件的大小</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">更新和搜索线程数（太多会卡顿）</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">文字操作显示搜索</div><div class="ps">长按文字在操作菜单中显示阅读·搜索</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">记录日志</div><div class="ps">记录调试日志</div></div><i class="sw"></i></div>
+        </div>
+      </div>
+    </div><figcaption>深色 Dark</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>长列表尾段</b>：本屏含「其它设置」组 16 行（<code>pref_config_other.xml:122-230</code>；末行「记录堆转储」:226-230 视口截断未画出）——35+ 行无逐行分割线依然可扫读：开关与胶囊提供了视觉锚点，行分组语义由 24dp 组顶距承担。</li>
+    <li><b>本组唯一 NameListPreference</b>：「检查更新查找版本」值胶囊「正式版」（<code>pref_config_other.xml:161-169</code>，entries=default_app_variant）——复用 <code>item_pref_value_chip.xml</code>，零改动。</li>
+    <li><b>危险动作不加重</b>：清理缓存 / 清除 WebView 数据 / 压缩数据库均按普通入口行处理（摘要说明后果），不使用 error 色——避免误触感，M3 亦不建议在列表行上用警示色。</li>
+    <li><b>长标题处理</b>：「更新和搜索线程数（太多会卡顿）」单行省略（singleLine），完整语义在点击后的对话框中。</li>
+  </ul>
+</section>
+
+<!-- ============ 04 主题 上 ============ -->
+<section class="scr" id="s4">
+  <div class="scr-head"><span class="scr-no">04</span><h2>主题设置（上 · 白天）</h2><span class="src">pref_config_theme.xml:5-116</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">主题设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">切换图标</div><div class="ps">切换软件显示在桌面的图标</div></div><div class="pend"><i class="licon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h6v16H5zM13 4h6v16h-6z"/></svg></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">启动界面样式</div><div class="ps">启动界面图片和是否显示文字等</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">状态栏颜色透明</div><div class="ps">状态栏颜色透明</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">沉浸式导航栏</div><div class="ps">导航栏颜色透明</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">导航栏阴影</div><div class="ps">当前阴影大小（elevation）：2</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">字体大小</div><div class="ps">当前字体大小：1.0</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">封面设置</div><div class="ps">通用封面规则及默认封面样式</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">主题列表</div><div class="ps">使用、保存、导入或分享主题</div></div></div>
+          <div class="pcat">白天</div>
+          <div class="prow"><div class="pbody"><div class="pt">主色调</div><div class="ps">白天，主色调</div></div><div class="pend"><i class="chip" style="background:#ff6b2c"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">强调色</div><div class="ps">白天，强调色</div></div><div class="pend"><i class="chip" style="background:#ff6b2c"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">背景色</div><div class="ps">白天，背景色</div></div><div class="pend"><i class="chip" style="background:#faf9f7"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">底栏色</div><div class="ps">白天，底栏色</div></div><div class="pend"><i class="chip" style="background:#eeece9"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">背景图片</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">保存主题配置</div><div class="ps">保存白天主题配置以供调用和分享</div></div></div>
+        </div>
+      </div>
+    </div><figcaption>浅色 Light（样本值：主色/强调 #FF6B2C、背景 #FAF9F7、底栏 #EEECE9）</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">主题设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">切换图标</div><div class="ps">切换软件显示在桌面的图标</div></div><div class="pend"><i class="licon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h6v16H5zM13 4h6v16h-6z"/></svg></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">启动界面样式</div><div class="ps">启动界面图片和是否显示文字等</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">状态栏颜色透明</div><div class="ps">状态栏颜色透明</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">沉浸式导航栏</div><div class="ps">导航栏颜色透明</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">导航栏阴影</div><div class="ps">当前阴影大小（elevation）：2</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">字体大小</div><div class="ps">当前字体大小：1.0</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">封面设置</div><div class="ps">通用封面规则及默认封面样式</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">主题列表</div><div class="ps">使用、保存、导入或分享主题</div></div></div>
+          <div class="pcat">白天</div>
+          <div class="prow"><div class="pbody"><div class="pt">主色调</div><div class="ps">白天，主色调</div></div><div class="pend"><i class="chip" style="background:#ff6b2c"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">强调色</div><div class="ps">白天，强调色</div></div><div class="pend"><i class="chip" style="background:#ff6b2c"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">背景色</div><div class="ps">白天，背景色</div></div><div class="pend"><i class="chip" style="background:#faf9f7"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">底栏色</div><div class="ps">白天，底栏色</div></div><div class="pend"><i class="chip" style="background:#eeece9"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">背景图片</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">保存主题配置</div><div class="ps">保存白天主题配置以供调用和分享</div></div></div>
+        </div>
+      </div>
+    </div><figcaption>深色 Dark</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>四类控件同屏</b>：IconListPreference（切换图标，48dp 桌面图标预览，<code>view_icon.xml</code> 48dp、<code>IconListPreference.kt:33/56-66</code>）、SwitchPreference（状态栏/导航栏沉浸）、ColorPreference（白天组 4 行，28dp 圆形色板展示当前值）、普通入口行——全部挂同一 <code>view_preference.xml</code> 行骨架，仅行尾 widget 不同。</li>
+    <li><b>色圆可读性</b>：浅色样本（#FAF9F7 背景色）靠库默认 1dp <code>#6E6E6E</code> 描边与行底区分（4.85:1），不为展示色而虚构底色；点击行弹 ColorPicker（<code>ColorPreference.kt:73-95</code>）。</li>
+    <li><b>页面跳转入口</b>：封面设置 / 主题列表 / 启动界面样式均无 caret（实现无此控件）；分组留白与摘要已足够指示「可点」。</li>
+  </ul>
+</section>
+
+<!-- ============ 05 主题 下 ============ -->
+<section class="scr" id="s5">
+  <div class="scr-head"><span class="scr-no">05</span><h2>主题设置（下 · 夜间）</h2><span class="src">pref_config_theme.xml:118-170（视口接 04 屏之后）</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">主题设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="pcat">夜间</div>
+          <div class="prow"><div class="pbody"><div class="pt">主色调</div><div class="ps">夜间，主色调</div></div><div class="pend"><i class="chip" style="background:#546e7a"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">强调色</div><div class="ps">夜间，强调色</div></div><div class="pend"><i class="chip" style="background:#d84315"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">背景色</div><div class="ps">夜间，背景色</div></div><div class="pend"><i class="chip" style="background:#212121"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">底栏色</div><div class="ps">夜间，底栏色</div></div><div class="pend"><i class="chip" style="background:#303030"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">背景图片</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">保存主题配置</div><div class="ps">保存夜间主题配置以供调用和分享</div></div></div>
+        </div>
+      </div>
+    </div><figcaption>浅色 Light（样本值：夜间组 XML 默认色）</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">主题设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="pcat">夜间</div>
+          <div class="prow"><div class="pbody"><div class="pt">主色调</div><div class="ps">夜间，主色调</div></div><div class="pend"><i class="chip" style="background:#546e7a"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">强调色</div><div class="ps">夜间，强调色</div></div><div class="pend"><i class="chip" style="background:#d84315"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">背景色</div><div class="ps">夜间，背景色</div></div><div class="pend"><i class="chip" style="background:#212121"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">底栏色</div><div class="ps">夜间，底栏色</div></div><div class="pend"><i class="chip" style="background:#303030"></i></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">背景图片</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">保存主题配置</div><div class="ps">保存夜间主题配置以供调用和分享</div></div></div>
+        </div>
+      </div>
+    </div><figcaption>深色 Dark</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>夜间组</b>（<code>pref_config_theme.xml:118-170</code>）：4 个 ColorPreference + 背景图片 + 保存主题配置，行型与白天组完全一致，样本色即 XML 默认值（<code>pref_config_theme.xml:127/135/143/151</code>）：md_blue_grey_600 <code>#546E7A</code> / md_deep_orange_800 <code>#D84315</code> / md_grey_900 <code>#212121</code> / md_grey_850 <code>#303030</code>。</li>
+    <li><b>白天/夜间两组间的分组节奏</b>：24dp 顶距 + 13sp 组题（「白天」「夜间」）即是分界，替代原 8dp shiftColor 色带——在两组同为取色行的长列表里，留白比色带更不容易被误读为一行内容。</li>
+    <li><b>改色即时反馈</b>：选色后 <code>saveValue()</code> → <code>notifyChanged()</code>（<code>ColorPreference.kt:160-165</code>），行尾色圆即时刷新；全局重建走 EventBus.RECREATE（<code>ConfigActivity.kt:46-48</code>）。</li>
+  </ul>
+</section>
+
+<!-- ============ 06 备份与恢复 ============ -->
+<section class="scr" id="s6">
+  <div class="scr-head"><span class="scr-no">06</span><h2>备份与恢复</h2><span class="src">pref_config_backup.xml:1-112</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">备份与恢复</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="pcat">WebDav 设置</div>
+          <div class="prow"><div class="pbody"><div class="pt">WebDav 服务器地址</div><div class="ps">https://dav.jianguoyun.com/dav/</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">WebDav 账号</div><div class="ps">输入你的 WebDav 账号</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">WebDav 密码</div><div class="ps">输入你的 WebDav 授权密码</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">子文件夹</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">设备名称</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">同步阅读进度</div><div class="ps">进入退出阅读界面时同步阅读进度</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">同步增强</div><div class="ps">重新进入页面（息屏、后台返回等）或者网络变为可用时同步云端进度</div></div><i class="sw on"></i></div>
+          <div class="pcat">备份与恢复</div>
+          <div class="prow"><div class="pbody"><div class="pt">备份路径</div><div class="ps">请选择备份路径</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">备份</div><div class="ps">本地和 WebDav 一起备份</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">恢复</div><div class="ps">优先从 WebDav 恢复，长按从本地恢复</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">恢复忽略列表</div><div class="ps">恢复时忽略一些内容不恢复，方便不同手机配置不同</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">导入旧版数据</div><div class="ps">选择旧版备份文件夹</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">仅保留最新备份</div><div class="ps">本地备份仅保留最新备份文件</div></div><i class="sw on"></i></div>
+        </div>
+      </div>
+    </div><figcaption>浅色 Light（样本值：服务器地址已配置）</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">备份与恢复</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="pcat">WebDav 设置</div>
+          <div class="prow"><div class="pbody"><div class="pt">WebDav 服务器地址</div><div class="ps">https://dav.jianguoyun.com/dav/</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">WebDav 账号</div><div class="ps">输入你的 WebDav 账号</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">WebDav 密码</div><div class="ps">输入你的 WebDav 授权密码</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">子文件夹</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">设备名称</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">同步阅读进度</div><div class="ps">进入退出阅读界面时同步阅读进度</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">同步增强</div><div class="ps">重新进入页面（息屏、后台返回等）或者网络变为可用时同步云端进度</div></div><i class="sw on"></i></div>
+          <div class="pcat">备份与恢复</div>
+          <div class="prow"><div class="pbody"><div class="pt">备份路径</div><div class="ps">请选择备份路径</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">备份</div><div class="ps">本地和 WebDav 一起备份</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">恢复</div><div class="ps">优先从 WebDav 恢复，长按从本地恢复</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">恢复忽略列表</div><div class="ps">恢复时忽略一些内容不恢复，方便不同手机配置不同</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">导入旧版数据</div><div class="ps">选择旧版备份文件夹</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">仅保留最新备份</div><div class="ps">本地备份仅保留最新备份文件</div></div><i class="sw on"></i></div>
+        </div>
+      </div>
+    </div><figcaption>深色 Dark</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>EditTextPreference 行</b>：值/占位文案走 13sp 摘要（<code>pref_config_backup.xml:12-42</code>），弹 <code>EditTextPreferenceDialog</code>；「子文件夹 / 设备名称」XML 无摘要 → 纯标题 48dp 行，不虚构占位。</li>
+    <li><b>依赖行（禁用态示范点）</b>：「同步增强」<code>android:dependency="syncBookProgress"</code>（<code>pref_config_backup.xml:58</code>）——「同步阅读进度」关时整行 alpha 38%（规格 D 可选一行 Kotlin），本稿样本为开（默认 true）。</li>
+    <li><b>组语义</b>：「WebDav 设置」「备份与恢复」两组（<code>pref_config_backup.xml:5/65</code>），组题右侧 1dp 弱线 + 24dp 顶距分界。</li>
+    <li><b>恢复的长按操作</b>：「恢复」摘要明示「长按从本地恢复」——长按行为保留（<code>Preference.kt:116-120</code> onLongClick 通路），无额外 UI。</li>
+  </ul>
+</section>
+
+<!-- ============ 07 封面设置 ============ -->
+<section class="scr" id="s7">
+  <div class="scr-head"><span class="scr-no">07</span><h2>封面设置</h2><span class="src">pref_config_cover.xml:1-97 · CoverConfigFragment.kt:39-41</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">封面设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">仅 WiFi</div><div class="ps">仅在 WiFi 下加载网络封面</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">封面规则</div><div class="ps">进入详情页时使用封面规则重新获取封面</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">总是使用默认封面</div><div class="ps">总是显示默认封面（不显示网络封面）</div></div><i class="sw"></i></div>
+          <div class="pcat">白天</div>
+          <div class="prow"><div class="pbody"><div class="pt">默认封面</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示书名</div><div class="ps">封面上显示书名</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示作者</div><div class="ps">封面上显示作者</div></div><i class="sw on"></i></div>
+          <div class="pcat">夜间</div>
+          <div class="prow"><div class="pbody"><div class="pt">默认封面</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示书名</div><div class="ps">封面上显示书名</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示作者</div><div class="ps">封面上显示作者</div></div><i class="sw on"></i></div>
+        </div>
+      </div>
+    </div><figcaption>浅色 Light</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">封面设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">仅 WiFi</div><div class="ps">仅在 WiFi 下加载网络封面</div></div><i class="sw"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">封面规则</div><div class="ps">进入详情页时使用封面规则重新获取封面</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">总是使用默认封面</div><div class="ps">总是显示默认封面（不显示网络封面）</div></div><i class="sw"></i></div>
+          <div class="pcat">白天</div>
+          <div class="prow"><div class="pbody"><div class="pt">默认封面</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示书名</div><div class="ps">封面上显示书名</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示作者</div><div class="ps">封面上显示作者</div></div><i class="sw on"></i></div>
+          <div class="pcat">夜间</div>
+          <div class="prow"><div class="pbody"><div class="pt">默认封面</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示书名</div><div class="ps">封面上显示书名</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示作者</div><div class="ps">封面上显示作者</div></div><i class="sw on"></i></div>
+        </div>
+      </div>
+    </div><figcaption>深色 Dark</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>白天/夜间两套默认封面</b>（<code>pref_config_cover.xml:28-96</code>）：组题分界，「默认封面」点击弹预设封面选择（无行尾 widget，与 XML 一致——不为示意虚构封面缩略图）。</li>
+    <li><b>联动禁用</b>：<code>CoverConfigFragment.kt:38-41</code> 以 <code>coverShowName/coverShowNameN</code> 控制 <code>coverShowAuthor/coverShowAuthorN</code> 行 isEnabled——关闭「显示书名」后「显示作者」行走 38% 禁用态（规格 D）。</li>
+    <li><b>开关默认值</b>：仅 WiFi / 总是使用默认封面默认关（XML defaultValue=false），封面规则为入口行。</li>
+  </ul>
+</section>
+
+<!-- ============ 08 欢迎页设置 ============ -->
+<section class="scr" id="s8">
+  <div class="scr-head"><span class="scr-no">08</span><h2>欢迎页设置</h2><span class="src">pref_config_welcome.xml:1-83</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">欢迎页设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">自定义欢迎页</div><div class="ps">是否使用自定义欢迎页</div></div><i class="sw"></i></div>
+          <div class="pcat">白天</div>
+          <div class="prow"><div class="pbody"><div class="pt">背景图片</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示文字</div><div class="ps">阅读|享受美好时光</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示图标</div><div class="ps">显示默认书籍图标</div></div><i class="sw on"></i></div>
+          <div class="pcat">夜间</div>
+          <div class="prow"><div class="pbody"><div class="pt">背景图片</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示文字</div><div class="ps">阅读|享受美好时光</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示图标</div><div class="ps">显示默认书籍图标</div></div><i class="sw on"></i></div>
+        </div>
+      </div>
+    </div><figcaption>浅色 Light（总开关默认关，分组行仍可配置）</figcaption></figure>
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12" aria-hidden="true"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><button class="icon-btn" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button><div class="st">欢迎页设置</div><span style="flex:1"></span></div>
+        <div class="plist">
+          <div class="prow"><div class="pbody"><div class="pt">自定义欢迎页</div><div class="ps">是否使用自定义欢迎页</div></div><i class="sw"></i></div>
+          <div class="pcat">白天</div>
+          <div class="prow"><div class="pbody"><div class="pt">背景图片</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示文字</div><div class="ps">阅读|享受美好时光</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示图标</div><div class="ps">显示默认书籍图标</div></div><i class="sw on"></i></div>
+          <div class="pcat">夜间</div>
+          <div class="prow"><div class="pbody"><div class="pt">背景图片</div></div></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示文字</div><div class="ps">阅读|享受美好时光</div></div><i class="sw on"></i></div>
+          <div class="prow"><div class="pbody"><div class="pt">显示图标</div><div class="ps">显示默认书籍图标</div></div><i class="sw on"></i></div>
+        </div>
+      </div>
+    </div><figcaption>深色 Dark</figcaption></figure>
+  </div>
+  <ul class="notes">
+    <li><b>最短分页</b>：总开关 + 白天/夜间两组各 3 行（<code>pref_config_welcome.xml:1-83</code>）；「自定义欢迎页」关时使用默认欢迎页，分组行不禁用（<code>WelcomeConfigFragment</code> 无 isEnabled 联动，稿面如实呈现）。</li>
+    <li><b>「显示文字」摘要即文案样本</b>：摘要直接展示欢迎语文案「阅读|享受美好时光」（<code>values-zh/strings.xml:992</code>），所见即所得。</li>
+    <li><b>组顶距在此屏的作用</b>：两组结构完全相同（背景图片/显示文字/显示图标），24dp 留白 + 13sp「白天/夜间」组题是唯一分界——这正是去色带方案对「同构重复组」的检验：分界依旧清晰。</li>
+  </ul>
+</section>
+
+</div>
+</body></html>

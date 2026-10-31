@@ -5,13 +5,30 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <!-- 12-missed-1 #20：工具栏透明置于 surface 卡底、标题 on_surface（同 01/03 屏修复项；
+         主色底上按 isColorLight 取字色在默认主色 #FF6B2C 下得白字，实算仅 2.84:1） -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="?attr/actionBarStyle"
         app:titleTextAppearance="@style/ToolbarTitle"
+        app:titleTextColor="@color/on_surface"
         app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    <!-- 10-reader-prefs#07：字体目录路径条（列表头 11.5sp on_surface_variant，换目录即时刷新） -->
+    <TextView
+        android:id="@+id/tv_font_dir"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="18dp"
+        android:paddingTop="10dp"
+        android:paddingRight="18dp"
+        android:paddingBottom="6dp"
+        android:singleLine="true"
+        android:ellipsize="start"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="11.5sp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"

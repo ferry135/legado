@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 阅读页点击区域九宫格·中格（12-missed-2 #11）：主色虚线描边强调默认居中调菜单，底色与其它格一致。
+     描边 @color/primary 仅作 ThemeStore 默认兜底：ClickActionConfigDialog 绑定处已以
+     context.primaryColor mutate+setStroke 运行时覆盖，随用户换肤（MASTER §4 禁布局固化 primary） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="@dimen/corner_radius_md" />
+    <stroke
+        android:width="1dp"
+        android:color="@color/primary"
+        android:dashWidth="3dp"
+        android:dashGap="3dp" />
+    <solid android:color="@color/click_action_panel" />
+</shape>

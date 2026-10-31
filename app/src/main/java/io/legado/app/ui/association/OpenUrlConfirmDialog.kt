@@ -13,7 +13,6 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.AppLog
 import io.legado.app.databinding.DialogOpenUrlConfirmBinding
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.toastOnUi
@@ -55,7 +54,8 @@ class OpenUrlConfirmDialog() : BaseDialogFragment(R.layout.dialog_open_url_confi
             dismiss()
             return
         }
-        binding.toolBar.setBackgroundColor(primaryColor)
+        // 12-missed-1 #04：去掉 primaryColor 实底（浅主色换肤时白字不可读），
+        // 工具栏透明置于 surface 卡底，标题色走 app:titleTextColor=@color/on_surface
         binding.toolBar.subtitle = viewModel.sourceName
         initView()
     }
@@ -68,6 +68,7 @@ class OpenUrlConfirmDialog() : BaseDialogFragment(R.layout.dialog_open_url_confi
 
     private fun initView() {
         binding.message.text = "${viewModel.sourceName} 正在请求跳转链接/应用，是否跳转？"
+        binding.tvUri.text = viewModel.uri
         binding.btnNegative.setOnClickListener { dismiss() }
         binding.btnPositive.setOnClickListener {
             openUrl()

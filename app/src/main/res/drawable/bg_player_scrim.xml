@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 听书播放器封面模糊图上的恒定暖黑渐变纱（11-audio-light S5：顶 70%→中 75%→底 85%，替换 vw_bg 的 scrim_50；任意封面（含最坏 #E5E5E6）下白字 ≥5.6:1） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:angle="270"
+        android:centerColor="#BF0C0805"
+        android:endColor="#D90C0805"
+        android:startColor="#B30C0805" />
+</shape>

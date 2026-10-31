@@ -8,6 +8,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.AppLog
 import io.legado.app.databinding.ItemFontBinding
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.*
 import java.io.File
 import java.net.URLDecoder
@@ -50,6 +51,8 @@ class FontAdapter(context: Context, curFilePath: String, val callBack: CallBack)
             }
             tvFont.text = item.name
             root.setOnClickListener { callBack.onFontSelect(item) }
+            // 选中项主色对勾：布局不固化 primary（MASTER §4），此处按 ThemeStore 运行时着色
+            ivChecked.setColorFilter(context.primaryColor)
             if (item.name == curName) {
                 ivChecked.visible()
             } else {
