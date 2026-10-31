@@ -174,13 +174,14 @@ class ReadMenu @JvmOverloads constructor(
             titleBar.setColorFilter(textColor)
             tvChapterName.setTextColor(lightTextColor)
             tvChapterUrl.setTextColor(lightTextColor)
-        } else if (reset) {
-            val bgColor = context.primaryColor
-            val textColor = context.primaryTextColor
-            titleBar.setTextColor(textColor)
-            titleBar.setColorFilter(textColor)
-            tvChapterName.setTextColor(textColor)
-            tvChapterUrl.setTextColor(textColor)
+        } else {
+            // 非沉浸：首次初始化与 reset 都必须显式着色——
+            // 否则章节名/地址残留 actionBarStyle 的白色，在亮色顶栏上不可见
+            val menuTextColor = if (reset) context.primaryTextColor else textColor
+            titleBar.setTextColor(menuTextColor)
+            titleBar.setColorFilter(menuTextColor)
+            tvChapterName.setTextColor(menuTextColor)
+            tvChapterUrl.setTextColor(menuTextColor)
         }
         upPanelBackground(titleBar, R.drawable.bg_read_menu_top_panel, bgColor)
         titleBar.elevation = 0f
