@@ -70,10 +70,10 @@
     "darkStatusIconNight": false
   },
   {
-    "name": "预设3",
-    "bgStr": "#C2D8AA",
+    "name": "护眼",
+    "bgStr": "#C7EDCC",
     "bgStrNight": "#3C3F43",
-    "textColor": "#596C44",
+    "textColor": "#465A33",
     "textColorNight": "#88C16F",
     "bgType": 0,
     "bgTypeNight": 0,

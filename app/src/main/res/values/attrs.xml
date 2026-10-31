@@ -170,6 +170,9 @@
     <declare-styleable name="StrokeTextView">
         <attr name="radius" />
         <attr name="isBottomBackground" />
+        <!-- 13-read-style#05：isBottomBackground 分支静息描边降为 25% ink（阅读界面设置弹窗六入口 chip 用，
+             不改全局默认，view_select_action_bar / dialog_read_bg_text 等同款控件不受影响） -->
+        <attr name="softStroke" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="BadgeView">
@@ -215,6 +218,8 @@
 
     <declare-styleable name="ThemeRadioNoButton">
         <attr name="isBottomBackground" />
+        <!-- 13-read-style#13：胶囊单选组圆角，默认 2dp 保持旧行为（dialog_search_scope 等不受影响） -->
+        <attr name="cornerRadius" format="dimension" />
     </declare-styleable>
 
     <declare-styleable name="Preference">

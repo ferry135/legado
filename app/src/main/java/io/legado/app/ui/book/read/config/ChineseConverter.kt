@@ -1,25 +1,20 @@
 package io.legado.app.ui.book.read.config
 
 import android.content.Context
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
 import io.legado.app.R
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.widget.text.StrokeTextView
 
 
 class ChineseConverter(context: Context, attrs: AttributeSet?) : StrokeTextView(context, attrs) {
 
-    private val spannableString = SpannableString("简/繁")
-    private var enabledSpan: ForegroundColorSpan = ForegroundColorSpan(context.accentColor)
+    // 13-read-style#06：当前段加粗表达状态，未选段 secondary 令牌；span 管线复用 BoldMutedSegments，仅保留区间映射
+    private val segments = BoldMutedSegments(this, context.getString(R.string.chinese_converter_text))
     private var onChanged: (() -> Unit)? = null
 
     init {
-        text = spannableString
         if (!isInEditMode) {
             upUi(AppConfig.chineseConverterType)
         }
@@ -29,12 +24,17 @@ class ChineseConverter(context: Context, attrs: AttributeSet?) : StrokeTextView(
     }
 
     private fun upUi(type: Int) {
-        spannableString.removeSpan(enabledSpan)
-        when (type) {
-            1 -> spannableString.setSpan(enabledSpan, 0, 1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
-            2 -> spannableString.setSpan(enabledSpan, 2, 3, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+        val boldRange = when (type) {
+            1 -> 0 to 1
+            2 -> 2 to 3
+            else -> null
         }
-        text = spannableString
+        val mutedRanges = when (type) {
+            1 -> listOf(2 to 3)
+            2 -> listOf(0 to 1)
+            else -> listOf(0 to 1, 2 to 3)
+        }
+        segments.apply(boldRange, mutedRanges)
     }
 
     private fun selectType() {

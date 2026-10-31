@@ -59,6 +59,10 @@
     <color name="day_surface_container_high">#F1EFE9</color>
     <color name="night_surface">#141312</color>
     <color name="night_surface_container">#1D1B19</color>
+    <!-- on_surface_variant 角色（次要文字）的运行时对：按 bottomBackground 明暗分支取值，
+         不走 values-night 限定符（EInk 白底可配夜间 uiMode，资源解析会错档） -->
+    <color name="day_on_surface_variant">#60656D</color>
+    <color name="night_on_surface_variant">#B4B0AA</color>
     <color name="day_bottom_nav">#FFFEFC</color>
     <color name="night_bottom_nav">#1B1917</color>
     <color name="divider_subtle">#0D000000</color>

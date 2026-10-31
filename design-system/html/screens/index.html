@@ -2,7 +2,7 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>legado 全新界面设计 v4 · 总导览</title><style>
+<title>legado 全新界面设计 v5 · 总导览</title><style>
 *{box-sizing:border-box}html,body{margin:0;padding:0}
 body{font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#ece9e2;color:#26231d}
 /* ---------- 页头 ---------- */
@@ -73,9 +73,9 @@ footer .ft b{color:#26231d}
 
 <header class="page-head">
   <div class="ph-in">
-    <div class="eyebrow">Legado UI Design · v4</div>
-    <h1>legado 全新界面设计 v4<span class="en">DESIGN OVERVIEW</span></h1>
-    <p class="ph-sub">暖橙主色 · 暖纸白 / 暖黑表面 · 弱分割线 · 大圆角 · 无阴影 blend 顶栏 · Material 3 —— 共 13 组设计稿、134 屏（按各稿分区计，明暗双主题）。点击任意预览或屏幕名，可在新窗口打开原稿。</p>
+    <div class="eyebrow">Legado UI Design · v5</div>
+    <h1>legado 全新界面设计 v5<span class="en">DESIGN OVERVIEW</span></h1>
+    <p class="ph-sub">暖橙主色 · 暖纸白 / 暖黑表面 · 弱分割线 · 大圆角 · 无阴影 blend 顶栏 · Material 3 —— 共 14 组设计稿、138 屏（按各稿分区计，明暗双主题）。点击任意预览或屏幕名，可在新窗口打开原稿。</p>
     <div class="tokens">
       <span class="tk"><i class="sw" style="background:#ff6b2c"></i><span><b>主色</b> <code>#FF6B2C</code><small>暖橙 · Tab 激活 / 主按钮 / 徽标</small></span></span>
       <span class="tk"><span class="pair-sw"><i style="background:#faf9f7"></i><i style="background:#ffffff"></i><i class="tri" style="background:#eeece9"></i></span><span><b>表面 · 暖纸白</b> <code>#FAF9F7 / #FFFFFF / #EEECE9</code><small>亮色 背景 / 卡面 / 次级面</small></span></span>
@@ -97,6 +97,7 @@ footer .ft b{color:#26231d}
       <a href="#g11"><b>11</b>听书播放与悬浮钮</a>
       <a href="#g12"><b>12</b>遗漏页面（一）</a>
       <a href="#g13"><b>13</b>遗漏页面（二）</a>
+      <a href="#g14"><b>14</b>界面设置弹窗重设计</a>
     </nav>
   </div>
 </header>
@@ -393,11 +394,27 @@ footer .ft b{color:#26231d}
   </a></div>
 </section>
 
+<!-- ============ 14 界面设置弹窗重设计 ============ -->
+<section class="grp" id="g14">
+  <div class="grp-head"><span class="grp-no">14</span><h2>界面设置弹窗重设计</h2><span class="grp-src">13-read-style.html</span></div>
+  <p class="grp-desc">阅读菜单「界面」入口的底部弹层（ReadStyleDialog）重设计：六入口 chip 网格、四组 DetailSeekBar 行（ink 8% 圆角卡+值胶囊）、翻页动画胶囊单选组（选中=主色底白字）与预设色板（圆形色块+预设名+主色 2dp 选中描边）；容器恢复 16dp 顶圆角 + scrim_dialog 50% 遮罩，配色决策收敛到「自适应 ink 状态层」梯度，任意换肤色下成立；护眼预设采用起点读书护眼绿 #C7EDCC（实测对比度见 02 节）。主色 #FF6B2C 可换肤；明暗双主题。</p>
+  <div class="slist"><span class="lab">屏幕清单</span>
+    <a href="13-read-style.html#sheet" target="_blank" rel="noopener"><i>1</i>界面设置弹窗（重设计形态）</a>
+    <a href="13-read-style.html#palette" target="_blank" rel="noopener"><i>2</i>护眼绿与色板状态</a>
+    <a href="13-read-style.html#mapping" target="_blank" rel="noopener"><i>3</i>旧观感问题 → 设计解法（逐条）</a>
+    <a href="13-read-style.html#landing" target="_blank" rel="noopener"><i>4</i>落地说明（XML / ReadBookConfig）</a>
+  </div>
+  <div class="pv-wrap"><a class="pv" href="13-read-style.html" target="_blank" rel="noopener" aria-label="在新窗口打开 14 界面设置弹窗重设计原稿">
+    <iframe src="13-read-style.html" title="14 界面设置弹窗重设计 预览" loading="lazy" tabindex="-1"></iframe>
+    <span class="veil"><span class="hint">缩放预览 · 完整稿含明暗双主题与设计注记</span><span class="open">在新窗口打开原稿 ↗</span></span>
+  </a></div>
+</section>
+
 </main>
 
 <footer>
   <div class="ft">
-    <b>legado 全新界面设计 v4</b> · 13 组设计稿 · 134 屏（按各稿分区计）· 单文件自包含，无外部依赖。<br>
+    <b>legado 全新界面设计 v5</b> · 14 组设计稿 · 138 屏（按各稿分区计）· 单文件自包含，无外部依赖。<br>
     视觉令牌：主色 <b>#FF6B2C</b>；亮色表面 <b>#FAF9F7 / #FFFFFF / #EEECE9</b>，暗色表面 <b>#141312 / #1D1B19 / #242220</b>；圆角 <b>面板 20 / 弹层 16 / 卡片 12</b>；分割线 <b>rgba(0,0,0,.07) / rgba(255,255,255,.08)</b>；无阴影、blend 顶栏、Material 3。
   </div>
 </footer>

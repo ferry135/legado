@@ -1,26 +1,21 @@
 package io.legado.app.ui.book.read.config
 
 import android.content.Context
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
 import io.legado.app.R
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.widget.text.StrokeTextView
 
 
 class TextFontWeightConverter(context: Context, attrs: AttributeSet?) :
     StrokeTextView(context, attrs) {
 
-    private val spannableString = SpannableString(context.getString(R.string.font_weight_text))
-    private var enabledSpan: ForegroundColorSpan = ForegroundColorSpan(context.accentColor)
+    // 13-read-style#06：当前段加粗表达状态，未选段 secondary 令牌；span 管线复用 BoldMutedSegments，仅保留区间映射
+    private val segments = BoldMutedSegments(this, context.getString(R.string.font_weight_text))
     private var onChanged: (() -> Unit)? = null
 
     init {
-        text = spannableString
         if (!isInEditMode) {
             upUi(ReadBookConfig.textBold)
         }
@@ -29,15 +24,20 @@ class TextFontWeightConverter(context: Context, attrs: AttributeSet?) :
         }
     }
 
+    // ReadStyleDialog.upView() 外部调用，保持 public
     @Suppress("MemberVisibilityCanBePrivate")
     fun upUi(type: Int) {
-        spannableString.removeSpan(enabledSpan)
-        when (type) {
-            0 -> spannableString.setSpan(enabledSpan, 0, 1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
-            1 -> spannableString.setSpan(enabledSpan, 2, 3, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
-            2 -> spannableString.setSpan(enabledSpan, 4, 5, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+        val boldRange = when (type) {
+            0 -> 0 to 1
+            1 -> 2 to 3
+            else -> 4 to 5
         }
-        text = spannableString
+        val mutedRanges = when (type) {
+            0 -> listOf(2 to 3, 4 to 5)
+            1 -> listOf(0 to 1, 4 to 5)
+            else -> listOf(0 to 1, 2 to 3)
+        }
+        segments.apply(boldRange, mutedRanges)
     }
 
     private fun selectType() {

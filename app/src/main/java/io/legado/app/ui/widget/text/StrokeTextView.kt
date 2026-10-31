@@ -14,11 +14,13 @@ open class StrokeTextView(context: Context, attrs: AttributeSet?) :
     AppCompatTextView(context, attrs) {
 
     private var radius = 1.dpToPx()
+    private var softStroke = false
     private val isBottomBackground: Boolean
 
     init {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.StrokeTextView)
         radius = typedArray.getDimensionPixelOffset(R.styleable.StrokeTextView_radius, radius)
+        softStroke = typedArray.getBoolean(R.styleable.StrokeTextView_softStroke, false)
         isBottomBackground =
             typedArray.getBoolean(R.styleable.StrokeTextView_isBottomBackground, false)
         typedArray.recycle()
@@ -51,11 +53,17 @@ open class StrokeTextView(context: Context, attrs: AttributeSet?) :
             }
             isBottomBackground -> {
                 val isLight = ColorUtils.isColorLight(context.bottomBackground)
+                // 13-read-style#05：softStroke 静息描边降为 25% ink（六入口 chip 用，档位取 InkGradient），其余不变
+                val strokeColor = if (softStroke) {
+                    ColorUtils.adjustAlpha(context.getPrimaryTextColor(isLight), InkGradient.STROKE_MUTED)
+                } else {
+                    context.getPrimaryTextColor(isLight)
+                }
                 background = Selector.shapeBuild()
                     .setCornerRadius(radius)
                     .setStrokeWidth(1.dpToPx())
                     .setDisabledStrokeColor(context.getCompatColor(R.color.md_grey_500))
-                    .setDefaultStrokeColor(context.getPrimaryTextColor(isLight))
+                    .setDefaultStrokeColor(strokeColor)
                     .setSelectedStrokeColor(context.accentColor)
                     .setPressedBgColor(context.getCompatColor(R.color.transparent30))
                     .create()

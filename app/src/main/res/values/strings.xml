@@ -271,6 +271,8 @@
     <string name="download_all">Download all</string>
     <string name="content_sl">This is a test text, \n\u3000\u3000 just to show you the effect</string>
     <string name="text_bg_style">Color and background (long tap to customize)</string>
+    <!-- 13-read-style：预设色板尾部「自定义」单元格名（footer，点击转 BgTextConfigDialog） -->
+    <string name="read_style_custom">Customize</string>
     <string name="immersion_status_bar">Immersive status bar</string>
     <string name="un_download">%d chapter(s) left</string>
     <string name="long_click_input_color">Long tap to input color value</string>
@@ -1183,6 +1185,7 @@
     <string name="record_heap_dump_s">Saving a heap dump when the application crashes by OOM</string>
     <string name="record_heap_dump_t">Capture heap dump</string>
     <string name="font_weight_text">N/B/L</string>
+    <string name="chinese_converter_text">S/T</string>
     <string name="keep_swipe_tip">Keep swiping to load the next chapter…</string>
     <string name="enable_optimize_render">启用绘制优化</string>
     <string name="ignore_battery_permission_rationale">阅读需要请求后台权限以保持服务正常运行</string>

@@ -1,11 +1,12 @@
 package io.legado.app.ui.book.read.config
 
 import android.content.DialogInterface
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.core.view.get
 import com.github.liuyueyi.quick.transfer.constants.TransType
 import io.legado.app.R
@@ -18,17 +19,21 @@ import io.legado.app.databinding.ItemReadStyleBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.lib.dialogs.selector
+import io.legado.app.lib.theme.InkGradient
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.getOnSurfaceVariant
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.font.FontSelectDialog
 import io.legado.app.utils.ChineseUtils
 import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.applyBottomSheetWindow
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.getIndexById
 import io.legado.app.utils.postEvent
+import io.legado.app.utils.setSheetBackground
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.views.onLongClick
@@ -40,18 +45,16 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
     private val callBack get() = activity as? ReadBookActivity
     private lateinit var styleAdapter: StyleAdapter
 
+    // 13-read-style#22：弹层只取一次自适应 ink 主色（分割线/容器/胶囊档位统一取 InkGradient 梯度表）；
+    // 次要字用 on_surface_variant 角色令牌（62% ink 在 #EEECE9 上 4.38:1 < 4.5，令牌 4.98:1 达标）
+    private var inkTextColor: Int = 0
+    private var secondaryTextColor: Int = 0
+
     override fun onStart() {
         super.onStart()
-        dialog?.window?.run {
-            clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-            setBackgroundDrawableResource(R.color.background)
-            decorView.setPadding(0, 0, 0, 0)
-            val attr = attributes
-            attr.dimAmount = 0.0f
-            attr.gravity = Gravity.BOTTOM
-            attributes = attr
-            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        }
+        // 13-read-style#03/#04：底部弹层窗口形态收口（透明底 + scrim_dialog 50% 遮罩 + 底部重力），
+        // 替换原 clearFlags(FLAG_DIM_BEHIND) + R.color.background 窗口底 + dimAmount=0 双套背景混用
+        dialog?.window?.applyBottomSheetWindow(ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,11 +73,16 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
     private fun initView() = binding.run {
         val bg = requireContext().bottomBackground
         val isLight = ColorUtils.isColorLight(bg)
-        val textColor = requireContext().getPrimaryTextColor(isLight)
-        rootView.setBackgroundColor(bg)
-        tvPageAnim.setTextColor(textColor)
-        tvBgTs.setTextColor(textColor)
-        tvShareLayout.setTextColor(textColor)
+        inkTextColor = requireContext().getPrimaryTextColor(isLight)
+        secondaryTextColor = requireContext().getOnSurfaceVariant(isLight)
+        // 13-read-style#02：顶部 16dp 圆角弹层底（随换肤），替代原 setBackgroundColor 直角覆盖
+        rootView.setSheetBackground(bg, topOnly = true)
+        // 13-read-style#16/#22：分割线 12% ink、次要标签 on_surface_variant 令牌，替代固定 divider_subtle 与 alpha 0.75
+        vwBgFg.background = ColorDrawable(ColorUtils.adjustAlpha(inkTextColor, InkGradient.DIVIDER))
+        vwBgFg1.background = ColorDrawable(ColorUtils.adjustAlpha(inkTextColor, InkGradient.DIVIDER))
+        tvPageAnim.setTextColor(secondaryTextColor)
+        tvBgTs.setTextColor(secondaryTextColor)
+        tvShareLayout.setTextColor(inkTextColor)
         dsbTextSize.valueFormat = {
             (it + 5).toString()
         }
@@ -85,13 +93,36 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
         dsbParagraphSpacing.valueFormat = { (it / 10f).toString() }
         styleAdapter = StyleAdapter()
         rvStyle.adapter = styleAdapter
+        // 13-read-style：色板右缘 44dp 渐隐提示（透明 → 弹层底色，对齐 .sw-fade 渐变）
+        vwStyleFade.background = GradientDrawable(
+            GradientDrawable.Orientation.LEFT_RIGHT,
+            intArrayOf(Color.TRANSPARENT, bg)
+        )
+        // 13-read-style#17：配色方案行整行可点（label 与开关同触控域）
+        rowShareLayout.setOnClickListener { cbShareLayout.toggle() }
         styleAdapter.addFooterView {
             ItemReadStyleBinding.inflate(layoutInflater, it, false).apply {
-                ivStyle.setPadding(6.dpToPx(), 6.dpToPx(), 6.dpToPx(), 6.dpToPx())
+                // 13-read-style#20：footer 48dp 圆钮内 24dp 加号；ghost 圆 = ink 8% 圆底 + 1dp 虚线描边
+                // （ink 30%，3/3dp 周期对齐稿 02 节 .sw-cell.add 的 1px dashed）——CircleImageView 自身
+                // border 无 dash 能力，改由背景层 GradientDrawable(OVAL) 承担虚线描边（边框归零、填充透明）
+                ivStyle.setPadding(12.dpToPx(), 12.dpToPx(), 12.dpToPx(), 12.dpToPx())
                 ivStyle.setText(null)
-                ivStyle.setColorFilter(textColor)
-                ivStyle.borderColor = textColor
+                ivStyle.setColorFilter(secondaryTextColor)
+                ivStyle.borderWidth = 0
+                ivStyle.circleBackgroundColor = Color.TRANSPARENT
+                ivStyle.background = GradientDrawable().apply {
+                    shape = GradientDrawable.OVAL
+                    setColor(ColorUtils.adjustAlpha(inkTextColor, InkGradient.CONTAINER))
+                    setStroke(
+                        1.dpToPx(),
+                        ColorUtils.adjustAlpha(inkTextColor, InkGradient.STROKE_GHOST),
+                        3.dpToPx().toFloat(),
+                        3.dpToPx().toFloat()
+                    )
+                }
                 ivStyle.setImageResource(R.drawable.ic_add)
+                tvStyleName.setText(R.string.read_style_custom)
+                tvStyleName.setTextColor(secondaryTextColor)
                 root.setOnClickListener {
                     ReadBookConfig.configList.add(ReadBookConfig.Config())
                     showBgTextConfig(ReadBookConfig.configList.lastIndex)
@@ -139,7 +170,8 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
             callBack?.upPageAnim()
             ReadBook.loadContent(false)
         }
-        cbShareLayout.onCheckedChangeListener = { _, isChecked ->
+        // 13-read-style#17：ThemeSwitch 为 SwitchCompat，监听走标准 setOnCheckedChangeListener
+        cbShareLayout.setOnCheckedChangeListener { _, isChecked ->
             ReadBookConfig.shareLayout = isChecked
             upView()
             postEvent(EventBus.UP_CONFIG, arrayListOf(1, 2, 5))
@@ -222,30 +254,45 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
             payloads: MutableList<Any>
         ) {
             binding.apply {
-                ivStyle.setText(item.name.ifBlank { "文字" })
-                ivStyle.setTextColor(item.curTextColor())
-                ivStyle.setImageDrawable(item.curBgDrawable(100, 150))
-                if (ReadBookConfig.styleSelect == holder.layoutPosition) {
-                    ivStyle.borderColor = accentColor
-                    ivStyle.setTextBold(true)
+                // 13-read-style#19：色板为方案预览——颜色型背景恒显白天配色（夜间也用 bgStr 渲染纯底色圆，
+                // 消除五个预设夜间同底近黑不可辨的问题；item.textColor 不进色板，经 curTextColor() 作用于
+                // 阅读正文）；图片背景仍走 curBgDrawable
+                if (item.bgType == 0) {
+                    ivStyle.setImageDrawable(
+                        runCatching { ColorDrawable(Color.parseColor(item.bgStr)) }.getOrNull()
+                            ?: item.curBgDrawable(100, 150)
+                    )
                 } else {
-                    ivStyle.borderColor = item.curTextColor()
-                    ivStyle.setTextBold(false)
+                    ivStyle.setImageDrawable(item.curBgDrawable(100, 150))
+                }
+                tvStyleName.text = item.name.ifBlank { tvStyleName.context.getString(R.string.text) }
+                if (ReadBookConfig.styleSelect == holder.layoutPosition) {
+                    // 13-read-style#18：选中 = 2dp 主色描边 + 名字主色加粗
+                    ivStyle.borderWidth = 2.dpToPx()
+                    ivStyle.borderColor = accentColor
+                    tvStyleName.setTextColor(accentColor)
+                    tvStyleName.paint.isFakeBoldText = true
+                } else {
+                    ivStyle.borderWidth = 1.dpToPx()
+                    ivStyle.borderColor = ColorUtils.adjustAlpha(inkTextColor, InkGradient.STROKE_MUTED)
+                    tvStyleName.setTextColor(secondaryTextColor)
+                    tvStyleName.paint.isFakeBoldText = false
                 }
             }
         }
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemReadStyleBinding) {
             binding.apply {
-                ivStyle.setOnClickListener {
-                    if (ivStyle.isInView) {
-                        changeBgTextConfig(holder.layoutPosition)
-                    }
+                // 13-read-style 02 节触控条目：色板单元格（圆+名，48+6+12=66dp）整体可点，监听绑 root
+                // （旧仅绑 48dp 圆形 ivStyle，预设名 tv_style_name 为点击死区）。原 isInView 守卫是
+                // CircleImageView 的圆内命中判定（48dp 方形四角拒点），整体可点后由单元格边界取代；
+                // 旧 onLongClick(isInView) 实为 splitties 的 consume 参数（注册时求值，绑定时恒 false，
+                // 长按未消费回落 click 造成双动作），恢复默认 consume=true
+                root.setOnClickListener {
+                    changeBgTextConfig(holder.layoutPosition)
                 }
-                ivStyle.onLongClick(ivStyle.isInView) {
-                    if (ivStyle.isInView) {
-                        showBgTextConfig(holder.layoutPosition)
-                    }
+                root.onLongClick {
+                    showBgTextConfig(holder.layoutPosition)
                 }
             }
         }

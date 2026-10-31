@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 阅读界面设置弹层顶部 grip 条（13-read-style .sheet-grip：36×4dp，纯装饰视形锚点；
+     尺寸由布局设置，底色 = 设计稿 track 令牌（明暗成对 progress_track）） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/progress_track" />
+    <corners android:radius="2dp" />
+</shape>

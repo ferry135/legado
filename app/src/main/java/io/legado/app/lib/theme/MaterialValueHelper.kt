@@ -17,8 +17,8 @@ import io.legado.app.utils.dpToPx
  * @author Karim Abou Zeid (kabouzeid)
  */
 @ColorInt
-fun Context.getPrimaryTextColor(dark: Boolean): Int {
-    return if (dark) {
+fun Context.getPrimaryTextColor(isLightBackground: Boolean): Int {
+    return if (isLightBackground) {
         ContextCompat.getColor(this, R.color.md_light_primary_text)
     } else {
         ContextCompat.getColor(this, R.color.md_dark_primary_text)
@@ -26,17 +26,32 @@ fun Context.getPrimaryTextColor(dark: Boolean): Int {
 }
 
 @ColorInt
-fun Context.getSecondaryTextColor(dark: Boolean): Int {
-    return if (dark) {
+fun Context.getSecondaryTextColor(isLightBackground: Boolean): Int {
+    return if (isLightBackground) {
         ContextCompat.getColor(this, R.color.md_light_secondary)
     } else {
         ContextCompat.getColor(this, R.color.md_dark_primary_text)
     }
 }
 
+/**
+ * on_surface_variant 角色（MASTER §2 次要文字）的换肤自适应取色：按 bottomBackground 明暗分支
+ * 返回 #60656D（亮）/ #B4B0AA（暗），均 ≥4.5:1（#EEECE9 上 4.98:1、#FAF9F7 上 5.58:1，
+ * 暗色 7.35:1+）。不走 values-night 限定符——EInk 白底可配夜间 uiMode，资源解析会错档。
+ * 13-read-style 梯度「次要字」档：62% ink 在 #EEECE9 上实算 4.38:1（<4.5，MASTER §1/§4），
+ * 故文字不做 alpha 派生，直接用本角色色；ink 8%/10% 叠层胶囊上的文字仍用 primaryText。
+ */
 @ColorInt
-fun Context.getPrimaryDisabledTextColor(dark: Boolean): Int {
-    return if (dark) {
+fun Context.getOnSurfaceVariant(isLightBackground: Boolean): Int {
+    return ContextCompat.getColor(
+        this,
+        if (isLightBackground) R.color.day_on_surface_variant else R.color.night_on_surface_variant
+    )
+}
+
+@ColorInt
+fun Context.getPrimaryDisabledTextColor(isLightBackground: Boolean): Int {
+    return if (isLightBackground) {
         ContextCompat.getColor(this, R.color.md_light_disabled)
     } else {
         ContextCompat.getColor(this, R.color.md_dark_disabled)
@@ -44,8 +59,8 @@ fun Context.getPrimaryDisabledTextColor(dark: Boolean): Int {
 }
 
 @ColorInt
-fun Context.getSecondaryDisabledTextColor(dark: Boolean): Int {
-    return if (dark) {
+fun Context.getSecondaryDisabledTextColor(isLightBackground: Boolean): Int {
+    return if (isLightBackground) {
         ContextCompat.getColor(
             this,
             androidx.appcompat.R.color.secondary_text_disabled_material_light
