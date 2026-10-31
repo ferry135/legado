@@ -53,6 +53,7 @@
         app:layout_constraintTop_toBottomOf="@+id/refresh_progress_bar" />
 
     <View
+        android:id="@+id/divider_above_bar"
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:background="@color/divider_subtle"
