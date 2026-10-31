@@ -270,6 +270,7 @@
     <string name="download_all">一键缓存</string>
     <string name="content_sl">这是一段测试文字\n\u3000\u3000只是让你看看效果的</string>
     <string name="text_bg_style">文字颜色和背景（长按自定义）</string>
+    <string name="read_style_custom">自定义</string>
     <string name="immersion_status_bar">沉浸式状态栏</string>
     <string name="un_download">还剩 %d 章未下载</string>
     <string name="long_click_input_color">长按输入颜色值</string>
@@ -1182,6 +1183,7 @@
     <string name="record_heap_dump_s">当应用发生OOM崩溃时保存堆转储</string>
     <string name="record_heap_dump_t">记录堆转储</string>
     <string name="font_weight_text">中/粗/细</string>
+    <string name="chinese_converter_text">简/繁</string>
     <string name="keep_swipe_tip">继续滑动以加载下一章…</string>
     <string name="enable_optimize_render">启用绘制优化</string>
     <string name="ignore_battery_permission_rationale">阅读需要请求后台权限以保持服务正常运行</string>

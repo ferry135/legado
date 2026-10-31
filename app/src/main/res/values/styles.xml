@@ -1,7 +1,5 @@
 <resources>
-
-    //**************************************************************Theme******************************************************************************//
-
+    <!-- Theme -->
     <!-- 亮色主题 -->
     <style name="AppTheme.Light" parent="Base.AppTheme">
         <item name="actionBarStyle">@style/AppTheme.AppBarOverlay.Light</item>
@@ -54,9 +52,7 @@
     </style>
 
     <style name="Spinner" parent="android:Theme.Holo.Light" />
-
-    //**********System Style******************//
-
+    <!-- System Style -->
     <style name="Style.NavigationView" parent="android:Widget">
         <item name="android:listPreferredItemHeightSmall">44dp</item>
     </style>
@@ -86,9 +82,7 @@
     <style name="ToolbarTitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">20sp</item>
     </style>
-
-    //*******************Widget Style**********************************//
-
+    <!-- Widget Style -->
     <style name="Style.Shadow.Top" parent="android:Widget">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/shadow_height</item>
@@ -131,9 +125,7 @@
     <style name="Style.Text.Second.Normal.Wrap">
         <item name="android:layout_width">wrap_content</item>
     </style>
-
-    //**********Material 3 Text Appearances**********//
-
+    <!-- Material 3 Text Appearances -->
     <style name="TextAppearance.Legado" parent="android:Widget" />
 
     <style name="TextAppearance.Legado.PageTitle" parent="TextAppearance.Legado">
@@ -184,15 +176,11 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/on_surface_variant</item>
     </style>
-
-    //**********Cards and Containers**********//
-
+    <!-- Cards and Containers -->
     <style name="Style.Card" parent="android:Widget">
         <item name="android:background">@drawable/bg_card</item>
     </style>
-
-    //**********Bottom Navigation**********//
-
+    <!-- Bottom Navigation -->
     <style name="ShapeAppearance.Legado.Pill" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
@@ -210,9 +198,7 @@
         <item name="itemIconSize">24dp</item>
         <item name="elevation">0dp</item>
     </style>
-
-    //**********Filled Field（10-reader-prefs#06：filled 输入框，同 activity_replace_edit 字段）**********//
-
+    <!-- Filled Field（10-reader-prefs#06：filled 输入框，同 activity_replace_edit 字段） -->
     <style name="Widget.Legado.FilledField" parent="">
         <item name="boxBackgroundMode">filled</item>
         <item name="boxBackgroundColor">@color/surface_container_high</item>
@@ -222,6 +208,41 @@
         <item name="boxCornerRadiusBottomEnd">10dp</item>
         <item name="boxStrokeWidth">0dp</item>
         <item name="boxStrokeWidthFocused">2dp</item>
+    </style>
+    <!-- Read Style Dialog（13-read-style：六入口 chip / 翻页动画 pill 公共基形） -->
+    <style name="Widget.Legado.ReadStyleChip" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">4dp</item>
+        <item name="android:layout_marginEnd">4dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:paddingLeft">11dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingRight">11dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="isBottomBackground">true</item>
+        <item name="radius">8dp</item>
+        <item name="softStroke">true</item>
+    </style>
+
+    <style name="Widget.Legado.ReadStyleAnimPill" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:button">@null</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingTop">9dp</item>
+        <item name="android:paddingRight">4dp</item>
+        <item name="android:paddingBottom">9dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="cornerRadius">24dp</item>
+        <item name="isBottomBackground">true</item>
     </style>
 
 </resources>

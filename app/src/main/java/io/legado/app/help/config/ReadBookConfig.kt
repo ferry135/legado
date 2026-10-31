@@ -506,8 +506,8 @@ object ReadBookConfig {
     @Keep
     data class Config(
         var name: String = "",
-        var bgStr: String = "#EEEEEE",//白天背景
-        var bgStrNight: String = "#000000",//夜间背景
+        var bgStr: String = "#FAF9F7",//白天背景（13-read-style#24：对齐 surface 亮 token）
+        var bgStrNight: String = "#141312",//夜间背景（对齐 surface 暗 token，消除纯黑）
         var bgStrEInk: String = "#FFFFFF",//EInk背景
         var bgAlpha: Int = 100,//背景透明度
         var bgType: Int = 0,//白天背景类型 0:颜色, 1:assets图片, 2其它图片

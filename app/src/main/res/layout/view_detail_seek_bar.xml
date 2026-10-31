@@ -18,37 +18,47 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_seek_reduce"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:padding="10dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
         android:contentDescription="@string/reduce"
         android:src="@drawable/ic_reduce"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:tint="@color/primaryText" />
 
+    <!-- 13-read-style#09：可视轨 24dp（padding 12dp 上下）+ 48dp 热区 -->
     <io.legado.app.lib.theme.view.ThemeSeekBar
         android:id="@+id/seek_bar"
         android:layout_width="0dp"
-        android:layout_height="25dp"
+        android:layout_height="48dp"
         android:layout_gravity="center_vertical"
         android:layout_weight="4"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
         android:max="10" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_seek_plus"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:padding="10dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
         android:contentDescription="@string/plus"
         android:src="@drawable/ic_add"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:tint="@color/primaryText" />
 
+    <!-- 13-read-style#11：值胶囊基形（ink 10% 圆角 8dp 底由 DetailSeekBar 代码设置，
+         与 dialog_auto_read tv_read_speed 的 vchip 形态对齐） -->
     <TextView
         android:id="@+id/tv_seek_value"
-        android:layout_width="48dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="right"
+        android:minWidth="40dp"
+        android:gravity="center"
+        android:paddingLeft="12dp"
+        android:paddingTop="5dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="5dp"
         android:singleLine="true"
         android:text="0"
         android:textColor="@color/primaryText"

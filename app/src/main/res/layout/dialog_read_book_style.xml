@@ -8,120 +8,66 @@
     android:background="@drawable/bg_read_sheet_top"
     android:orientation="vertical">
 
+    <!-- 13-read-style：顶部 4dp grip 视形锚点（纯装饰，底色为明暗成对 progress_track） -->
+    <View
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/bg_sheet_grip" />
+
+    <!-- 13-read-style#05/06/07：六入口 2×3 chip 网格（48dp 目标、14sp、8dp 圆角、25% ink 软描边；
+         与 grip 间距 12dp 对齐 .sheet-grip margin-bottom:12px） -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp">
+        android:layout_marginTop="12dp"
+        android:orientation="vertical">
 
-        <io.legado.app.ui.book.read.config.TextFontWeightConverter
-            android:id="@+id/text_font_weight_converter"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingLeft="11dp"
-            android:paddingTop="6dp"
-            android:paddingRight="11dp"
-            android:paddingBottom="6dp"
-            android:textSize="13sp"
-            app:isBottomBackground="true"
-            app:radius="8dp" />
+            android:layout_marginHorizontal="12dp"
+            android:orientation="horizontal">
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            <io.legado.app.ui.book.read.config.TextFontWeightConverter
+                android:id="@+id/text_font_weight_converter"
+                style="@style/Widget.Legado.ReadStyleChip" />
 
-        <io.legado.app.ui.widget.text.StrokeTextView
-            android:id="@+id/tv_text_font"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingLeft="11dp"
-            android:paddingTop="6dp"
-            android:paddingRight="11dp"
-            android:paddingBottom="6dp"
-            android:text="@string/text_font"
-            android:textSize="13sp"
-            app:isBottomBackground="true"
-            app:radius="8dp" />
+            <io.legado.app.ui.widget.text.StrokeTextView
+                android:id="@+id/tv_text_font"
+                style="@style/Widget.Legado.ReadStyleChip"
+                android:text="@string/text_font" />
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            <io.legado.app.ui.widget.text.StrokeTextView
+                android:id="@+id/tv_text_indent"
+                style="@style/Widget.Legado.ReadStyleChip"
+                android:text="@string/text_indent" />
 
-        <io.legado.app.ui.widget.text.StrokeTextView
-            android:id="@+id/tv_text_indent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingLeft="11dp"
-            android:paddingTop="6dp"
-            android:paddingRight="11dp"
-            android:paddingBottom="6dp"
-            android:text="@string/text_indent"
-            android:textSize="13sp"
-            app:isBottomBackground="true"
-            app:radius="8dp" />
+        </LinearLayout>
 
-        <Space
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_marginTop="8dp"
+            android:layout_marginHorizontal="12dp"
+            android:orientation="horizontal">
 
-        <io.legado.app.ui.book.read.config.ChineseConverter
-            android:id="@+id/chinese_converter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingLeft="11dp"
-            android:paddingTop="6dp"
-            android:paddingRight="11dp"
-            android:paddingBottom="6dp"
-            android:textSize="13sp"
-            app:isBottomBackground="true"
-            app:radius="8dp" />
+            <io.legado.app.ui.book.read.config.ChineseConverter
+                android:id="@+id/chinese_converter"
+                style="@style/Widget.Legado.ReadStyleChip" />
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            <io.legado.app.ui.widget.text.StrokeTextView
+                android:id="@+id/tv_padding"
+                style="@style/Widget.Legado.ReadStyleChip"
+                android:text="@string/padding" />
 
-        <io.legado.app.ui.widget.text.StrokeTextView
-            android:id="@+id/tv_padding"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingLeft="11dp"
-            android:paddingTop="6dp"
-            android:paddingRight="11dp"
-            android:paddingBottom="6dp"
-            android:text="@string/padding"
-            android:textSize="13sp"
-            app:isBottomBackground="true"
-            app:radius="8dp" />
+            <io.legado.app.ui.widget.text.StrokeTextView
+                android:id="@+id/tv_tip"
+                style="@style/Widget.Legado.ReadStyleChip"
+                android:text="@string/information" />
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <io.legado.app.ui.widget.text.StrokeTextView
-            android:id="@+id/tv_tip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingLeft="11dp"
-            android:paddingTop="6dp"
-            android:paddingRight="11dp"
-            android:paddingBottom="6dp"
-            android:text="@string/information"
-            android:textSize="13sp"
-            app:isBottomBackground="true"
-            app:radius="8dp" />
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -140,6 +86,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
         app:isBottomBackground="true"
         app:max="100"
         app:title="@string/text_letter_spacing" />
@@ -149,6 +96,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
         app:isBottomBackground="true"
         app:max="20"
         app:title="@string/line_size" />
@@ -158,25 +106,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
         app:isBottomBackground="true"
         app:max="20"
         app:title="@string/paragraph_size" />
 
+    <!-- 13-read-style#16：分割线颜色改由代码设 ink 12%（随运行时换肤自适应），布局不再固定 divider_subtle -->
     <View
         android:id="@+id/vw_bg_fg"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginVertical="12dp"
-        android:background="@color/divider_subtle" />
+        android:layout_marginVertical="12dp" />
 
+    <!-- 13-read-style#12：删 alpha，颜色由代码设 on_surface_variant 角色令牌（getOnSurfaceVariant，ReadStyleDialog.kt） -->
     <TextView
         android:id="@+id/tv_page_anim"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="8dp"
-        android:alpha="0.75"
         android:text="@string/page_anim"
         android:textSize="12sp" />
 
@@ -190,83 +139,28 @@
 
         <io.legado.app.lib.theme.view.ThemeRadioNoButton
             android:id="@+id/rb_anim0"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:layout_weight="1"
-            android:button="@null"
-            android:gravity="center"
-            android:paddingLeft="4dp"
-            android:paddingTop="9dp"
-            android:paddingRight="4dp"
-            android:paddingBottom="9dp"
-            android:singleLine="true"
-            android:text="@string/page_anim_cover"
-            app:isBottomBackground="true" />
+            style="@style/Widget.Legado.ReadStyleAnimPill"
+            android:text="@string/page_anim_cover" />
 
         <io.legado.app.lib.theme.view.ThemeRadioNoButton
             android:id="@+id/rb_anim1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:layout_weight="1"
-            android:button="@null"
-            android:gravity="center"
-            android:paddingLeft="4dp"
-            android:paddingTop="9dp"
-            android:paddingRight="4dp"
-            android:paddingBottom="9dp"
-            android:singleLine="true"
-            android:text="@string/page_anim_slide"
-            app:isBottomBackground="true" />
+            style="@style/Widget.Legado.ReadStyleAnimPill"
+            android:text="@string/page_anim_slide" />
 
         <io.legado.app.lib.theme.view.ThemeRadioNoButton
             android:id="@+id/rb_simulation_anim"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:layout_weight="1"
-            android:button="@null"
-            android:gravity="center"
-            android:paddingLeft="4dp"
-            android:paddingTop="9dp"
-            android:paddingRight="4dp"
-            android:paddingBottom="9dp"
-            android:singleLine="true"
-            android:text="@string/page_anim_simulation"
-            app:isBottomBackground="true" />
+            style="@style/Widget.Legado.ReadStyleAnimPill"
+            android:text="@string/page_anim_simulation" />
 
         <io.legado.app.lib.theme.view.ThemeRadioNoButton
             android:id="@+id/rb_scroll_anim"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:layout_weight="1"
-            android:button="@null"
-            android:gravity="center"
-            android:paddingLeft="4dp"
-            android:paddingTop="9dp"
-            android:paddingRight="4dp"
-            android:paddingBottom="9dp"
-            android:singleLine="true"
-            android:text="@string/page_anim_scroll"
-            app:isBottomBackground="true" />
+            style="@style/Widget.Legado.ReadStyleAnimPill"
+            android:text="@string/page_anim_scroll" />
 
         <io.legado.app.lib.theme.view.ThemeRadioNoButton
             android:id="@+id/rb_no_anim"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:layout_weight="1"
-            android:button="@null"
-            android:gravity="center"
-            android:paddingLeft="4dp"
-            android:paddingTop="9dp"
-            android:paddingRight="4dp"
-            android:paddingBottom="9dp"
-            android:singleLine="true"
-            android:text="@string/page_anim_none"
-            app:isBottomBackground="true" />
+            style="@style/Widget.Legado.ReadStyleAnimPill"
+            android:text="@string/page_anim_none" />
 
     </RadioGroup>
 
@@ -275,13 +169,18 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginVertical="12dp"
-        android:background="@color/divider_subtle" />
+        android:layout_marginVertical="12dp" />
 
+    <!-- 13-read-style#17：配色方案行 48dp、整行可点；开关换 ThemeSwitch（主色轨） -->
     <LinearLayout
+        android:id="@+id/row_share_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
         android:gravity="center_vertical"
+        android:minHeight="48dp"
         android:orientation="horizontal">
 
         <TextView
@@ -290,7 +189,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="18dp"
             android:layout_weight="1"
-            android:alpha="0.75"
             android:text="@string/text_bg_style"
             android:textSize="12sp" />
 
@@ -299,27 +197,40 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/share_layout"
-            android:textSize="13sp" />
+            android:textSize="14sp" />
 
-        <io.legado.app.ui.widget.checkbox.SmoothCheckBox
+        <io.legado.app.lib.theme.view.ThemeSwitch
             android:id="@+id/cb_share_layout"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="38dp"
+            android:layout_height="22dp"
             android:layout_marginStart="6dp"
             android:layout_marginEnd="18dp" />
 
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_style"
+    <!-- 13-read-style：色板横向列表 + 右缘 44dp 渐隐提示（渐变终点=运行时弹层底色，由代码设） -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
-        android:clipToPadding="false"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tool:listitem="@layout/item_read_style" />
+        android:layout_marginBottom="16dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tool:listitem="@layout/item_read_style" />
+
+        <View
+            android:id="@+id/vw_style_fade"
+            android:layout_width="44dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end" />
+
+    </FrameLayout>
 
 </LinearLayout>
