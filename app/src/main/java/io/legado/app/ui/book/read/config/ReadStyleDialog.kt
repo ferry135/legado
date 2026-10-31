@@ -20,10 +20,9 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.config.ReadBookConfig
 import io.legado.app.lib.dialogs.selector
 import io.legado.app.lib.theme.InkGradient
+import io.legado.app.lib.theme.SheetInk
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.lib.theme.bottomBackground
-import io.legado.app.lib.theme.getOnSurfaceVariant
-import io.legado.app.lib.theme.getPrimaryTextColor
+import io.legado.app.lib.theme.sheetInk
 import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.font.FontSelectDialog
@@ -45,10 +44,10 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
     private val callBack get() = activity as? ReadBookActivity
     private lateinit var styleAdapter: StyleAdapter
 
-    // 13-read-style#22：弹层只取一次自适应 ink 主色（分割线/容器/胶囊档位统一取 InkGradient 梯度表）；
-    // 次要字用 on_surface_variant 角色令牌（62% ink 在 #EEECE9 上 4.38:1 < 4.5，令牌 4.98:1 达标）
-    private var inkTextColor: Int = 0
-    private var secondaryTextColor: Int = 0
+    // 13-read-style#22：弹层只取一次自适应 ink 派生三元组（分割线/容器/胶囊档位统一取
+    // InkGradient 梯度表 + SheetInk 构建器）；次要字用 on_surface_variant 角色令牌
+    // （62% ink 在 #EEECE9 上 4.38:1 < 4.5，令牌 4.98:1 达标）
+    private lateinit var sheetInk: SheetInk
 
     override fun onStart() {
         super.onStart()
@@ -71,18 +70,15 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
     }
 
     private fun initView() = binding.run {
-        val bg = requireContext().bottomBackground
-        val isLight = ColorUtils.isColorLight(bg)
-        inkTextColor = requireContext().getPrimaryTextColor(isLight)
-        secondaryTextColor = requireContext().getOnSurfaceVariant(isLight)
+        sheetInk = requireContext().sheetInk()
         // 13-read-style#02：顶部 16dp 圆角弹层底（随换肤），替代原 setBackgroundColor 直角覆盖
-        rootView.setSheetBackground(bg, topOnly = true)
+        rootView.setSheetBackground(sheetInk.bg, topOnly = true)
         // 13-read-style#16/#22：分割线 12% ink、次要标签 on_surface_variant 令牌，替代固定 divider_subtle 与 alpha 0.75
-        vwBgFg.background = ColorDrawable(ColorUtils.adjustAlpha(inkTextColor, InkGradient.DIVIDER))
-        vwBgFg1.background = ColorDrawable(ColorUtils.adjustAlpha(inkTextColor, InkGradient.DIVIDER))
-        tvPageAnim.setTextColor(secondaryTextColor)
-        tvBgTs.setTextColor(secondaryTextColor)
-        tvShareLayout.setTextColor(inkTextColor)
+        vwBgFg.background = sheetInk.divider()
+        vwBgFg1.background = sheetInk.divider()
+        tvPageAnim.setTextColor(sheetInk.secondary)
+        tvBgTs.setTextColor(sheetInk.secondary)
+        tvShareLayout.setTextColor(sheetInk.ink)
         dsbTextSize.valueFormat = {
             (it + 5).toString()
         }
@@ -96,7 +92,7 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
         // 13-read-style：色板右缘 44dp 渐隐提示（透明 → 弹层底色，对齐 .sw-fade 渐变）
         vwStyleFade.background = GradientDrawable(
             GradientDrawable.Orientation.LEFT_RIGHT,
-            intArrayOf(Color.TRANSPARENT, bg)
+            intArrayOf(Color.TRANSPARENT, sheetInk.bg)
         )
         // 13-read-style#17：配色方案行整行可点（label 与开关同触控域）
         rowShareLayout.setOnClickListener { cbShareLayout.toggle() }
@@ -107,22 +103,22 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
                 // border 无 dash 能力，改由背景层 GradientDrawable(OVAL) 承担虚线描边（边框归零、填充透明）
                 ivStyle.setPadding(12.dpToPx(), 12.dpToPx(), 12.dpToPx(), 12.dpToPx())
                 ivStyle.setText(null)
-                ivStyle.setColorFilter(secondaryTextColor)
+                ivStyle.setColorFilter(sheetInk.secondary)
                 ivStyle.borderWidth = 0
                 ivStyle.circleBackgroundColor = Color.TRANSPARENT
                 ivStyle.background = GradientDrawable().apply {
                     shape = GradientDrawable.OVAL
-                    setColor(ColorUtils.adjustAlpha(inkTextColor, InkGradient.CONTAINER))
+                    setColor(ColorUtils.adjustAlpha(sheetInk.ink, InkGradient.CONTAINER))
                     setStroke(
                         1.dpToPx(),
-                        ColorUtils.adjustAlpha(inkTextColor, InkGradient.STROKE_GHOST),
+                        ColorUtils.adjustAlpha(sheetInk.ink, InkGradient.STROKE_GHOST),
                         3.dpToPx().toFloat(),
                         3.dpToPx().toFloat()
                     )
                 }
                 ivStyle.setImageResource(R.drawable.ic_add)
                 tvStyleName.setText(R.string.read_style_custom)
-                tvStyleName.setTextColor(secondaryTextColor)
+                tvStyleName.setTextColor(sheetInk.secondary)
                 root.setOnClickListener {
                     ReadBookConfig.configList.add(ReadBookConfig.Config())
                     showBgTextConfig(ReadBookConfig.configList.lastIndex)
@@ -274,8 +270,8 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
                     tvStyleName.paint.isFakeBoldText = true
                 } else {
                     ivStyle.borderWidth = 1.dpToPx()
-                    ivStyle.borderColor = ColorUtils.adjustAlpha(inkTextColor, InkGradient.STROKE_MUTED)
-                    tvStyleName.setTextColor(secondaryTextColor)
+                    ivStyle.borderColor = ColorUtils.adjustAlpha(sheetInk.ink, InkGradient.STROKE_MUTED)
+                    tvStyleName.setTextColor(sheetInk.secondary)
                     tvStyleName.paint.isFakeBoldText = false
                 }
             }

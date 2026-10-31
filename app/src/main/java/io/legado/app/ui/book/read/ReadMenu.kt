@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.PorterDuff
-import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -37,15 +36,12 @@ import io.legado.app.model.ReadBook
 import io.legado.app.ui.browser.WebViewActivity
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.ColorUtils
-import io.legado.app.utils.ConstraintModify
 import io.legado.app.utils.activity
 import io.legado.app.utils.applyNavigationBarPadding
-import io.legado.app.utils.dpToPx
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.gone
 import io.legado.app.utils.invisible
 import io.legado.app.utils.loadAnimation
-import io.legado.app.utils.modifyBegin
 import io.legado.app.utils.openUrl
 import io.legado.app.utils.putPrefBoolean
 import io.legado.app.utils.startActivity
@@ -122,7 +118,9 @@ class ReadMenu @JvmOverloads constructor(
                 ReadBook.bookSource?.bookSourceName ?: context.getString(R.string.book_source)
             binding.tvSourceAction.isGone = ReadBook.isLocalBook
             callBack.upSystemUiVisibility()
-            binding.llBrightness.visible(showBrightnessView)
+            // 14-reader-brightness#01：showBrightnessView 关闭时亮度行整行 gone（不占位，
+            // 行隐藏期间 brightnessAuto() 的 !showBrightnessView 兜底保持生效）
+            binding.llBrightnessRow.gone(!showBrightnessView)
         }
 
         @SuppressLint("RtlHardcoded")
@@ -185,10 +183,6 @@ class ReadMenu @JvmOverloads constructor(
         }
         upPanelBackground(titleBar, R.drawable.bg_read_menu_top_panel, bgColor)
         titleBar.elevation = 0f
-        val brightnessBackground = GradientDrawable()
-        brightnessBackground.cornerRadius = 16F.dpToPx()
-        brightnessBackground.setColor(ColorUtils.adjustAlpha(bgColor, 0.5f))
-        llBrightness.background = brightnessBackground
         if (AppConfig.isEInkMode) {
             titleBar.setBackgroundResource(R.drawable.bg_eink_border_bottom)
             llBottomBg.setBackgroundResource(R.drawable.bg_eink_border_top)
@@ -209,8 +203,9 @@ class ReadMenu @JvmOverloads constructor(
         tvFont.setTextColor(textColor)
         ivSetting.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
         tvSetting.setTextColor(textColor)
-        vwBrightnessPosAdjust.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
-        llBrightness.setOnClickListener(null)
+        // 14-reader-brightness#01：亮度行并入底面板，太阳静态图标随菜单 textColor 体系着色；
+        // seek_brightness / iv_brightness_auto 着色分别由 ThemeSeekBar 主题与 upBrightnessState 承担
+        ivBrightnessIcon.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
         seekBrightness.post {
             seekBrightness.progress = AppConfig.readBrightness
         }
@@ -219,7 +214,6 @@ class ReadMenu @JvmOverloads constructor(
         } else {
             titleBarAddition.gone()
         }
-        upBrightnessVwPos()
         /**
          * 确保视图不被导航栏遮挡
          */
@@ -262,12 +256,17 @@ class ReadMenu @JvmOverloads constructor(
     }
 
     fun upBrightnessState() {
+        // 14-reader-brightness#02：无障碍——开/关态同步 contentDescription 播报（同 fabAutoPage 双态口径）
         if (brightnessAuto()) {
             binding.ivBrightnessAuto.setColorFilter(context.accentColor)
             binding.seekBrightness.isEnabled = false
+            binding.ivBrightnessAuto.contentDescription =
+                context.getString(R.string.brightness_auto_on)
         } else {
             binding.ivBrightnessAuto.setColorFilter(context.buttonDisabledColor)
             binding.seekBrightness.isEnabled = true
+            binding.ivBrightnessAuto.contentDescription =
+                context.getString(R.string.brightness_auto_off)
         }
         setScreenBrightness(AppConfig.readBrightness.toFloat())
     }
@@ -397,10 +396,6 @@ class ReadMenu @JvmOverloads constructor(
             }
 
         })
-        vwBrightnessPosAdjust.setOnClickListener {
-            AppConfig.brightnessVwPos = !AppConfig.brightnessVwPos
-            upBrightnessVwPos()
-        }
         //阅读进度
         seekReadPage.setOnSeekBarChangeListener(object : SeekBarChangeListener {
 
@@ -553,20 +548,6 @@ class ReadMenu @JvmOverloads constructor(
             fabAutoPage.contentDescription = context.getString(R.string.auto_next_page)
         }
         fabAutoPage.setColorFilter(textColor)
-    }
-
-    private fun upBrightnessVwPos() {
-        if (AppConfig.brightnessVwPos) {
-            binding.root.modifyBegin()
-                .clear(R.id.ll_brightness, ConstraintModify.Anchor.LEFT)
-                .rightToRightOf(R.id.ll_brightness, R.id.vw_menu_root)
-                .commit()
-        } else {
-            binding.root.modifyBegin()
-                .clear(R.id.ll_brightness, ConstraintModify.Anchor.RIGHT)
-                .leftToLeftOf(R.id.ll_brightness, R.id.vw_menu_root)
-                .commit()
-        }
     }
 
     interface CallBack {

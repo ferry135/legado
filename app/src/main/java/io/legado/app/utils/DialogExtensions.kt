@@ -12,7 +12,7 @@ import io.legado.app.R
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.accentColor
-import io.legado.app.lib.theme.filletBackground
+import io.legado.app.lib.theme.alertCardBackground
 import splitties.systemservices.windowManager
 
 /**
@@ -48,7 +48,7 @@ fun Window.applyBottomSheetWindow(height: Int) {
 }
 
 fun AlertDialog.applyTint(): AlertDialog {
-    window?.setBackgroundDrawable(context.filletBackground)
+    window?.setBackgroundDrawable(context.alertCardBackground)
     val colorStateList = Selector.colorBuild()
         .setDefaultColor(ThemeStore.accentColor(context))
         .setPressedColor(ColorUtils.darkenColor(ThemeStore.accentColor(context)))

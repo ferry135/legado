@@ -74,59 +74,6 @@
     </io.legado.app.ui.widget.TitleBar>
 
     <LinearLayout
-        android:id="@+id/ll_brightness"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
-        android:minWidth="54dp"
-        android:background="@drawable/bg_read_brightness_panel"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_menu"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_bar"
-        tools:ignore="RtlHardcoded">
-
-        <ImageView
-            android:id="@+id/iv_brightness_auto"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="4dp"
-            android:padding="10dp"
-            android:contentDescription="@string/brightness_auto"
-            android:src="@drawable/ic_brightness_auto"
-            tools:ignore="ImageContrastCheck" />
-
-        <io.legado.app.ui.widget.seekbar.VerticalSeekBarWrapper
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-            <io.legado.app.ui.widget.seekbar.VerticalSeekBar
-                android:id="@+id/seek_brightness"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:max="255"
-                app:seekBarRotation="CW270" />
-
-        </io.legado.app.ui.widget.seekbar.VerticalSeekBarWrapper>
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/vw_brightness_pos_adjust"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="6dp"
-            android:padding="10dp"
-            android:contentDescription="@string/adjust_pos"
-            android:src="@drawable/ic_swap_horiz"
-            app:tint="@color/on_surface" />
-
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/bottom_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -239,6 +186,56 @@
             android:orientation="vertical"
             android:paddingTop="10dp"
             android:paddingBottom="14dp">
+
+            <!-- 14-reader-brightness#01：亮度行并入底面板（起点式横条：太阳静态图标 + 横向滑条 +
+                 自动亮度开关），替代旧左侧悬浮竖条（ll_brightness/bg_read_brightness_panel 已删）；
+                 行 paddingBottom 4dp + 章节行 marginTop 4dp = 8dp 间距（MASTER §1） -->
+            <LinearLayout
+                android:id="@+id/ll_brightness_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="22dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="22dp"
+                android:paddingBottom="4dp">
+
+                <!-- 静态太阳指示图标：44dp 命中区、24dp 图标 + 10dp padding，不响应点击 -->
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_brightness_icon"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:contentDescription="@string/brightness"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_brightness_sun"
+                    app:tint="@color/on_surface" />
+
+                <!-- 14-reader-brightness#02：VerticalSeekBar → ThemeSeekBar（同章节行控件），
+                     控件高 48dp、上下 padding 12dp → 可视轨 24dp；max=255 不变 -->
+                <io.legado.app.lib.theme.view.ThemeSeekBar
+                    android:id="@+id/seek_brightness"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:max="255"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp" />
+
+                <!-- 自动亮度开关：id/类型/行为不变（原竖条顶部移至行尾），着色与开/关态播报
+                     （contentDescription）由 upBrightnessState 设 -->
+                <ImageView
+                    android:id="@+id/iv_brightness_auto"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_brightness_auto"
+                    tools:ignore="ImageContrastCheck" />
+
+            </LinearLayout>
+
             <!--章节设置-->
             <LinearLayout
                 android:layout_width="match_parent"

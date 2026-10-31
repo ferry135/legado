@@ -571,7 +571,6 @@ Còn </string>
     <string name="reading">Đọc</string>
     <string name="battery_show">%d%%</string>
     <string name="timer_m">%d phút</string>
-    <string name="brightness_auto">Độ sáng tự động %s</string>
     <string name="read_aloud_by_page">Nói theo trang</string>
     <string name="speak_engine">Nói động cơ</string>
     <string name="bg_image">Ảnh nền</string>
@@ -1121,7 +1120,6 @@ Còn </string>
      <string name="load_word_count">Số lượng từ tải</string>
      <string name="replace_exclude_scope">Loại trừ phạm vi, tên sách tùy chọn hoặc URL nguồn sách</string>
      <string name="format_js_rule">Quy tắc định dạng (formatJs)</string>
-     <string name="adjust_pos">Điều chỉnh vị trí</string>
      <string name="error_scope_input">Vui lòng nhập phạm vi chính xác</string>
      <string name="custom_export">Xuất tùy chỉnh</string>
      <string name="file_contains_number">Số chương chứa trong mỗi tập tin</string>

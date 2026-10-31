@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 阅读菜单亮度侧面板：93% 半透明底 + 16dp 圆角（03） -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/read_panel" />
-    <corners android:radius="@dimen/corner_radius_lg" />
-</shape>

@@ -18,12 +18,12 @@ import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
+import io.legado.app.lib.theme.sheetInk
 import io.legado.app.ui.file.HandleFileContract
-import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.FileDoc
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.RealPathUtil
-import io.legado.app.utils.applyDialogScrim
+import io.legado.app.utils.applyTransparentScrimWindow
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.externalFiles
@@ -33,6 +33,7 @@ import io.legado.app.utils.list
 import io.legado.app.utils.listFileDocs
 import io.legado.app.utils.putPrefString
 import io.legado.app.utils.setLayout
+import io.legado.app.utils.setSheetBackground
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.Main
@@ -76,8 +77,10 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
 
     override fun onStart() {
         super.onStart()
-        // 10-reader-prefs#07 注⑤：统一 scrim_dialog 遮罩（applyDialogScrim = 50% 黑）
-        dialog?.window?.applyDialogScrim()
+        // 10-reader-prefs#07 注⑤：统一 scrim_dialog 遮罩（applyDialogScrim = 50% 黑）；
+        // 14-reader-brightness#04：16dp 圆角卡须透明窗口底（applyTransparentScrimWindow 已含遮罩
+        // 语义），否则不透明窗底垫在圆角缺口后填成直角，同 ReadAloudConfigDialog 先例
+        dialog?.window?.applyTransparentScrimWindow()
         setLayout(0.9f, 0.9f)
     }
 
@@ -85,13 +88,23 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
         // 12-missed-1 #20：工具栏透明置于 surface 卡底，标题/图标/文字动作项走 on_surface
         // （原主色实底按 isColorLight 取字，默认主色 #FF6B2C 判暗→白字仅 2.84:1，明暗均不达标；
         // 文字动作项随 actionBarStyle DayNight 覆盖层取字色，与卡底明暗天然匹配）
+        // 14-reader-brightness#04：自适应 ink 派生三元组（路径胶囊取 SheetInk.chip 档位，同
+        // ReadStyleDialog 口径；仅本方法使用故用局部 val，与 PaddingConfigDialog 一致）
+        val ink = requireContext().sheetInk()
+        // 14-reader-brightness#04：0.9×0.9 卡片形态保留，底换 16dp 圆角卡（corner_radius_lg +
+        // bottomBackground 填充，与 13 弹层底色同源随换肤；覆盖 BaseDialogFragment 的
+        // backgroundColor 卡底，同 MoreConfigDialog/ReadStyleDialog 做法）
+        binding.root.setSheetBackground(ink.bg)
         binding.toolBar.setTitle(R.string.select_font)
         binding.toolBar.inflateMenu(R.menu.font_select)
         binding.toolBar.menu.applyTint(requireContext())
         binding.toolBar.setOnMenuItemClickListener(this)
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.adapter = adapter
-        binding.recyclerView.addItemDecoration(VerticalDivider(requireContext()))
+        // 14-reader-brightness#04：目录行=值胶囊行，整行可点换目录（menu_other 兼容保留）；
+        // 路径胶囊 ink 10% 底随换肤（档位取 InkGradient）；去掉行分隔线，用留白与状态层
+        binding.llFontDir.setOnClickListener { openFolder() }
+        binding.tvFontDirPath.background = ink.chip()
         // 10-reader-prefs#07：字体目录路径条，换目录即时刷新
         upFontDirLabel()
 
@@ -146,7 +159,9 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
         val path = getPrefString(PreferKey.fontFolder)
             ?.let { if (it.isContentScheme()) Uri.decode(it) else it }
             ?: "SD/Fonts"
-        binding.tvFontDir.text = getString(R.string.font_dir, path)
+        // 14-reader-brightness#04：label 与值分置两视图，文案仍走 font_dir 资源（占位传空串取前缀）
+        binding.tvFontDir.text = getString(R.string.font_dir, "").trimEnd('：', ':', ' ')
+        binding.tvFontDirPath.text = path
     }
 
     private fun getLocalFonts(): ArrayList<FileDoc> {

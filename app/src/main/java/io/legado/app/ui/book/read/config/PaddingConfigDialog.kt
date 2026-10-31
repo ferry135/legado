@@ -3,15 +3,15 @@ package io.legado.app.ui.book.read.config
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.constant.EventBus
 import io.legado.app.databinding.DialogReadPaddingBinding
 import io.legado.app.help.config.ReadBookConfig
+import io.legado.app.lib.theme.sheetInk
+import io.legado.app.utils.applyBottomSheetWindow
 import io.legado.app.utils.postEvent
-import io.legado.app.utils.setLayout
+import io.legado.app.utils.setSheetBackground
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class PaddingConfigDialog : BaseDialogFragment(R.layout.dialog_read_padding) {
@@ -20,13 +20,11 @@ class PaddingConfigDialog : BaseDialogFragment(R.layout.dialog_read_padding) {
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.let {
-            it.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-            val attr = it.attributes
-            attr.dimAmount = 0.0f
-            it.attributes = attr
-        }
-        setLayout(0.9f, ViewGroup.LayoutParams.WRAP_CONTENT)
+        // 14-reader-brightness#05：底部弹层窗口收口（透明窗底 + scrim_dialog 50% + 底部重力），
+        // 替换原 clearFlags(FLAG_DIM_BEHIND) + dimAmount=0 无遮罩浮窗；高 80% 屏防超长（内部滚动）
+        dialog?.window?.applyBottomSheetWindow(
+            (resources.displayMetrics.heightPixels * 0.8f).toInt()
+        )
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,6 +58,24 @@ class PaddingConfigDialog : BaseDialogFragment(R.layout.dialog_read_padding) {
     }
 
     private fun initView() = binding.run {
+        // 14-reader-brightness#05：16dp 顶圆角弹层底 + 分组标签/hairline/开关行卡随换肤
+        // （ink 令牌同 13-read-style 语言：标签 on_surface_variant、hairline 12%、行卡 8%；
+        // 派生三元组与行卡构建器收敛至 lib/theme SheetInk，与 TipConfig/ReadStyle/FontSelect 同源）
+        val ink = requireContext().sheetInk()
+        root.setSheetBackground(ink.bg, topOnly = true)
+        listOf(tvHeaderPadding, tvBodyPadding, tvFooterPadding).forEach {
+            it.setTextColor(ink.secondary)
+        }
+        listOf(vwPaddingDivider, vwPaddingDividerFooter).forEach {
+            it.background = ink.divider()
+        }
+        listOf(llShowTopLine, llShowBottomLine).forEach {
+            // 整行可点：行卡底叠 selectableItemBackground 按压态，触控反馈不因静态卡覆盖而丢失
+            it.background = ink.rowCardSelectable()
+        }
+        // 显示分隔线整行可点（label 与开关同触控域）
+        llShowTopLine.setOnClickListener { cbShowTopLine.toggle() }
+        llShowBottomLine.setOnClickListener { cbShowBottomLine.toggle() }
         //正文
         dsbPaddingTop.onChanged = {
             ReadBookConfig.paddingTop = it
@@ -111,11 +127,12 @@ class PaddingConfigDialog : BaseDialogFragment(R.layout.dialog_read_padding) {
             ReadBookConfig.footerPaddingRight = it
             postEvent(EventBus.UP_CONFIG, arrayListOf(2))
         }
-        cbShowTopLine.onCheckedChangeListener = { _, isChecked ->
+        // 14-reader-brightness#05：SmoothCheckBox→ThemeSwitch（SwitchCompat），监听换标准 CompoundButton API
+        cbShowTopLine.setOnCheckedChangeListener { _, isChecked ->
             ReadBookConfig.showHeaderLine = isChecked
             postEvent(EventBus.UP_CONFIG, arrayListOf(2))
         }
-        cbShowBottomLine.onCheckedChangeListener = { _, isChecked ->
+        cbShowBottomLine.setOnCheckedChangeListener { _, isChecked ->
             ReadBookConfig.showFooterLine = isChecked
             postEvent(EventBus.UP_CONFIG, arrayListOf(2))
         }
