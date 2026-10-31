@@ -23,12 +23,14 @@
                 android:orientation="horizontal"
                 android:paddingBottom="10dp">
 
-                <io.legado.app.ui.widget.text.AccentTextView
+                <!-- 12-missed-2 #13：分组标签按 #29-A 用深主色 on_primary_soft（AccentTextView 运行时主色亮色压白 2.84:1） -->
+                <TextView
                     android:id="@+id/tv_header_padding"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/header"
+                    android:textColor="@color/on_primary_soft"
                     android:textSize="18sp" />
 
                 <TextView
@@ -74,13 +76,14 @@
 
         </LinearLayout>
 
-        <io.legado.app.ui.widget.text.AccentTextView
+        <TextView
             android:id="@+id/tv_body_padding"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:text="@string/main_body"
+            android:textColor="@color/on_primary_soft"
             android:textSize="18sp" />
 
         <io.legado.app.ui.widget.DetailSeekBar
@@ -117,13 +120,14 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <io.legado.app.ui.widget.text.AccentTextView
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:text="@string/footer"
+                android:textColor="@color/on_primary_soft"
                 android:textSize="18sp" />
 
             <TextView

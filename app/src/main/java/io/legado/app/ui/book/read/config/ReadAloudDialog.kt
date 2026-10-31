@@ -5,10 +5,8 @@ import android.content.DialogInterface
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.SeekBar
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -34,16 +32,8 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.run {
-            clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-            setBackgroundDrawableResource(R.color.background)
-            decorView.setPadding(0, 0, 0, 0)
-            val attr = attributes
-            attr.dimAmount = 0.0f
-            attr.gravity = Gravity.BOTTOM
-            attributes = attr
-            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        }
+        // 10-reader-prefs#08 注⑤：底部弹层窗口形态收口（透明底 + scrim_dialog 50% 遮罩 + 底部重力）
+        dialog?.window?.applyBottomSheetWindow(ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     override fun onDismiss(dialog: DialogInterface) {
@@ -61,7 +51,8 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
         val isLight = ColorUtils.isColorLight(bg)
         val textColor = requireContext().getPrimaryTextColor(isLight)
         binding.run {
-            rootView.setBackgroundColor(bg)
+            // 10-reader-prefs#08：弹层顶部 16dp 圆角（bg_read_sheet_top 形态），底色仍随运行时换肤
+            rootView.setSheetBackground(bg, topOnly = true)
             tvPre.setTextColor(textColor)
             tvNext.setTextColor(textColor)
             ivPlayPrev.setColorFilter(textColor)
@@ -72,7 +63,8 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
             tvTimer.setTextColor(textColor)
             ivTtsSpeechReduce.setColorFilter(textColor)
             tvTtsSpeed.setTextColor(textColor)
-            tvTtsSpeedValue.setTextColor(textColor)
+            // 语速值为中性值胶囊（bg_chip 底 + on_surface 字，10-reader-prefs#08 注②同 AutoReadDialog）
+            tvTtsSpeedValue.setTextColor(getCompatColor(R.color.on_surface))
             ivTtsSpeechAdd.setColorFilter(textColor)
             ivCatalog.setColorFilter(textColor)
             tvCatalog.setTextColor(textColor)

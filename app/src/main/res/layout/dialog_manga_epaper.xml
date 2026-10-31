@@ -10,12 +10,15 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <io.legado.app.ui.widget.text.AccentTextView
+        <!-- 12-missed-2 #16：弹层标题按稿面 h4 用 on_surface（AccentTextView 运行时主色亮色压白 2.84:1 不达标） -->
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
             android:text="@string/manga_epaper_stting"
-            android:textSize="18sp" />
+            android:textColor="@color/primaryText"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <io.legado.app.ui.widget.DetailSeekBar
             android:id="@+id/dsb_epaper"

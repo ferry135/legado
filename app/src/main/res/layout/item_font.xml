@@ -1,19 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 10-reader-prefs#07：.lrow 行形态 —— 14.5sp on_surface 字体名、行高 ≥48dp、选中项主色对勾
+     （对勾不在此固化 primary：FontAdapter.convert 以 context.primaryColor 运行时着色，随 ThemeStore 换肤，MASTER §4） -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:minHeight="48dp"
     android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="5dp">
+    android:paddingLeft="18dp"
+    android:paddingTop="5dp"
+    android:paddingRight="18dp"
+    android:paddingBottom="5dp">
 
     <TextView
         android:id="@+id/tv_font"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:padding="5dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:textSize="14.5sp"
         android:textColor="@color/primaryText" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -21,7 +28,6 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:src="@drawable/ic_check"
-        android:visibility="invisible"
-        app:tint="@color/primaryText" />
+        android:visibility="invisible" />
 
 </LinearLayout>

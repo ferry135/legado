@@ -3,10 +3,8 @@ package io.legado.app.ui.book.read.config
 import android.content.DialogInterface
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.SeekBar
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -20,7 +18,10 @@ import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.BaseReadBookActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
+import io.legado.app.utils.applyBottomSheetWindow
 import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.getCompatColor
+import io.legado.app.utils.setSheetBackground
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.util.Locale
 
@@ -32,16 +33,8 @@ class AutoReadDialog : BaseDialogFragment(R.layout.dialog_auto_read) {
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.run {
-            clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-            setBackgroundDrawableResource(R.color.background)
-            decorView.setPadding(0, 0, 0, 0)
-            val attr = attributes
-            attr.dimAmount = 0.0f
-            attr.gravity = Gravity.BOTTOM
-            attributes = attr
-            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        }
+        // 10-reader-prefs#08 注③：底部弹层窗口形态收口（透明底 + scrim_dialog 50% 遮罩 + 底部重力）
+        dialog?.window?.applyBottomSheetWindow(ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     override fun onDismiss(dialog: DialogInterface) {
@@ -58,9 +51,12 @@ class AutoReadDialog : BaseDialogFragment(R.layout.dialog_auto_read) {
         val bg = requireContext().bottomBackground
         val isLight = ColorUtils.isColorLight(bg)
         val textColor = requireContext().getPrimaryTextColor(isLight)
-        root.setBackgroundColor(bg)
+        // 10-reader-prefs#08：弹层顶部 16dp 圆角（bg_read_sheet_top 形态），底色仍随运行时换肤
+        root.setSheetBackground(bg, topOnly = true)
         tvReadSpeedTitle.setTextColor(textColor)
-        tvReadSpeed.setTextColor(textColor)
+        // 速度值为中性值胶囊（bg_chip 底 + on_surface 字），不再随 textColor 染色——
+        // 主色字压 surface2 亮色仅 2.41:1 违 MASTER §4（10-reader-prefs#08 注②）
+        tvReadSpeed.setTextColor(getCompatColor(R.color.on_surface))
         ivCatalog.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
         tvCatalog.setTextColor(textColor)
         ivMainMenu.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)

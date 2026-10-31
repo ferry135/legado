@@ -9,11 +9,11 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.data.entities.BookGroup
 import io.legado.app.databinding.DialogBookGroupEditBinding
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.SelectImageContract
 import io.legado.app.utils.externalFiles
+import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.inputStream
 import io.legado.app.utils.launch
@@ -63,7 +63,10 @@ class GroupEditDialog() : BaseDialogFragment(R.layout.dialog_book_group_edit) {
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        binding.toolBar.setBackgroundColor(primaryColor)
+        // 12-missed-1 #05：工具栏走布局 background_menu（surface2）实底，
+        // 不再运行时染 primaryColor（浅主色换肤时标题白字不可读；标题色=on_surface）
+        // 12-missed-1 #05：删除为破坏性动作，用 error 色（AccentTextView 强染主色在亮底仅 2.7:1）
+        binding.btnDelete.setTextColor(getCompatColor(R.color.error))
         @Suppress("DEPRECATION")
         bookGroup = arguments?.getParcelable("group")
         bookGroup?.let {

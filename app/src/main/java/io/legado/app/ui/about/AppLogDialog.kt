@@ -14,9 +14,9 @@ import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.AppLog
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemAppLogBinding
-import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.LogUtils
+import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -38,7 +38,6 @@ class AppLogDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.run {
-            toolBar.setBackgroundColor(primaryColor)
             toolBar.setTitle(R.string.log)
             toolBar.inflateMenu(R.menu.app_log)
             toolBar.setOnMenuItemClickListener(this@AppLogDialog)
@@ -73,6 +72,14 @@ class AppLogDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         ) {
             binding.textTime.text = LogUtils.logTimeFormat.format(Date(item.first))
             binding.textMessage.text = item.second
+            // 12-missed-2 #04：含异常条目用 error 色并提示可点按查看堆栈
+            if (item.third != null) {
+                binding.textMessage.setTextColor(getCompatColor(R.color.error))
+                binding.textHint.visibility = View.VISIBLE
+            } else {
+                binding.textMessage.setTextColor(getCompatColor(R.color.primaryText))
+                binding.textHint.visibility = View.GONE
+            }
         }
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemAppLogBinding) {

@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.read.config
 
 import android.content.DialogInterface
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,9 @@ import io.legado.app.constant.PreferKey
 import io.legado.app.databinding.DialogClickActionConfigBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.selector
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.read.ReadBookActivity
+import io.legado.app.utils.dpToPx
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.putPrefInt
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -57,6 +60,11 @@ class ClickActionConfigDialog : BaseDialogFragment(R.layout.dialog_click_action_
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         (activity as ReadBookActivity).bottomDialog++
         view.setBackgroundColor(getCompatColor(R.color.translucent))
+        // 12-missed-2 #11：中格主色虚线描边运行时着色随 ThemeStore 换肤
+        // （MASTER §4 禁布局固化 primary；drawable 内 @color/primary 仅作默认兜底）
+        (binding.tvMiddleCenter.background.mutate() as? GradientDrawable)?.setStroke(
+            1.dpToPx(), view.context.primaryColor, 3.dpToPx().toFloat(), 3.dpToPx().toFloat()
+        )
         initData()
         initViewEvent()
     }

@@ -11,10 +11,12 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <io.legado.app.ui.widget.text.AccentTextView
+        <!-- 12-missed-2 #14：分组标签按 #29-A 用深主色 on_primary_soft（AccentTextView 运行时主色亮色压白 2.84:1） -->
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/body_title"
+            android:textColor="@color/on_primary_soft"
             android:textSize="18sp" />
 
         <RadioGroup
@@ -69,11 +71,12 @@
             app:max="100"
             app:title="@string/title_margin_bottom" />
 
-        <io.legado.app.ui.widget.text.AccentTextView
+        <TextView
             android:id="@+id/tv_header_padding"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/header"
+            android:textColor="@color/on_primary_soft"
             android:textSize="18sp" />
 
         <LinearLayout
@@ -180,10 +183,11 @@
 
         </LinearLayout>
 
-        <io.legado.app.ui.widget.text.AccentTextView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/footer"
+            android:textColor="@color/on_primary_soft"
             android:textSize="18sp" />
 
         <LinearLayout
@@ -290,10 +294,11 @@
 
         </LinearLayout>
 
-        <io.legado.app.ui.widget.text.AccentTextView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/header_footer"
+            android:textColor="@color/on_primary_soft"
             android:textSize="18sp" />
 
         <LinearLayout

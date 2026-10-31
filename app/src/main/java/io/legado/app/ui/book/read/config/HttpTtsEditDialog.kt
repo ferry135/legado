@@ -11,13 +11,13 @@ import io.legado.app.base.BaseDialogFragment
 import io.legado.app.data.entities.HttpTTS
 import io.legado.app.databinding.DialogHttpTtsEditBinding
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.about.AppLogDialog
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.ui.widget.code.addJsPattern
 import io.legado.app.ui.widget.code.addJsonPattern
 import io.legado.app.ui.widget.code.addLegadoPattern
 import io.legado.app.utils.GSON
+import io.legado.app.utils.applyDialogScrim
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.sendToClip
 import io.legado.app.utils.setLayout
@@ -41,11 +41,16 @@ class HttpTtsEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit, tr
 
     override fun onStart() {
         super.onStart()
-        setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        // 10-reader-prefs#05/#06：统一 scrim_dialog 遮罩（applyDialogScrim = 50% 黑）；0.9 高近全屏弹层
+        dialog?.window?.applyDialogScrim()
+        setLayout(ViewGroup.LayoutParams.MATCH_PARENT, 0.9f)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        binding.toolBar.setBackgroundColor(primaryColor)
+        // 12-missed-1 #19：工具栏透明置于 bg_dialog_card 卡底上，标题/图标走 on_surface
+        // （原主色实底按 isColorLight 取字，默认主色 #FF6B2C 判暗→白字仅 2.84:1，
+        // 明暗主题均不达标；卡片圆角由 bg_dialog_card + clipToOutline 保证）
+        binding.vwBg.clipToOutline = true
         binding.tvUrl.run {
             addLegadoPattern()
             addJsonPattern()

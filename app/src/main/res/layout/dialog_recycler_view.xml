@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         android:theme="?attr/actionBarStyle"
         app:popupTheme="@style/AppTheme.PopupOverlay"
-        app:titleTextAppearance="@style/ToolbarTitle" />
+        app:titleTextAppearance="@style/ToolbarTitle"
+        app:titleTextColor="@color/on_surface" />
 
     <FrameLayout
         android:layout_width="match_parent"

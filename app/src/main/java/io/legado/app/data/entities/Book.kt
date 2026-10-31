@@ -372,6 +372,25 @@ data class Book(
         }
     }
 
+    /**
+     * 入架保存（BookInfoViewModel.saveBook 与 AddToBookshelfDialog.addToBookshelf 共用）：
+     * order 为 0（新书）时回填为当前最小 order-1 置顶；backfillProgress=true 时
+     * 先拉取同名作者已存记录的阅读进度（换源/重存场景），新书入架用默认 false
+     */
+    fun saveWithOrderBackfill(backfillProgress: Boolean = false) {
+        if (order == 0) {
+            order = appDb.bookDao.minOrder - 1
+        }
+        if (backfillProgress) {
+            appDb.bookDao.getBook(name, author)?.let {
+                durChapterIndex = it.durChapterIndex
+                durChapterPos = it.durChapterPos
+                durChapterTitle = it.durChapterTitle
+            }
+        }
+        save()
+    }
+
     fun delete() {
         if (ReadBook.book?.bookUrl == bookUrl) {
             ReadBook.book = null

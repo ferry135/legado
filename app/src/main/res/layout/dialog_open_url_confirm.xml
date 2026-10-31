@@ -10,11 +10,11 @@
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="5dp"
         android:theme="?attr/actionBarStyle"
         app:popupTheme="@style/AppTheme.PopupOverlay"
         app:title="跳转确认"
-        app:titleTextAppearance="@style/ToolbarTitle" />
+        app:titleTextAppearance="@style/ToolbarTitle"
+        app:titleTextColor="@color/on_surface" />
 
     <TextView
         android:id="@+id/message"
@@ -23,6 +23,25 @@
         android:padding="16dp"
         android:textColor="@color/primaryText"
         android:textSize="16sp" />
+
+    <!-- 12-missed-1 #04：目标链接 field-solid 实底 + 次要文字色单行展示（设计稿不再作链接色渲染） -->
+    <TextView
+        android:id="@+id/tv_uri"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/bg_edit_filled"
+        android:fontFamily="monospace"
+        android:paddingLeft="13dp"
+        android:paddingTop="9dp"
+        android:paddingRight="13dp"
+        android:paddingBottom="9dp"
+        android:singleLine="true"
+        android:textColor="@color/secondaryText"
+        android:textSize="12.5sp" />
 
     <com.google.android.flexbox.FlexboxLayout
         android:layout_width="match_parent"

@@ -1,6 +1,7 @@
 package io.legado.app.ui.widget
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.PorterDuff
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -27,6 +28,32 @@ class DetailSeekBar @JvmOverloads constructor(
 
     var valueFormat: ((progress: Int) -> String)? = null
     var onChanged: ((progress: Int) -> Unit)? = null
+
+    private var themeProgressTint: ColorStateList? = null
+    private var themeThumbTint: ColorStateList? = null
+
+    /**
+     * 12-missed-2 #15：按需覆盖进度条已滑过部分与滑块着色（如漫画滤镜 R/G/B/A 通道色相）；
+     * 未设或置回 null 保持/恢复 ThemeSeekBar 的运行时主题色着色，背景轨道不随之改动
+     */
+    var progressThumbTint: Int? = null
+        set(value) {
+            if (value != null && field == null) {
+                // 首次覆盖前快照 ThemeSeekBar 运行时着色（applyTint(accentColor) 所设），供置回 null 时恢复
+                themeProgressTint = binding.seekBar.progressTintList
+                themeThumbTint = binding.seekBar.thumbTintList
+            }
+            field = value
+            if (value != null) {
+                val tintList = ColorStateList.valueOf(value)
+                binding.seekBar.progressTintList = tintList
+                binding.seekBar.thumbTintList = tintList
+            } else {
+                themeProgressTint?.let { binding.seekBar.progressTintList = it }
+                themeThumbTint?.let { binding.seekBar.thumbTintList = it }
+            }
+        }
+
     var progress: Int
         get() = binding.seekBar.progress
         set(value) {

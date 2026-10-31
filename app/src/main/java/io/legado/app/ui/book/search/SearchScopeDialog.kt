@@ -17,7 +17,6 @@ import io.legado.app.data.entities.BookSourcePart
 import io.legado.app.databinding.DialogSearchScopeBinding
 import io.legado.app.databinding.ItemCheckBoxBinding
 import io.legado.app.databinding.ItemRadioButtonBinding
-import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.flowWithLifecycleAndDatabaseChange
 import io.legado.app.utils.setLayout
@@ -50,7 +49,8 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        binding.toolBar.setBackgroundColor(primaryColor)
+        // 12-missed-2 #29-A 同模式扩展：去 primaryColor 涂色工具栏（布局侧去 elevation、
+        // titleTextColor=on_surface），夜间白字压主色橙 2.84:1 不达标——MASTER §4 对全部弹窗生效
         binding.recyclerView.adapter = adapter
         initMenu()
         initSearchView()

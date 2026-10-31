@@ -12,16 +12,17 @@
         android:layout_height="wrap_content"
         android:theme="?attr/actionBarStyle"
         app:titleTextAppearance="@style/ToolbarTitle"
+        app:titleTextColor="@color/on_surface"
         app:popupTheme="@style/AppTheme.PopupOverlay" />
 
+    <!-- 12-missed-1 #01：路径面包屑置 surface 底、去掉 5dp 阴影，分隔交给列表分隔线 -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_path"
         android:layout_width="match_parent"
         android:layout_height="24dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:background="@color/background_card"
-        android:elevation="5dp" />
+        android:background="@color/background" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -39,6 +40,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:textSize="13.5sp"
+            android:textColor="@color/secondaryText"
             android:visibility="gone" />
 
     </FrameLayout>

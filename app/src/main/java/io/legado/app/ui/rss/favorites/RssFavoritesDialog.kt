@@ -7,7 +7,6 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.data.entities.RssArticle
 import io.legado.app.databinding.DialogRssFavoriteConfigBinding
-import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -28,7 +27,8 @@ class RssFavoritesDialog() : BaseDialogFragment(R.layout.dialog_rss_favorite_con
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        binding.toolBar.setBackgroundColor(primaryColor)
+        // 12-missed-2 #29-A 同模式扩展：去 primaryColor 涂色工具栏，标题走 actionBarStyle/on_surface
+        // （夜间 Dark 白字压主色橙 2.84:1——MASTER §4 对全部弹窗生效）
         val arguments = arguments ?: let {
             dismiss()
             return

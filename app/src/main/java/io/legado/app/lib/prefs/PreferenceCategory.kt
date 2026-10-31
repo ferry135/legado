@@ -8,10 +8,6 @@ import androidx.core.view.isVisible
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceViewHolder
 import io.legado.app.R
-import io.legado.app.help.config.AppConfig
-import io.legado.app.lib.theme.accentColor
-import io.legado.app.lib.theme.backgroundColor
-import io.legado.app.utils.ColorUtils
 
 
 class PreferenceCategory(context: Context, attrs: AttributeSet) :
@@ -28,28 +24,16 @@ class PreferenceCategory(context: Context, attrs: AttributeSet) :
         if (view is TextView) {  //  && !view.isInEditMode
             view.text = title
             if (view.isInEditMode) return
-            view.setTextColor(context.accentColor)
+            // 09稿改动④：组题色回归 XML 的 on_surface_variant，不再用运行时 accentColor 覆盖
+            // 09稿改动③：组间 24dp 纯留白，divider 不再按背景 shiftColor 涂色带
             view.isVisible = !title.isNullOrEmpty()
 
             val da = holder.findViewById(R.id.preference_divider_above)
-            val dividerColor = if (AppConfig.isNightTheme) {
-                ColorUtils.withAlpha(
-                    ColorUtils.shiftColor(context.backgroundColor, 1.05f),
-                    0.5f
-                )
-            } else {
-                ColorUtils.withAlpha(
-                    ColorUtils.shiftColor(context.backgroundColor, 0.95f),
-                    0.5f
-                )
-            }
             if (da is View) {
-                da.setBackgroundColor(dividerColor)
                 da.isVisible = holder.isDividerAllowedAbove
             }
             val db = holder.findViewById(R.id.preference_divider_below)
             if (db is View) {
-                db.setBackgroundColor(dividerColor)
                 db.isVisible = holder.isDividerAllowedBelow
             }
         }

@@ -18,11 +18,12 @@ import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.permission.Permissions
 import io.legado.app.lib.permission.PermissionsCompat
-import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.file.HandleFileContract
+import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.FileDoc
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.RealPathUtil
+import io.legado.app.utils.applyDialogScrim
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.externalFiles
@@ -54,6 +55,7 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
         it.uri?.let { uri ->
             if (uri.isContentScheme()) {
                 putPrefString(PreferKey.fontFolder, uri.toString())
+                upFontDirLabel()
                 val doc = DocumentFile.fromTreeUri(requireContext(), uri)
                 if (doc != null) {
                     loadFontFiles(FileDoc.fromDocumentFile(doc))
@@ -65,6 +67,7 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
             } else {
                 uri.path?.let { path ->
                     putPrefString(PreferKey.fontFolder, path)
+                    upFontDirLabel()
                     loadFontFilesByPermission(path)
                 }
             }
@@ -73,17 +76,24 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
 
     override fun onStart() {
         super.onStart()
+        // 10-reader-prefs#07 注⑤：统一 scrim_dialog 遮罩（applyDialogScrim = 50% 黑）
+        dialog?.window?.applyDialogScrim()
         setLayout(0.9f, 0.9f)
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        binding.toolBar.setBackgroundColor(primaryColor)
+        // 12-missed-1 #20：工具栏透明置于 surface 卡底，标题/图标/文字动作项走 on_surface
+        // （原主色实底按 isColorLight 取字，默认主色 #FF6B2C 判暗→白字仅 2.84:1，明暗均不达标；
+        // 文字动作项随 actionBarStyle DayNight 覆盖层取字色，与卡底明暗天然匹配）
         binding.toolBar.setTitle(R.string.select_font)
         binding.toolBar.inflateMenu(R.menu.font_select)
         binding.toolBar.menu.applyTint(requireContext())
         binding.toolBar.setOnMenuItemClickListener(this)
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.adapter = adapter
+        binding.recyclerView.addItemDecoration(VerticalDivider(requireContext()))
+        // 10-reader-prefs#07：字体目录路径条，换目录即时刷新
+        upFontDirLabel()
 
         val fontPath = getPrefString(PreferKey.fontFolder)
         if (fontPath.isNullOrEmpty()) {
@@ -130,6 +140,13 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
                 otherActions = arrayListOf(SelectItem(defaultPath, -1))
             }
         }
+    }
+
+    private fun upFontDirLabel() {
+        val path = getPrefString(PreferKey.fontFolder)
+            ?.let { if (it.isContentScheme()) Uri.decode(it) else it }
+            ?: "SD/Fonts"
+        binding.tvFontDir.text = getString(R.string.font_dir, path)
     }
 
     private fun getLocalFonts(): ArrayList<FileDoc> {

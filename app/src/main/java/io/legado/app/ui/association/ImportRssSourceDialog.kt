@@ -22,7 +22,6 @@ import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemSourceImportBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.dialog.CodeDialog
 import io.legado.app.ui.widget.dialog.WaitDialog
 import io.legado.app.utils.*
@@ -61,7 +60,6 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        binding.toolBar.setBackgroundColor(primaryColor)
         binding.toolBar.setTitle(R.string.import_rss_source)
         binding.rotateLoading.visible()
         initMenu()
@@ -137,6 +135,7 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
     private fun initMenu() {
         binding.toolBar.setOnMenuItemClickListener(this)
         binding.toolBar.inflateMenu(R.menu.import_source)
+        binding.toolBar.menu.applyTint(requireContext())
         binding.toolBar.menu.findItem(R.id.menu_keep_original_name)?.isChecked =
             AppConfig.importKeepName
         binding.toolBar.menu.findItem(R.id.menu_keep_group)?.isChecked =

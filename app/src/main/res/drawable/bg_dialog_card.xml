@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 弹窗内卡片（10-reader-prefs#06：统一 16dp 圆角，替换 shape_card_view 的 3dp；仅供本屏卡片用，
+     shape_card_view 为多屏共用不改） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="@dimen/corner_radius_lg" />
+    <solid android:color="@color/background_card" />
+</shape>

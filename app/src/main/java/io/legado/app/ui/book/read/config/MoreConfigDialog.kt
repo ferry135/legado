@@ -4,12 +4,10 @@ import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.LinearLayout
 import androidx.preference.Preference
 import io.legado.app.R
@@ -25,28 +23,23 @@ import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 import io.legado.app.ui.widget.number.NumberPickerDialog
+import io.legado.app.utils.applyBottomSheetWindow
 import io.legado.app.utils.canvasrecorder.CanvasRecorderFactory
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.getPrefBoolean
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.removePref
 import io.legado.app.utils.setEdgeEffectColor
+import io.legado.app.utils.setSheetBackground
 
 class MoreConfigDialog : BasePrefDialogFragment() {
     private val readPreferTag = "readPreferenceFragment"
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.run {
-            clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-            setBackgroundDrawableResource(R.color.background)
-            decorView.setPadding(0, 0, 0, 0)
-            val attr = attributes
-            attr.dimAmount = 0.0f
-            attr.gravity = Gravity.BOTTOM
-            attributes = attr
-            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, 360.dpToPx())
-        }
+        // 10-reader-prefs#01 注②：底部弹层窗口形态收口（透明底 + scrim_dialog 50% 遮罩 + 底部重力，
+        // 理由见 DialogExtensions.applyBottomSheetWindow KDoc）
+        dialog?.window?.applyBottomSheetWindow(360.dpToPx())
     }
 
     override fun onCreateView(
@@ -56,7 +49,8 @@ class MoreConfigDialog : BasePrefDialogFragment() {
     ): View {
         (activity as ReadBookActivity).bottomDialog++
         val view = LinearLayout(context)
-        view.setBackgroundColor(requireContext().bottomBackground)
+        // 10-reader-prefs#01：弹层顶部 16dp 圆角（bg_read_sheet_top 形态），底色仍随运行时换肤
+        view.setSheetBackground(requireContext().bottomBackground, topOnly = true)
         view.id = R.id.tag1
         container?.addView(view)
         return view

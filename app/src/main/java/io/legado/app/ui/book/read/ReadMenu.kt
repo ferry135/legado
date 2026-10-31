@@ -194,15 +194,10 @@ class ReadMenu @JvmOverloads constructor(
         } else {
             upPanelBackground(llBottomBg, R.drawable.bg_read_menu_bottom_panel, bgColor)
         }
-        val fabTint = ColorStateList.valueOf(ColorUtils.adjustAlpha(textColor, 0.1f))
-        fabSearch.backgroundTintList = fabTint
-        fabSearch.setColorFilter(textColor)
-        fabAutoPage.backgroundTintList = fabTint
-        fabAutoPage.setColorFilter(textColor)
-        fabReplaceRule.backgroundTintList = fabTint
-        fabReplaceRule.setColorFilter(textColor)
-        fabNightTheme.backgroundTintList = fabTint
-        fabNightTheme.setColorFilter(textColor)
+        // 11-audio-light S3：4 个悬浮钮（fabSearch/fabAutoPage/fabReplaceRule/fabNightTheme）
+        // 终态以 view_read_menu.xml 为准（backgroundTint=surface_container + tint=on_surface），
+        // Kotlin 不再覆盖——亮色主题 × 暗色沉浸页时 textColor 与钮底同明暗的兜底
+        // 已由 XML 静态 on_surface 承担（见 11-audio-light.html:363）
         tvPre.setTextColor(textColor)
         tvNext.setTextColor(textColor)
         ivCatalog.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)

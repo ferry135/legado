@@ -25,6 +25,8 @@ import io.legado.app.help.DirectLinkUpload
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.theme.Selector
+import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
@@ -32,8 +34,11 @@ import io.legado.app.ui.association.ImportHttpTtsDialog
 import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.ui.login.SourceLoginActivity
 import io.legado.app.utils.ACache
+import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.GSON
+import io.legado.app.utils.applyDialogScrim
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.dpToPx
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.gone
 import io.legado.app.utils.isAbsUrl
@@ -91,6 +96,8 @@ class SpeakEngineDialog() : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     override fun onStart() {
         super.onStart()
+        // 10-reader-prefs#05 注⑤：统一 scrim_dialog 遮罩（applyDialogScrim = 50% 黑）
+        dialog?.window?.applyDialogScrim()
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, 0.9f)
     }
 
@@ -101,7 +108,8 @@ class SpeakEngineDialog() : BaseDialogFragment(R.layout.dialog_recycler_view),
     }
 
     private fun initView() = binding.run {
-        toolBar.setBackgroundColor(primaryColor)
+        // 12-missed-1 #17：工具栏透明置于 surface 卡底，标题/溢出图标走 on_surface
+        // （原主色实底按 isColorLight 取字，默认主色 #FF6B2C 判暗→白字仅 2.84:1，明暗均不达标）
         toolBar.setTitle(R.string.speak_engine)
         recyclerView.setEdgeEffectColor(primaryColor)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -139,6 +147,31 @@ class SpeakEngineDialog() : BaseDialogFragment(R.layout.dialog_recycler_view),
                 }
             }
         }
+        // 10-reader-prefs#05 注③：底部双作用域 —— 「书」tonal 胶囊按主题取分支：
+        // 亮色 primary 14% 底 + 深主色字（shift 0.6，实测 5.6:1；0.7 版仅 4.40:1 低于 AA），
+        // 暗色 primary 18% 暗底 + 主色字（实测 5.1:1；统一深主色字压暗底仅 2.9:1 不可读）
+        val primary = primaryColor
+        val isLightBg = ColorUtils.isColorLight(requireContext().backgroundColor)
+        // 自适应主色文字色只算一次，「书」「全局」两处复用，避免公式调整需同步两分支
+        val primaryTextColor = if (isLightBg) {
+            ColorUtils.shiftColor(primary, 0.6f)
+        } else {
+            primary
+        }
+        if (isLightBg) {
+            tvFooterLeft.background = Selector.shapeBuild()
+                .setCornerRadius(999.dpToPx())
+                .setDefaultBgColor(ColorUtils.adjustAlpha(primary, 0.14f))
+                .setPressedBgColor(ColorUtils.adjustAlpha(primary, 0.24f))
+                .create()
+        } else {
+            tvFooterLeft.background = Selector.shapeBuild()
+                .setCornerRadius(999.dpToPx())
+                .setDefaultBgColor(ColorUtils.adjustAlpha(primary, 0.18f))
+                .setPressedBgColor(ColorUtils.adjustAlpha(primary, 0.28f))
+                .create()
+        }
+        tvFooterLeft.setTextColor(primaryTextColor)
         tvFooterLeft.setText(R.string.book)
         tvFooterLeft.visible()
         tvFooterLeft.setOnClickListener {
@@ -147,6 +180,10 @@ class SpeakEngineDialog() : BaseDialogFragment(R.layout.dialog_recycler_view),
             ReadAloud.upReadAloudClass()
             dismissAllowingStateLoss()
         }
+        // 12-missed-1 #17：「全局」为文字按钮（稿面 .txtbtn.pri 形态）；原主色填充胶囊白字
+        // 压默认主色仅 2.84:1，改用与「书」一致的自适应可读主色（亮 shift 0.6 ≈5.6:1 / 暗 primary ≈6.5:1）
+        tvOk.background = null
+        tvOk.setTextColor(primaryTextColor)
         tvOk.setText(R.string.general)
         tvOk.visible()
         tvOk.setOnClickListener {
@@ -164,6 +201,8 @@ class SpeakEngineDialog() : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     private fun initMenu() = binding.run {
         toolBar.inflateMenu(R.menu.speak_engine)
+        // 12-missed-1 #17：工具栏透明 on_surface 主题下动作图标走 Auto 分支（on_surface），
+        // overflow 展开项仍取 primaryText（MenuExtensions.applyTint 的 requiresOverflow 分支）
         toolBar.menu.applyTint(requireContext())
         toolBar.setOnMenuItemClickListener(this@SpeakEngineDialog)
     }

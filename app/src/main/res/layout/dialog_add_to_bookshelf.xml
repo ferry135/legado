@@ -49,6 +49,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="2dp"
+            android:textColor="@color/secondaryText"
+            android:textSize="13.5sp"
             app:layout_constraintLeft_toRightOf="@+id/iv_author"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_name"
@@ -72,6 +74,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="2dp"
+            android:textColor="@color/secondaryText"
+            android:textSize="13.5sp"
             app:layout_constraintLeft_toRightOf="@+id/iv_origin"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_author"
@@ -89,12 +93,15 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/book_info" />
 
-    <io.legado.app.ui.widget.text.AccentTextView
+    <!-- 12-missed-2 #19：动作钮按稿 .dact.pri 亮色取深主色 on_primary_soft
+         （AccentTextView 运行时主色 #FF6B2C 亮色压白 2.84:1 不达标），暗色跟随主色 -->
+    <TextView
         android:id="@+id/tv_ok"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:text="@string/ok"
+        android:textColor="@color/on_primary_soft"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -111,12 +118,13 @@
         app:layout_constraintRight_toLeftOf="@+id/tv_ok"
         app:layout_constraintTop_toBottomOf="@+id/book_info" />
 
-    <io.legado.app.ui.widget.text.AccentTextView
+    <TextView
         android:id="@+id/tv_read"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:text="@string/reading"
+        android:textColor="@color/on_primary_soft"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent" />

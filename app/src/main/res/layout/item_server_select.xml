@@ -18,25 +18,26 @@
         android:textColor="@color/primaryText" />
 
 
+    <!-- 12-missed-1 #10：编辑/删除行内图标 on_surface_variant 20px + 48dp 触控目标（MASTER §4；48dp 触控区含 14dp padding，图标仍 20dp） -->
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_edit"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_gravity="center"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/edit"
-        android:padding="6dp"
+        android:padding="14dp"
         android:src="@drawable/ic_edit"
-        android:tint="@color/primaryText" />
+        android:tint="@color/secondaryText" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_delete"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:padding="6dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="14dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_outline_delete"
-        android:tint="@color/primaryText"
+        android:tint="@color/secondaryText"
         android:contentDescription="@string/delete"
         tools:ignore="RtlHardcoded" />
 

@@ -35,13 +35,18 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
+            <!-- .vchip 值胶囊（10-reader-prefs#08：中性胶囊替代主色字，主色压 surface2 亮色仅 2.41:1） -->
             <TextView
                 android:id="@+id/tv_read_speed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/primary"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+                android:background="@drawable/bg_chip"
+                android:paddingLeft="12dp"
+                android:paddingTop="5dp"
+                android:paddingRight="12dp"
+                android:paddingBottom="5dp"
+                android:textColor="@color/on_surface"
+                android:textSize="14sp" />
 
         </LinearLayout>
 

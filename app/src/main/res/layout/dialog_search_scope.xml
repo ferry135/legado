@@ -11,14 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/background_menu"
-        android:elevation="5dp"
         android:theme="?attr/actionBarStyle"
         app:displayHomeAsUp="false"
         app:fitStatusBar="false"
         app:layout_constraintTop_toTopOf="parent"
         app:popupTheme="@style/AppTheme.PopupOverlay"
         app:title="@string/search_scope"
-        app:titleTextAppearance="@style/ToolbarTitle" />
+        app:titleTextAppearance="@style/ToolbarTitle"
+        app:titleTextColor="@color/on_surface" />
 
     <RadioGroup
         android:id="@+id/rg_scope"

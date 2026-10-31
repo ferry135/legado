@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Picture
+import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.text.Html
 import android.view.MotionEvent
@@ -37,6 +38,7 @@ import androidx.core.view.marginBottom
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
+import io.legado.app.R
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.TintHelper
 import io.legado.app.utils.canvasrecorder.CanvasRecorder
@@ -317,5 +319,27 @@ fun View.setOnApplyWindowInsetsListenerCompat(listener: (View, WindowInsetsCompa
         }
         windowInsets
     }
+}
+
+/**
+ * 16dp 圆角弹层底（10-reader-prefs 弹层规范，bg_read_sheet_top 形态）：
+ * topOnly=true 顶部圆角，false 四角圆角；圆角取 corner_radius_lg 令牌（dimens.xml），
+ * 颜色由调用方传运行时换肤值（backgroundColor / bottomBackground）。
+ */
+fun Context.sheetBackground(
+    @ColorInt color: Int,
+    topOnly: Boolean = false
+): GradientDrawable = GradientDrawable().apply {
+    val r = resources.getDimensionPixelSize(R.dimen.corner_radius_lg).toFloat()
+    if (topOnly) {
+        cornerRadii = floatArrayOf(r, r, r, r, 0f, 0f, 0f, 0f)
+    } else {
+        cornerRadius = r
+    }
+    setColor(color)
+}
+
+fun View.setSheetBackground(@ColorInt color: Int, topOnly: Boolean = false) {
+    background = context.sheetBackground(color, topOnly)
 }
 

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/player_surface"
     android:orientation="vertical"
     tools:context=".ui.book.audio.AudioPlayActivity">
 
@@ -19,7 +19,7 @@
         android:id="@+id/vw_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/scrim_50" />
+        android:background="@drawable/bg_player_scrim" />
 
     <io.legado.app.ui.widget.TitleBar
         android:id="@+id/title_bar"
@@ -41,10 +41,10 @@
         android:paddingRight="11dp"
         android:paddingBottom="4dp"
         android:textSize="12.5sp"
-        android:textColor="@color/md_white_1000"
+        android:textColor="@color/player_on_surface"
         android:visibility="invisible"
         app:drawableLeftCompat="@drawable/ic_timer_black_24dp"
-        app:drawableTint="@color/md_white_1000"
+        app:drawableTint="@color/player_on_surface"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title_bar" />
 
@@ -60,7 +60,7 @@
         android:paddingRight="11dp"
         android:paddingBottom="4dp"
         android:textSize="12.5sp"
-        android:textColor="@color/md_white_1000"
+        android:textColor="@color/player_on_surface"
         android:visibility="invisible"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title_bar" />
@@ -70,6 +70,7 @@
         android:id="@+id/iv_cover"
         android:layout_width="240dp"
         android:layout_height="240dp"
+        app:civ_circle_background_color="#3C2A1A"
         android:contentDescription="@string/img_cover"
         android:scaleType="centerCrop"
         app:civ_border_color="@color/accent"
@@ -92,7 +93,7 @@
         android:paddingEnd="32dp"
         android:paddingBottom="6dp"
         android:textSize="14.5sp"
-        android:textColor="@color/md_white_1000"
+        android:textColor="@color/player_on_surface"
         app:layout_constraintBottom_toTopOf="@+id/ll_player_progress" />
 
     <!-- .progrow：26dp 侧边距、12dp 间隙、12sp 计时文字 -->
@@ -112,8 +113,8 @@
             android:layout_height="wrap_content"
             android:text="00:00"
             android:textSize="12sp"
-            android:textColor="@color/md_white_1000"
-            tools:ignore="HardcodedText,RtlSymmetry,TextContrastCheck" />
+            android:textColor="@color/player_on_surface_variant"
+            tools:ignore="HardcodedText,RtlSymmetry" />
 
         <io.legado.app.lib.theme.view.ThemeSeekBar
             android:id="@+id/player_progress"
@@ -123,7 +124,7 @@
             android:layout_marginStart="12dp"
             android:layout_marginEnd="12dp"
             android:layout_weight="1"
-            android:progressBackgroundTint="@color/md_dark_secondary" />
+            android:progressBackgroundTint="#38FFFFFF" />
 
         <TextView
             android:id="@+id/tv_all_time"
@@ -131,8 +132,8 @@
             android:layout_height="wrap_content"
             android:text="00:00"
             android:textSize="12sp"
-            android:textColor="@color/md_white_1000"
-            tools:ignore="HardcodedText,TextContrastCheck" />
+            android:textColor="@color/player_on_surface_variant"
+            tools:ignore="HardcodedText" />
 
     </LinearLayout>
 
@@ -155,7 +156,7 @@
             android:contentDescription="@string/set_timer"
             android:padding="6dp"
             android:src="@drawable/ic_timer_black_24dp"
-            app:tint="@color/md_white_1000"
+            app:tint="@color/player_on_surface"
             tools:ignore="ImageContrastCheck" />
 
         <View
@@ -171,7 +172,7 @@
             android:contentDescription="@string/skip_previous"
             android:padding="6dp"
             android:src="@drawable/ic_fast_rewind"
-            app:tint="@color/md_white_1000"
+            app:tint="@color/player_on_surface"
             tools:ignore="ImageContrastCheck" />
 
         <View
@@ -187,7 +188,7 @@
             android:contentDescription="@string/skip_previous"
             android:padding="6dp"
             android:src="@drawable/ic_skip_previous"
-            app:tint="@color/md_white_1000"
+            app:tint="@color/player_on_surface"
             tools:ignore="ImageContrastCheck" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -201,8 +202,8 @@
                 android:layout_margin="10dp"
                 android:contentDescription="@string/audio_play"
                 android:src="@drawable/ic_play_24dp"
-                android:tint="@color/md_black_1000"
-                app:backgroundTint="@color/md_white_1000"
+                android:tint="@color/player_surface"
+                app:backgroundTint="@color/player_on_surface"
                 app:elevation="2dp"
                 app:fabCustomSize="72dp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -234,7 +235,7 @@
             android:contentDescription="@string/skip_next"
             android:padding="6dp"
             android:src="@drawable/ic_skip_next"
-            app:tint="@color/md_white_1000"
+            app:tint="@color/player_on_surface"
             tools:ignore="ImageContrastCheck" />
 
         <View
@@ -250,7 +251,7 @@
             android:contentDescription="@string/skip_next"
             android:padding="6dp"
             android:src="@drawable/ic_fast_forward"
-            app:tint="@color/md_white_1000"
+            app:tint="@color/player_on_surface"
             tools:ignore="ImageContrastCheck" />
 
         <View
@@ -266,7 +267,7 @@
             android:contentDescription="@string/chapter_list"
             android:padding="6dp"
             android:src="@drawable/ic_chapter_list"
-            app:tint="@color/md_white_1000"
+            app:tint="@color/player_on_surface"
             tools:ignore="ImageContrastCheck" />
 
     </LinearLayout>

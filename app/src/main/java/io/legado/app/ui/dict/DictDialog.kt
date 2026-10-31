@@ -12,6 +12,7 @@ import io.legado.app.data.entities.DictRule
 import io.legado.app.databinding.DialogDictBinding
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
+import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.setHtml
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.toastOnUi
@@ -48,6 +49,11 @@ class DictDialog() : BaseDialogFragment(R.layout.dialog_dict) {
         }
         binding.tabLayout.setBackgroundColor(backgroundColor)
         binding.tabLayout.setSelectedTabIndicatorColor(accentColor)
+        // 12-missed-1 #14：Tab 未选中 on_surface_variant / 选中主色，避免 TabLayout 主题染色不确定性
+        binding.tabLayout.setTabTextColors(
+            requireContext().getCompatColor(R.color.secondaryText),
+            accentColor
+        )
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab) {
 

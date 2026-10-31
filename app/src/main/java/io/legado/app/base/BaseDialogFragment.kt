@@ -2,7 +2,6 @@ package io.legado.app.base
 
 import android.content.DialogInterface
 import android.content.DialogInterface.OnDismissListener
-import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
@@ -21,6 +20,7 @@ import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.setBackgroundKeepPadding
+import io.legado.app.utils.setSheetBackground
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext
@@ -81,10 +81,7 @@ abstract class BaseDialogFragment(
             view.findViewById<View>(R.id.vw_bg)?.setOnClickListener(null)
             view.setOnClickListener { dismiss() }
         } else if (!AppConfig.isEInkMode) {
-            view.background = GradientDrawable().apply {
-                setColor(ThemeStore.backgroundColor())
-                cornerRadius = 16.dpToPx().toFloat()
-            }
+            view.setSheetBackground(ThemeStore.backgroundColor())
         }
         onFragmentCreated(view, savedInstanceState)
         observeLiveBus()

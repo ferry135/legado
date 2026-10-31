@@ -40,6 +40,10 @@
 - 已达标（无豁免）：`dialog_read_aloud` 主播放钮已升级为运行时着色
   （`ReadAloudDialog.upPlayState` 以 `ThemeStore.accentColor` 设 backgroundTintList 并按明暗取图标黑白），
   XML 侧仅余 `tools:backgroundTint` 预览属性（03 稿注记许可的纯 XML 方案之上的加强）。
+- 已达标（无豁免，二轮补）：`item_font.xml` 选中对勾与 `bg_click_action_panel_mid.xml` 中格虚线描边
+  曾为布局内静态 `@color/primary`，已按上述自述疗法改为运行时着色——`FontAdapter.convert`
+  以 `context.primaryColor` setColorFilter（XML 侧 tint 已删）、`ClickActionConfigDialog.onFragmentCreated`
+  以 `context.primaryColor` mutate+setStroke（drawable 内 primary 仅余 ThemeStore 默认兜底，同豁免 2 兜底逻辑）。
 - 豁免 1：`item_chapter_list.xml:84` iv_checked `app:tint="?attr/colorPrimary"` ——
   02 稿 :461 注记明确许可「改 ?attr/colorPrimary 即与本稿一致（纯 XML 一行）」，按稿保留。
 - 豁免 2：`activity_manga.xml:57` 加载指示器 `app:indicatorColor="@color/primary"` ——

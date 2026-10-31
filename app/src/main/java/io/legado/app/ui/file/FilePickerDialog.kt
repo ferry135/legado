@@ -25,9 +25,7 @@ import io.legado.app.databinding.ItemFilePickerBinding
 import io.legado.app.databinding.ItemPathPickerBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.theme.getPrimaryDisabledTextColor
 import io.legado.app.lib.theme.getPrimaryTextColor
-import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.file.HandleFileContract.Companion.FILE
 import io.legado.app.ui.file.utils.FilePickerIcon
 import io.legado.app.ui.widget.recycler.VerticalDivider
@@ -79,7 +77,8 @@ class FilePickerDialog : BaseDialogFragment(R.layout.dialog_file_chooser),
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        binding.toolBar.setBackgroundColor(primaryColor)
+        // 12-missed-1 #01：去掉 primaryColor 实底（换肤浅主色时标题/图标白字不可读），
+        // 工具栏透明置于 surface 卡底上，标题色由 app:titleTextColor=@color/on_surface 保证
         view.setBackgroundResource(R.color.background_card)
         initMenu()
         initContentView()
@@ -208,7 +207,9 @@ class FilePickerDialog : BaseDialogFragment(R.layout.dialog_file_chooser),
 
     inner class FileAdapter : RecyclerAdapter<File, ItemFilePickerBinding>(requireContext()) {
         private val primaryTextColor = context.getPrimaryTextColor(!AppConfig.isNightTheme)
-        private val disabledTextColor = context.getPrimaryDisabledTextColor(!AppConfig.isNightTheme)
+        // 12-missed-1 #01：置灰不匹配文件用 on_surface_variant 全色（亮 5.87:1 / 暗 7.96:1），
+        // 不再用 md disabled 半透明色（叠 62% 透明度亮色仅 2.63:1）
+        private val disabledTextColor = context.getCompatColor(R.color.on_surface_variant)
         private val upIcon = ConvertUtils.toDrawable(FilePickerIcon.getUpDir())!!
         private val folderIcon = ConvertUtils.toDrawable(FilePickerIcon.getFolder())!!
         private val fileIcon = ConvertUtils.toDrawable(FilePickerIcon.getFile())!!

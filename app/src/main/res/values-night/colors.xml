@@ -30,6 +30,12 @@
     <color name="hero_gradient_start">#33261C</color>
     <color name="hero_gradient_end">#221A14</color>
     <color name="warning">#C2551F</color>
+    <!-- 阅读页点击区域九宫格面板底（12-missed-2 #11/#29-B，与 values 成对；player_* 播放面令牌有意不在夜间覆盖，11-audio-light S5 恒定暗面） -->
+    <color name="click_action_panel">#E8242220</color>
+    <!-- 代码查看/编辑高亮（12-missed-2 #27，与 values 成对） -->
+    <color name="code_keyword">#FF9E80</color>
+    <color name="code_key">#82B1FF</color>
+    <color name="code_comment">#8F8B7F</color>
 
     <color name="primary">@color/design_orange</color>
     <color name="primaryDark">@color/md_deep_orange_800</color>

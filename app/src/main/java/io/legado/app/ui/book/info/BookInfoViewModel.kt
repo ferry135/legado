@@ -389,15 +389,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     fun saveBook(book: Book?, success: (() -> Unit)? = null) {
         book ?: return
         execute {
-            if (book.order == 0) {
-                book.order = appDb.bookDao.minOrder - 1
-            }
-            appDb.bookDao.getBook(book.name, book.author)?.let {
-                book.durChapterIndex = it.durChapterIndex
-                book.durChapterPos = it.durChapterPos
-                book.durChapterTitle = it.durChapterTitle
-            }
-            book.save()
+            book.saveWithOrderBackfill(backfillProgress = true)
             if (ReadBook.book?.isSameNameAuthor(book) == true) {
                 ReadBook.book = book
             } else if (AudioPlay.book?.isSameNameAuthor(book) == true) {
