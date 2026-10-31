@@ -154,10 +154,16 @@ val Context.elevation: Float
         }
     }
 
-val Context.filletBackground: GradientDrawable
+val Context.alertCardBackground: GradientDrawable
     get() {
         val background = GradientDrawable()
-        background.cornerRadius = 3f.dpToPx()
+        // 14-reader-brightness#07：3dp 直角感弹窗卡 → corner_radius_lg 16dp（MASTER §3）。
+        // 消费面=alert 系窗口底（AlertDialog.applyTint() 与 lib/prefs 三偏好弹窗直设），一次改动
+        // 全局生效：字重切换卡、章节跳转确认、「默认字体」三选、缩进/简繁 selector 等；
+        // 非弹窗卡片（如 AboutActivity 头卡）已各自独立设底，不随本属性变动。
+        // 原名 filletBackground 为通用圆角语义，收窄为 alert 窗底专属后随之更名，
+        // 防后续非 alert 消费方误用共享通道
+        background.cornerRadius = resources.getDimension(R.dimen.corner_radius_lg)
         background.setColor(backgroundColor)
         return background
     }

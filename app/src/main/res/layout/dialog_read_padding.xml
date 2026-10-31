@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 14-reader-brightness#05：边距弹窗改 16dp 顶圆角底弹层（PaddingConfigDialog.onStart
+     applyBottomSheetWindow + setSheetBackground），分组标签 12sp on_surface_variant（色由代码设）、
+     组间 12% ink hairline、显示分隔线行 = ink 8% 卡整行可点 + ThemeSwitch（38×22 主色轨）；
+     12 条 DetailSeekBar 行观感直接继承 13#08-#11（app:isBottomBackground），id/事件/存储全保留 -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -8,7 +12,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp">
+
+        <!-- 13-read-style：顶部 4dp grip 视形锚点（纯装饰） -->
+        <View
+            android:layout_width="36dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_sheet_grip" />
 
         <LinearLayout
             android:id="@+id/ll_header_padding"
@@ -16,33 +29,45 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tv_header_padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingBottom="10dp">
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/header"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="12sp" />
 
-                <!-- 12-missed-2 #13：分组标签按 #29-A 用深主色 on_primary_soft（AccentTextView 运行时主色亮色压白 2.84:1） -->
+            <!-- 显示分隔线：ink 8% 圆角卡、minHeight 48dp、整行可点（label+开关同触控域） -->
+            <LinearLayout
+                android:id="@+id/ll_show_top_line"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:minHeight="48dp"
+                android:orientation="horizontal"
+                android:paddingLeft="14dp"
+                android:paddingRight="14dp">
+
                 <TextView
-                    android:id="@+id/tv_header_padding"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/header"
-                    android:textColor="@color/on_primary_soft"
-                    android:textSize="18sp" />
+                    android:text="@string/showLine"
+                    android:textColor="@color/primaryText"
+                    android:textSize="14sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/showLine" />
-
-                <io.legado.app.ui.widget.checkbox.SmoothCheckBox
+                <io.legado.app.lib.theme.view.ThemeSwitch
                     android:id="@+id/cb_show_top_line"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_margin="6dp" />
+                    android:layout_width="38dp"
+                    android:layout_height="22dp"
+                    android:layout_marginStart="10dp" />
 
             </LinearLayout>
 
@@ -50,6 +75,10 @@
                 android:id="@+id/dsb_header_padding_top"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="16dp"
+                app:isBottomBackground="true"
                 app:max="100"
                 app:title="@string/padding_top" />
 
@@ -57,6 +86,10 @@
                 android:id="@+id/dsb_header_padding_bottom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="16dp"
+                app:isBottomBackground="true"
                 app:max="100"
                 app:title="@string/padding_bottom" />
 
@@ -64,6 +97,10 @@
                 android:id="@+id/dsb_header_padding_left"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="16dp"
+                app:isBottomBackground="true"
                 app:max="100"
                 app:title="@string/padding_left" />
 
@@ -71,25 +108,44 @@
                 android:id="@+id/dsb_header_padding_right"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="16dp"
+                app:isBottomBackground="true"
                 app:max="100"
                 app:title="@string/padding_right" />
 
         </LinearLayout>
 
+        <!-- 组间 12% ink hairline（色由代码设随换肤） -->
+        <View
+            android:id="@+id/vw_padding_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="12dp" />
+
         <TextView
             android:id="@+id/tv_body_padding"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/main_body"
-            android:textColor="@color/on_primary_soft"
-            android:textSize="18sp" />
+            android:textColor="@color/on_surface_variant"
+            android:textSize="12sp" />
 
         <io.legado.app.ui.widget.DetailSeekBar
             android:id="@+id/dsb_padding_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            app:isBottomBackground="true"
             app:max="200"
             app:title="@string/padding_top" />
 
@@ -97,6 +153,10 @@
             android:id="@+id/dsb_padding_bottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            app:isBottomBackground="true"
             app:max="100"
             app:title="@string/padding_bottom" />
 
@@ -104,6 +164,10 @@
             android:id="@+id/dsb_padding_left"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            app:isBottomBackground="true"
             app:max="100"
             app:title="@string/padding_left" />
 
@@ -111,35 +175,62 @@
             android:id="@+id/dsb_padding_right"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            app:isBottomBackground="true"
             app:max="100"
             app:title="@string/padding_right" />
 
-        <LinearLayout
+        <!-- 组间 12% ink hairline（色由代码设随换肤） -->
+        <View
+            android:id="@+id/vw_padding_divider_footer"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:id="@+id/tv_footer_padding"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/footer"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="12sp" />
+
+        <!-- 显示分隔线：ink 8% 圆角卡、minHeight 48dp、整行可点（label+开关同触控域） -->
+        <LinearLayout
+            android:id="@+id/ll_show_bottom_line"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:minHeight="48dp"
+            android:orientation="horizontal"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:text="@string/footer"
-                android:textColor="@color/on_primary_soft"
-                android:textSize="18sp" />
+                android:text="@string/showLine"
+                android:textColor="@color/primaryText"
+                android:textSize="14sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/showLine" />
-
-            <io.legado.app.ui.widget.checkbox.SmoothCheckBox
+            <io.legado.app.lib.theme.view.ThemeSwitch
                 android:id="@+id/cb_show_bottom_line"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_margin="6dp" />
+                android:layout_width="38dp"
+                android:layout_height="22dp"
+                android:layout_marginStart="10dp" />
 
         </LinearLayout>
 
@@ -147,6 +238,10 @@
             android:id="@+id/dsb_footer_padding_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            app:isBottomBackground="true"
             app:max="100"
             app:title="@string/padding_top" />
 
@@ -154,6 +249,10 @@
             android:id="@+id/dsb_footer_padding_bottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            app:isBottomBackground="true"
             app:max="100"
             app:title="@string/padding_bottom" />
 
@@ -161,6 +260,10 @@
             android:id="@+id/dsb_footer_padding_left"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            app:isBottomBackground="true"
             app:max="100"
             app:title="@string/padding_left" />
 
@@ -168,6 +271,10 @@
             android:id="@+id/dsb_footer_padding_right"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            app:isBottomBackground="true"
             app:max="100"
             app:title="@string/padding_right" />
 

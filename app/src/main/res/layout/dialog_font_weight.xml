@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 14-reader-brightness#07：字重切换弹窗（TextFontWeightConverter.selectType customView），
+     16dp 圆角卡（全局 alert 卡背景通道 alertCardBackground）+ 三枚胶囊单选（13#13 语言：
+     ThemeRadioNoButton cornerRadius 24dp、minHeight 48dp、weight 1）；
+     选项文案由代码取 R.array.text_font_weight（正常/粗体/细体） -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="20dp"
+    android:paddingTop="20dp"
+    android:paddingRight="20dp"
+    android:paddingBottom="20dp">
+
+    <TextView
+        android:id="@+id/tv_font_weight_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_font_weight_converter"
+        android:textColor="@color/primaryText"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/rg_font_weight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:layout_marginLeft="-4dp"
+        android:layout_marginRight="-4dp"
+        android:orientation="horizontal">
+
+        <io.legado.app.lib.theme.view.ThemeRadioNoButton
+            android:id="@+id/rb_font_weight0"
+            style="@style/Widget.Legado.ReadStyleAnimPill"
+            tools:text="正常" />
+
+        <io.legado.app.lib.theme.view.ThemeRadioNoButton
+            android:id="@+id/rb_font_weight1"
+            style="@style/Widget.Legado.ReadStyleAnimPill"
+            tools:text="粗体" />
+
+        <io.legado.app.lib.theme.view.ThemeRadioNoButton
+            android:id="@+id/rb_font_weight2"
+            style="@style/Widget.Legado.ReadStyleAnimPill"
+            tools:text="细体" />
+
+    </RadioGroup>
+
+</LinearLayout>

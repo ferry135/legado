@@ -572,7 +572,6 @@
     <string name="reading">Leituras</string>
     <string name="battery_show">%d%%</string>
     <string name="timer_m">%d min</string>
-    <string name="brightness_auto">Brilho autom. %s</string>
     <string name="read_aloud_by_page">Ler páginas em voz alta</string>
     <string name="speak_engine">Mecanismo de voz</string>
     <string name="bg_image">Imagens de fundo</string>
@@ -1124,7 +1123,6 @@
     <string name="load_word_count">Carregar os palavras do livro</string>
     <string name="replace_exclude_scope">排除范围，选填书名或者书源 URL</string>
     <string name="format_js_rule">格式化规则(formatJs)</string>
-    <string name="adjust_pos">调整位置</string>
     <string name="select_section_export">Choose some chapters to be exported</string>
     <string name="error_scope_input">Please enter the correct range</string>
     <string name="custom_export">Custom Export</string>

@@ -600,12 +600,6 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.audioPlayWakeLock, value)
         }
 
-    var brightnessVwPos: Boolean
-        get() = appCtx.getPrefBoolean(PreferKey.brightnessVwPos)
-        set(value) {
-            appCtx.putPrefBoolean(PreferKey.brightnessVwPos, value)
-        }
-
     fun detectClickArea() {
         if (clickActionTL * clickActionTC * clickActionTR
             * clickActionML * clickActionMC * clickActionMR

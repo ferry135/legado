@@ -16,19 +16,56 @@
         app:titleTextColor="@color/on_surface"
         app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-    <!-- 10-reader-prefs#07：字体目录路径条（列表头 11.5sp on_surface_variant，换目录即时刷新） -->
-    <TextView
-        android:id="@+id/tv_font_dir"
+    <!-- 14-reader-brightness#04：目录条升级为值胶囊行（label 12sp + 路径胶囊 monospace 11.5sp +
+         尾部箭头），整行可点换目录（FontSelectDialog 绑定 openFolder）；
+         minHeight 48dp（MASTER §1.4 触控目标 ≥48dp；稿面 .fdir 44px 与其自述「弹窗内可点控件统一 ≥48dp」矛盾，从 MASTER 口径） -->
+    <LinearLayout
+        android:id="@+id/ll_font_dir"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="18dp"
-        android:paddingTop="10dp"
-        android:paddingRight="18dp"
-        android:paddingBottom="6dp"
-        android:singleLine="true"
-        android:ellipsize="start"
-        android:textColor="@color/on_surface_variant"
-        android:textSize="11.5sp" />
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="10dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:minHeight="48dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_font_dir"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_font_dir_path"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:ellipsize="start"
+            android:fontFamily="monospace"
+            android:paddingLeft="10dp"
+            android:paddingTop="6dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="6dp"
+            android:singleLine="true"
+            android:textColor="@color/primaryText"
+            android:textSize="11.5sp" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="7dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_arrow_right"
+            app:tint="@color/on_surface_variant" />
+
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"

@@ -582,7 +582,8 @@
     <string name="reading">Read</string>
     <string name="battery_show">%d%%</string>
     <string name="timer_m">%d min</string>
-    <string name="brightness_auto">Auto-Brightness %s</string>
+    <string name="brightness_auto_on">Auto-Brightness On</string>
+    <string name="brightness_auto_off">Auto-Brightness Off</string>
     <string name="read_aloud_by_page">Speak by pages</string>
     <string name="speak_engine">Speak Engine</string>
     <string name="bg_image">Background images</string>
@@ -1145,7 +1146,6 @@
     <string name="load_word_count">Load word count</string>
     <string name="replace_exclude_scope">Exclude range, optional title or source URL</string>
     <string name="format_js_rule">格式化规则(formatJs)</string>
-    <string name="adjust_pos">Adjustment position</string>
     <string name="error_scope_input">Please enter the correct range</string>
     <string name="custom_export">Custom Export</string>
     <string name="file_contains_number">The number of chapters contained in each file</string>
