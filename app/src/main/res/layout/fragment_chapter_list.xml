@@ -15,6 +15,7 @@
         app:layout_constraintBottom_toTopOf="@+id/ll_chapter_base_info" />
 
     <View
+        android:id="@+id/divider_above_info"
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:background="@color/divider_subtle"
