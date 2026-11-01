@@ -351,6 +351,7 @@ abstract class BaseReadAloudService : BaseService(),
                 }
             }
             upTtsProgress(readAloudNumber + 1)
+            resetTimelineAnchor()
             play()
         } else {
             toLast = true
@@ -375,6 +376,7 @@ abstract class BaseReadAloudService : BaseService(),
                 }
             }
             upTtsProgress(readAloudNumber + 1)
+            resetTimelineAnchor()
             play()
         } else {
             nextChapter()
@@ -450,10 +452,20 @@ abstract class BaseReadAloudService : BaseService(),
      * 更新媒体状态
      */
     protected fun upMediaSessionPlaybackState(state: Int) {
+        ensureChapterTimeline()
         upMediaSessionMetadata()
-        // 时间轴按估算朗读时长换算（字符位 → 毫秒），进度条比例 = 已读字符 / 章节总字符
-        val total = estimatedDurationMs()
-        val position = charToMs(readAloudNumber.toLong()).coerceIn(0L, total)
+        // 映射到本章冻结时间轴，并用单调前沿兜底：
+        // 段间超时/暂停都按已插值到的位置续推，进度只进不退（同音乐播放器）
+        val now = SystemClock.elapsedRealtime()
+        val mapped = (readAloudNumber.toLong() * chapterPaceMsPerChar).toLong()
+        val frontier = if (lastPushedRealtime > 0L) {
+            lastPushedPositionMs + (now - lastPushedRealtime)
+        } else {
+            lastPushedPositionMs
+        }
+        val position = maxOf(mapped, frontier).coerceIn(0L, chapterDurationMs)
+        lastPushedPositionMs = position
+        lastPushedRealtime = if (state == PlaybackStateCompat.STATE_PLAYING) now else 0L
         mediaSessionCompat.setPlaybackState(
             PlaybackStateCompat.Builder()
                 .setActions(
@@ -499,6 +511,15 @@ abstract class BaseReadAloudService : BaseService(),
     private var paceAnchorChar = 0L
     private var paceAnchorValid = false
 
+    // 本章冻结时间轴：章内换算节奏与总时长固定、进度单调，
+    // 避免每段重标定/暂停按段首回推导致进度回跳（对齐音乐播放器每首曲目时长固定的行为）
+    private var chapterKey = -1
+    private var chapterTimelineLocked = false
+    private var chapterPaceMsPerChar = 0f
+    private var chapterDurationMs = 0L
+    private var lastPushedPositionMs = 0L
+    private var lastPushedRealtime = 0L
+
     /** 每段开始时采样：相邻两段的字符差/墙钟间隔即真实节奏（含段间停顿） */
     protected fun trackReadingPace() {
         val now = SystemClock.elapsedRealtime()
@@ -523,25 +544,53 @@ abstract class BaseReadAloudService : BaseService(),
         paceAnchorValid = false
     }
 
+    /** 拖动进度/上下段跳转：进度允许回跳，清除单调前沿 */
+    private fun resetTimelineAnchor() {
+        lastPushedPositionMs = 0L
+        lastPushedRealtime = 0L
+    }
+
     /** 当前换算节奏：优先实测，未校准时按 TTS 正常语速约 5 字/秒 × 语速倍率估算 */
-    private fun effectiveMsPerChar(): Float =
+    private fun effectivePace(): Float =
         if (paceMsPerChar > 0f) paceMsPerChar
         else if (speechRateFactor() > 0f) 200f / speechRateFactor()
         else 200f
 
-    /** 估算当前章节朗读总时长（ms） */
-    private fun estimatedDurationMs(): Long = charToMs(totalChapterChars())
-
-    /** 字符位 → 毫秒（按朗读节奏换算） */
-    private fun charToMs(chars: Long): Long {
-        if (chars <= 0L) return 0L
-        return (chars * effectiveMsPerChar()).toLong()
+    /**
+     * 建立/维持本章时间轴：换章即按最新校准节奏冻结本章时长；
+     * 章首尚无校准数据时先用静态估算，首个实测样本到达后仅在最前段重建一次
+     * （单调前沿兜底，重建也不会让进度回跳）
+     */
+    private fun ensureChapterTimeline() {
+        val tc = textChapter ?: return
+        if (chapterKey != tc.position) {
+            chapterKey = tc.position
+            chapterTimelineLocked = paceMsPerChar > 0f
+            chapterPaceMsPerChar = effectivePace()
+            chapterDurationMs = (totalChapterChars() * chapterPaceMsPerChar).toLong()
+            resetTimelineAnchor()
+            LogUtils.d(
+                "MediaPace",
+                "章节时间轴冻结: pace=${chapterPaceMsPerChar}ms/字 时长=${chapterDurationMs}ms"
+            )
+        } else if (!chapterTimelineLocked && paceMsPerChar > 0f && paceMsPerChar != chapterPaceMsPerChar) {
+            chapterTimelineLocked = true
+            chapterPaceMsPerChar = paceMsPerChar
+            chapterDurationMs = (totalChapterChars() * paceMsPerChar).toLong()
+            LogUtils.d(
+                "MediaPace",
+                "实测节奏到达, 时间轴重建: pace=${chapterPaceMsPerChar}ms/字 时长=${chapterDurationMs}ms"
+            )
+        }
     }
 
-    /** 毫秒 → 字符位（charToMs 的逆换算，供拖动进度条定位） */
+    /** 本章总时长（ms） */
+    private fun estimatedDurationMs(): Long = chapterDurationMs
+
+    /** 毫秒 → 字符位（按本章冻结节奏的逆换算，供拖动进度条定位） */
     private fun msToChar(ms: Long): Long {
-        if (ms <= 0L) return 0L
-        return (ms / effectiveMsPerChar()).toLong()
+        if (ms <= 0L || chapterPaceMsPerChar <= 0f) return 0L
+        return (ms / chapterPaceMsPerChar).toLong()
     }
 
     /**
@@ -553,7 +602,7 @@ abstract class BaseReadAloudService : BaseService(),
         val book = ReadBook.book ?: return
         val tc = textChapter ?: return
         val duration = estimatedDurationMs()
-        // 时长随节奏校准变化超过 1 秒就刷新，保持进度条比例与时长一致
+        // 时间轴冻结/重建后时长变化超 1 秒即刷新，保持进度条比例与显示时长一致
         val diff = duration - lastMetaDurationMs
         val durationChanged = duration > 0L && (diff > 1000L || diff < -1000L)
         val key = "${book.bookUrl}-${tc.position}-${book.durChapterTitle}"
@@ -630,6 +679,7 @@ abstract class BaseReadAloudService : BaseService(),
                 readAloudNumber = target
                 paragraphStartPos = 0
                 invalidatePaceAnchor()
+                resetTimelineAnchor()
                 play()
                 upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
             }
