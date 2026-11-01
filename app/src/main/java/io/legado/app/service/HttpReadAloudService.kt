@@ -553,7 +553,8 @@ class HttpReadAloudService : BaseReadAloudService(),
         }
         updateNextPos()
         upPlayPos()
-        // 每段音频切换重推媒体进度，校正估算时间轴的系统插值漂移
+        // 每段音频切换实测朗读节奏并重推媒体进度，校正时间轴漂移
+        trackReadingPace()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
     }
 
