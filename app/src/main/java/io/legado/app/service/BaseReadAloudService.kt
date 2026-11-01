@@ -478,7 +478,8 @@ abstract class BaseReadAloudService : BaseService(),
                         or PlaybackStateCompat.ACTION_SEEK_TO
                         or PlaybackStateCompat.ACTION_STOP
                 )
-                .setState(state, position, 1f)
+                // 时间轴为语速=1.0的基准轴：语速倍率即基准轴上的推进速度
+                .setState(state, position, speechRateFactor())
                 // 为系统媒体控件添加停止、定时按钮
                 .addCustomAction(
                     PlaybackStateCompat.CustomAction.Builder(
@@ -555,14 +556,14 @@ abstract class BaseReadAloudService : BaseService(),
         lastPushedRealtime = 0L
     }
 
-    /** 当前换算节奏：优先实测，未校准时按 TTS 正常语速约 5 字/秒 × 语速倍率估算 */
-    private fun effectivePace(): Float =
-        if (paceMsPerChar > 0f) paceMsPerChar
-        else if (speechRateFactor() > 0f) 200f / speechRateFactor()
+    /** 基准节奏（ms/字符，按语速=1.0 归一）：时间轴与语速无关，语速只决定推进速度 */
+    private fun basePaceMsPerChar(): Float =
+        if (paceMsPerChar > 0f) paceMsPerChar * speechRateFactor()
         else 200f
 
     /**
-     * 建立/维持本章时间轴：换章即按最新校准节奏冻结本章时长；
+     * 建立/维持本章时间轴：换章即按当前基准节奏（语速归一）冻结本章时长，
+     * 语速变更不重建时间轴（总时长恒定，只有推进快慢不同）；
      * 章首尚无校准数据时先用静态估算，首个实测样本到达后仅在最前段重建一次
      * （单调前沿兜底，重建也不会让进度回跳）
      */
@@ -571,7 +572,7 @@ abstract class BaseReadAloudService : BaseService(),
         if (chapterKey != tc.position) {
             chapterKey = tc.position
             chapterTimelineLocked = paceMsPerChar > 0f
-            chapterPaceMsPerChar = effectivePace()
+            chapterPaceMsPerChar = basePaceMsPerChar()
             chapterDurationMs = (totalChapterChars() * chapterPaceMsPerChar).toLong()
             resetTimelineAnchor()
             LogUtils.d(
@@ -580,8 +581,8 @@ abstract class BaseReadAloudService : BaseService(),
             )
         } else if (!chapterTimelineLocked && paceMsPerChar > 0f && paceMsPerChar != chapterPaceMsPerChar) {
             chapterTimelineLocked = true
-            chapterPaceMsPerChar = paceMsPerChar
-            chapterDurationMs = (totalChapterChars() * paceMsPerChar).toLong()
+            chapterPaceMsPerChar = basePaceMsPerChar()
+            chapterDurationMs = (totalChapterChars() * chapterPaceMsPerChar).toLong()
             LogUtils.d(
                 "MediaPace",
                 "实测节奏到达, 时间轴重建: pace=${chapterPaceMsPerChar}ms/字 时长=${chapterDurationMs}ms"
