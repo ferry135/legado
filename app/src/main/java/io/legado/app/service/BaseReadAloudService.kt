@@ -443,11 +443,11 @@ abstract class BaseReadAloudService : BaseService(),
     /**
      * 更新媒体状态
      */
-    private fun upMediaSessionPlaybackState(state: Int) {
+    protected fun upMediaSessionPlaybackState(state: Int) {
         upMediaSessionMetadata()
-        // 伪时间轴：1 字符 = 1ms，进度条比例 = 朗读字符位 / 章节总字符
-        val total = totalChapterChars()
-        val position = readAloudNumber.toLong().coerceIn(0L, total)
+        // 时间轴按估算朗读时长换算（字符位 → 毫秒），进度条比例 = 已读字符 / 章节总字符
+        val total = estimatedDurationMs()
+        val position = charToMs(readAloudNumber.toLong()).coerceIn(0L, total)
         mediaSessionCompat.setPlaybackState(
             PlaybackStateCompat.Builder()
                 .setActions(
@@ -473,6 +473,29 @@ abstract class BaseReadAloudService : BaseService(),
         return (last.chapterPosition + last.text.length).toLong().coerceAtLeast(0L)
     }
 
+    /** 相对正常语速的倍率：默认语速 5 → 1.0，与各朗读服务的语速设置保持一致 */
+    private fun speechRateFactor(): Float = when (this) {
+        is TTSReadAloudService -> (AppConfig.ttsSpeechRate + 5) / 10f
+        else -> (AppConfig.speechRatePlay + 5) / 10f
+    }
+
+    /** 估算当前章节朗读总时长（ms）：TTS 正常语速约 5 字/秒 */
+    private fun estimatedDurationMs(): Long = charToMs(totalChapterChars())
+
+    /** 字符位 → 毫秒（按估算语速换算） */
+    private fun charToMs(chars: Long): Long {
+        val factor = speechRateFactor()
+        if (chars <= 0L || factor <= 0f) return 0L
+        return (chars / (5f * factor) * 1000f).toLong()
+    }
+
+    /** 毫秒 → 字符位（charToMs 的逆换算，供拖动进度条定位） */
+    private fun msToChar(ms: Long): Long {
+        val factor = speechRateFactor()
+        if (factor <= 0f) return 0L
+        return (ms * factor / 200f).toLong()
+    }
+
     /**
      * 向系统媒体卡片同步元数据（书名/章节/封面/时长），章节或封面变化时才更新
      */
@@ -493,7 +516,7 @@ abstract class BaseReadAloudService : BaseService(),
                 .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, cover)
                 .putLong(
                     MediaMetadataCompat.METADATA_KEY_DURATION,
-                    totalChapterChars()
+                    estimatedDurationMs()
                 )
                 .build()
         )
@@ -541,10 +564,10 @@ abstract class BaseReadAloudService : BaseService(),
             }
 
             override fun onSeekTo(pos: Long) {
-                // 拖动媒体进度条 = 跳到章节内对应字符位所在段落
+                // 拖动媒体进度条 = 跳到章节内对应字符位所在段落（时间轴为估算朗读时长）
                 val tc = textChapter ?: return
                 val total = totalChapterChars()
-                val target = pos.coerceIn(0L, total).toInt()
+                val target = msToChar(pos).coerceIn(0L, total).toInt()
                 nowSpeak = (tc.getParagraphNum(target, readAloudByPage) - 1)
                     .coerceAtLeast(0)
                 readAloudNumber = target

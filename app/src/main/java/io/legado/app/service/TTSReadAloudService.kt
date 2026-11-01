@@ -3,6 +3,7 @@ package io.legado.app.service
 import android.app.PendingIntent
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
+import android.support.v4.media.session.PlaybackStateCompat
 import io.legado.app.R
 import io.legado.app.constant.AppConst
 import io.legado.app.constant.AppLog
@@ -202,6 +203,8 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                     ReadBook.moveToNextPage()
                 }
                 upTtsProgress(readAloudNumber + 1)
+                // 每段开始重推媒体进度，校正估算时间轴的系统插值漂移
+                upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
             }
         }
 

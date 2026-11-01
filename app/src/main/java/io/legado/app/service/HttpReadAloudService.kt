@@ -3,6 +3,7 @@ package io.legado.app.service
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.net.Uri
+import android.support.v4.media.session.PlaybackStateCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -552,6 +553,8 @@ class HttpReadAloudService : BaseReadAloudService(),
         }
         updateNextPos()
         upPlayPos()
+        // 每段音频切换重推媒体进度，校正估算时间轴的系统插值漂移
+        upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
     }
 
     override fun onPlayerError(error: PlaybackException) {
