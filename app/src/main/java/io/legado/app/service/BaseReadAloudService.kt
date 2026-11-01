@@ -274,6 +274,9 @@ abstract class BaseReadAloudService : BaseService(),
                 }
             }
             paragraphStartPos = pos
+            // 朗读中翻页是显式重定位：进度条跟随新页面（允许回跳），节奏锚点作废重采
+            invalidatePaceAnchor()
+            resetTimelineAnchor()
             launch(Main) {
                 if (play) play() else pageChanged = true
             }
@@ -351,6 +354,7 @@ abstract class BaseReadAloudService : BaseService(),
                 }
             }
             upTtsProgress(readAloudNumber + 1)
+            invalidatePaceAnchor()
             resetTimelineAnchor()
             play()
         } else {
@@ -376,6 +380,7 @@ abstract class BaseReadAloudService : BaseService(),
                 }
             }
             upTtsProgress(readAloudNumber + 1)
+            invalidatePaceAnchor()
             resetTimelineAnchor()
             play()
         } else {
