@@ -72,6 +72,10 @@ abstract class BaseReadAloudService : BaseService(),
     AudioManager.OnAudioFocusChangeListener {
 
     companion object {
+        // 系统媒体卡片(13+)不渲染通知 action 按钮，改由 PlaybackState custom action 提供
+        private const val APP_ACTION_STOP = "Stop"
+        private const val APP_ACTION_TIMER = "Timer"
+
         @JvmStatic
         var isRun = false
             private set
@@ -453,12 +457,20 @@ abstract class BaseReadAloudService : BaseService(),
                 .setActions(
                     MediaHelp.MEDIA_SESSION_ACTIONS
                         or PlaybackStateCompat.ACTION_SEEK_TO
+                        or PlaybackStateCompat.ACTION_STOP
                 )
                 .setState(state, position, 1f)
-                // 为系统媒体控件添加定时按钮
+                // 为系统媒体控件添加停止、定时按钮
                 .addCustomAction(
                     PlaybackStateCompat.CustomAction.Builder(
-                        "ACTION_ADD_TIMER",
+                        APP_ACTION_STOP,
+                        getString(R.string.stop),
+                        R.drawable.ic_stop_black_24dp
+                    ).build()
+                )
+                .addCustomAction(
+                    PlaybackStateCompat.CustomAction.Builder(
+                        APP_ACTION_TIMER,
                         getString(R.string.set_timer),
                         R.drawable.ic_time_add_24dp
                     ).build()
@@ -560,7 +572,10 @@ abstract class BaseReadAloudService : BaseService(),
             }
 
             override fun onCustomAction(action: String, extras: Bundle?) {
-                if (action == "ACTION_ADD_TIMER") addTimer()
+                when (action) {
+                    APP_ACTION_STOP -> stopSelf()
+                    APP_ACTION_TIMER -> addTimer()
+                }
             }
 
             override fun onSeekTo(pos: Long) {
