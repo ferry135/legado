@@ -355,6 +355,8 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
 
             Player.STATE_ENDED -> {
                 playErrorNo = 0
+                // 列表被合成速度拖干/自然结束：空档墙钟时间不得计入节奏采样
+                invalidatePaceAnchor()
                 updateNextPos()
                 exoPlayer.stop()
                 exoPlayer.clearMediaItems()
@@ -399,6 +401,8 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
             pauseReadAloud()
         } else {
             if (exoPlayer.hasNextMediaItem()) {
+                // 出错跳段：跳过的墙钟时间不计入节奏采样
+                invalidatePaceAnchor()
                 exoPlayer.seekToNextMediaItem()
                 exoPlayer.prepare()
             } else {
@@ -407,6 +411,9 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
             }
         }
     }
+
+    /** 系统TTS引擎各自节奏不同，按引擎持久化基准节奏 */
+    override fun paceStoreKey(): String = "sysTts-" + (ttsEngineName ?: "default")
 
     private fun deleteCurrentSpeakFile() {
         val mediaItem = exoPlayer.currentMediaItem ?: return

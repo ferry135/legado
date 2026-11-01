@@ -511,20 +511,45 @@ abstract class BaseReadAloudService : BaseService(),
         else -> (AppConfig.speechRatePlay + 5) / 10f
     }
 
-    // 实测朗读节奏（ms/字符，含段间停顿）：0 表示尚未校准，用静态估算兜底
+    // 实测朗读节奏（ms/字符，含段间停顿）：0 表示尚未校准
     private var paceMsPerChar = 0f
+    private var paceSampleCount = 0
     private var paceAnchorTime = 0L
     private var paceAnchorChar = 0L
     private var paceAnchorValid = false
 
-    // 本章冻结时间轴：章内换算节奏与总时长固定、进度单调，
-    // 避免每段重标定/暂停按段首回推导致进度回跳（对齐音乐播放器每首曲目时长固定的行为）
+    // 本章冻结时间轴：换章冻结一次、章内绝不重建、进度单调，
+    // 时长从首次显示起恒定（对齐起点：总时长固定，语速只影响推进速度）
     private var chapterKey = -1
-    private var chapterTimelineLocked = false
     private var chapterPaceMsPerChar = 0f
     private var chapterDurationMs = 0L
     private var lastPushedPositionMs = 0L
     private var lastPushedRealtime = 0L
+
+    // 按引擎持久化的基准节奏（语速=1.0 归一 ms/字）：跨会话学习，
+    // 新章节一冻结即得稳定且接近真实的总时长
+    private val pacePrefs by lazy {
+        getSharedPreferences("readAloudPace", Context.MODE_PRIVATE)
+    }
+    private var storedBasePace = 0f
+    private var storedPaceLoaded = false
+
+    /** 节奏持久化键：同一引擎/音源以语速无关的基准节奏共享 */
+    protected open fun paceStoreKey(): String = "aloud"
+
+    private fun loadStoredPace() {
+        if (storedPaceLoaded) return
+        storedPaceLoaded = true
+        storedBasePace = pacePrefs.getFloat(paceStoreKey(), 0f)
+    }
+
+    // 会话内章节冻结缓存：切回已读章节时总时长与上次分毫不差
+    private val chapterTimelineCache =
+        object : LinkedHashMap<String, Pair<Float, Long>>(16, 0.75f, true) {
+            override fun removeEldestEntry(
+                eldest: MutableMap.MutableEntry<String, Pair<Float, Long>>
+            ): Boolean = size > 32
+        }
 
     /** 每段开始时采样：相邻两段的字符差/墙钟间隔即真实节奏（含段间停顿） */
     protected fun trackReadingPace() {
@@ -533,11 +558,20 @@ abstract class BaseReadAloudService : BaseService(),
             val dt = now - paceAnchorTime
             val dc = readAloudNumber - paceAnchorChar
             if (dt > 1500L && dc > 0) {
-                // EMA 平滑并夹紧异常采样（约 2~10 字/秒）
-                val sample = (dt.toFloat() / dc).coerceIn(100f, 500f)
+                // EMA 平滑并夹紧异常采样（约 1.25~8 字/秒）
+                val sample = (dt.toFloat() / dc).coerceIn(125f, 800f)
                 paceMsPerChar = if (paceMsPerChar <= 0f) sample
                 else paceMsPerChar * 0.6f + sample * 0.4f
-                LogUtils.d("MediaPace", "dt:${dt}ms dc:${dc}字 → ${paceMsPerChar}ms/字")
+                paceSampleCount++
+                // 采样足够后按引擎持久化（语速归一），后续章节总时长即接近真实
+                if (paceSampleCount >= 3) {
+                    storedBasePace = paceMsPerChar * speechRateFactor()
+                    pacePrefs.edit().putFloat(paceStoreKey(), storedBasePace).apply()
+                }
+                LogUtils.d(
+                    "MediaPace",
+                    "dt:${dt}ms dc:${dc}字 → ${paceMsPerChar}ms/字 (基准$storedBasePace)"
+                )
             }
         }
         paceAnchorTime = now
@@ -545,8 +579,11 @@ abstract class BaseReadAloudService : BaseService(),
         paceAnchorValid = true
     }
 
-    /** 暂停或拖动进度后节奏锚点失效，下一段重新起算 */
-    private fun invalidatePaceAnchor() {
+    /**
+     * 暂停/拖动/播放器空档（缓冲、列表拖干、出错跳段）后节奏锚点失效，
+     * 下一段重新起算——空档墙钟时间不是朗读节奏，不得计入采样
+     */
+    protected fun invalidatePaceAnchor() {
         paceAnchorValid = false
     }
 
@@ -562,32 +599,33 @@ abstract class BaseReadAloudService : BaseService(),
         else 200f
 
     /**
-     * 建立/维持本章时间轴：换章即按当前基准节奏（语速归一）冻结本章时长，
-     * 语速变更不重建时间轴（总时长恒定，只有推进快慢不同）；
-     * 章首尚无校准数据时先用静态估算，首个实测样本到达后仅在最前段重建一次
-     * （单调前沿兜底，重建也不会让进度回跳）
+     * 建立本章时间轴：换章冻结一次、章内绝不重建。
+     * 冻结值优先取同章会话缓存（重进章节总时长与上次一致），
+     * 否则取按引擎持久化的基准节奏（跨会话学习），首次使用退回 200ms/字 静态估算。
+     * 时长一旦显示即恒定——总时长不随语速/翻页/校准变化，语速只决定推进快慢
      */
     private fun ensureChapterTimeline() {
         val tc = textChapter ?: return
-        if (chapterKey != tc.position) {
-            chapterKey = tc.position
-            chapterTimelineLocked = paceMsPerChar > 0f
-            chapterPaceMsPerChar = basePaceMsPerChar()
+        if (chapterKey == tc.position) return
+        if (totalChapterChars() <= 0L) return // 章节尚未就绪，待内容加载后再冻结
+        loadStoredPace()
+        val cacheKey = "${ReadBook.book?.bookUrl}#${tc.position}"
+        val cached = chapterTimelineCache[cacheKey]
+        chapterKey = tc.position
+        if (cached != null) {
+            chapterPaceMsPerChar = cached.first
+            chapterDurationMs = cached.second
+        } else {
+            chapterPaceMsPerChar = if (storedBasePace > 0f) storedBasePace else 200f
             chapterDurationMs = (totalChapterChars() * chapterPaceMsPerChar).toLong()
-            resetTimelineAnchor()
-            LogUtils.d(
-                "MediaPace",
-                "章节时间轴冻结: pace=${chapterPaceMsPerChar}ms/字 时长=${chapterDurationMs}ms"
-            )
-        } else if (!chapterTimelineLocked && paceMsPerChar > 0f && paceMsPerChar != chapterPaceMsPerChar) {
-            chapterTimelineLocked = true
-            chapterPaceMsPerChar = basePaceMsPerChar()
-            chapterDurationMs = (totalChapterChars() * chapterPaceMsPerChar).toLong()
-            LogUtils.d(
-                "MediaPace",
-                "实测节奏到达, 时间轴重建: pace=${chapterPaceMsPerChar}ms/字 时长=${chapterDurationMs}ms"
-            )
+            chapterTimelineCache[cacheKey] = Pair(chapterPaceMsPerChar, chapterDurationMs)
         }
+        resetTimelineAnchor()
+        LogUtils.d(
+            "MediaPace",
+            "章节时间轴冻结: pace=${chapterPaceMsPerChar}ms/字 时长=${chapterDurationMs}ms" +
+                if (cached != null) " (会话缓存)" else ""
+        )
     }
 
     /** 本章总时长（ms） */

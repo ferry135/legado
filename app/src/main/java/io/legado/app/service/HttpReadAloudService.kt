@@ -514,7 +514,8 @@ class HttpReadAloudService : BaseReadAloudService(),
             }
 
             Player.STATE_BUFFERING -> {
-                // 缓冲中
+                // 缓冲中：网络空档不计入节奏采样
+                invalidatePaceAnchor()
             }
 
             Player.STATE_READY -> {
@@ -527,6 +528,7 @@ class HttpReadAloudService : BaseReadAloudService(),
             Player.STATE_ENDED -> {
                 // 结束
                 playErrorNo = 0
+                invalidatePaceAnchor()
                 updateNextPos()
                 exoPlayer.stop()
                 exoPlayer.clearMediaItems()
@@ -569,6 +571,8 @@ class HttpReadAloudService : BaseReadAloudService(),
             pauseReadAloud()
         } else {
             if (exoPlayer.hasNextMediaItem()) {
+                // 出错跳段：跳过的墙钟时间不计入节奏采样
+                invalidatePaceAnchor()
                 exoPlayer.seekToNextMediaItem()
                 exoPlayer.prepare()
             } else {
@@ -577,6 +581,9 @@ class HttpReadAloudService : BaseReadAloudService(),
             }
         }
     }
+
+    /** 在线音源各自节奏不同，按音源持久化基准节奏 */
+    override fun paceStoreKey(): String = "httpTts-" + (ReadAloud.httpTTS?.url ?: "default")
 
     private fun deleteCurrentSpeakFile() {
         if (AppConfig.streamReadAloudAudio) {
