@@ -551,6 +551,32 @@ abstract class BaseReadAloudService : BaseService(),
             ): Boolean = size > 32
         }
 
+    // 各段音频精确时长累计（语速归一基准）：比墙钟采样更准，合成快慢/播放空档均不影响
+    private var exactPaceBaseMs = 0f
+    private var exactPaceChars = 0
+
+    /** 是否具备单段音频精确时长校准能力（逐段合成到文件的实现才有） */
+    protected open fun exactPaceAvailable(): Boolean = false
+
+    /**
+     * 单段音频精确时长校准（合成完成时回调）：毫秒/字符按语速=1.0归一后累计平均并持久化。
+     * 首个样本即可让新引擎的第一章总时长接近真实，无需等墙钟采样
+     */
+    protected fun onExactPaceSample(durationMs: Long, charCount: Int) {
+        if (durationMs <= 0L || charCount <= 0) return
+        loadStoredPace()
+        exactPaceBaseMs += durationMs * speechRateFactor()
+        exactPaceChars += charCount
+        if (exactPaceChars >= 30) {
+            storedBasePace = exactPaceBaseMs / exactPaceChars
+            pacePrefs.edit().putFloat(paceStoreKey(), storedBasePace).apply()
+            LogUtils.d(
+                "MediaPace",
+                "精确校准: +${durationMs}ms/${charCount}字 → 基准$storedBasePace"
+            )
+        }
+    }
+
     /** 每段开始时采样：相邻两段的字符差/墙钟间隔即真实节奏（含段间停顿） */
     protected fun trackReadingPace() {
         val now = SystemClock.elapsedRealtime()
@@ -607,8 +633,15 @@ abstract class BaseReadAloudService : BaseService(),
     private fun ensureChapterTimeline() {
         val tc = textChapter ?: return
         if (chapterKey == tc.position) return
+        // 分页是异步逐页进行的：未排完时段落表只含已排版前缀，总字数会偏小——
+        // 必须等排版完成再冻结，否则整章时长被低估且被会话缓存固化
+        if (!tc.isCompleted) return
         if (totalChapterChars() <= 0L) return // 章节尚未就绪，待内容加载后再冻结
         loadStoredPace()
+        // 首次使用某引擎：等首段合成音频的精确节奏（约1~2秒），避免静态估算的整章偏差
+        if (exactPaceAvailable() && storedBasePace <= 0f &&
+            exactPaceChars < 30 && paceMsPerChar <= 0f
+        ) return
         val cacheKey = "${ReadBook.book?.bookUrl}#${tc.position}"
         val cached = chapterTimelineCache[cacheKey]
         chapterKey = tc.position
@@ -616,7 +649,11 @@ abstract class BaseReadAloudService : BaseService(),
             chapterPaceMsPerChar = cached.first
             chapterDurationMs = cached.second
         } else {
-            chapterPaceMsPerChar = if (storedBasePace > 0f) storedBasePace else 200f
+            chapterPaceMsPerChar = when {
+                storedBasePace > 0f -> storedBasePace
+                paceMsPerChar > 0f -> paceMsPerChar * speechRateFactor()
+                else -> 200f
+            }
             chapterDurationMs = (totalChapterChars() * chapterPaceMsPerChar).toLong()
             chapterTimelineCache[cacheKey] = Pair(chapterPaceMsPerChar, chapterDurationMs)
         }
