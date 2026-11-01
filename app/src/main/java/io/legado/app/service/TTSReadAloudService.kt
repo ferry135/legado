@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
 import java.io.File
+import java.io.FileInputStream
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.resume
 
@@ -175,6 +176,8 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
                             }
                         } else {
                             synthErrorNo = 0
+                            // 单段音频精确时长 → 基准节奏校准（首段即准，后续持续精化）
+                            onExactPaceSample(wavDurationMs(getSpeakFile(fileName)), speakText.length)
                         }
                     }
                 }
@@ -414,6 +417,30 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
 
     /** 系统TTS引擎各自节奏不同，按引擎持久化基准节奏 */
     override fun paceStoreKey(): String = "sysTts-" + (ttsEngineName ?: "default")
+
+    /** 逐段合成到 wav 文件，具备单段精确时长校准能力 */
+    override fun exactPaceAvailable(): Boolean = true
+
+    /** 解析标准44字节头的wav精确时长（毫秒），异常或非标准头返回0 */
+    private fun wavDurationMs(file: File): Long {
+        return try {
+            if (file.length() <= 44L) return 0L
+            FileInputStream(file).use { ins ->
+                val header = ByteArray(44)
+                if (ins.read(header) != 44) return 0L
+                if (!String(header, 0, 4, Charsets.US_ASCII).startsWith("RIFF")) return 0L
+                // 标准头：24-27采样率，28-31字节率(=采样率×块对齐)；时长按字节率换算
+                val byteRate = ((header[31].toInt() and 0xFF) shl 24) or
+                        ((header[30].toInt() and 0xFF) shl 16) or
+                        ((header[29].toInt() and 0xFF) shl 8) or
+                        (header[28].toInt() and 0xFF)
+                if (byteRate < 4000 || byteRate > 1_000_000) return 0L
+                (file.length() - 44L) * 1000L / byteRate
+            }
+        } catch (e: Exception) {
+            0L
+        }
+    }
 
     private fun deleteCurrentSpeakFile() {
         val mediaItem = exoPlayer.currentMediaItem ?: return
