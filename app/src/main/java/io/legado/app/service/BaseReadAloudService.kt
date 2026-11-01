@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.SystemClock
 import android.media.AudioManager
 import android.net.wifi.WifiManager
 import android.os.Bundle
@@ -308,6 +309,7 @@ abstract class BaseReadAloudService : BaseService(),
         if (abandonFocus) {
             abandonFocus()
         }
+        invalidatePaceAnchor()
         upReadAloudNotification()
         upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PAUSED)
         postEvent(EventBus.ALOUD_STATE, Status.PAUSE)
@@ -491,35 +493,75 @@ abstract class BaseReadAloudService : BaseService(),
         else -> (AppConfig.speechRatePlay + 5) / 10f
     }
 
-    /** 估算当前章节朗读总时长（ms）：TTS 正常语速约 5 字/秒 */
+    // 实测朗读节奏（ms/字符，含段间停顿）：0 表示尚未校准，用静态估算兜底
+    private var paceMsPerChar = 0f
+    private var paceAnchorTime = 0L
+    private var paceAnchorChar = 0L
+    private var paceAnchorValid = false
+
+    /** 每段开始时采样：相邻两段的字符差/墙钟间隔即真实节奏（含段间停顿） */
+    protected fun trackReadingPace() {
+        val now = SystemClock.elapsedRealtime()
+        if (paceAnchorValid) {
+            val dt = now - paceAnchorTime
+            val dc = readAloudNumber - paceAnchorChar
+            if (dt > 1500L && dc > 0) {
+                // EMA 平滑并夹紧异常采样（约 2~10 字/秒）
+                val sample = (dt.toFloat() / dc).coerceIn(100f, 500f)
+                paceMsPerChar = if (paceMsPerChar <= 0f) sample
+                else paceMsPerChar * 0.6f + sample * 0.4f
+                LogUtils.d("MediaPace", "dt:${dt}ms dc:${dc}字 → ${paceMsPerChar}ms/字")
+            }
+        }
+        paceAnchorTime = now
+        paceAnchorChar = readAloudNumber.toLong()
+        paceAnchorValid = true
+    }
+
+    /** 暂停或拖动进度后节奏锚点失效，下一段重新起算 */
+    private fun invalidatePaceAnchor() {
+        paceAnchorValid = false
+    }
+
+    /** 当前换算节奏：优先实测，未校准时按 TTS 正常语速约 5 字/秒 × 语速倍率估算 */
+    private fun effectiveMsPerChar(): Float =
+        if (paceMsPerChar > 0f) paceMsPerChar
+        else if (speechRateFactor() > 0f) 200f / speechRateFactor()
+        else 200f
+
+    /** 估算当前章节朗读总时长（ms） */
     private fun estimatedDurationMs(): Long = charToMs(totalChapterChars())
 
-    /** 字符位 → 毫秒（按估算语速换算） */
+    /** 字符位 → 毫秒（按朗读节奏换算） */
     private fun charToMs(chars: Long): Long {
-        val factor = speechRateFactor()
-        if (chars <= 0L || factor <= 0f) return 0L
-        return (chars / (5f * factor) * 1000f).toLong()
+        if (chars <= 0L) return 0L
+        return (chars * effectiveMsPerChar()).toLong()
     }
 
     /** 毫秒 → 字符位（charToMs 的逆换算，供拖动进度条定位） */
     private fun msToChar(ms: Long): Long {
-        val factor = speechRateFactor()
-        if (factor <= 0f) return 0L
-        return (ms * factor / 200f).toLong()
+        if (ms <= 0L) return 0L
+        return (ms / effectiveMsPerChar()).toLong()
     }
 
     /**
      * 向系统媒体卡片同步元数据（书名/章节/封面/时长），章节或封面变化时才更新
      */
     private var lastMediaMetaKey: String? = null
+    private var lastMetaDurationMs = -1L
     private fun upMediaSessionMetadata(force: Boolean = false) {
         val book = ReadBook.book ?: return
         val tc = textChapter ?: return
+        val duration = estimatedDurationMs()
+        // 时长随节奏校准变化超过 1 秒就刷新，保持进度条比例与时长一致
+        val diff = duration - lastMetaDurationMs
+        val durationChanged = duration > 0L && (diff > 1000L || diff < -1000L)
         val key = "${book.bookUrl}-${tc.position}-${book.durChapterTitle}"
-        if (!force && key == lastMediaMetaKey) {
+        if (!force && key == lastMediaMetaKey && !durationChanged) {
             return
         }
         lastMediaMetaKey = key
+        lastMetaDurationMs = duration
         mediaSessionCompat.setMetadata(
             MediaMetadataCompat.Builder()
                 .putString(MediaMetadataCompat.METADATA_KEY_TITLE, book.name)
@@ -587,6 +629,7 @@ abstract class BaseReadAloudService : BaseService(),
                     .coerceAtLeast(0)
                 readAloudNumber = target
                 paragraphStartPos = 0
+                invalidatePaceAnchor()
                 play()
                 upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
             }

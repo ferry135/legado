@@ -203,7 +203,8 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener 
                     ReadBook.moveToNextPage()
                 }
                 upTtsProgress(readAloudNumber + 1)
-                // 每段开始重推媒体进度，校正估算时间轴的系统插值漂移
+                // 每段开始实测朗读节奏并重推媒体进度，校正时间轴漂移
+                trackReadingPace()
                 upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
             }
         }
