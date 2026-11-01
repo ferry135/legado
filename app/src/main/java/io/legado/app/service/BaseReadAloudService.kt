@@ -14,6 +14,7 @@ import android.media.AudioManager
 import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.os.PowerManager
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.telephony.PhoneStateListener
@@ -162,6 +163,8 @@ abstract class BaseReadAloudService : BaseService(),
         }.onSuccess {
             if (it.width > 16 && it.height > 16) {
                 cover = it
+                lastMediaMetaKey = null
+                upMediaSessionMetadata(force = true)
                 upReadAloudNotification()
             }
         }
@@ -441,10 +444,17 @@ abstract class BaseReadAloudService : BaseService(),
      * 更新媒体状态
      */
     private fun upMediaSessionPlaybackState(state: Int) {
+        upMediaSessionMetadata()
+        // 伪时间轴：1 字符 = 1ms，进度条比例 = 朗读字符位 / 章节总字符
+        val total = totalChapterChars()
+        val position = readAloudNumber.toLong().coerceIn(0L, total)
         mediaSessionCompat.setPlaybackState(
             PlaybackStateCompat.Builder()
-                .setActions(MediaHelp.MEDIA_SESSION_ACTIONS)
-                .setState(state, nowSpeak.toLong(), 1f)
+                .setActions(
+                    MediaHelp.MEDIA_SESSION_ACTIONS
+                        or PlaybackStateCompat.ACTION_SEEK_TO
+                )
+                .setState(state, position, 1f)
                 // 为系统媒体控件添加定时按钮
                 .addCustomAction(
                     PlaybackStateCompat.CustomAction.Builder(
@@ -457,60 +467,98 @@ abstract class BaseReadAloudService : BaseService(),
         )
     }
 
+    private fun totalChapterChars(): Long {
+        val last = textChapter?.getParagraphs(readAloudByPage)?.lastOrNull()
+            ?: return 0L
+        return (last.chapterPosition + last.text.length).toLong().coerceAtLeast(0L)
+    }
+
+    /**
+     * 向系统媒体卡片同步元数据（书名/章节/封面/时长），章节或封面变化时才更新
+     */
+    private var lastMediaMetaKey: String? = null
+    private fun upMediaSessionMetadata(force: Boolean = false) {
+        val book = ReadBook.book ?: return
+        val tc = textChapter ?: return
+        val key = "${book.bookUrl}-${tc.position}-${book.durChapterTitle}"
+        if (!force && key == lastMediaMetaKey) {
+            return
+        }
+        lastMediaMetaKey = key
+        mediaSessionCompat.setMetadata(
+            MediaMetadataCompat.Builder()
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, book.name)
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, tc.title)
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, getString(R.string.read_aloud))
+                .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, cover)
+                .putLong(
+                    MediaMetadataCompat.METADATA_KEY_DURATION,
+                    totalChapterChars()
+                )
+                .build()
+        )
+    }
+
     /**
      * 初始化MediaSession, 注册多媒体按钮
      */
     @SuppressLint("UnspecifiedImmutableFlag")
     private fun initMediaSession() {
-        if (getPrefBoolean("systemMediaControlCompatibilityChange")) {
-            mediaSessionCompat.setCallback(object : MediaSessionCompat.Callback() {
-                override fun onPlay() {
-                    resumeReadAloud()
-                }
+        // 无条件注册完整 Callback 并在通知上绑定 sessionToken：
+        // 缺一系统就不渲染标准媒体卡片（原 systemMediaControlCompatibilityChange
+        // 开关为 #4090 的保守 opt-in，现默认行为即与音乐类应用一致）
+        mediaSessionCompat.setCallback(object : MediaSessionCompat.Callback() {
+            override fun onPlay() {
+                resumeReadAloud()
+            }
 
-                override fun onPause() {
-                    pauseReadAloud()
-                }
+            override fun onPause() {
+                pauseReadAloud()
+            }
 
-                override fun onSkipToNext() {
-                    if (getPrefBoolean("mediaButtonPerNext", false)) {
-                        nextChapter()
-                    } else {
-                        nextP()
-                    }
+            override fun onSkipToNext() {
+                if (getPrefBoolean("mediaButtonPerNext", false)) {
+                    nextChapter()
+                } else {
+                    nextP()
                 }
+            }
 
-                override fun onSkipToPrevious() {
-                    if (getPrefBoolean("mediaButtonPerNext", false)) {
-                        prevChapter()
-                    } else {
-                        prevP()
-                    }
+            override fun onSkipToPrevious() {
+                if (getPrefBoolean("mediaButtonPerNext", false)) {
+                    prevChapter()
+                } else {
+                    prevP()
                 }
+            }
 
-                override fun onStop() {
-                    stopSelf()
-                }
+            override fun onStop() {
+                stopSelf()
+            }
 
-                override fun onCustomAction(action: String, extras: Bundle?) {
-                    if (action == "ACTION_ADD_TIMER") addTimer()
-                }
+            override fun onCustomAction(action: String, extras: Bundle?) {
+                if (action == "ACTION_ADD_TIMER") addTimer()
+            }
 
-                override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
-                    return MediaButtonReceiver.handleIntent(
-                        this@BaseReadAloudService, mediaButtonEvent
-                    )
-                }
-            })
-        } else {
-            mediaSessionCompat.setCallback(object : MediaSessionCompat.Callback() {
-                override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
-                    return MediaButtonReceiver.handleIntent(
-                        this@BaseReadAloudService, mediaButtonEvent
-                    )
-                }
-            })
-        }
+            override fun onSeekTo(pos: Long) {
+                // 拖动媒体进度条 = 跳到章节内对应字符位所在段落
+                val tc = textChapter ?: return
+                val total = totalChapterChars()
+                val target = pos.coerceIn(0L, total).toInt()
+                nowSpeak = (tc.getParagraphNum(target, readAloudByPage) - 1)
+                    .coerceAtLeast(0)
+                readAloudNumber = target
+                paragraphStartPos = 0
+                play()
+                upMediaSessionPlaybackState(PlaybackStateCompat.STATE_PLAYING)
+            }
+
+            override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
+                return MediaButtonReceiver.handleIntent(
+                    this@BaseReadAloudService, mediaButtonEvent
+                )
+            }
+        })
         mediaSessionCompat.setMediaButtonReceiver(
             broadcastPendingIntent<MediaButtonReceiver>(Intent.ACTION_MEDIA_BUTTON)
         )
@@ -575,13 +623,10 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     private fun choiceMediaStyle(): androidx.media.app.NotificationCompat.MediaStyle {
-        val mediaStyle = androidx.media.app.NotificationCompat.MediaStyle()
+        // 无条件绑定 sessionToken：系统据此渲染标准媒体卡片（进度条/锁屏控制）
+        return androidx.media.app.NotificationCompat.MediaStyle()
             .setShowActionsInCompactView(1, 2, 4)
-        if (getPrefBoolean("systemMediaControlCompatibilityChange")) {
-            //fix #4090 android 14 can not show play control in lock screen
-            mediaStyle.setMediaSession(mediaSessionCompat.sessionToken)
-        }
-        return mediaStyle
+            .setMediaSession(mediaSessionCompat.sessionToken)
     }
 
     private fun createNotification(): NotificationCompat.Builder {
