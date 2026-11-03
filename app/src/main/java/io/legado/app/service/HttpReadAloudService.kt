@@ -68,7 +68,16 @@ import kotlin.coroutines.coroutineContext
 class HttpReadAloudService : BaseReadAloudService(),
     Player.Listener {
     private val exoPlayer: ExoPlayer by lazy {
-        ExoPlayer.Builder(this).build()
+        ExoPlayer.Builder(this).build().apply {
+            // 媒体用途+语音内容类型：与音乐播放器同走媒体音量曲线，系统DSP按语音处理
+            setAudioAttributes(
+                androidx.media3.common.AudioAttributes.Builder()
+                    .setUsage(C.USAGE_MEDIA)
+                    .setContentType(C.AUDIO_CONTENT_TYPE_SPEECH)
+                    .build(),
+                /* handleAudioFocus = */ false // 音频焦点由 BaseReadAloudService 统一管理
+            )
+        }
     }
     private val ttsFolderPath: String by lazy {
         cacheDir.absolutePath + File.separator + "httpTTS" + File.separator
