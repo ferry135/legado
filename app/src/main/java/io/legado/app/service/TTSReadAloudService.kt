@@ -8,6 +8,7 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -59,7 +60,16 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
     private val TAG = "TTSReadAloudService"
 
     private val exoPlayer: ExoPlayer by lazy {
-        ExoPlayer.Builder(this).build()
+        ExoPlayer.Builder(this).build().apply {
+            // 媒体用途+语音内容类型：与音乐播放器同走媒体音量曲线，系统DSP按语音处理
+            setAudioAttributes(
+                androidx.media3.common.AudioAttributes.Builder()
+                    .setUsage(C.USAGE_MEDIA)
+                    .setContentType(C.AUDIO_CONTENT_TYPE_SPEECH)
+                    .build(),
+                /* handleAudioFocus = */ false // 音频焦点由 BaseReadAloudService 统一管理
+            )
+        }
     }
     private val ttsFolderPath: String by lazy {
         val path = cacheDir.absolutePath + File.separator + "sysTTS" + File.separator
@@ -176,8 +186,11 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
                             }
                         } else {
                             synthErrorNo = 0
+                            val file = getSpeakFile(fileName)
+                            // 峰值归一化后再入缓存：语音电平远低于音乐母带，同音量条听感偏小
+                            normalizeWavPeak(file)
                             // 单段音频精确时长 → 基准节奏校准（首段即准，后续持续精化）
-                            onExactPaceSample(wavDurationMs(getSpeakFile(fileName)), speakText.length)
+                            onExactPaceSample(wavDurationMs(file), speakText.length)
                         }
                     }
                 }
@@ -417,6 +430,69 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
 
     /** 系统TTS引擎各自节奏不同，按引擎持久化基准节奏 */
     override fun paceStoreKey(): String = "sysTts-" + (ttsEngineName ?: "default")
+
+    /**
+     * 峰值归一化：TTS 引擎输出电平远低于音乐母带（峰值常见 -6~-12dBFS），
+     * 同音量条下朗读明显偏小；把峰值拉到约 -1dBFS 再入缓存，
+     * 只放大不衰减，增益上限 4 倍，近满幅/近静音的文件原样保留
+     */
+    private fun normalizeWavPeak(file: File) {
+        try {
+            val bytes = file.readBytes()
+            if (bytes.size <= 44) return
+            if (!String(bytes, 0, 4, Charsets.US_ASCII).startsWith("RIFF")) return
+            // 遍历 RIFF 块定位 data 块真实偏移（部分引擎在 fmt 后附加 LIST 等块）
+            var pos = 12
+            var dataStart = -1
+            var dataSize = 0
+            while (pos + 8 <= bytes.size) {
+                val id = String(bytes, pos, 4, Charsets.US_ASCII)
+                val size = ((bytes[pos + 4].toInt() and 0xFF)) or
+                        ((bytes[pos + 5].toInt() and 0xFF) shl 8) or
+                        ((bytes[pos + 6].toInt() and 0xFF) shl 16) or
+                        ((bytes[pos + 7].toInt() and 0xFF) shl 24)
+                if (id == "data") {
+                    dataStart = pos + 8
+                    dataSize = size
+                    break
+                }
+                pos += 8 + size + (size and 1) // RIFF 块按字对齐
+            }
+            if (dataStart <= 0) return
+            if (dataStart + dataSize > bytes.size || dataSize <= 0) dataSize = bytes.size - dataStart
+            // 仅处理 16bit PCM：22-23声道，34-35位深（fmt 块固定起始于 12+8）
+            val channels = ((bytes[23].toInt() and 0xFF) shl 8) or (bytes[22].toInt() and 0xFF)
+            val bits = ((bytes[35].toInt() and 0xFF) shl 8) or (bytes[34].toInt() and 0xFF)
+            if (bits != 16 || channels < 1) return
+            val end = dataStart + dataSize
+            var peak = 0
+            var i = dataStart
+            while (i + 1 < end) {
+                val raw = (bytes[i].toInt() and 0xFF) or ((bytes[i + 1].toInt() and 0xFF) shl 8)
+                val v = if (raw >= 0x8000) raw - 0x10000 else raw
+                val a = if (v < 0) -v else v
+                if (a > peak) peak = a
+                i += 2
+            }
+            val target = 29200 // ≈0.89 满幅（-1dBFS）
+            if (peak < 100 || peak > target) return
+            val gain = (target.toFloat() / peak).coerceAtMost(4f)
+            if (gain <= 1.05f) return
+            i = dataStart
+            while (i + 1 < end) {
+                val raw = (bytes[i].toInt() and 0xFF) or ((bytes[i + 1].toInt() and 0xFF) shl 8)
+                val v = if (raw >= 0x8000) raw - 0x10000 else raw
+                val scaled = (v * gain).toInt().coerceIn(-32768, 32767)
+                bytes[i] = (scaled and 0xFF).toByte()
+                bytes[i + 1] = ((scaled shr 8) and 0xFF).toByte()
+                i += 2
+            }
+            file.writeBytes(bytes)
+            LogUtils.d(TAG, "峰值归一化: peak=$peak gain=${gain}x ${file.name}")
+        } catch (e: Exception) {
+            AppLog.put("朗读音频归一化失败", e)
+        }
+    }
 
     /** 逐段合成到 wav 文件，具备单段精确时长校准能力 */
     override fun exactPaceAvailable(): Boolean = true
