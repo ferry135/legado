@@ -411,7 +411,6 @@ abstract class BaseReadAloudService : BaseService(),
     private fun doDs() {
         postEvent(EventBus.READ_ALOUD_DS, timeMinute)
         upReadAloudNotification()
-        upMediaSessionMetadata(force = true)
         dsJob?.cancel()
         dsJob = lifecycleScope.launch {
             while (isActive) {
@@ -425,7 +424,6 @@ abstract class BaseReadAloudService : BaseService(),
                 }
                 postEvent(EventBus.READ_ALOUD_DS, timeMinute)
                 upReadAloudNotification()
-                upMediaSessionMetadata(force = true)
                 if (timeMinute <= 0) break // 无定时或已到期，结束空转
             }
         }
@@ -687,13 +685,7 @@ abstract class BaseReadAloudService : BaseService(),
         // 时间轴冻结/重建后时长变化超 1 秒即刷新，保持进度条比例与显示时长一致
         val diff = duration - lastMetaDurationMs
         val durationChanged = duration > 0L && (diff > 1000L || diff < -1000L)
-        // 定时进行中把剩余分钟拼进卡片第二行（系统媒体模板无自定义视图可用）
-        val artist = if (timeMinute > 0) {
-            "${tc.title} · 定时${timeMinute}分钟"
-        } else {
-            tc.title
-        }
-        val key = "${book.bookUrl}-${tc.position}-${book.durChapterTitle}-$timeMinute"
+        val key = "${book.bookUrl}-${tc.position}-${book.durChapterTitle}"
         if (!force && key == lastMediaMetaKey && !durationChanged) {
             return
         }
@@ -702,7 +694,7 @@ abstract class BaseReadAloudService : BaseService(),
         mediaSessionCompat.setMetadata(
             MediaMetadataCompat.Builder()
                 .putString(MediaMetadataCompat.METADATA_KEY_TITLE, book.name)
-                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, tc.title)
                 .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, getString(R.string.read_aloud))
                 .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, cover)
                 .putLong(
