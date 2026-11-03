@@ -1,0 +1,153 @@
+<!-- design-system: legado v2 -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>legado v2 · 分组管理弹窗重设计</title><style>
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#eceae5;color:#24221e;padding:44px 20px 90px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:980px;margin:0 auto}
+.eyebrow{font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:#8d8878;font-weight:650}
+h1.group{font-size:34px;font-weight:750;margin:8px 0 10px}
+.lede{font-size:14.5px;line-height:1.9;color:#5f5b52;margin:0 0 20px;max-width:800px}
+.screen-sec{margin-top:56px}
+.sec-head{display:flex;align-items:baseline;gap:12px}
+.sec-no{font-size:13px;font-weight:750;color:#ff6b2c;letter-spacing:.1em}
+.sec-head h2{font-size:24px;font-weight:700;margin:0}
+.sec-sub{font-size:13.5px;color:#6d6a62;margin:6px 0 24px;line-height:1.8;max-width:880px}
+.pair{display:flex;gap:32px;flex-wrap:wrap}
+figure.phone-col{display:flex;flex-direction:column;gap:9px;margin:0}
+.phone{width:412px;height:900px;border-radius:30px;position:relative;overflow:hidden;border:1px solid rgba(0,0,0,.10);flex:none}
+.phone-tag{font-size:12.5px;color:#8d8878;display:flex;justify-content:space-between}
+.spec{margin:22px 0 0;padding:16px 20px;background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:14px;font-size:13px;line-height:2;color:#5f5b52;max-width:880px}
+.spec code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#f2f0ea;padding:1px 6px;border-radius:6px;color:#45423a}
+.spec b{color:#3a372f}
+.footnote{margin-top:80px;padding-top:20px;border-top:1px solid rgba(0,0,0,.08);font-size:12.5px;color:#8d8878;line-height:2}
+/* ---------- 主题令牌（延续 12-missed-2） ---------- */
+.t-light{--bg:#faf9f7;--surface:#ffffff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--outline:#8b8878;--primary:#ff6b2c;--primary-soft:#fff0e6;--ghost:rgba(255,107,44,.08);--track:#e5e2de;--divider:rgba(0,0,0,.07);--err:#ba1a1a;--ok:#3b7a45;background:var(--bg);color:var(--text)}
+.t-dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--text:#f3f0eb;--secondary:#b4b0aa;--outline:#8f8b7f;--primary:#ff6b2c;--primary-soft:#3a241b;--ghost:rgba(255,255,255,.08);--track:#353331;--divider:rgba(255,255,255,.08);--err:#ffb4ab;--ok:#7fd891;background:var(--bg);color:var(--text)}
+/* ---------- 手机壳 ---------- */
+.status{height:34px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:14px;font-weight:600;position:relative;z-index:12}
+.status-right{display:flex;gap:10px;align-items:center}
+.home-indicator{position:absolute;left:50%;bottom:5px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--secondary);opacity:.9;z-index:40;pointer-events:none}
+.icon{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block}
+/* ---------- 被遮罩的宿主屏（书架） ---------- */
+.host{position:absolute;top:34px;left:0;right:0;bottom:0;padding:12px 16px;z-index:1;opacity:.9}
+.host-tb{display:flex;align-items:center;gap:12px;height:54px;font-size:17px;font-weight:650}
+.host-tb i{width:22px;height:22px;border-radius:7px;background:var(--surface2);flex:none}
+.shelf{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+.shelf i{display:block;height:150px;border-radius:6px;background:var(--surface2)}
+.shelf i:nth-child(2n){height:136px;margin-top:14px}
+/* ---------- 遮罩与弹窗容器 ---------- */
+.veil{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:10}
+.t-dark .veil{background:rgba(0,0,0,.55)}
+.dlg{position:absolute;z-index:11;left:50%;top:50%;transform:translate(-50%,-50%);width:374px;height:730px;background:var(--surface);border:1px solid var(--divider);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.dtb{display:flex;align-items:center;gap:2px;min-height:56px;padding:0 4px 0 18px;flex:none;border-bottom:1px solid var(--divider)}
+.dtb b{flex:1;font-size:17px;font-weight:650;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dtb .ico{border:0;background:transparent;width:42px;height:42px;border-radius:21px;display:grid;place-items:center;color:var(--text);cursor:pointer;padding:0}
+.dtb .ico:hover{background:var(--ghost)}
+.dbody{padding:6px 0 4px;overflow:hidden;flex:1;min-height:0;position:relative}
+.dfoot{display:flex;align-items:center;gap:2px;padding:8px 12px 12px;flex:none;border-top:1px solid var(--divider)}
+.dfoot .sp{flex:1}
+.dact{border:0;background:transparent;color:var(--text);font-family:inherit;font-size:13.5px;font-weight:600;padding:10px 12px;border-radius:9px;cursor:pointer;white-space:nowrap}
+.dact:hover{background:var(--ghost)}
+.dact.pri{color:var(--primary)}
+/* 亮色主色文字钮可达性：#FF6B2C 压白卡 2.84:1 不达标，沿用 12-missed-2 定稿改深主色 #B34A15（压白 5.37:1） */
+.t-light .dact.pri{color:#b34a15}
+/* ---------- 分组行（对齐 item_book_group_manage.xml 已令牌结构：组名 15sp medium + 编辑 12sp + 开关） ---------- */
+.grow{display:flex;align-items:center;gap:8px;padding:12px 16px;min-height:48px}
+.grow+.grow{border-top:1px solid var(--divider)}
+.grow .nm{flex:1;min-width:0;font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.grow .ed{flex:none;font-size:12px;color:var(--secondary);padding:8px 10px;border-radius:8px;cursor:pointer}
+.grow .ed:hover{background:var(--ghost)}
+.switch{width:38px;height:22px;border-radius:11px;background:var(--track);position:relative;flex:none;display:inline-block}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff}
+.switch.on{background:var(--primary)}
+.switch.on::after{left:auto;right:3px}
+/* 拖拽态：沿用 12-missed-2 #01 的 surface2 浮起行语言 */
+.grow.drag{background:var(--surface2);border:0;margin:2px 8px 6px;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:8px 8px 8px 12px}
+.grow.drag .nm small{display:block;font-size:11.5px;color:var(--secondary);font-weight:400;margin-top:2px}
+.grow.drag .ic{width:20px;height:20px;color:var(--primary);flex:none}
+/* ---------- 上限提示（toast） ---------- */
+.toast{position:absolute;left:50%;bottom:70px;transform:translateX(-50%);z-index:20;background:rgba(20,19,18,.85);color:#f3f0eb;font-size:12.5px;padding:9px 16px;border-radius:10px;white-space:nowrap}
+.t-dark .toast{background:rgba(238,236,233,.95);color:#20242b}
+</style></head><body><div class="wrap">
+
+<header>
+  <div class="eyebrow">design-system: legado v2 · mockups</div>
+  <h1 class="group">分组管理弹窗重设计</h1>
+  <p class="lede">GroupManageDialog（书籍分组管理）· 书架菜单「分组管理」或书架整理页进入的 90%×90% 大窗：顶栏标题 + 添加分组、分组列表（组名 / 编辑 / 书架显示开关）、长按拖拽排序、底部确认。视觉令牌延续 12-missed-2 弹窗稿；列表行严格对齐已令牌的 item_book_group_manage.xml，容器 dialog_recycler_view.xml 为多弹窗共用、本稿不动。</p>
+</header>
+
+<!-- ============ 01 分组管理 ============ -->
+<section class="screen-sec" id="s1"><div class="sec-head"><span class="sec-no">01</span><h2>分组管理</h2></div>
+<p class="sec-sub">浅色稿演示长按拖拽态（「新书精选」浮起）；深色稿为常态并演示「添加分组」达 64 个上限时的 toast。内置分组按 getManageName 现状显示身份后缀（如「全部(全部)」），改名后后缀保留身份标识（如「有声书(音频)」）。</p>
+<div class="pair">
+
+<!-- 浅色 · 拖拽态 -->
+<figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="host"><div class="host-tb"><i></i>书架<i></i><i></i></div><div class="shelf"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+<div class="veil"></div>
+<div class="dlg">
+  <div class="dtb"><b>分组管理</b><button class="ico" type="button" aria-label="添加分组"><svg class="icon" style="width:22px;height:22px" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div>
+  <div class="dbody">
+    <div style="display:flex;padding:8px 16px 2px"><span style="font-size:12.5px;color:var(--secondary)">开关控制书架显示 · 长按分组行拖动排序</span></div>
+    <div class="grow"><span class="nm">全部(全部)</span><span class="ed" role="button">编辑</span><span class="switch on" role="switch" aria-checked="true" aria-label="书架显示"></span></div>
+    <div class="grow"><span class="nm">追更中</span><span class="ed" role="button">编辑</span><span class="switch on" role="switch" aria-checked="true" aria-label="书架显示"></span></div>
+    <div class="grow"><span class="nm">网文</span><span class="ed" role="button">编辑</span><span class="switch on" role="switch" aria-checked="true" aria-label="书架显示"></span></div>
+    <div class="grow drag">
+      <svg class="icon ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11.2V6a1.6 1.6 0 0 1 3.2 0v4.4l4.2 1.2c.9.26 1.6 1.1 1.6 2v2.2c0 .5-.1 1-.4 1.4l-1.4 2.3c-.3.5-.8.8-1.4.8h-4.9c-.5 0-1-.2-1.3-.6L5 16.5c-.5-.6-.4-1.5.2-2 .5-.4 1.2-.4 1.7 0l2.1 1.7"/></svg>
+      <span class="nm">新书精选<small>拖拽排序中 · 松手按新顺序保存</small></span>
+      <span class="ed" role="button">编辑</span><span class="switch on" role="switch" aria-checked="true" aria-label="书架显示"></span>
+    </div>
+    <div class="grow"><span class="nm">出版图书</span><span class="ed" role="button">编辑</span><span class="switch on" role="switch" aria-checked="true" aria-label="书架显示"></span></div>
+    <div class="grow"><span class="nm">有声书(音频)</span><span class="ed" role="button">编辑</span><span class="switch on" role="switch" aria-checked="true" aria-label="书架显示"></span></div>
+    <div class="grow"><span class="nm">短篇合集</span><span class="ed" role="button">编辑</span><span class="switch" role="switch" aria-checked="false" aria-label="书架显示"></span></div>
+    <div class="grow"><span class="nm">完本待看</span><span class="ed" role="button">编辑</span><span class="switch on" role="switch" aria-checked="true" aria-label="书架显示"></span></div>
+    <div class="grow"><span class="nm">更新失败(更新失败)</span><span class="ed" role="button">编辑</span><span class="switch on" role="switch" aria-checked="true" aria-label="书架显示"></span></div>
+    <div class="grow"><span class="nm">本地(本地)</span><span class="ed" role="button">编辑</span><span class="switch" role="switch" aria-checked="false" aria-label="书架显示"></span></div>
+  </div>
+  <div class="dfoot"><span class="sp"></span><button class="dact pri" type="button">确认</button></div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题 · 长按拖拽态</span><span>412 × 900</span></figcaption></figure>
+
+<!-- 深色 · 常态 + 上限提示 -->
+<figure class="phone-col"><div class="phone t-dark">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="host"><div class="host-tb"><i></i>书架<i></i><i></i></div><div class="shelf"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+<div class="veil"></div>
+<div class="dlg">
+  <div class="dtb"><b>分组管理</b><button class="ico" type="button" aria-label="添加分组"><svg class="icon" style="width:22px;height:22px" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div>
+  <div class="dbody">
+    <div style="display:flex;padding:8px 16px 2px"><span style="font-size:12.5px;color:var(--secondary)">开关控制书架显示 · 长按分组行拖动排序</span></div>
+    <div class="grow"><span class="nm">全部(全部)</span><span class="ed" role="button">编辑</span><span class="switch on" role="switch" aria-checked="true" aria-label="书架显示"></span></div>
+    <div class="grow"><span class="nm">追更中</span><span class="ed" role="button">编辑</span><span class="switch on" role="switch" aria-checked="true" aria-label="书架显示"></span></div>
+    <div class="grow"><span class="nm">网文</span><span class="ed" role="button">编辑</span><span class="switch on" role="switch" aria-checked="true" aria-label="书架显示"></span></div>
+    <div class="grow"><span class="nm">新书精选</span><span class="ed" role="button">编辑</span><span class="switch on" role="switch" aria-checked="true" aria-label="书架显示"></span></div>
+    <div class="grow"><span class="nm">出版图书</span><span class="ed" role="button">编辑</span><span class="switch on" role="switch" aria-checked="true" aria-label="书架显示"></span></div>
+    <div class="grow"><span class="nm">有声书(音频)</span><span class="ed" role="button">编辑</span><span class="switch on" role="switch" aria-checked="true" aria-label="书架显示"></span></div>
+    <div class="grow"><span class="nm">短篇合集</span><span class="ed" role="button">编辑</span><span class="switch" role="switch" aria-checked="false" aria-label="书架显示"></span></div>
+    <div class="grow"><span class="nm">完本待看</span><span class="ed" role="button">编辑</span><span class="switch on" role="switch" aria-checked="true" aria-label="书架显示"></span></div>
+    <div class="grow"><span class="nm">更新失败(更新失败)</span><span class="ed" role="button">编辑</span><span class="switch on" role="switch" aria-checked="true" aria-label="书架显示"></span></div>
+    <div class="grow"><span class="nm">本地(本地)</span><span class="ed" role="button">编辑</span><span class="switch" role="switch" aria-checked="false" aria-label="书架显示"></span></div>
+  </div>
+  <div class="dfoot"><span class="sp"></span><button class="dact pri" type="button">确认</button></div>
+  <div class="toast">分组已达上限(64个)</div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>深色主题 · 上限提示演示</span><span>412 × 900</span></figcaption></figure>
+
+</div>
+<ul class="spec">
+<li><code>入口</code> — 书架菜单「分组管理」（BaseBookshelfFragment.kt:99 menu_group_manage）与书架整理页（BookshelfManageActivity.kt:292）→ showDialogFragment(GroupManageDialog)；setLayout(0.9f, 0.9f)（GroupManageDialog.kt:51-54）→ 90%×90% 大窗，稿面即 374px 卡 + 遮罩。</li>
+<li><code>容器（不动）</code> — dialog_recycler_view.xml 为 10+ 弹窗共用（AppLog/CrashLogs/6×Import/Icon 等），本稿不改容器：Toolbar + RecyclerView(weight 1) + 分割线 + 底部 FlexboxLayout；rotate_loading/tv_msg 本弹窗不启用；tv_cancel/tv_footer_left 保持 gone，仅 tv_ok 显示（GroupManageDialog.kt:70-74）。</li>
+<li><code>顶栏</code> — 标题「分组管理」（GroupManageDialog.kt:57，ToolbarTitle 20sp）+ 右侧 menu_add ic_add「添加分组」（menu/book_group_manage.xml，applyTint :91）；点击先查 canAddGroup（BookGroupDao.kt:71-72 计数 &lt; 64）→ 开 GroupEditDialog 新建（GroupManageDialog.kt:96-98），达上限 toast「分组已达上限(64个)」（:100，深色稿演示）。</li>
+<li><code>列表数据</code> — flowAll 全量分组按 order 排序实时收集（GroupManageDialog.kt:77-85；BookGroupDao.kt:24），含 AppDatabase.kt:167-203 预置的内置组；行名走 getManageName 身份后缀（BookGroup.kt:39-49）：内置组恒显「(全部)(音频)…」身份，用户改名后仍可辨认（稿面「有声书(音频)」）。</li>
+<li><code>列表行（对齐已令牌 item_book_group_manage.xml）</code> — 组名 15sp sans-serif-medium on_surface（xml:14-24）+「编辑」12sp on_surface_variant（xml:26-37）→ GroupEditDialog(group) 编辑态（GroupManageDialog.kt:132-138；改名/封面/排序/允许下拉刷新/删除二次确认，见 12-missed-1 #05；内置组删除隐藏）+ ThemeSwitch（xml:39-44，主色开关，min 48dp）→ upGroup(copy(show)) 控制书架显示（GroupManageDialog.kt:139-145，isPressed 防程序性误触）。</li>
+<li><code>拖拽排序</code> — ItemTouchHelper isCanDrag，长按触发（ItemTouchCallback.kt:34-37 isLongPressDragEnabled），松手 onClearView 重排 order=1..n 并整批入库（GroupManageDialog.kt:149-163）；稿面拖拽态沿用 12-missed-2 #01：surface2 圆角浮起行 + 阴影 + 主色手势图标，无新增拖拽手柄。</li>
+<li><code>行分隔</code> — 现状 VerticalDivider 1px（ic_divider = bg_divider_line → outline_variant 别名），稿面为 7%/8% hairline；行底 @color/background（= surface 别名），稿面即弹窗 surface 同底。</li>
+<li><code>底栏</code> — tv_ok「确认」AccentTextView 运行时 accentColor（GroupManageDialog.kt:70）→ dismissAllowingStateLoss（:72-74）；亮色主色文字压白卡仅 2.84:1，按 12-missed-2 定稿改深主色 #B34A15（稿面 .dact.pri），暗色仍 accentColor；仅一行改动（:70）。</li>
+</ul></section>
+
+<footer class="footnote">
+来源：GroupManageDialog.kt（ui/book/group）· dialog_recycler_view.xml · item_book_group_manage.xml · menu/book_group_manage.xml · BookGroupDao.kt · BookGroup.kt · GroupEditDialog.kt · ItemTouchCallback.kt；视觉令牌延续 design-system/html/screens/12-missed-2.html（01 分组选择）与 12-missed-1.html（05 分组编辑）。设计稿仅示意，内容为示例数据。
+</footer>
+
+</div></body></html>

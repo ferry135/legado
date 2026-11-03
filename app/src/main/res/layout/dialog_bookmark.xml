@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 书签编辑弹窗（12-missed-2 #02 容器 + #03 field 卡，对齐 dialog_simulated_reading.xml）：
+     控件 id 与行为不变，仅排版与皮肤；卡底 bg_dialog_card（surface + 16dp 圆角，DECISIONS §4） -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -11,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/shape_card_view"
+        android:background="@drawable/bg_dialog_card"
         android:orientation="vertical"
         tools:ignore="UselessParent">
 
@@ -24,63 +26,151 @@
             app:title="@string/bookmark"
             app:titleTextAppearance="@style/ToolbarTitle" />
 
-        <TextView
-            android:id="@+id/tv_chapter_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:textColor="@color/primaryText" />
-
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:overScrollMode="ifContentScrolls">
 
+            <!-- 稿 .dbody：上下 6/4dp，field 卡自带 16dp 侧 margin 与 10dp 卡间距 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:paddingTop="6dp"
+                android:paddingBottom="4dp">
 
-                <io.legado.app.ui.widget.text.TextInputLayout
+                <!-- field 卡①：章节名（只读，与输入域同栅格；无 caret、无聚焦描边） -->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="3dp">
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/bg_edit_filled"
+                    android:orientation="vertical"
+                    android:paddingLeft="14dp"
+                    android:paddingTop="7dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="8dp">
 
-                    <io.legado.app.lib.theme.view.ThemeEditText
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/chapter_name"
+                        android:textColor="@color/secondaryText"
+                        android:textSize="11.5sp" />
+
+                    <TextView
+                        android:id="@+id/tv_chapter_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:minHeight="24dp"
+                        android:textColor="@color/primaryText"
+                        android:textSize="14sp"
+                        tools:text="第三十二章 夜探藏书楼" />
+
+                </LinearLayout>
+
+                <!-- field 卡②：内容（书内原文），聚焦描边由卡容器承担（12-missed-2 #28 先例）；
+                     背景运行时注入（BookmarkDialog），accent 随 ThemeStore 换肤（MASTER.md §1.2） -->
+                <LinearLayout
+                    android:id="@+id/vw_book_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="10dp"
+                    android:addStatesFromChildren="true"
+                    android:orientation="vertical"
+                    android:paddingLeft="14dp"
+                    android:paddingTop="7dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/content"
+                        android:textColor="@color/secondaryText"
+                        android:textSize="11.5sp" />
+
+                    <EditText
                         android:id="@+id/edit_book_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:background="@null"
                         android:hint="@string/content"
-                        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+                        android:inputType="textMultiLine"
+                        android:lineSpacingMultiplier="1.75"
+                        android:minHeight="24dp"
+                        android:textColor="@color/primaryText"
+                        android:textColorHint="@color/secondaryText"
+                        android:textCursorDrawable="@drawable/shape_text_cursor"
+                        android:textSize="14sp"
+                        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck"
+                        tools:text="门后是一整面墙的孤本，烛火摇曳间，一册蓝皮旧书正摊在案上。" />
 
-                </io.legado.app.ui.widget.text.TextInputLayout>
+                </LinearLayout>
 
-                <io.legado.app.ui.widget.text.TextInputLayout
+                <!-- field 卡③：备注内容，空值占位走 hint；聚焦描边同 field 卡② 运行时注入 -->
+                <LinearLayout
+                    android:id="@+id/vw_note"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="3dp">
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="10dp"
+                    android:addStatesFromChildren="true"
+                    android:orientation="vertical"
+                    android:paddingLeft="14dp"
+                    android:paddingTop="7dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="8dp">
 
-                    <io.legado.app.lib.theme.view.ThemeEditText
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/note_content"
+                        android:textColor="@color/secondaryText"
+                        android:textSize="11.5sp" />
+
+                    <EditText
                         android:id="@+id/edit_content"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:background="@null"
                         android:hint="@string/note_content"
-                        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+                        android:inputType="textMultiLine"
+                        android:lineSpacingMultiplier="1.75"
+                        android:minHeight="24dp"
+                        android:textColor="@color/primaryText"
+                        android:textColorHint="@color/secondaryText"
+                        android:textCursorDrawable="@drawable/shape_text_cursor"
+                        android:textSize="14sp"
+                        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck"
+                        tools:text="下一卷线索：蓝皮旧书缺页，可能对应「藏书楼起火」伏笔。" />
 
-                </io.legado.app.ui.widget.text.TextInputLayout>
+                </LinearLayout>
 
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
 
+        <!-- 底栏三文字钮结构不变：删除（error 色，Kotlin 仅编辑态 visible）+ spacer + 取消/确定 -->
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="12dp"
+            android:paddingTop="8dp"
             android:paddingRight="12dp"
+            android:paddingBottom="12dp"
             app:flexWrap="wrap"
             app:justifyContent="space_between">
 
@@ -98,20 +188,23 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <io.legado.app.ui.widget.text.AccentTextView
+                <TextView
                     android:id="@+id/tv_cancel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="12dp"
                     android:text="@string/cancel"
+                    android:textColor="@color/secondaryText"
                     tools:ignore="RtlHardcoded" />
 
-                <io.legado.app.ui.widget.text.AccentTextView
+                <!-- 12-missed-2:62/#19：确定亮色取深主色 on_primary_soft 保 AA 对比，暗色回主色 -->
+                <TextView
                     android:id="@+id/tv_ok"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="12dp"
                     android:text="@string/ok"
+                    android:textColor="@color/on_primary_soft"
                     tools:ignore="RtlHardcoded" />
 
             </LinearLayout>

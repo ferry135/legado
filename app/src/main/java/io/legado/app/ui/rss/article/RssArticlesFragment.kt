@@ -23,6 +23,7 @@ import io.legado.app.ui.rss.read.ReadRssActivity
 import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.applyNavigationBarPadding
+import io.legado.app.utils.dpToPx
 import io.legado.app.utils.launchCollectWithLifecycle
 import io.legado.app.utils.setEdgeEffectColor
 import io.legado.app.utils.startActivity
@@ -77,7 +78,7 @@ class RssArticlesFragment() : VMBaseFragment<RssArticlesViewModel>(R.layout.frag
             }
         }
         recyclerView.layoutManager = if (activityViewModel.isGridLayout) {
-            recyclerView.setPadding(8, 0, 8, 0)
+            recyclerView.setPadding(12.dpToPx(), 0, 12.dpToPx(), 0) // 网格外缘 12dp=spacing_md（rss-articles.html:258，原 12 为 px 误口径）
             GridLayoutManager(requireContext(), 2)
         } else {
             recyclerView.addItemDecoration(VerticalDivider(requireContext()))

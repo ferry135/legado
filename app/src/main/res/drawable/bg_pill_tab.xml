@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 词典弹窗药丸 Tab 底（dict.html ①②）：999dp 胶囊形，solid 仅为占位——
+     运行时 backgroundTintList 覆盖：选中 accentColor / 未选中 pill_field（DictDialog.kt selectTab） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <solid android:color="#FFFFFF" />
+
+    <corners android:radius="999dp" />
+
+</shape>

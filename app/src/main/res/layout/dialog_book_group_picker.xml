@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 分组选择弹窗（group-select 稿）：卡片 16dp 圆角由 BaseDialogFragment.setSheetBackground 统一给出，
+     垂直三段 = Toolbar / 列表(含空态) / 底部操作条；底栏顶部 1dp outline_variant 分隔；
+     确定 accent、复选框主色均为运行时着色（布局不硬编码 primary） -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -11,41 +14,131 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="?attr/actionBarStyle"
-        app:titleTextAppearance="@style/ToolbarTitle"
-        app:popupTheme="@style/AppTheme.PopupOverlay" />
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:titleTextAppearance="@style/TextAppearance.Legado.BarTitle"
+        app:titleTextColor="@color/on_surface" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- 空态（新增）：tag 图标 + 引导 + 添加分组 ghost 按钮（accent 描边运行时着色），
+             点击与 toolbar menu_add 同走 GroupEditDialog() 新建态 -->
+        <LinearLayout
+            android:id="@+id/ll_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingLeft="44dp"
+            android:paddingRight="44dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:alpha="0.55"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_tag" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/group_empty_title"
+                android:textColor="@color/on_surface"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:lineSpacingExtra="3dp"
+                android:text="@string/group_empty_tip"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="12.5sp" />
+
+            <io.legado.app.ui.widget.text.AccentStrokeTextView
+                android:id="@+id/btn_add_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:minWidth="72dp"
+                android:minHeight="38dp"
+                android:paddingLeft="16dp"
+                android:paddingTop="9dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="9dp"
+                android:text="@string/add_group"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:radius="9dp" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/outline_variant" />
+
+    <!-- 底部操作条：左「已选 n 组」计数（popcount 展示层新增），右 取消/确定 -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="56dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="18dp"
+        android:paddingEnd="18dp">
 
-        <Space
+        <TextView
+            android:id="@+id/tv_select_count"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="12sp"
+            tools:text="已选 2 组" />
 
         <TextView
             android:id="@+id/tv_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
-            android:padding="12dp"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:minWidth="44dp"
+            android:minHeight="44dp"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
             android:text="@string/cancel"
-            tools:ignore="RtlHardcoded" />
+            android:textColor="@color/on_surface_variant"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
-            android:padding="12dp"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:minWidth="44dp"
+            android:minHeight="44dp"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
             android:text="@string/ok"
-            tools:ignore="RtlHardcoded" />
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 </LinearLayout>

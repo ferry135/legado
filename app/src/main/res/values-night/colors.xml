@@ -56,6 +56,8 @@
     <color name="transparent50">#50ffffff</color>
 
     <color name="error">#FFB4AB</color>
+    <!-- 词典药丸 Tab 未选中底（dict.html field：surface 上叠 rgba(255,255,255,.08)） -->
+    <color name="pill_field">#14FFFFFF</color>
     <color name="success">#7FD891</color>
 
     <color name="bg_divider_line">@color/outline_variant</color>

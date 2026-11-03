@@ -1,27 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 分组选择行（group-select 稿）：[分组名 flex:1][编辑][尾部 22dp 复选框槽]，
+     容器 padding 14/8、分割线/字号/色层级与 item_book_group_manage.xml 完全同参（一次对齐两处）；
+     运行时根背景随卡面（GroupSelectDialog convert 着 backgroundColor），
+     cb_group 选中实底主色 + 白勾由代码运行时着色（布局禁硬编码 primary） -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background"
-    android:padding="8dp"
+    android:background="@color/surface_container"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:paddingLeft="8dp"
+    android:paddingTop="14dp"
+    android:paddingRight="8dp"
+    android:paddingBottom="14dp">
 
-    <io.legado.app.lib.theme.view.ThemeCheckBox
-        android:id="@+id/cb_group"
+    <TextView
+        android:id="@+id/tv_group"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:layout_weight="1"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
         android:singleLine="true"
-        android:textColor="@color/primaryText" />
+        android:textColor="@color/on_surface"
+        android:textSize="15sp"
+        tools:text="group" />
 
     <TextView
         android:id="@+id/tv_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
-        android:padding="8dp"
-        android:text="@string/edit" />
+        android:paddingLeft="12dp"
+        android:paddingTop="10dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="10dp"
+        android:text="@string/edit"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="12sp" />
+
+    <!-- 尾部槽：22dp 复选框（整行点击翻转掩码，cb 不可点防双触发），白勾叠层随勾选显示 -->
+    <FrameLayout
+        android:layout_width="22dp"
+        android:layout_height="22dp">
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/cb_group"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:button="@null"
+            android:clickable="false"
+            android:focusable="false" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_check"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_check"
+            android:visibility="gone"
+            app:tint="@android:color/white" />
+
+    </FrameLayout>
 
 </LinearLayout>

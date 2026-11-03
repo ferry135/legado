@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 书架分组卡「›」层级指引芯片底（books-adapter-grid 稿 .gchip：surface-high 面 + divider 描边） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/surface_container_high" />
+    <stroke
+        android:width="0.5dp"
+        android:color="@color/outline_variant" />
+</shape>

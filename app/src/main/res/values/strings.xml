@@ -595,6 +595,10 @@
     <string name="group_edit">Group editing</string>
     <string name="move_to_group">Move to group</string>
     <string name="add_group">Add to Groups</string>
+    <string name="group_selected_count">%1$d selected</string>
+    <string name="group_empty_title">No groups yet</string>
+    <string name="group_empty_tip">Create a group to select and organize your books here</string>
+    <string name="theme_in_use">In use</string>
     <string name="remove_group">Remove from Groups</string>
     <string name="add_replace_rule">New replacement</string>
     <string name="group">Group</string>
@@ -1247,4 +1251,8 @@
     <string name="manga_epaper_value">阈值</string>
     <string name="disable_horizontal_animation">禁用水平滚动动画</string>
     <string name="enable_manga_gray">开启图片灰色</string>
+    <string name="chapter_name">Chapter name</string>
+    <string name="selected_word">Selected word</string>
+    <string name="manage_dict_rule">Manage dict rules</string>
+    <string name="no_dict_rule_enabled">No dict rule enabled yet\nEnable one in dict rules first, then come back</string>
 </resources>
