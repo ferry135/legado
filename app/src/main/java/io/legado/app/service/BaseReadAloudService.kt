@@ -404,28 +404,29 @@ abstract class BaseReadAloudService : BaseService(),
     }
 
     /**
-     * 定时
+     * 定时：一次性，倒计时每分钟走一格（暂停时冻结）；
+     * 到期即消耗（含保存的默认定时 AppConfig.ttsTimer），下次开始朗读不再套用上次定时
      */
     @Synchronized
     private fun doDs() {
         postEvent(EventBus.READ_ALOUD_DS, timeMinute)
         upReadAloudNotification()
+        upMediaSessionMetadata(force = true)
         dsJob?.cancel()
         dsJob = lifecycleScope.launch {
             while (isActive) {
                 delay(60000)
-                if (!pause) {
-                    if (timeMinute >= 0) {
-                        timeMinute--
-                    }
+                if (!pause && timeMinute > 0) {
+                    timeMinute--
                     if (timeMinute == 0) {
+                        AppConfig.ttsTimer = 0
                         ReadAloud.stop(this@BaseReadAloudService)
-                        postEvent(EventBus.READ_ALOUD_DS, timeMinute)
-                        break
                     }
                 }
                 postEvent(EventBus.READ_ALOUD_DS, timeMinute)
                 upReadAloudNotification()
+                upMediaSessionMetadata(force = true)
+                if (timeMinute <= 0) break // 无定时或已到期，结束空转
             }
         }
     }
@@ -686,7 +687,13 @@ abstract class BaseReadAloudService : BaseService(),
         // 时间轴冻结/重建后时长变化超 1 秒即刷新，保持进度条比例与显示时长一致
         val diff = duration - lastMetaDurationMs
         val durationChanged = duration > 0L && (diff > 1000L || diff < -1000L)
-        val key = "${book.bookUrl}-${tc.position}-${book.durChapterTitle}"
+        // 定时进行中把剩余分钟拼进卡片第二行（系统媒体模板无自定义视图可用）
+        val artist = if (timeMinute > 0) {
+            "${tc.title} · 定时${timeMinute}分钟"
+        } else {
+            tc.title
+        }
+        val key = "${book.bookUrl}-${tc.position}-${book.durChapterTitle}-$timeMinute"
         if (!force && key == lastMediaMetaKey && !durationChanged) {
             return
         }
@@ -695,7 +702,7 @@ abstract class BaseReadAloudService : BaseService(),
         mediaSessionCompat.setMetadata(
             MediaMetadataCompat.Builder()
                 .putString(MediaMetadataCompat.METADATA_KEY_TITLE, book.name)
-                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, tc.title)
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
                 .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, getString(R.string.read_aloud))
                 .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, cover)
                 .putLong(
