@@ -88,6 +88,8 @@
     <color name="lightBlue_color">#FF578FCC</color>
 
     <color name="error">#BA1A1A</color>
+    <!-- 词典药丸 Tab 未选中底（dict.html field：surface 上叠 rgba(0,0,0,.06)；夜 #14FFFFFF） -->
+    <color name="pill_field">#0F000000</color>
     <color name="success">#3B7A45</color>
 
     <color name="night_mask">#00000000</color>

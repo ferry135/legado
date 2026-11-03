@@ -1,0 +1,295 @@
+<!doctype html>
+<!-- design-system: legado v2 · mockup -->
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>legado v2 · mockup · 分组选择</title><style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Noto Sans SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;background:#eae7e0;color:#3a3833}
+.wrap{max-width:1180px;margin:0 auto;padding:52px 24px 110px;display:flex;flex-direction:column;gap:60px;align-items:center}
+/* ---------- 页头 ---------- */
+.page-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:16px}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.14em;color:#a8623c}
+.h1{font-size:34px;font-weight:750;line-height:1.2;margin:0}
+.h1 small{font-size:15px;font-weight:600;color:#60656d;margin-left:12px}
+.desc{font-size:14px;line-height:1.8;color:#60656d;margin:0;max-width:760px}
+.nav{display:flex;flex-wrap:wrap;gap:10px}
+.nav a{text-decoration:none;font-size:13px;font-weight:600;color:#5a574e;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:999px;padding:9px 16px;transition:.15s}
+.nav a:hover{background:#ff6b2c;color:#fff;border-color:#ff6b2c}
+.nav a b{font-weight:750;color:inherit;opacity:.55;margin-right:6px}
+/* ---------- 屏幕区 ---------- */
+.screen{width:100%;display:flex;flex-direction:column;align-items:center;gap:24px;scroll-margin-top:20px}
+.screen-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:10px}
+.st-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.st-num{font-size:13px;font-weight:750;color:#ff6b2c;letter-spacing:.08em}
+.st-title{font-size:24px;font-weight:750;margin:0}
+.st-src{font-size:12px;color:#60656d}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{font-size:12px;color:#6d6a62;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:7px;padding:5px 10px}
+.chips span.new{color:#a8623c;border-color:rgba(255,107,44,.35);background:#fff7f2}
+.pairs{display:flex;gap:30px;flex-wrap:wrap;justify-content:center}
+.pair{display:flex;flex-direction:column;gap:10px;align-items:center}
+.theme-tag{font-size:12px;font-weight:700;color:#60656d;letter-spacing:.1em}
+/* ---------- 手机壳（与 07-manage 同规格） ---------- */
+.phone{width:412px;height:900px;border-radius:30px;position:relative;overflow:hidden;background:var(--bg);color:var(--text);border:1px solid rgba(0,0,0,.09);flex:none}
+.phone.light{--bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--feature:#fff1e8;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--on-primary:#fff;--track:#e5e2de;--divider:rgba(0,0,0,.07);--field:rgba(0,0,0,.06);--menu:#fff;--error:#ba1a1a;--ok:#3b7a45;--scrim:rgba(0,0,0,.5);--field-solid:#f1efe9}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--feature:#2b1d15;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--on-primary:#fff;--track:#353331;--divider:rgba(255,255,255,.08);--field:rgba(255,255,255,.08);--menu:#2a2824;--error:#ffb4ab;--ok:#7fd891;--scrim:rgba(0,0,0,.5);--field-solid:#2a2925}
+.status{height:34px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:14px;font-weight:600}
+.status-right{display:flex;gap:10px;align-items:center}
+.hi{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--text);opacity:.4;z-index:30}
+/* ---------- 顶栏 / 图标 ---------- */
+.trow{display:flex;align-items:center;gap:2px;min-height:50px}
+.tb-title{font-size:18px;font-weight:650;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tcol{flex:1;min-width:0}
+.icon-btn{width:44px;height:44px;border:0;background:transparent;border-radius:22px;display:grid;place-items:center;cursor:pointer;color:var(--text)}
+.icon{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* ---------- 分割线 / 分组行（与 07 分组管理 item_book_group_manage 对齐） ---------- */
+.vd{height:1px;background:var(--divider);margin-left:10px}
+.grow{display:flex;align-items:center;gap:8px;padding:14px 8px}
+.grow .gname{flex:1;min-width:0;font-size:15px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tbtn{border:0;background:transparent;color:var(--secondary);font-size:12px;padding:10px 12px;border-radius:8px;cursor:pointer;font-family:inherit;flex:none}
+/* 复选框（trailing 槽位）：22px、选中实底 primary + 白勾 */
+.cb{width:22px;height:22px;flex:none;display:grid;place-items:center;border-radius:6px;border:2px solid var(--secondary);color:transparent;background:transparent}
+.cb svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cb.on{background:var(--primary);border-color:var(--primary);color:#fff}
+/* 开关（分组管理 tail 槽位，仅行规格对照用） */
+.sw{width:40px;height:24px;border-radius:12px;background:var(--track);position:relative;flex:none}
+.sw::after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.sw.on{background:var(--primary)}.sw.on::after{left:19px}
+/* ---------- 对话框（90%×90% = setLayout(0.9f, 0.9f)） ---------- */
+.dim{position:absolute;inset:0;background:var(--scrim);z-index:5}
+.card{position:absolute;background:var(--surface);border-radius:16px;z-index:9;overflow:hidden;border:1px solid var(--divider)}
+.card .trow{padding:4px 8px}
+.cardfoot{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:2px;padding:6px 18px 14px;border-top:1px solid var(--divider);background:var(--surface)}
+.cardfoot .sel{flex:1;min-width:0;font-size:12px;font-weight:500;color:var(--secondary)}
+.txtbtn{border:0;background:transparent;font-size:14px;font-weight:650;color:var(--secondary);padding:10px 14px;border-radius:10px;cursor:pointer;font-family:inherit}
+.txtbtn.pri{color:var(--primary)}
+.ghost{border:1px solid var(--track);background:transparent;color:var(--text);border-radius:9px;padding:9px 16px;min-height:38px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:650;cursor:pointer;font-family:inherit;flex:none}
+.ghost.pri{border-color:var(--primary);color:var(--primary)}
+/* 空态 */
+.emptywrap{position:absolute;left:0;right:0;top:54px;bottom:58px;display:grid;place-items:center}
+.ein{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:0 44px}
+.ein .icon{width:44px;height:44px;color:var(--secondary);opacity:.55}
+.etitle{font-size:15px;font-weight:600;color:var(--text)}
+.esub{font-size:12.5px;line-height:1.7;color:var(--secondary)}
+/* 拖拽浮起行 */
+.lift{background:var(--surface);border-radius:12px;box-shadow:0 8px 22px rgba(0,0,0,.22);position:relative;z-index:2;transform:scale(1.02)}
+.gaprow{height:13px}
+/* ---------- 行规格对照（页内说明块） ---------- */
+.specs{width:100%;max-width:1080px;display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.specbox{background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:14px;padding:16px 18px;width:470px;flex:none;display:flex;flex-direction:column;gap:12px;
+ --bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--track:#e5e2de;--divider:rgba(0,0,0,.07)}
+.specbox .sf{font-size:13px;font-weight:700;color:#3a3833}
+.specbox .sf code{font-size:11.5px;font-weight:500;color:#60656d;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px;margin-left:8px}
+.specdemo{background:var(--bg);border-radius:10px;padding:2px 10px}
+.specmap{display:flex;flex-wrap:wrap;gap:6px}
+.specmap span{font-size:11.5px;color:#6d6a62;background:#faf9f7;border:1px solid rgba(0,0,0,.07);border-radius:6px;padding:4px 8px}
+/* 注释 */
+.notes{width:100%;max-width:1080px;font-size:12.5px;line-height:1.9;color:#60656d;border-top:1px dashed rgba(0,0,0,.12);padding-top:12px}
+.notes code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px}
+.notes b{color:#3a3833}
+.foot{font-size:12px;color:#60656d;text-align:center;line-height:2}
+</style></head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></symbol>
+<symbol id="i-tag" viewBox="0 0 24 24"><path d="M12.6 3H4v8.6l8.7 8.7a1.6 1.6 0 0 0 2.3 0l6.3-6.3a1.6 1.6 0 0 0 0-2.3z"/><circle cx="8.2" cy="7.2" r="1.4"/></symbol>
+</defs></svg>
+
+<div class="wrap">
+
+<header class="page-head">
+  <div class="kicker">LEGADO V2 · MOCKUP</div>
+  <h1 class="h1">分组选择<small>Group Select Dialog · 浅色为主 / 深色对照</small></h1>
+  <p class="desc">重构 <b>GroupSelectDialog</b>（dialog_book_group_picker.xml + item_group_select.xml）：书籍详情「更换分组」与书架整理「移入分组」共用的分组多选弹窗。视觉令牌与 07 号屏（管理与导入）完全一致——主色 #FF6B2C、暖纸白/暖黑表面、弱分割线、16dp 圆角对话框、无阴影、blend 顶栏；<b>行样式直接复用 07 分组管理落地后的 item 形态</b>（名称 + 编辑 + 尾部控制位），一次对齐两处。功能逐项取自 GroupSelectDialog.kt，见各屏来源注释。</p>
+  <nav class="nav">
+    <a href="#s1"><b>01</b>分组选择 · 主态</a>
+    <a href="#s2"><b>02</b>空态 / 拖拽态</a>
+    <a href="#s3"><b>03</b>共用行规格</a>
+  </nav>
+</header>
+
+<!-- ================= 01 分组选择 · 主态 ================= -->
+<section class="screen" id="s1">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">01</span><h2 class="st-title">分组选择</h2><span class="st-src">GroupSelectDialog · dialog_book_group_picker.xml · item_group_select.xml · menu/book_group_manage.xml</span></div>
+    <div class="chips"><span>位掩码多选</span><span>仅自定义分组（groupId≥0）</span><span>添加分组 → 分组编辑</span><span>行内「编辑」</span><span>拖拽排序（长按）</span><span>取消 / 确定</span><span class="new">已选计数 · 新增</span><span class="new">整行点击切换 · 建议</span></div>
+  </div>
+  <div class="pairs">
+    <div class="pair"><div class="theme-tag">浅色 · 主态</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card" style="left:18px;right:18px;top:70px;bottom:64px">
+        <div class="trow">
+          <div class="tcol"><div class="tb-title">分组选择</div></div>
+          <button class="icon-btn" title="添加分组"><svg class="icon"><use href="#i-plus"/></svg></button>
+        </div>
+        <div style="padding:2px 10px">
+          <div class="grow"><span class="gname">追更</span><button class="tbtn">编辑</button><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">养肥</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">完结</span><button class="tbtn">编辑</button><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">玄幻</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">都市</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">历史</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">科幻</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">短篇集</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">漫画</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+        </div>
+        <div class="cardfoot">
+          <span class="sel">已选 2 组</span>
+          <button class="txtbtn">取消</button>
+          <button class="txtbtn pri">确定</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <div class="pair"><div class="theme-tag">深色 · 同态对照</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card" style="left:18px;right:18px;top:70px;bottom:64px">
+        <div class="trow">
+          <div class="tcol"><div class="tb-title">分组选择</div></div>
+          <button class="icon-btn" title="添加分组"><svg class="icon"><use href="#i-plus"/></svg></button>
+        </div>
+        <div style="padding:2px 10px">
+          <div class="grow"><span class="gname">追更</span><button class="tbtn">编辑</button><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">养肥</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">完结</span><button class="tbtn">编辑</button><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">玄幻</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">都市</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">历史</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">科幻</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">短篇集</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">漫画</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+        </div>
+        <div class="cardfoot">
+          <span class="sel">已选 2 组</span>
+          <button class="txtbtn">取消</button>
+          <button class="txtbtn pri">确定</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <p class="notes">来源：<code>GroupSelectDialog.kt:67</code>（标题「分组选择」，values-zh/strings.xml:592）<code>:68-70</code>（菜单 book_group_manage → 仅 menu_add「添加分组」常驻动作，values-zh/strings.xml:595）<code>:74-76</code>（ItemTouchHelper 拖拽）<code>:77-84</code>（取消 dismiss / 确定 accent 色回传 upGroup）<code>:87-94</code>（bookGroupDao.flowSelect 实时流）<code>:96-103</code>（menu_add → GroupEditDialog 新建态）<code>:124</code>（isChecked = groupId and item.groupId 位掩码）<code>:128-140</code>（勾选仅响应 isPressed，翻转入掩码）<code>:141-145</code>（行内「编辑」→ GroupEditDialog 编辑态）<code>:149-163</code>（拖拽松手 order=index+1 持久化）<code>:52-55</code>（setLayout(0.9f, 0.9f)，即稿中 371×766 卡片）。<b>列表只含自定义分组</b>：<code>BookGroupDao.kt:58</code> flowSelect 过滤 groupId≥0，内置分组（全部/本地/音频/网络未分组…）不出现。两个入口：书籍详情「更换分组」（<code>BookInfoActivity.kt:503-506</code>，单书）与书架整理「移入分组」（<code>BookshelfManageActivity.kt:365-369</code>，批量）。相对现状的三处演进（均为展示层，不动数据）：① 底栏左补「已选 n 组」计数（由位掩码 popcount 得出，伴随勾选即时更新）；② 勾选热区由 checkbox 本体扩到整行（现状 kt:131 仅 isPressed 响应，行中段为死区；编辑按钮独立热区不受影响）；③ 复选框移到行尾、名称居主位，与分组管理行完全同构。</p>
+</section>
+
+<!-- ================= 02 空态 / 拖拽态 ================= -->
+<section class="screen" id="s2">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">02</span><h2 class="st-title">空态与拖拽态</h2><span class="st-src">边界状态 · 浅色</span></div>
+    <div class="chips"><span class="new">空态引导 · 新增（现状为空白列表）</span><span>空态入口仍走 menu_add</span><span>拖拽浮起行（长按触发）</span><span>松手落位并持久化 order</span></div>
+  </div>
+  <div class="pairs">
+    <div class="pair"><div class="theme-tag">浅色 · 空态</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card" style="left:18px;right:18px;top:70px;bottom:64px">
+        <div class="trow">
+          <div class="tcol"><div class="tb-title">分组选择</div></div>
+          <button class="icon-btn" title="添加分组"><svg class="icon"><use href="#i-plus"/></svg></button>
+        </div>
+        <div class="emptywrap">
+          <div class="ein">
+            <svg class="icon"><use href="#i-tag"/></svg>
+            <div class="etitle">还没有分组</div>
+            <div class="esub">创建分组后，可在这里勾选<br>整理书架与批量移动书籍</div>
+            <button class="ghost pri">添加分组</button>
+          </div>
+        </div>
+        <div class="cardfoot">
+          <span class="sel">已选 0 组</span>
+          <button class="txtbtn">取消</button>
+          <button class="txtbtn pri">确定</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <div class="pair"><div class="theme-tag">浅色 · 拖拽排序中</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card" style="left:18px;right:18px;top:70px;bottom:64px">
+        <div class="trow">
+          <div class="tcol"><div class="tb-title">分组选择</div></div>
+          <button class="icon-btn" title="添加分组"><svg class="icon"><use href="#i-plus"/></svg></button>
+        </div>
+        <div style="padding:2px 10px">
+          <div class="grow"><span class="gname">追更</span><button class="tbtn">编辑</button><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">养肥</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+          <div class="gaprow"></div>
+          <div class="grow lift"><span class="gname">玄幻</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+          <div class="gaprow"></div>
+          <div class="grow"><span class="gname">完结</span><button class="tbtn">编辑</button><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">都市</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">历史</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">科幻</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">短篇集</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+        </div>
+        <div class="cardfoot">
+          <span class="sel">已选 2 组 · 拖拽仅调整顺序</span>
+          <button class="txtbtn">取消</button>
+          <button class="txtbtn pri">确定</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <p class="notes"><b>空态（新增）</b>：现状 <code>GroupSelectDialog.kt:87-94</code> 直接收集 flowSelect，无分组时 RecyclerView 空白、用户无提示；稿中补居中空态——i-tag 图标 + 「还没有分组」+ 引导文案 + 「添加分组」ghost 按钮，点击与 toolbar <code>menu_add</code> 走同一入口（GroupEditDialog 新建态），不新增代码路径。<b>拖拽态</b>：ItemTouchCallback 默认长按触发（<code>GroupSelectDialog.kt:74-76</code> isCanDrag，与分组管理一致，不设拖拽把手）；浮起行用 surface 实底 + 12dp 圆角 + 大距离投影浮出列表平面，上下留 13dp 让位缝隙，松手后 <code>:155-163</code> order=index+1 持久化，列表实时流自动回填。拖拽不改变勾选掩码（底栏计数不变）。</p>
+</section>
+
+<!-- ================= 03 共用行规格 ================= -->
+<section class="screen" id="s3">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">03</span><h2 class="st-title">共用行规格 · 一次对齐两处</h2><span class="st-src">item_group_select.xml ↔ item_book_group_manage.xml（07 稿已落地）</span></div>
+    <div class="chips"><span>同一行结构：名称 + 编辑 + 尾部控制位</span><span>选择弹窗 = 22dp 复选框</span><span>管理弹窗 = 40×24 开关</span><span>触控 ≥48dp</span></div>
+  </div>
+  <div class="specs">
+    <div class="specbox">
+      <div class="sf">分组管理行<code>item_book_group_manage.xml · GroupManageDialog</code></div>
+      <div class="specdemo">
+        <div class="grow"><span class="gname">追更</span><button class="tbtn">编辑</button><span class="sw on"></span></div>
+        <div class="vd"></div>
+        <div class="grow"><span class="gname">养肥</span><button class="tbtn">编辑</button><span class="sw"></span></div>
+      </div>
+      <div class="specmap"><span>尾部槽 = 显示开关</span><span>开关 40×24 · on=primary</span><span>点击开关 = show 字段</span></div>
+    </div>
+    <div class="specbox">
+      <div class="sf">分组选择行（本稿）<code>item_group_select.xml · GroupSelectDialog</code></div>
+      <div class="specdemo">
+        <div class="grow"><span class="gname">追更</span><button class="tbtn">编辑</button><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span></div>
+        <div class="vd"></div>
+        <div class="grow"><span class="gname">养肥</span><button class="tbtn">编辑</button><span class="cb"></span></div>
+      </div>
+      <div class="specmap"><span>尾部槽 = 22dp 复选框</span><span>on=primary 实底白勾</span><span>整行点击 = 翻转掩码</span></div>
+    </div>
+  </div>
+  <p class="notes">两处行共用同一结构 <b>[分组名 flex:1][编辑][尾部控制位]</b>，仅尾部槽位不同；实现建议抽单一布局（如 <code>item_book_group_row.xml</code>）以 <code>cb_group</code> / <code>sw_show</code> 二选一显示承载。共用规格：容器 padding 14/8dp、行高约 64dp（≥48dp 触控）；分组名 15sp/500 <code>on_surface</code>（主内容）；「编辑」12sp <code>on_surface_variant</code>（次要操作，padding 10/12dp → ≥36px 目标，编辑打开 <code>GroupEditDialog</code>，见 12-missed-1 #05 稿）；分割线 <code>vd</code> 1dp <code>outline_variant</code>、左侧与文本起点对齐；复选框 22dp、6dp 圆角、选中 <code>ThemeStore.primaryColor</code> 实底 + 白勾（运行时着色，禁布局硬编码 primary，MASTER §4）；开关 40×24 沿用 07 稿。深浅色均无阴影、无二级底色，行背景随 <code>surface</code>（现状 item_group_select.xml:5 的 @color/background → 建议随对话框卡面 surface_container）。</p>
+</section>
+
+<footer class="foot">legado v2 · mockup · group-select —— 功能对照 GroupSelectDialog.kt（classic-base）· 视觉令牌与 design-system/html/screens/07-manage.html 一致</footer>
+</div>
+</body></html>

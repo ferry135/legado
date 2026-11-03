@@ -11,7 +11,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
  * Created by GKF on 2018/3/16.
  */
 @Suppress("MemberVisibilityCanBePrivate")
-class ItemTouchCallback(private val callback: Callback) : ItemTouchHelper.Callback() {
+open class ItemTouchCallback(private val callback: Callback) : ItemTouchHelper.Callback() {
 
     private var swipeRefreshLayout: SwipeRefreshLayout? = null
 

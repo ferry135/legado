@@ -44,17 +44,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:gravity="center"
             android:padding="16dp"
+            android:text="@string/change_source_empty_title"
             android:textColor="@color/secondaryText"
+            android:textSize="14sp"
             android:visibility="gone" />
 
     </FrameLayout>
 
+    <!-- 底部按钮条上缘 1dp 分隔（source-picker 稿 .pfoot border-top） -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/outline_variant" />
+
+    <!-- 底部按钮条（source-picker 稿 .pfoot）：左右 10dp、上 6dp、下 16dp 避让 home indicator；
+         文字钮 14sp/600、padding 14×13dp（触控高≥48）、12dp 圆角 ripple -->
     <com.google.android.flexbox.FlexboxLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="6dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="16dp"
         app:flexWrap="wrap"
         app:justifyContent="space_between">
 
@@ -62,9 +75,16 @@
             android:id="@+id/tv_footer_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:visibility="gone"
-            tools:ignore="RtlHardcoded" />
+            android:background="@drawable/bg_text_btn"
+            android:paddingLeft="14dp"
+            android:paddingTop="13dp"
+            android:paddingRight="14dp"
+            android:paddingBottom="13dp"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:visibility="visible"
+            tools:ignore="RtlHardcoded"
+            tools:text="换源间隔 · 5 秒" />
 
         <Space
             android:layout_width="0dp"
@@ -75,21 +95,35 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <io.legado.app.ui.widget.text.AccentTextView
+            <!-- [NEED-DECISION]②：v3 弹窗族定稿取消=次要色，AccentTextView 恒 accent → 换 TextView 走令牌 -->
+            <TextView
                 android:id="@+id/tv_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="12dp"
+                android:background="@drawable/bg_text_btn"
+                android:paddingLeft="14dp"
+                android:paddingTop="13dp"
+                android:paddingRight="14dp"
+                android:paddingBottom="13dp"
                 android:text="@string/cancel"
-                android:visibility="gone"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:visibility="visible"
                 tools:ignore="RtlHardcoded" />
 
             <io.legado.app.ui.widget.text.AccentTextView
                 android:id="@+id/tv_ok"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="12dp"
+                android:background="@drawable/bg_text_btn"
+                android:paddingLeft="14dp"
+                android:paddingTop="13dp"
+                android:paddingBottom="13dp"
+                android:paddingRight="14dp"
                 android:text="@string/ok"
+                android:textSize="14sp"
+                android:textStyle="bold"
                 android:visibility="gone"
                 tools:ignore="RtlHardcoded" />
 

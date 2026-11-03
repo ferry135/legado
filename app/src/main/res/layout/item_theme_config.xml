@@ -1,44 +1,184 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 主题行（theme-list 稿）：minHeight 72dp、padding 10×16dp、元素间距 12dp、整行可点。
+     预览块 52dp 四色 = 顶栏(主色)/正文(背景)/底栏(底栏色)/强调条+圆点(强调色)，运行时着色；
+     圆角 8dp + 描边随预览明度派生（25% ink/white，convert 内 GradientDrawable + clipToOutline）。
+     「使用中」pill = primary_soft 底 + on_primary_soft 字（既有令牌，随明暗成对）。
+     动作钮 36→48dp（MASTER §4 触控修复），iv_share 无障碍标签由误标「编辑」修正为「分享」；
+     行底「使用中」高亮（sel 状态色）由 convert 运行时着色 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
+    android:background="?attr/selectableItemBackground"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:minHeight="72dp"
+    android:orientation="horizontal"
+    android:paddingStart="16dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="10dp">
 
-    <TextView
-        android:id="@+id/tv_name"
+    <FrameLayout
+        android:id="@+id/fl_preview"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:padding="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <View
+                android:id="@+id/v_prev_top"
+                android:layout_width="match_parent"
+                android:layout_height="13dp"
+                tools:background="#FF6B2C" />
+
+            <LinearLayout
+                android:id="@+id/v_prev_body"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
+                tools:background="#FAF9F7">
+
+                <View
+                    android:id="@+id/v_prev_acc"
+                    android:layout_width="16dp"
+                    android:layout_height="3dp"
+                    tools:background="#FF6B2C" />
+
+                <View
+                    android:id="@+id/v_prev_tx1"
+                    android:layout_width="31dp"
+                    android:layout_height="3dp"
+                    android:layout_marginTop="3dp"
+                    tools:background="#8A8D93" />
+
+                <View
+                    android:id="@+id/v_prev_tx2"
+                    android:layout_width="22dp"
+                    android:layout_height="3dp"
+                    android:layout_marginTop="3dp"
+                    tools:background="#8A8D93" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/v_prev_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="13dp"
+                tools:background="#FFFEFC">
+
+                <View
+                    android:id="@+id/v_prev_dot"
+                    android:layout_width="4dp"
+                    android:layout_height="4dp"
+                    android:layout_gravity="center"
+                    tools:background="#FF6B2C" />
+            </FrameLayout>
+        </LinearLayout>
+    </FrameLayout>
+
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
         android:layout_weight="1"
-        android:maxLines="1"
-        android:textColor="@color/primaryText"
-        tools:text="theme" />
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/on_surface"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="theme" />
+
+            <TextView
+                android:id="@+id/tv_in_use"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_pill_soft"
+                android:paddingStart="8dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="2dp"
+                android:text="@string/theme_in_use"
+                android:textColor="@color/on_primary_soft"
+                android:textSize="10.5sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_night"
+                android:layout_width="11dp"
+                android:layout_height="11dp"
+                android:layout_marginEnd="5dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_moon"
+                android:visibility="gone" />
+
+            <!-- 主色 hex 等宽（theme-list 稿 §248）；中文无等宽字形回退系统字体，仅 hex/拉丁命中 -->
+            <TextView
+                android:id="@+id/tv_meta"
+                android:fontFamily="monospace"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="11.5sp"
+                tools:text="白天主题 · 主色调 #FF6B2C" />
+        </LinearLayout>
+    </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_share"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_gravity="center"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="12dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/edit"
-        android:padding="6dp"
-        android:tooltipText="@string/edit"
+        android:contentDescription="@string/share"
+        android:padding="14dp"
         android:src="@drawable/ic_share"
-        android:tint="@color/primaryText"
+        android:tooltipText="@string/share"
+        android:tint="@color/on_surface_variant"
         tools:ignore="UnusedAttribute" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_delete"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="12dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/delete"
-        android:tooltipText="@string/delete"
-        android:padding="6dp"
+        android:padding="14dp"
         android:src="@drawable/ic_clear_all"
-        android:tint="@color/primaryText"
+        android:tooltipText="@string/delete"
+        android:tint="@color/on_surface_variant"
         tools:ignore="UnusedAttribute" />
 
 </LinearLayout>

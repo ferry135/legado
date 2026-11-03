@@ -1,0 +1,310 @@
+<!-- design-system: legado v2 -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>legado · 批量换源 · 选择书源弹窗</title><style>
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#eceae5;color:#24221e;padding:44px 20px 90px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:980px;margin:0 auto}
+.eyebrow{font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:#8d8878;font-weight:650}
+h1.group{font-size:34px;font-weight:750;margin:8px 0 10px}
+.lede{font-size:14.5px;line-height:1.9;color:#5f5b52;margin:0 0 20px;max-width:800px}
+.sec-nav{display:flex;flex-wrap:wrap;gap:8px}
+.sec-nav a{font-size:12.5px;color:#3f3c35;text-decoration:none;padding:6px 13px;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.07);font-weight:550}
+.sec-nav a:hover{background:#ff6b2c;color:#fff;border-color:#ff6b2c}
+.screen-sec{margin-top:72px}
+.sec-head{display:flex;align-items:baseline;gap:12px}
+.sec-no{font-size:13px;font-weight:750;color:#ff6b2c;letter-spacing:.1em}
+.sec-head h2{font-size:24px;font-weight:700;margin:0}
+.sec-sub{font-size:13.5px;color:#6d6a62;margin:6px 0 24px;line-height:1.8;max-width:880px}
+.pair{display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start}
+figure.phone-col{display:flex;flex-direction:column;gap:9px;margin:0}
+.phone{width:412px;height:900px;border-radius:30px;position:relative;overflow:hidden;border:1px solid rgba(0,0,0,.10);flex:none}
+.phone-tag{font-size:12.5px;color:#8d8878;display:flex;justify-content:space-between}
+.spec{margin:22px 0 0;padding:16px 20px;background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:14px;font-size:13px;line-height:2;color:#5f5b52;max-width:880px}
+.spec code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#f2f0ea;padding:1px 6px;border-radius:6px;color:#45423a}
+.spec .nd{color:#b34a15;font-weight:650}
+.footnote{margin-top:80px;padding-top:20px;border-top:1px solid rgba(0,0,0,.08);font-size:12.5px;color:#8d8878;line-height:2}
+/* ---------- 主题令牌（同 screens 系列） ---------- */
+.t-light{--bg:#faf9f7;--surface:#ffffff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--outline:#8b8878;--primary:#ff6b2c;--primary-soft:#fff0e6;--track:#e5e2de;--divider:rgba(0,0,0,.07);--err:#ba1a1a;--ok:#3b7a45;background:var(--bg);color:var(--text)}
+.t-dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--text:#f3f0eb;--secondary:#b4b0aa;--outline:#8f8b7f;--primary:#ff6b2c;--primary-soft:#3a241b;--track:#353331;--divider:rgba(255,255,255,.08);--err:#ffb4ab;--ok:#7fd891;background:var(--bg);color:var(--text)}
+/* ---------- 手机壳 ---------- */
+.status{height:34px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:14px;font-weight:600;position:relative;z-index:12}
+.status-right{display:flex;gap:10px;align-items:center}
+.home-indicator{position:absolute;left:50%;bottom:5px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--secondary);opacity:.9;z-index:40;pointer-events:none}
+.icon{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block}
+.icon.f{fill:currentColor;stroke:none}
+/* ---------- 选择书源整屏 ---------- */
+.picker{position:absolute;top:34px;left:0;right:0;bottom:0;display:flex;flex-direction:column;z-index:1}
+.appbar{flex:none;display:flex;align-items:center;gap:2px;padding:2px 8px 0;min-height:56px}
+.appbar h1{font-size:18px;font-weight:650;margin:0;padding:0 6px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.icon-btn{width:44px;height:44px;border:0;background:transparent;border-radius:22px;display:grid;place-items:center;color:var(--text);flex:none;padding:0;cursor:pointer}
+/* 搜索胶囊（view_search：40dp、surface_container_high 实底、全圆角） */
+.search-pill{display:flex;align-items:center;gap:10px;height:40px;margin:8px 16px 10px;padding:0 14px;border-radius:20px;background:var(--surface2);color:var(--secondary);font-size:15px;flex:none}
+.search-pill .icon{width:19px;height:19px;flex:none}
+.search-pill .sv{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-pill .sv.q{color:var(--text)}
+/* 列表（item_book_source 复用：内边距 12/14/12/16，名称 15sp） */
+.plist{flex:1;min-height:0;position:relative;overflow:hidden}
+.prow{display:flex;align-items:center;gap:4px;padding:12px 16px 12px 14px}
+.prow .nm{flex:1;min-width:0;font-size:15px;font-weight:550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow .grp{color:var(--secondary);font-weight:400}
+.pdiv{height:1px;background:var(--divider);margin-left:14px}
+.fastscroll{position:absolute;right:3px;top:34%;width:4px;height:52px;border-radius:3px;background:var(--primary);opacity:.45;z-index:3}
+.pmsg{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:16px;color:var(--secondary);font-size:14px;line-height:1.9}
+/* 底部按钮条（dialog_source_picker.xml FlexboxLayout 补样式） */
+.pfoot{flex:none;display:flex;align-items:center;gap:2px;padding:6px 10px 16px;border-top:1px solid var(--divider)}
+.pfoot .sp{flex:1}
+.ftact{border:0;background:transparent;font-family:inherit;font-size:14px;font-weight:600;padding:13px 14px;border-radius:12px;color:var(--secondary);white-space:nowrap;cursor:pointer}
+.ftact.pri{color:var(--primary)}
+.t-light .ftact.pri{color:#b34a15} /* 亮色主色文字钮可达性：#FF6B2C 压纸底 2.8:1 → 深主色 #B34A15（12-missed-2#s29 同方案），运行时仍取 ThemeStore.accentColor */
+/* ---------- 居中弹层（换源间隔数字选择，同 12-missed-2#s24） ---------- */
+.veil{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:10}
+.t-dark .veil{background:rgba(0,0,0,.55)}
+.dlg{position:absolute;z-index:11;left:50%;top:43%;transform:translate(-50%,-50%);width:280px;background:var(--surface);border:1px solid var(--divider);border-radius:16px;overflow:hidden}
+.dtb{display:flex;align-items:center;min-height:56px;padding:0 4px 0 18px;flex:none;border-bottom:1px solid var(--divider)}
+.dtb b{flex:1;font-size:17px;font-weight:650}
+.dfoot{display:flex;align-items:center;gap:2px;padding:8px 12px 12px;flex:none}
+.dfoot .sp{flex:1}
+.dact{border:0;background:transparent;color:var(--text);font-family:inherit;font-size:13.5px;font-weight:600;padding:10px 12px;border-radius:9px;cursor:pointer;white-space:nowrap}
+.dact.mut{color:var(--secondary)}
+.dact.pri{color:var(--primary)}
+.t-light .dact.pri{color:#b34a15}
+.wheel{position:relative;margin:6px 52px 14px;height:150px;overflow:hidden;flex:none}
+.wheel:before,.wheel:after{content:"";position:absolute;left:0;right:0;height:42px;z-index:2;pointer-events:none}
+.wheel:before{top:0;background:linear-gradient(180deg,var(--surface),rgba(0,0,0,0))}
+.wheel:after{bottom:0;background:linear-gradient(0deg,var(--surface),rgba(0,0,0,0))}
+.wheel .band{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:42px;background:var(--surface2);border-radius:10px;z-index:1}
+.wheel ul{list-style:none;margin:0;padding:0;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:17px;color:var(--secondary);position:relative;z-index:2}
+.wheel li.cur{color:var(--text);font-weight:650;font-size:20px}
+/* ---------- 溢出菜单（06-rss 同款） ---------- */
+.menu{min-width:176px;background:var(--surface);border:1px solid var(--divider);border-radius:12px;padding:6px;display:inline-block}
+.menu button{display:flex;align-items:center;gap:12px;width:100%;border:0;background:transparent;text-align:left;font-size:14.5px;color:var(--text);padding:11px 14px;border-radius:9px;font-family:inherit}
+/* ---------- 组件规格条 ---------- */
+.strip-wrap{display:flex;flex-direction:column;gap:8px}
+.strip{width:374px;border-radius:16px;border:1px solid rgba(0,0,0,.10);overflow:hidden;position:relative}
+.strip-cap{font-size:12.5px;color:#8d8878;display:flex;justify-content:space-between}
+.mini-badge{display:inline-block;font-size:10.5px;line-height:1.5;color:var(--secondary);background:var(--track);border-radius:9px;padding:0 7px;margin-left:7px;vertical-align:2px;flex:none;font-weight:500}
+</style></head><body>
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="12" cy="19" r="1.9"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+</svg>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">design-system: legado v2 · mockup / source-picker</div>
+  <h1 class="group">批量换源 · 选择书源弹窗</h1>
+  <p class="lede">SourcePickerDialog（dialog_source_picker.xml）重设计：书架管理选中多本书 → 菜单「批量换源」→ 全屏弹窗选择目标书源，点行即对所选书籍批量换源。本稿补齐 blend 标题栏（含搜索胶囊）与底部按钮条两块样式；列表行复用 item_book_source（已落地，稿面仅呈现名称·分组）。视觉令牌与 screens 系列一致：主色 #FF6B2C、亮色 #FAF9F7/#FFFFFF/#EEECE9、暗色 #141312/#1D1B19/#242220、blend 顶栏无分割无阴影。</p>
+  <nav class="sec-nav">
+    <a href="#s01"><b>01</b> 全屏主稿</a><a href="#s02"><b>02</b> 搜索与空态</a><a href="#s03"><b>03</b> 换源间隔</a><a href="#s04"><b>04</b> 组件规格与功能核对</a>
+  </nav>
+</header>
+
+<!-- ============ 01 全屏主稿 ============ -->
+<section class="screen-sec" id="s01"><div class="sec-head"><span class="sec-no">01</span><h2>全屏主稿</h2></div>
+<p class="sec-sub">setLayout(1f, MATCH_PARENT) 全屏弹窗：blend 标题栏（标题 + ⋮ 溢出 + × 关闭）+ 搜索胶囊 + 已启用书源列表（item_book_source 行复用，FastScroll 快滚条）+ 底部按钮条（左「换源间隔 · N 秒」/ 右「取消」）。点行即换源并关闭，无勾选无确认。</p>
+<div class="pair">
+<figure class="phone-col mirror"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="picker">
+  <div class="appbar">
+    <h1>选择书源</h1>
+    <button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:22px;height:22px"><use href="#i-more"/></svg></button>
+    <button class="icon-btn" aria-label="关闭"><svg class="icon" style="width:22px;height:22px"><use href="#i-close"/></svg></button>
+  </div>
+  <div class="search-pill"><svg class="icon"><use href="#i-search"/></svg><span class="sv">搜索书源</span></div>
+  <div class="plist">
+    <div class="prow"><div class="nm">笔趣阁 <span class="grp">· 综合</span></div></div><div class="pdiv"></div>
+    <div class="prow"><div class="nm">千千小说 <span class="grp">· 综合</span></div></div><div class="pdiv"></div>
+    <div class="prow"><div class="nm">鸿蒙文学 <span class="grp">· 网文</span></div></div><div class="pdiv"></div>
+    <div class="prow"><div class="nm">笔趣阁·永久防失联备用镜像线路三号站 <span class="grp">· 综合</span></div></div><div class="pdiv"></div>
+    <div class="prow"><div class="nm">晋江文学城 <span class="grp">· 女频</span></div></div><div class="pdiv"></div>
+    <div class="prow"><div class="nm">起点中文网 <span class="grp">· 付费</span></div></div><div class="pdiv"></div>
+    <div class="prow"><div class="nm">纵横中文网 <span class="grp">· 综合</span></div></div><div class="pdiv"></div>
+    <div class="prow"><div class="nm">海蚀书院 <span class="grp">· 听书</span></div></div><div class="pdiv"></div>
+    <div class="prow"><div class="nm">七猫中文网 <span class="grp">· 付费</span></div></div><div class="pdiv"></div>
+    <div class="prow"><div class="nm">灯芯文学 <span class="grp">· 网文</span></div></div><div class="pdiv"></div>
+    <div class="prow"><div class="nm">书海阁小说网 <span class="grp">· 综合</span></div></div><div class="pdiv"></div>
+    <div class="prow"><div class="nm">御宅书屋 <span class="grp">· 轻小说</span></div></div><div class="pdiv"></div>
+    <div class="prow"><div class="nm">飞卢小说网 <span class="grp">· 付费</span></div></div><div class="pdiv"></div>
+    <div class="prow"><div class="nm">次元姬小说 <span class="grp">· 轻小说</span></div></div>
+    <div class="fastscroll"></div>
+  </div>
+  <div class="pfoot">
+    <button class="ftact pri" type="button">换源间隔 · 5 秒</button>
+    <span class="sp"></span>
+    <button class="ftact" type="button">取消</button>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure>
+</div>
+<ul class="spec">
+<li><code>容器</code> — SourcePickerDialog <code>setLayout(1f, MATCH_PARENT)</code>（SourcePickerDialog.kt:59）→ 全屏弹窗，稿面为整屏页面而非居中卡。</li>
+<li><code>blend 标题栏</code> — dialog_source_picker.xml:9-19 TitleBar（attachToActivity=false，contentLayout=view_search）：透明背景、无分割线无阴影（blend 定稿，同 06-rss#S5 / 12-missed-2#s29-A，现状的 primaryColor 涂色已删，Kotlin:69-70 注记）；标题「选择书源」18sp/650 on_surface（Kotlin:71）；右上 ⋮（menu/source_picker.xml 唯一项「换源间隔」保留）+ ×关闭（新增：全屏弹窗屏内退出，行为 = dismissAllowingStateLoss，与底部「取消」等价；44dp 圆形点击区，ic_close tint on_surface）。</li>
+<li><code>搜索胶囊</code> — view_search 现样式不动：40dp 全圆角、bg_tab_capsule = surface_container_high 实底、上下边距 8dp；hint「搜索书源」（Kotlin:76）、isSubmitButtonEnabled=true（:75，键盘 actionSearch）；onQueryTextChange 实时过滤 flowSearchEnabled（:82-85,94）。</li>
+<li><code>列表</code> — FastScrollRecyclerView（xml:26-31）快滚条保留（右缘 4dp 主色 45% 胶囊，同 06-rss#S5）；行复用 item_book_source（已落地）：名称 15sp on_surface（cb_book_source 字号，item_book_source.xml:47-48）、行内边距 12/14/12/16（:9-12）、行间 1dp outline_variant 分割线（左缩进 14dp，05-source-rules#01 同款）；分组后缀用 on_surface_variant 次要色（getDisPlayNameGroup 返回「名称 (分组)」单串，BookSourcePart.kt:50-56，建议按 bookSourceGroup 字段分色，整串 on_surface 亦可）；仅已启用书源（flowEnabled，Kotlin:93）。</li>
+<li><code>行点击</code> — 点行 → callback.sourceOnClick(source) 批量换源并 dismissAllowingStateLoss（Kotlin:143-150）；单选即换，无勾选/确认（起点换源同型）；点行后宿主页 WaitDialog 显示「批量换源 i / n」（BookshelfManageActivity.kt:139-149，不在本稿范围）。</li>
+<li><code>底部按钮条</code> — dialog_source_picker.xml:53-98 FlexboxLayout（space_between）：左 tv_footer_left「换源间隔 · N 秒」主色文字钮（与 ⋮ 菜单项同行为，见 03 屏；显示当前值作为决策时上下文）；右 tv_cancel「取消」次要文字钮（dismiss）；上缘 1dp outline_variant 分割线，底部留 home indicator 空间；tv_ok 保持 gone（无多选确认语义，样式成对给出见 04 屏）。</li>
+</ul></section>
+
+<!-- ============ 02 搜索与空态 ============ -->
+<section class="screen-sec" id="s02"><div class="sec-head"><span class="sec-no">02</span><h2>搜索与空态</h2></div>
+<p class="sec-sub">搜索胶囊聚焦输入后实时过滤（flowSearchEnabled）；无命中时列表区居中显示 tv_msg 提示（布局占位启用）。标题栏/底部按钮条在两态下不变。</p>
+<div class="pair">
+<figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="picker">
+  <div class="appbar">
+    <h1>选择书源</h1>
+    <button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:22px;height:22px"><use href="#i-more"/></svg></button>
+    <button class="icon-btn" aria-label="关闭"><svg class="icon" style="width:22px;height:22px"><use href="#i-close"/></svg></button>
+  </div>
+  <div class="search-pill"><svg class="icon"><use href="#i-search"/></svg><span class="sv q">笔趣</span><svg class="icon" style="color:var(--secondary)" aria-label="清除"><use href="#i-close"/></svg></div>
+  <div class="plist">
+    <div class="prow"><div class="nm">笔趣阁 <span class="grp">· 综合</span></div></div><div class="pdiv"></div>
+    <div class="prow"><div class="nm">笔趣阁·永久防失联备用镜像线路三号站 <span class="grp">· 综合</span></div></div><div class="pdiv"></div>
+    <div class="prow"><div class="nm">笔趣阁 <span class="grp">· 精品</span></div></div>
+    <div class="fastscroll" style="display:none"></div>
+  </div>
+  <div class="pfoot">
+    <button class="ftact pri" type="button">换源间隔 · 5 秒</button>
+    <span class="sp"></span>
+    <button class="ftact" type="button">取消</button>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色 · 搜索命中</span><span>412 × 900</span></figcaption></figure>
+<figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="picker">
+  <div class="appbar">
+    <h1>选择书源</h1>
+    <button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:22px;height:22px"><use href="#i-more"/></svg></button>
+    <button class="icon-btn" aria-label="关闭"><svg class="icon" style="width:22px;height:22px"><use href="#i-close"/></svg></button>
+  </div>
+  <div class="search-pill"><svg class="icon"><use href="#i-search"/></svg><span class="sv q">xyz书站</span><svg class="icon" style="color:var(--secondary)" aria-label="清除"><use href="#i-close"/></svg></div>
+  <div class="plist">
+    <div class="pmsg"><span>未找到匹配的书源<br><span style="font-size:12px;opacity:.85">试试其他关键字</span></span></div>
+  </div>
+  <div class="pfoot">
+    <button class="ftact pri" type="button">换源间隔 · 5 秒</button>
+    <span class="sp"></span>
+    <button class="ftact" type="button">取消</button>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色 · 搜索无结果（tv_msg）</span><span>412 × 900</span></figcaption></figure>
+</div>
+<ul class="spec">
+<li><code>搜索态</code> — 输入后胶囊内文字 on_surface、右端清除钮（×，tint on_surface_variant）；提交键保留（isSubmitButtonEnabled=true，:75）；过滤走 flowSearchEnabled(searchKey)（:94），仅匹配已启用源。</li>
+<li><code>空态</code> — tv_msg（dialog_source_picker.xml:42-49，现未绑定）：搜索无结果时显示居中次要文字（secondaryText 14sp，16dp 内边距，gravity=center 现样式）；稿面文案「未找到匹配的书源」，绑定时机 = flow 收集结果为空。</li>
+<li><code>RotateLoading</code> — xml:33-40 现未绑定：本地 Room flow 无网络加载态，保持 gone，稿面不出现。</li>
+</ul></section>
+
+<!-- ============ 03 换源间隔 ============ -->
+<section class="screen-sec" id="s03"><div class="sec-head"><span class="sec-no">03</span><h2>换源间隔</h2></div>
+<p class="sec-sub">⋮ 菜单项「换源间隔」与底部左钮同一行为：NumberPickerDialog（0 ~ 9999 秒，初值 AppConfig.batchChangeSourceDelay，确定写回偏好）。数值为批量换源逐本之间的等待秒数。</p>
+<div class="pair">
+<figure class="phone-col mirror"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="picker">
+  <div class="appbar">
+    <h1>选择书源</h1>
+    <button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:22px;height:22px"><use href="#i-more"/></svg></button>
+    <button class="icon-btn" aria-label="关闭"><svg class="icon" style="width:22px;height:22px"><use href="#i-close"/></svg></button>
+  </div>
+  <div class="search-pill"><svg class="icon"><use href="#i-search"/></svg><span class="sv">搜索书源</span></div>
+  <div class="plist">
+    <div class="prow"><div class="nm">笔趣阁 <span class="grp">· 综合</span></div></div><div class="pdiv"></div>
+    <div class="prow"><div class="nm">千千小说 <span class="grp">· 综合</span></div></div><div class="pdiv"></div>
+    <div class="prow"><div class="nm">鸿蒙文学 <span class="grp">· 网文</span></div></div><div class="pdiv"></div>
+    <div class="prow"><div class="nm">晋江文学城 <span class="grp">· 女频</span></div></div><div class="pdiv"></div>
+    <div class="prow"><div class="nm">起点中文网 <span class="grp">· 付费</span></div></div><div class="pdiv"></div>
+    <div class="prow"><div class="nm">纵横中文网 <span class="grp">· 综合</span></div></div>
+  </div>
+  <div class="pfoot">
+    <button class="ftact pri" type="button">换源间隔 · 5 秒</button>
+    <span class="sp"></span>
+    <button class="ftact" type="button">取消</button>
+  </div>
+</div>
+<div class="veil"></div>
+<div class="dlg">
+  <div class="dtb"><b>换源间隔</b></div>
+  <div class="wheel">
+    <div class="band"></div>
+    <ul><li>3</li><li>4</li><li class="cur">5</li><li>6</li><li>7</li></ul>
+  </div>
+  <div class="dfoot"><span class="sp"></span><button class="dact mut" type="button">取消</button><button class="dact pri" type="button">确定</button></div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题</span><span>412 × 900</span></figcaption></figure>
+</div>
+<ul class="spec">
+<li><code>入口×2</code> — ① 顶栏 ⋮ → menu/source_picker.xml menu_change_source_delay（现状唯一菜单项，保留）；② 底部左钮（常显，带当前值）。两处同调 NumberPickerDialog（Kotlin:110-121）。</li>
+<li><code>弹窗</code> — NumberPickerDialog：标题「换源间隔」，min 0 / max 9999（:113-114），初值 AppConfig.batchChangeSourceDelay（:116），确定写回偏好（:118）；呈现沿用 12-missed-2#s24 数字选择轮（surface2 选中带 + on_surface 加粗当前值）。</li>
+<li><code>语义</code> — 批量换源逐本之间的等待秒数（BookshelfManageViewModel.kt:86,112 <code>delay(changeSourceDelay)</code>）；稿面值 5 秒。</li>
+</ul></section>
+
+<!-- ============ 04 组件规格与功能核对 ============ -->
+<section class="screen-sec" id="s04"><div class="sec-head"><span class="sec-no">04</span><h2>组件规格与功能核对</h2></div>
+<p class="sec-sub">本稿两块补样式的组件解剖（blend 标题栏 / 底部按钮条），以及对照现状的功能核对清单。</p>
+<div class="pair">
+<figure class="phone-col"><div class="strip-wrap">
+  <div class="strip t-light" style="padding:6px 6px 10px">
+    <div class="appbar">
+      <h1>选择书源</h1>
+      <button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:22px;height:22px"><use href="#i-more"/></svg></button>
+      <button class="icon-btn" aria-label="关闭"><svg class="icon" style="width:22px;height:22px"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="search-pill"><svg class="icon"><use href="#i-search"/></svg><span class="sv">搜索书源</span></div>
+  </div>
+  <div class="strip-cap"><span>blend 标题栏：透明底、无分割无阴影 · 56dp</span><span>TitleBar + view_search</span></div>
+</div></figure>
+<figure class="phone-col"><div class="strip-wrap">
+  <div class="strip t-light">
+    <div class="pfoot" style="position:static">
+      <span class="ftact pri" style="cursor:default">换源间隔 · 5 秒</span>
+      <span class="sp" style="flex:1"></span>
+      <span class="ftact" style="cursor:default">取消</span>
+      <span class="ftact pri" style="cursor:default">确定<span class="mini-badge">tv_ok · 本弹窗未启用</span></span>
+    </div>
+  </div>
+  <div class="strip-cap"><span>底部按钮条：上缘 1dp 分割线 · 文字钮 48dp 触控高</span><span>FlexboxLayout</span></div>
+</div></figure>
+<figure class="phone-col"><div class="strip-wrap">
+  <div class="strip t-light" style="padding:10px;width:auto;display:inline-block">
+    <div class="menu" style="position:static">
+      <button type="button">换源间隔</button>
+    </div>
+  </div>
+  <div class="strip-cap"><span>⋮ 溢出菜单：surface 卡 + 12dp 圆角</span><span>menu/source_picker.xml</span></div>
+</div></figure>
+</div>
+<ul class="spec">
+<li><span class="nd">[NEED-DECISION]</span> <code>勾选框取舍</code> — 列表复用 item_book_source 后 cb_book_source 既是名称控件又自带勾选框（ThemeCheckBox），而本弹窗是「点行即换」的单选语义，勾选框无功能。稿面按无框体呈现；实现建议 <code>cb_book_source.buttonDrawable = null</code>（一行，仅留文字，字号 15sp 不变）。若希望原样保留框体，行左将出现无功能方框（不推荐，起点换源无勾选）。swt_enabled / iv_edit / iv_menu_more / iv_explore / iv_debug_text 在本弹窗未接线 → visibility=gone。</li>
+<li><span class="nd">[NEED-DECISION]</span> <code>取消钮着色</code> — 现布局 tv_cancel / tv_ok 均为 AccentTextView（运行时 accentColor 主色文字）；v3 弹窗族定稿（12-missed-2 .dfoot）取消 = 次要色。稿面按定稿：取消 on_surface_variant；若不改代码保留 AccentTextView，则取消/确定同为 accent 主色文字（可接受，非阻塞）。</li>
+<li><code>标题栏规格</code> — 高 56dp（min），背景透明（与弹窗 surface 同色，blend 无分割无阴影）；标题 18sp/650 on_surface 居左；右侧两枚 44dp 圆形图标钮（⋮ 溢出、× 关闭），图标 22dp tint on_surface；其下搜索胶囊 40dp、surface_container_high 实底（bg_tab_capsule）、hint 搜索书源、上下边距 8dp。布局落点：dialog_source_picker.xml TitleBar 不动，新增关闭钮可用 menu 或 navigationIcon 二选一（navigationIcon = ic_close 更省）。</li>
+<li><code>底部按钮条规格</code> — 上缘 1dp outline_variant（亮 #E4E1D8 / 夜 #36342E）；左右 padding 10dp、上 6dp、下 16dp（避让 home indicator）；文字钮 14sp/600、padding 14dp×13dp（触控高 ≥48dp）、圆角 12dp 按压态 ripple；左槽 tv_footer_left 主色文字（运行时 ThemeStore.accentColor，亮色实色建议 #B34A15 保 ≥4.5:1，同 12-missed-2#s29）、右 tv_cancel 次要色、tv_ok 主色文字（本弹窗 gone）。</li>
+<li><code>功能核对（现状 → 新稿）</code> — ① 入口：书架管理选中态菜单「批量换源」（menu/bookshelf_menage_sel.xml:21 → BookshelfManageActivity.kt:330）不改；② 标题「选择书源」（Kotlin:71）→ blend 标题栏；③ 搜索书源 + 实时过滤（Kotlin:76,82-85）→ 搜索胶囊；④ 换源间隔菜单项（menu/source_picker.xml:5 → Kotlin:112-119）→ ⋮ 保留 + 底部左钮常显（双入口同行为）；⑤ 已启用书源列表 +「名称 (分组)」（Kotlin:93 / BookSourcePart.kt:50-56）→ item_book_source 行；⑥ FastScrollRecyclerView 快滚（xml:26-31）→ 右缘快滚条；⑦ 点行换源并关闭（Kotlin:143-150）→ 行点击（后续 WaitDialog 进度在宿主页，稿外）；⑧ 底部 tv_footer_left/tv_cancel/tv_ok（xml:61-94，现均 gone）→ 左「换源间隔 · N 秒」+ 右「取消」，确定样式成对给出未启用；⑨ tv_msg 空态（xml:42-49，现未绑定）→ 搜索无结果提示；⑩ RotateLoading（xml:33-40，现未绑定）→ 保持 gone。无删项、无新增权限/网络行为。</li>
+</ul></section>
+
+<footer>
+  <div class="footnote">
+    <b>legado 全新界面设计 v3 · 批量换源 · 选择书源弹窗</b> — design-system/mockups/source-picker.html，单文件自包含、无外部依赖；深色稿由脚本镜像浅色稿并切换令牌生成。<br>
+    视觉令牌延续 v3：主色 #FF6B2C；亮色 #FAF9F7/#FFFFFF/#EEECE9，暗色 #141312/#1D1B19/#242220；分割线 rgba(0,0,0,.07)/rgba(255,255,255,.08)；blend 顶栏无阴影、Material 3。功能块与代码引用均来自 app/src/main 现有布局与 Kotlin（SourcePickerDialog.kt / dialog_source_picker.xml / item_book_source.xml / menu/source_picker.xml / BookshelfManageActivity.kt）。
+  </div>
+</footer>
+
+</div>
+<script>
+(function(){
+  document.querySelectorAll('figure.phone-col.mirror').forEach(function(f){
+    var clone=f.cloneNode(true);
+    var ph=clone.querySelector('.phone');
+    ph.classList.remove('t-light');ph.classList.add('t-dark');
+    clone.classList.remove('mirror');
+    var cap=clone.querySelector('.phone-tag span');
+    if(cap)cap.textContent='深色主题';
+    f.parentNode.insertBefore(clone,f.nextSibling);
+  });
+})();
+</script>
+</body></html>

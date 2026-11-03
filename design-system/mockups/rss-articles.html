@@ -1,0 +1,334 @@
+<!-- design-system: legado v2 · mockup -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>legado v2 · RSS 文章卡 简洁/紧凑变体 — 设计稿</title><style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#f3f1ed;color:#1d1b16;-webkit-font-smoothing:antialiased}
+/* ---------- 文档框架（与 screens/06-rss.html 同构） ---------- */
+.doc-head{max-width:1180px;margin:0 auto;padding:44px 24px 10px}
+.doc-head h1{font-size:34px;font-weight:750;margin:0 0 10px;letter-spacing:.5px}
+.doc-head p{margin:0;font-size:14.5px;line-height:1.8;color:#6d6a62;max-width:880px}
+.doc-nav{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px;padding:12px 24px;max-width:1180px;margin:0 auto;background:rgba(243,241,237,.92);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,.06)}
+.doc-nav a{font-size:13.5px;font-weight:600;color:#6d6a62;text-decoration:none;background:#fff;border:1px solid #e4e1d8;border-radius:999px;padding:6px 14px}
+.doc-nav a:hover{color:#ff6b2c;border-color:#ffc9ad}
+.wrap{max-width:1180px;margin:0 auto;padding:8px 24px 96px}
+.screen{margin-top:56px}
+.screen-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.screen-head h2{font-size:22px;font-weight:750;margin:0}
+.screen-head .src{font-size:12.5px;color:#8b8878;font-family:ui-monospace,Consolas,monospace}
+.screen-desc{margin:0 0 18px;font-size:13.5px;line-height:1.7;color:#6d6a62;max-width:880px}
+.pair{display:flex;gap:34px;flex-wrap:wrap}
+figure{margin:0}
+figcaption{text-align:center;font-size:13px;font-weight:600;color:#8b8878;margin-top:12px;letter-spacing:2px}
+.notes{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 0;padding:0;list-style:none;max-width:940px}
+.note{font-size:12.5px;line-height:1.6;color:#6d6a62;background:#fff;border:1px solid #e4e1d8;border-radius:999px;padding:4px 12px}
+.note b{color:#1d1b16;font-weight:650}
+.note.dec{border-color:#ffc9ad;background:#fff6f0}
+.note.dec b{color:#b34a15}
+/* ---------- 手机壳 / 页面骨架（与 screens/06-rss.html 逐字对齐） ---------- */
+.phone{width:412px;height:900px;border-radius:30px;border:1px solid rgba(0,0,0,.10);overflow:hidden;position:relative;display:flex;flex-direction:column;flex:none}
+.phone.light{--bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--track:#e5e2de;--divider:rgba(0,0,0,.07);--error:#ba1a1a;--chip:rgba(0,0,0,.05);--home:#69717b;background:var(--bg);color:var(--text)}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--track:#353331;--divider:rgba(255,255,255,.08);--error:#ffb4ab;--chip:rgba(255,255,255,.08);--home:#f3f0eb;background:var(--bg);color:var(--text)}
+.phone.slim{height:640px}
+.status{height:34px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:14px;font-weight:600}
+.status-right{display:flex;gap:10px;align-items:center}
+.appbar{flex:none;display:flex;align-items:center;gap:2px;padding:2px 8px 0;min-height:56px}
+.appbar h1{font-size:18px;font-weight:650;margin:0;padding:0 4px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.icon-btn{width:44px;height:44px;border:0;background:transparent;border-radius:22px;display:grid;place-items:center;color:var(--text);flex:none}
+.icon{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon.f{fill:currentColor;stroke:none}
+.body{flex:1;min-height:0;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.tabs-row{display:flex;gap:24px;padding:0 20px;border-bottom:1px solid var(--divider);flex:none;overflow:hidden}
+.tab{border:0;background:transparent;font-family:inherit;font-size:15px;font-weight:600;color:var(--secondary);padding:12px 2px 11px;position:relative;white-space:nowrap}
+.tab.on{color:var(--primary)}
+.tab.on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:3px 3px 0 0;background:var(--primary)}
+.menu{position:absolute;z-index:9;min-width:172px;background:var(--surface);border:1px solid var(--divider);border-radius:12px;padding:6px}
+.menu button{display:flex;align-items:center;gap:12px;width:100%;border:0;background:transparent;text-align:left;font-size:14.5px;color:var(--text);padding:11px 14px;border-radius:9px;font-family:inherit}
+.menu button:hover{background:var(--chip)}
+.menu .m-sep{height:1px;background:var(--divider);margin:5px 8px}
+/* ---------- 变体一：简洁列表行（articleStyle 0，已落地基准） ---------- */
+.art-list{flex:1;min-height:0;overflow:hidden;padding:2px 20px}
+.art{display:flex;gap:14px;padding:15px 0;border-bottom:1px solid var(--divider)}
+.art .txt{flex:1;min-width:0}
+.art .t{font-size:16px;font-weight:650;line-height:1.42;margin:0 0 9px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.art .d{font-size:12px;color:var(--secondary);font-style:italic}
+.art .img{width:110px;height:68px;border-radius:9px;flex:none;object-fit:cover}
+.ph-img{position:relative;overflow:hidden;display:grid;place-items:center;color:rgba(255,255,255,.75)}
+.ph-img>svg.fill{position:absolute;inset:0;width:100%;height:100%;opacity:.55}
+/* ---------- 变体二：大图卡（articleStyle 1 重设计） ---------- */
+.artbig{padding:14px 20px 15px;border-bottom:1px solid var(--divider)}
+.artbig .img{width:100%;height:200px;border-radius:12px;flex:none}
+.artbig .t{font-size:16px;font-weight:650;line-height:1.42;margin:12px 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.artbig .d{display:block;font-size:12px;color:var(--secondary);font-style:italic;margin-top:9px}
+.isread{color:var(--secondary) !important}
+/* ---------- 变体三：紧凑网格卡（articleStyle 2 重设计 / 网格态共用） ---------- */
+.ggrid{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px;align-content:start;overflow:hidden}
+.gcard{background:var(--surface);border-radius:12px;padding:8px 8px 10px;min-width:0}
+.gcard .img{width:100%;height:96px;border-radius:9px}
+.gcard .t{font-size:14px;font-weight:600;line-height:1.45;margin:8px 4px 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gcard .d{display:block;font-size:12px;color:var(--secondary);font-style:italic;margin:6px 4px 0}
+/* ---------- 加载更多（LoadMoreView 三态） ---------- */
+.load-more{display:flex;align-items:center;justify-content:center;gap:8px;padding:16px 0 20px;color:var(--secondary);font-size:13.5px}
+.spinner{width:15px;height:15px;border-radius:50%;border:2px solid var(--track);border-top-color:var(--primary);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* ---------- 浅色占位图 12 色 / 深色占位图（沿用 screens/06 组瓦片） ---------- */
+.g1{background:linear-gradient(135deg,#ffb27a,#ff6b2c)}.g2{background:linear-gradient(135deg,#7db2ff,#2f6fed)}
+.g3{background:linear-gradient(135deg,#6fd091,#1f8a4c)}.g4{background:linear-gradient(135deg,#b3a0f2,#6a4ac0)}
+.g5{background:linear-gradient(135deg,#ffd08a,#e2a23c)}.g6{background:linear-gradient(135deg,#8fd8e8,#1899b4)}
+.dg1{background:linear-gradient(135deg,#b25a33,#8a3a12)}.dg2{background:linear-gradient(135deg,#2c4a72,#1d3050)}
+.dg3{background:linear-gradient(135deg,#2c5c3e,#1a3a26)}.dg4{background:linear-gradient(135deg,#3c3a70,#2a2452)}
+.dg5{background:linear-gradient(135deg,#7a5a28,#57400f)}.dg6{background:linear-gradient(135deg,#1e5560,#0f3944)}
+.home-indicator{position:absolute;left:50%;bottom:5px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--home)}
+/* ---------- 令牌映射表 ---------- */
+.tok{margin-top:14px;border-collapse:collapse;font-size:13px;max-width:940px;width:100%}
+.tok th{font-size:12px;font-weight:650;color:#8b8878;text-align:left;letter-spacing:1px;padding:8px 14px 8px 0;border-bottom:1px solid #e4e1d8;white-space:nowrap}
+.tok td{padding:8px 14px 8px 0;border-bottom:1px solid #e4e1d8;color:#6d6a62;vertical-align:top}
+.tok td:first-child{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;color:#1d1b16;white-space:nowrap}
+.swb{display:inline-block;width:14px;height:14px;border-radius:4px;border:1px solid rgba(0,0,0,.12);vertical-align:-2px;margin-right:7px}
+</style></head>
+<body>
+
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></symbol>
+<symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="5.2" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="18.8" r="1.8"/></symbol>
+<symbol id="i-mtn" viewBox="0 0 400 172" preserveAspectRatio="none"><path d="M0 172V96l70-52 62 44 58-62 76 58 60-38 74 52v74z" fill="rgba(255,255,255,.22)"/><circle cx="318" cy="42" r="20" fill="rgba(255,255,255,.5)"/></symbol>
+</svg>
+
+<header class="doc-head">
+<h1>RSS 文章卡 · 简洁 / 紧凑变体</h1>
+<p>legado v2 界面改造 — 订阅源文章列表的卡片变体稿。基准为已落地的 <b>item_rss_article.xml</b>（简洁列表行，articleStyle 0）；本稿在<b>完全继承其卡片令牌</b>（标题 16sp/1.42 行距、斜体时间 12sp on_surface_variant、缩略图圆角 9、行距 15/20、1px 弱分割线）的前提下，重设计 <b>item_rss_article_1.xml</b>（大图卡，style 1）与 <b>item_rss_article_2.xml</b>（紧凑网格卡，style 2），并给出「切换布局」网格态，保证三种阅读样式切换时视觉统一。页面骨架（blend 顶栏 / 可滚动 Tab / 溢出菜单 / 下拉刷新 / 触底加载）与 <b>screens/06-rss.html</b> S2 一致。</p>
+</header>
+<nav class="doc-nav">
+<a href="#s1">1 简洁列表 · style 0</a><a href="#s2">2 大图卡 · style 1</a><a href="#s3">3 紧凑网格卡 · style 2</a><a href="#s4">4 切换布局 &amp; 状态</a><a href="#tokens">5 令牌映射</a>
+</nav>
+
+<main class="wrap">
+
+<!-- ============ S1 简洁列表 ============ -->
+<section class="screen" id="s1">
+<div class="screen-head"><h2>01 · 简洁列表（articleStyle 0 · 已落地基准）</h2><span class="src">item_rss_article.xml · RssArticlesAdapter.kt</span></div>
+<p class="screen-desc">基准样式，仅作令牌锚点与入口核对：左标题两行 + 斜体时间，右 110×68 圆角 9 缩略图，行内边距 15/20，行间 1px 弱分割线；已读条目标题降为次要色。左机溢出菜单展开，收录 <b>rss_articles.xml</b> 全部 7 项。</p>
+<div class="pair">
+<figure><div class="phone light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>少数派</h1>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
+<div class="tabs-row">
+<button class="tab on">首页</button><button class="tab">快讯</button><button class="tab">AI</button><button class="tab">设计</button><button class="tab">音视频</button><button class="tab">工具</button></div>
+<div class="body">
+<div class="art-list">
+<div class="art"><div class="txt"><p class="t">把订阅源还给我：RSS 阅读的黄金时代</p><span class="d">2026-10-26 18:30</span></div><span class="ph-img img" style="background:linear-gradient(135deg,#ffb27a,#ff6b2c)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t">实测三款国产折叠屏：轻了，也更耐用了</p><span class="d">2026-10-26 10:02</span></div><span class="ph-img img" style="background:linear-gradient(135deg,#7db2ff,#2f6fed)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t isread">一份写给设计师的 AI 工作流指南：从素材收集、灵感整理到多端发布的完整实践（2026 修订版）</p><span class="d">2026-10-25 21:44</span></div></div>
+<div class="art"><div class="txt"><p class="t">周末去做一杯手冲：从器具到冲煮参数</p><span class="d">2026-10-25 09:15</span></div><span class="ph-img img" style="background:linear-gradient(135deg,#6fd091,#1f8a4c)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t isread">为什么你的笔记应用总是用不下去？</p><span class="d">2026-10-24 20:08</span></div></div>
+<div class="art"><div class="txt"><p class="t">iPad 上的分屏学习法：一门课的两块屏</p><span class="d">2026-10-24 11:40</span></div><span class="ph-img img" style="background:linear-gradient(135deg,#b3a0f2,#6a4ac0)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t">城市骑行装备清单：通勤党的十件好物</p><span class="d">2026-10-23 19:26</span></div></div>
+<div class="load-more"><span class="spinner"></span>加载更多</div>
+</div>
+<div class="menu" style="right:14px;top:8px;min-width:196px">
+<button>登录</button>
+<button>刷新分类</button>
+<button>设置源变量</button>
+<button>编辑源</button>
+<button>切换布局</button>
+<button>阅读记录</button>
+<button>清除</button></div>
+</div>
+<div class="home-indicator"></div>
+</div><figcaption>浅色 · 菜单展开</figcaption></figure>
+<figure><div class="phone dark">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>少数派</h1>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
+<div class="tabs-row">
+<button class="tab on">首页</button><button class="tab">快讯</button><button class="tab">AI</button><button class="tab">设计</button><button class="tab">音视频</button><button class="tab">工具</button></div>
+<div class="body">
+<div class="art-list">
+<div class="art"><div class="txt"><p class="t">把订阅源还给我：RSS 阅读的黄金时代</p><span class="d">2026-10-26 18:30</span></div><span class="ph-img img" style="background:linear-gradient(135deg,#b25a33,#8a3a12)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t">实测三款国产折叠屏：轻了，也更耐用了</p><span class="d">2026-10-26 10:02</span></div><span class="ph-img img" style="background:linear-gradient(135deg,#2c4a72,#1d3050)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t isread">一份写给设计师的 AI 工作流指南：从素材收集、灵感整理到多端发布的完整实践（2026 修订版）</p><span class="d">2026-10-25 21:44</span></div></div>
+<div class="art"><div class="txt"><p class="t">周末去做一杯手冲：从器具到冲煮参数</p><span class="d">2026-10-25 09:15</span></div><span class="ph-img img" style="background:linear-gradient(135deg,#2c5c3e,#1a3a26)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="art"><div class="txt"><p class="t isread">为什么你的笔记应用总是用不下去？</p><span class="d">2026-10-24 20:08</span></div></div>
+<div class="art"><div class="txt"><p class="t">iPad 上的分屏学习法：一门课的两块屏</p><span class="d">2026-10-24 11:40</span></div><span class="ph-img img" style="background:linear-gradient(135deg,#3c3a70,#2a2452)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+<div class="load-more">我是有底线的</div>
+</div>
+</div>
+<div class="home-indicator"></div>
+</div><figcaption>深色 · 无更多</figcaption></figure>
+</div>
+<ul class="notes">
+<li class="note">顶栏 = blend：返回 + 源名称（viewModel.titleLiveData）+ 溢出菜单；菜单项见左机</li>
+<li class="note">「登录」仅当源配置 loginUrl 时可见（RssSortActivity.kt:62-66）</li>
+<li class="note">已读条目：标题 on_surface_variant（tv_text_summary 别名），时间不变</li>
+<li class="note">列表态无图条目 image_view=gone，标题占满整行；网格态无图条目用 image_rss_article 占位图</li>
+</ul>
+</section>
+
+<!-- ============ S2 大图卡 ============ -->
+<section class="screen" id="s2">
+<div class="screen-head"><h2>02 · 大图卡（articleStyle 1 · 重设计）</h2><span class="src">item_rss_article_1.xml · RssArticlesAdapter1.kt</span></div>
+<p class="screen-desc">保留信息架构（通栏大图在上 / 标题两行 / 时间），对齐基准令牌：图 200dp 高、圆角 12（corner_radius_md）、左右内缩 20；标题 16sp 粗体 1.42 行距（原 15sp）与时间 12sp 斜体（原 11sp）与 style 0 完全一致；原 8dp 分隔色带改为 1px 弱分割线（原 bg_divider_line 8dp 带），整页节奏与简洁列表同源。无图条目退化为纯文字块（标题 + 时间），与基准行为一致。</p>
+<div class="pair">
+<figure><div class="phone light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>少数派</h1>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
+<div class="tabs-row">
+<button class="tab on">首页</button><button class="tab">快讯</button><button class="tab">AI</button><button class="tab">设计</button><button class="tab">音视频</button><button class="tab">工具</button></div>
+<div class="body">
+<div class="art-list" style="padding:2px 0 0">
+<div class="artbig"><span class="ph-img img" style="background:linear-gradient(135deg,#ffb27a,#ff6b2c)"><svg class="fill"><use href="#i-mtn"/></svg></span><p class="t">把订阅源还给我：RSS 阅读的黄金时代</p><span class="d">2026-10-26 18:30</span></div>
+<div class="artbig"><span class="ph-img img" style="background:linear-gradient(135deg,#7db2ff,#2f6fed)"><svg class="fill"><use href="#i-mtn"/></svg></span><p class="t">实测三款国产折叠屏：轻了，也更耐用了</p><span class="d">2026-10-26 10:02</span></div>
+<div class="artbig"><p class="t isread">一份写给设计师的 AI 工作流指南：从素材收集、灵感整理到多端发布的完整实践（2026 修订版）</p><span class="d">2026-10-25 21:44</span></div>
+<div class="load-more"><span class="spinner"></span>加载更多</div>
+</div>
+</div>
+<div class="home-indicator"></div>
+</div><figcaption>浅色</figcaption></figure>
+<figure><div class="phone dark">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>少数派</h1>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
+<div class="tabs-row">
+<button class="tab on">首页</button><button class="tab">快讯</button><button class="tab">AI</button><button class="tab">设计</button><button class="tab">音视频</button><button class="tab">工具</button></div>
+<div class="body">
+<div class="art-list" style="padding:2px 0 0">
+<div class="artbig"><span class="ph-img img" style="background:linear-gradient(135deg,#b25a33,#8a3a12)"><svg class="fill"><use href="#i-mtn"/></svg></span><p class="t">把订阅源还给我：RSS 阅读的黄金时代</p><span class="d">2026-10-26 18:30</span></div>
+<div class="artbig"><span class="ph-img img" style="background:linear-gradient(135deg,#2c4a72,#1d3050)"><svg class="fill"><use href="#i-mtn"/></svg></span><p class="t">实测三款国产折叠屏：轻了，也更耐用了</p><span class="d">2026-10-26 10:02</span></div>
+<div class="load-more">加载失败 · 点击查看详情</div>
+</div>
+</div>
+<div class="home-indicator"></div>
+</div><figcaption>深色 · 加载失败</figcaption></figure>
+</div>
+<ul class="notes">
+<li class="note">卡片结构：image_view（match 宽 ×200dp、radius 12、marginTop 14、marginH 20）→ tv_title（paddingH 20、marginTop 12）→ tv_pub_date（paddingH 20、marginTop 9、paddingBottom 15）</li>
+<li class="note">原 item_rss_article_1.xml 的 paddingTop 12dp 贴边图 + 8dp 分隔色带 → 改为内缩圆角大图 + 1px 分割线，与基准列表同节奏</li>
+<li class="note">列表态无图：image_view gone（适配器 onLoadFailed 同样回退），纯文字块高度 ≈ 基准行两倍行高</li>
+<li class="note">深色：图片用暗调占位，标题 #F3F0EB / 时间 #B4B0AA / 分割线 rgba(255,255,255,.08)</li>
+</ul>
+</section>
+
+<!-- ============ S3 紧凑网格卡 ============ -->
+<section class="screen" id="s3">
+<div class="screen-head"><h2>03 · 紧凑网格卡（articleStyle 2 · 重设计）</h2><span class="src">item_rss_article_2.xml · RssArticlesAdapter2.kt</span></div>
+<p class="screen-desc">两列网格卡：白卡（surface_container）圆角 12、内边距 8、无描边无阴影（原 bg_img_border 1px 描边 + 1dp 直角废弃）；卡内图 16:9 高 96dp 圆角 9（与基准缩略图同圆角），标题 14sp 600 两行（原 13sp）、时间 12sp 斜体（原 11sp），网格间距 12（spacing_md）。网格态无图条目一律渲染 image_rss_article 占位（适配器网格分支行为），深色为暖黑卡面。</p>
+<div class="pair">
+<figure><div class="phone light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>少数派</h1>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
+<div class="tabs-row">
+<button class="tab on">首页</button><button class="tab">快讯</button><button class="tab">AI</button><button class="tab">设计</button><button class="tab">音视频</button><button class="tab">工具</button></div>
+<div class="body">
+<div class="ggrid">
+<div class="gcard"><span class="ph-img img" style="background:linear-gradient(135deg,#ffb27a,#ff6b2c)"><svg class="fill"><use href="#i-mtn"/></svg></span><p class="t">把订阅源还给我：RSS 阅读的黄金时代</p><span class="d">2026-10-26 18:30</span></div>
+<div class="gcard"><span class="ph-img img" style="background:linear-gradient(135deg,#7db2ff,#2f6fed)"><svg class="fill"><use href="#i-mtn"/></svg></span><p class="t">实测三款国产折叠屏：轻了，也更耐用了</p><span class="d">2026-10-26 10:02</span></div>
+<div class="gcard"><span class="ph-img img" style="background:linear-gradient(135deg,#6fd091,#1f8a4c)"><svg class="fill"><use href="#i-mtn"/></svg></span><p class="t">周末去做一杯手冲：从器具到冲煮参数</p><span class="d">2026-10-25 09:15</span></div>
+<div class="gcard"><span class="ph-img img" style="background:linear-gradient(135deg,#ffd08a,#e2a23c)"><svg class="fill"><use href="#i-mtn"/></svg></span><p class="t isread">为什么你的笔记应用总是用不下去？</p><span class="d">2026-10-24 20:08</span></div>
+<div class="gcard"><span class="ph-img img" style="background:linear-gradient(135deg,#b3a0f2,#6a4ac0)"><svg class="fill"><use href="#i-mtn"/></svg></span><p class="t">iPad 上的分屏学习法：一门课的两块屏</p><span class="d">2026-10-24 11:40</span></div>
+<div class="gcard"><span class="ph-img img" style="background:linear-gradient(135deg,#8fd8e8,#1899b4)"><svg class="fill"><use href="#i-mtn"/></svg></span><p class="t">城市骑行装备清单：通勤党的十件好物</p><span class="d">2026-10-23 19:26</span></div>
+</div>
+<div class="load-more" style="flex:none"><span class="spinner"></span>加载更多</div>
+</div>
+<div class="home-indicator"></div>
+</div><figcaption>浅色</figcaption></figure>
+<figure><div class="phone dark">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>少数派</h1>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
+<div class="tabs-row">
+<button class="tab on">首页</button><button class="tab">快讯</button><button class="tab">AI</button><button class="tab">设计</button><button class="tab">音视频</button><button class="tab">工具</button></div>
+<div class="body">
+<div class="ggrid">
+<div class="gcard"><span class="ph-img img" style="background:linear-gradient(135deg,#b25a33,#8a3a12)"><svg class="fill"><use href="#i-mtn"/></svg></span><p class="t">把订阅源还给我：RSS 阅读的黄金时代</p><span class="d">2026-10-26 18:30</span></div>
+<div class="gcard"><span class="ph-img img" style="background:linear-gradient(135deg,#2c4a72,#1d3050)"><svg class="fill"><use href="#i-mtn"/></svg></span><p class="t">实测三款国产折叠屏：轻了，也更耐用了</p><span class="d">2026-10-26 10:02</span></div>
+<div class="gcard"><span class="ph-img img" style="background:linear-gradient(135deg,#2c5c3e,#1a3a26)"><svg class="fill"><use href="#i-mtn"/></svg></span><p class="t">周末去做一杯手冲：从器具到冲煮参数</p><span class="d">2026-10-25 09:15</span></div>
+<div class="gcard"><span class="ph-img img" style="background:linear-gradient(135deg,#7a5a28,#57400f)"><svg class="fill"><use href="#i-mtn"/></svg></span><p class="t isread">为什么你的笔记应用总是用不下去？</p><span class="d">2026-10-24 20:08</span></div>
+</div>
+<div class="load-more" style="flex:none">我是有底线的</div>
+</div>
+<div class="home-indicator"></div>
+</div><figcaption>深色 · 无更多</figcaption></figure>
+</div>
+<ul class="notes">
+<li class="note">卡结构：gcard（surface 白卡 r12、padding 8）→ image_view（match ×96dp、radius 9）→ tv_title（14sp/600、margin 8/4）→ tv_pub_date（12sp 斜体、margin 6/4）</li>
+<li class="note">网格：recycler padding 12 + 卡间距 12（spacing_md）；GridLayoutManager(2) 不变</li>
+<li class="note">废弃 bg_img_border（1px 描边 1dp 直角）与 272dp 定高图：卡高由内容撑开，图统一 96dp 视口</li>
+<li class="note">style 2 单列列表态：同一张卡通栏展示，令牌不变</li>
+</ul>
+</section>
+
+<!-- ============ S4 切换布局 & 状态 ============ -->
+<section class="screen" id="s4">
+<div class="screen-head"><h2>04 · 切换布局（style 0 网格态）与页面状态</h2><span class="src">menu_switch_layout · RssArticlesFragment.kt:79-85</span></div>
+<p class="screen-desc">「切换布局」把 LinearLayoutManager 换为 GridLayoutManager(2)：style 0/1 的网格展示统一复用第 03 节紧凑卡组件（图 96dp 圆角 9 + 标题 14sp + 斜体时间），无图条目以占位图填充 —— 即三种阅读样式 × 两种布局共 6 态收敛为「简洁行 / 大图卡 / 紧凑卡」三个组件，切换时仅改排列不改皮肤。下方注记覆盖页面其余功能与状态。</p>
+<div class="pair">
+<figure><div class="phone light slim">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>少数派</h1>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
+<div class="tabs-row">
+<button class="tab on">首页</button><button class="tab">快讯</button><button class="tab">AI</button><button class="tab">设计</button></div>
+<div class="body">
+<div class="ggrid">
+<div class="gcard"><span class="ph-img img" style="background:linear-gradient(135deg,#ffb27a,#ff6b2c)"><svg class="fill"><use href="#i-mtn"/></svg></span><p class="t">把订阅源还给我：RSS 阅读的黄金时代</p><span class="d">2026-10-26 18:30</span></div>
+<div class="gcard"><span class="ph-img img" style="background:linear-gradient(135deg,#7db2ff,#2f6fed)"><svg class="fill"><use href="#i-mtn"/></svg></span><p class="t">实测三款国产折叠屏：轻了，也更耐用了</p><span class="d">2026-10-26 10:02</span></div>
+<div class="gcard"><span class="ph-img img" style="background:linear-gradient(135deg,#8fd8e8,#1899b4)"><svg class="fill"><use href="#i-mtn"/></svg></span><p class="t isread">一份写给设计师的 AI 工作流指南：从素材收集、灵感整理到多端发布的完整实践（2026 修订版）</p><span class="d">2026-10-25 21:44</span></div>
+<div class="gcard"><span class="ph-img img" style="background:linear-gradient(135deg,#6fd091,#1f8a4c)"><svg class="fill"><use href="#i-mtn"/></svg></span><p class="t">周末去做一杯手冲：从器具到冲煮参数</p><span class="d">2026-10-25 09:15</span></div>
+</div>
+<div class="load-more" style="flex:none"><span class="spinner"></span>加载更多</div>
+</div>
+<div class="home-indicator"></div>
+</div><figcaption>浅色 · style 0 网格态</figcaption></figure>
+<figure><div class="phone light slim">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="appbar"><button class="icon-btn" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><h1>少数派</h1>
+<button class="icon-btn" aria-label="更多"><svg class="icon f" style="width:24px"><use href="#i-more"/></svg></button></div>
+<div class="body">
+<div class="art-list" style="padding:2px 20px">
+<div class="art" style="border-bottom:0"><div class="txt"><p class="t">把订阅源还给我：RSS 阅读的黄金时代</p><span class="d">2026-10-26 18:30</span></div><span class="ph-img img" style="background:linear-gradient(135deg,#ffb27a,#ff6b2c)"><svg class="fill"><use href="#i-mtn"/></svg></span></div>
+</div>
+<div class="load-more" style="flex:none;margin-top:-40px">加载失败 · 点击查看详情</div>
+</div>
+<div class="home-indicator"></div>
+</div><figcaption>浅色 · 单分类（Tab 隐藏）+ 失败态</figcaption></figure>
+</div>
+<ul class="notes">
+<li class="note"><b>下拉刷新</b>：SwipeRefreshLayout 主色指示器（accentColor），RESUMED 自动触发首次刷新</li>
+<li class="note"><b>触底加载</b>：滚动到底自动 loadMore，footer 可点击强制重试；三态 = 旋转指示器（隐藏文字）/「我是有底线的」/「加载失败 · 点击查看详情」（点击弹错误对话框）</li>
+<li class="note"><b>阅读记录</b>：菜单项弹 ReadRecordDialog（列表 + 删除记录菜单）</li>
+<li class="note"><b>清除</b>：确认后清空当前源全部缓存文章（clearArticles）</li>
+<li class="note"><b>刷新分类 / 设置源变量 / 编辑源</b>：重建 Tab 与文章流 / VariableDialog / RssSourceEditActivity</li>
+<li class="note"><b>点击文章</b> → ReadRssActivity（title/origin/link），返回后列表实时标记已读</li>
+<li class="note"><b>单分类</b>：sortList.size==1 时 tabLayout gone（右机）；多分类 Tab 主色 3dp 下划线</li>
+<li class="note"><b>手势导航</b>：recycler applyNavigationBarPadding + clipToPadding=false，footer 不被手势条遮挡</li>
+</ul>
+</section>
+
+<!-- ============ S5 令牌映射 ============ -->
+<section class="screen" id="tokens">
+<div class="screen-head"><h2>05 · 令牌映射（设计稿 → 布局资源）</h2><span class="src">design-system/legado/MASTER.md</span></div>
+<table class="tok">
+<tr><th>设计稿</th><th>Android 令牌 / 资源</th><th>用途</th></tr>
+<tr><td><span class="swb" style="background:#faf9f7"></span>#FAF9F7</td><td>@color/surface</td><td>页面背景（三变体共用）</td></tr>
+<tr><td><span class="swb" style="background:#ffffff"></span>#FFFFFF</td><td>@color/surface_container</td><td>紧凑卡卡面（style 2 / 网格态）</td></tr>
+<tr><td><span class="swb" style="background:#20242b"></span>#20242B</td><td>@color/on_surface</td><td>标题（未读）</td></tr>
+<tr><td><span class="swb" style="background:#60656d"></span>#60656D</td><td>@color/on_surface_variant（tv_text_summary 别名）</td><td>标题（已读）/ 时间 / 加载态文字</td></tr>
+<tr><td><span class="swb" style="background:#ff6b2c"></span>#FF6B2C</td><td>ThemeStore.accentColor（运行时主色）</td><td>Tab 指示器、刷新指示器、加载 spinner</td></tr>
+<tr><td><span class="swb" style="background:#e4e1d8"></span>#E4E1D8</td><td>@color/bg_divider_line → outline_variant</td><td>行/卡间 1px 分割线（ic_divider）</td></tr>
+<tr><td>radius 9 / 12</td><td>9dp（缩略图，沿用 item_rss_article）/ 12dp = corner_radius_md（大图与卡面）</td><td>圆角</td></tr>
+<tr><td>字号 16 / 14 / 12</td><td>16sp 列表标题 · 14sp 网格标题 · 12sp 时间（斜体）</td><td>字阶（Title/正文/辅助）</td></tr>
+<tr><td>间距 20 / 15 / 12 / 8</td><td>行内边距 20·15（基准）· 卡距 12 = spacing_md · 卡内 8 = spacing_sm</td><td>间距</td></tr>
+</table>
+<ul class="notes">
+<li class="note dec"><b>[NEED-DECISION] 大图卡高度</b>：取通栏宽 16:9 ≈ 200dp（本稿默认）；如偏好更冲击力可回到原 220dp，仅改 image_view 高度一行</li>
+<li class="note dec"><b>[NEED-DECISION] style 1 的 8dp 分隔色带 → 1px 分割线</b>：本稿默认对齐基准列表节奏；保留色带则改回 8dp View，两种均不影响其他令牌</li>
+<li class="note dec"><b>[NEED-DECISION] 已读标识仅变标题色</b>（现状行为，本稿默认）；如需更强辨识可加已读小圆点，需新增 drawable</li>
+</ul>
+</section>
+
+</main>
+</body></html>

@@ -1,0 +1,200 @@
+<!-- design-system: legado v2 · mockup -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Legado v2 · 书架网格分组卡</title><style>
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#efece6;color:#26231d;display:flex;flex-direction:column;align-items:center}
+.page{width:min(100%,912px);padding:0 16px 96px}
+/* ---------- 页头（对齐 screens 系列） ---------- */
+.page-head{position:sticky;top:0;z-index:60;background:rgba(239,236,230,.94);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,.08);margin:0 -16px;padding:16px 20px 14px}
+.page-head h1{margin:0;font-size:22px;letter-spacing:.02em}
+.page-head .en{font-size:12.5px;color:#6d6a62;font-weight:600;letter-spacing:.14em;margin-left:10px}
+.scr{margin-top:60px}
+.scr-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.scr-no{font-size:13px;font-weight:800;color:#ff6b2c;letter-spacing:.1em}
+.scr-head h2{margin:0;font-size:24px}
+.src{font-size:12px;color:#6d6a62;font-family:ui-monospace,Consolas,monospace}
+.pair{display:flex;flex-wrap:wrap;gap:28px;margin-top:18px}
+figure.dev{margin:0}
+figcaption{text-align:center;font-size:13px;font-weight:600;color:#6d6a62;margin-top:10px}
+.notes{max-width:880px;margin:20px 0 0;padding:14px 18px;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:14px;font-size:13px;line-height:2;color:#3a372f}
+.notes b{color:#1d1b16}
+.notes code{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;background:rgba(0,0,0,.055);padding:1px 6px;border-radius:5px;color:#8a4a20;white-space:nowrap}
+/* ---------- 手机壳与令牌（对齐 01-framework.html） ---------- */
+.phone{width:412px;height:900px;border-radius:30px;border:1px solid rgba(0,0,0,.2);position:relative;overflow:hidden;flex:none;
+--bg:#faf9f7;--surface:#ffffff;--surface2:#eeece9;--surface-high:#eeece9;--outline:#8b8878;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--track:#e5e2de;--divider:rgba(0,0,0,.07);--indicator:#8d939c;
+background:var(--bg);color:var(--text)}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--surface-high:#242220;--outline:#8f8b7f;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--track:#353331;--divider:rgba(255,255,255,.08);--indicator:#777}
+.status{height:36px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 22px 4px;font-size:13.5px;font-weight:600}
+.sright{display:flex;gap:7px;align-items:center}
+.main{position:absolute;inset:36px 0 0 0;display:flex;flex-direction:column}
+.tbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 20px;flex:none}
+.tbar .t{font-size:28px;font-weight:700}
+.actions{display:flex}
+.icon-btn{width:44px;height:44px;border:0;background:transparent;border-radius:22px;display:grid;place-items:center;color:var(--text);cursor:pointer;padding:0}
+.icon{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* ---------- 网格（对齐 01 稿 04：item_bookshelf_grid） ---------- */
+.grid{flex:1;overflow:hidden;display:grid;grid-template-columns:repeat(3,1fr);gap:16px 12px;padding:8px 16px;align-content:start}
+.grid.cols4{grid-template-columns:repeat(4,1fr)}
+.gcell{position:relative}
+.gcover{width:100%;aspect-ratio:2/3;border-radius:9px;display:grid;place-items:center;color:rgba(255,255,255,.93);font-weight:700;font-size:15px;letter-spacing:1.5px;text-align:center;line-height:1.45;padding:8px}
+.gname{margin-top:7px;font-size:13px;line-height:1.45;text-align:center;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gcell>.bdg{position:absolute;top:6px;right:6px;z-index:2;box-shadow:0 1px 4px rgba(0,0,0,.28)}
+.bdg{min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:var(--primary);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
+.spin{width:19px;height:19px;border-radius:50%;border:2px solid var(--track);border-top-color:var(--primary);animation:rot .9s linear infinite;flex:none}
+.spinwrap{position:absolute;top:2px;right:2px;z-index:2;background:var(--bg);border-radius:50%;padding:4px;display:grid;place-items:center}
+.spinwrap .spin{width:20px;height:20px}
+@keyframes rot{to{transform:rotate(1turn)}}
+/* ---------- 网格分组卡（本稿新增：item_bookshelf_grid_group） ---------- */
+.gcard{position:relative;background:var(--surface);border:1px solid var(--divider);border-radius:12px;padding:12px 10px;cursor:pointer}
+.gcoverwrap{position:relative}
+.gcard .gcover{border-radius:8px}
+.gchip{position:absolute;right:5px;bottom:5px;width:20px;height:20px;border-radius:10px;background:var(--surface-high);border:1px solid var(--divider);display:grid;place-items:center;color:var(--secondary)}
+.gchip svg{width:11px;height:11px}
+/* 无自定义封面 → image_cover_default（暖纸装饰框，明暗同图） */
+.gcover.def{background:#f4f1ea;border:1px solid #d8d2c2;box-shadow:inset 0 0 0 5px #f4f1ea,inset 0 0 0 6px #c6bfae;color:#b3aa97;font-size:13px;letter-spacing:2px}
+/* ---------- 底部导航（对齐 01 稿 activity_main） ---------- */
+.bottom{position:absolute;left:0;right:0;bottom:0;height:84px;display:grid;grid-template-columns:repeat(4,1fr);align-items:center;padding:5px 10px 14px;background:var(--surface);border-top:1px solid var(--divider);z-index:30}
+.nav{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;height:64px;border-radius:20px;font-size:13px;font-weight:600;color:var(--secondary)}
+.nav.active{width:64px;justify-self:center;background:var(--primary-soft);color:var(--primary)}
+.navicon{width:24px;height:24px}
+.nbdg{position:absolute;top:5px;left:50%;margin-left:5px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--primary);color:#fff;font-size:10.5px;font-weight:700;display:grid;place-items:center;z-index:2}
+.home-indicator{position:absolute;left:50%;bottom:5px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--indicator);z-index:31}
+/* ---------- 组件对照条 ---------- */
+.comp{display:flex;flex-wrap:wrap;gap:32px;margin-top:20px}
+.ccard{width:158px}
+.ccard .clab{margin-top:9px;text-align:center;font-size:12.5px;font-weight:600;color:#6d6a62;line-height:1.6}
+.ccard .clab b{color:#3a372f}
+.ccard .gname{margin-top:7px}
+/* 封面渐变（模拟真实封面内容，非界面令牌；同 01 稿） */
+.c1{background:linear-gradient(160deg,#316350,#1e4237)}.c2{background:linear-gradient(160deg,#8c3b2e,#652a1f)}
+.c3{background:linear-gradient(160deg,#3c5a8c,#294065)}.c4{background:linear-gradient(160deg,#c28a3d,#96661f)}
+.c5{background:linear-gradient(160deg,#4a4a58,#302f3c)}.c6{background:linear-gradient(160deg,#6e4e8c,#4e3666)}
+.c7{background:linear-gradient(160deg,#2e6e6a,#1e4b47)}.c8{background:linear-gradient(160deg,#a8552e,#79381b)}
+.c9{background:linear-gradient(160deg,#5c7a3c,#41562a)}.c10{background:linear-gradient(160deg,#38647c,#274757)}
+</style></head>
+<body>
+<div class="page">
+
+<header class="page-head">
+  <h1>Legado v2 · 书架网格分组卡<span class="en">BOOKSHELF GRID GROUP CARD</span></h1>
+</header>
+
+<!-- ============ 01 主稿 · 浅色 ============ -->
+<section class="scr" id="s1">
+  <div class="scr-head"><span class="scr-no">01</span><h2>网格模式分组卡（浅色 · 三列 / 四列）</h2><span class="src">item_bookshelf_grid_group.xml · BooksAdapterGrid.kt · BookshelfFragment2.kt</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><div class="t">书架</div><div class="actions">
+          <button class="icon-btn" aria-label="搜索"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+          <button class="icon-btn" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button></div></div>
+        <div class="grid">
+          <div class="gcell"><div class="gcard"><div class="gcoverwrap"><div class="gcover c4">追更</div><div class="gchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></div></div><div class="gname">追更</div></div></div>
+          <div class="gcell"><div class="gcard"><div class="gcoverwrap"><div class="gcover c3">网文</div><div class="gchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></div></div><div class="gname">西幻·克苏鲁·规则怪谈</div></div></div>
+          <div class="gcell"><div class="gcard"><div class="gcoverwrap"><div class="gcover def">本地</div><div class="gchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></div></div><div class="gname">本地</div></div></div>
+          <div class="gcell"><span class="bdg">12</span><div class="gcover c1">国民法医</div><div class="gname">国民法医</div></div>
+          <div class="gcell"><div class="gcover c8">大医凌然</div><div class="gname">大医凌然</div></div>
+          <div class="gcell"><span class="bdg">3</span><div class="gcover c3">诡秘之主</div><div class="gname">诡秘之主</div></div>
+          <div class="gcell"><div class="gcover c5">深空彼岸</div><div class="gname">深空彼岸</div><div class="spinwrap"><div class="spin"></div></div></div>
+          <div class="gcell"><div class="gcover c6">明克街13号</div><div class="gname">明克街13号</div></div>
+          <div class="gcell"><div class="gcover c10">转生史莱姆</div><div class="gname">关于我转生变成史莱姆这档事</div></div>
+        </div>
+        <div class="bottom">
+          <div class="nav active"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4v16H5z"/><path d="M12 4h4v16h-4z"/><path d="m19.2 5.4 2.4 14.4-3.9.7L15.3 6z" transform="scale(.9) translate(1.5 .5)"/></svg>书架<span class="nbdg">12</span></div>
+          <div class="nav"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5Z"/></svg>发现</div>
+          <div class="nav"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 5a15 15 0 0 1 15 15"/><circle cx="5.2" cy="18.8" r="1.6" fill="currentColor" stroke="none"/></svg>订阅</div>
+          <div class="nav"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>我的</div>
+          <i class="home-indicator"></i>
+        </div>
+      </div>
+    </div><figcaption>浅色 Light · 根层混排：分组卡（行 1）+ 未分组书籍 · 长按任意分组卡 → GroupEditDialog</figcaption></figure>
+    <figure class="dev"><div class="phone">
+      <div class="status"><span>9:41</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="13" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><div class="t">书架</div><div class="actions">
+          <button class="icon-btn" aria-label="搜索"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+          <button class="icon-btn" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button></div></div>
+        <div class="grid cols4">
+          <div class="gcell"><div class="gcard"><div class="gcoverwrap"><div class="gcover c4">追更</div><div class="gchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></div></div><div class="gname">追更</div></div></div>
+          <div class="gcell"><div class="gcard"><div class="gcoverwrap"><div class="gcover c7">完本</div><div class="gchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></div></div><div class="gname">完本</div></div></div>
+          <div class="gcell"><div class="gcard"><div class="gcoverwrap"><div class="gcover c3">网文</div><div class="gchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></div></div><div class="gname">西幻·克苏鲁·规则怪谈</div></div></div>
+          <div class="gcell"><div class="gcard"><div class="gcoverwrap"><div class="gcover def">本地</div><div class="gchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></div></div><div class="gname">本地</div></div></div>
+          <div class="gcell"><span class="bdg">12</span><div class="gcover c1">国民法医</div><div class="gname">国民法医</div></div>
+          <div class="gcell"><span class="bdg">3</span><div class="gcover c3">诡秘之主</div><div class="gname">诡秘之主</div></div>
+          <div class="gcell"><div class="gcover c5">深空彼岸</div><div class="gname">深空彼岸</div><div class="spinwrap"><div class="spin"></div></div></div>
+          <div class="gcell"><div class="gcover c2">宿命之环</div><div class="gname">宿命之环</div></div>
+          <div class="gcell"><div class="gcover c9">临渊行</div><div class="gname">临渊行</div></div>
+          <div class="gcell"><div class="gcover c7">道诡异仙</div><div class="gname">道诡异仙</div></div>
+          <div class="gcell"><div class="gcover c6">明克街13号</div><div class="gname">明克街13号</div></div>
+          <div class="gcell"><div class="gcover c10">转生史莱姆</div><div class="gname">关于我转生变成史莱姆这档事</div></div>
+        </div>
+        <div class="bottom">
+          <div class="nav active"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4v16H5z"/><path d="M12 4h4v16h-4z"/><path d="m19.2 5.4 2.4 14.4-3.9.7L15.3 6z" transform="scale(.9) translate(1.5 .5)"/></svg>书架<span class="nbdg">12</span></div>
+          <div class="nav"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5Z"/></svg>发现</div>
+          <div class="nav"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 5a15 15 0 0 1 15 15"/><circle cx="5.2" cy="18.8" r="1.6" fill="currentColor" stroke="none"/></svg>订阅</div>
+          <div class="nav"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>我的</div>
+          <i class="home-indicator"></i>
+        </div>
+      </div>
+    </div><figcaption>浅色 Light · 四列（bookshelfLayout=2）：卡面 / 芯片 / 13sp 组名不随列数缩放</figcaption></figure>
+  </div>
+</section>
+
+<!-- ============ 02 深色说明 ============ -->
+<section class="scr" id="s2">
+  <div class="scr-head"><span class="scr-no">02</span><h2>深色对照</h2><span class="src">night tokens · colors.xml</span></div>
+  <div class="pair">
+    <figure class="dev"><div class="phone dark">
+      <div class="status"><span>23:07</span><span class="sright"><span>5G</span><svg width="17" height="12" viewBox="0 0 17 12"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></g></svg><svg width="23" height="12" viewBox="0 0 23 12"><rect x=".5" y=".5" width="19" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="9" height="8" rx="1.6" fill="currentColor"/><rect x="21" y="3.6" width="2" height="4.8" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+      <div class="main">
+        <div class="tbar"><div class="t">书架</div><div class="actions">
+          <button class="icon-btn" aria-label="搜索"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+          <button class="icon-btn" aria-label="更多"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.7" fill="currentColor" stroke="none"/></svg></button></div></div>
+        <div class="grid">
+          <div class="gcell"><div class="gcard"><div class="gcoverwrap"><div class="gcover c4">追更</div><div class="gchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></div></div><div class="gname">追更</div></div></div>
+          <div class="gcell"><div class="gcard"><div class="gcoverwrap"><div class="gcover c3">网文</div><div class="gchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></div></div><div class="gname">西幻·克苏鲁·规则怪谈</div></div></div>
+          <div class="gcell"><div class="gcard"><div class="gcoverwrap"><div class="gcover def">本地</div><div class="gchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></div></div><div class="gname">本地</div></div></div>
+          <div class="gcell"><span class="bdg">12</span><div class="gcover c1">国民法医</div><div class="gname">国民法医</div></div>
+          <div class="gcell"><div class="gcover c8">大医凌然</div><div class="gname">大医凌然</div></div>
+          <div class="gcell"><span class="bdg">3</span><div class="gcover c3">诡秘之主</div><div class="gname">诡秘之主</div></div>
+          <div class="gcell"><div class="gcover c6">明克街13号</div><div class="gname">明克街13号</div></div>
+          <div class="gcell"><div class="gcover c10">转生史莱姆</div><div class="gname">关于我转生变成史莱姆这档事</div></div>
+          <div class="gcell"><div class="gcover c7">道诡异仙</div><div class="gname">道诡异仙</div></div>
+        </div>
+        <div class="bottom">
+          <div class="nav active"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4v16H5z"/><path d="M12 4h4v16h-4z"/><path d="m19.2 5.4 2.4 14.4-3.9.7L15.3 6z" transform="scale(.9) translate(1.5 .5)"/></svg>书架<span class="nbdg">12</span></div>
+          <div class="nav"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5Z"/></svg>发现</div>
+          <div class="nav"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 5a15 15 0 0 1 15 15"/><circle cx="5.2" cy="18.8" r="1.6" fill="currentColor" stroke="none"/></svg>订阅</div>
+          <div class="nav"><svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>我的</div>
+          <i class="home-indicator"></i>
+        </div>
+      </div>
+    </div><figcaption>深色 Dark · 卡面 #1D1B19 浮于页面 #141312 · 默认封面为图片资源，明暗同图不换色</figcaption></figure>
+  </div>
+</section>
+
+<!-- ============ 03 组件对照 ============ -->
+<section class="scr" id="s3">
+  <div class="scr-head"><span class="scr-no">03</span><h2>组件对照 · 现状 vs 新设计</h2><span class="src">item_bookshelf_grid_group.xml 现状 → 本稿</span></div>
+  <div class="comp">
+    <div class="ccard"><div class="gcover c4" style="aspect-ratio:2/3;border-radius:9px;display:grid;place-items:center;color:rgba(255,255,255,.93);font-weight:700;font-size:15px;letter-spacing:1.5px">追更</div><div class="gname">追更</div><div class="clab"><b>现状</b>：与书籍卡完全同构<br>无卡面 · 无层级指引</div></div>
+    <div class="ccard"><div class="gcard"><div class="gcoverwrap"><div class="gcover c4">追更</div><div class="gchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></div></div><div class="gname">追更</div></div><div class="clab"><b>新设计 A</b>：自定义封面<br>卡面 + 「›」芯片右下 6dp</div></div>
+    <div class="ccard"><div class="gcard"><div class="gcoverwrap"><div class="gcover def">本地</div><div class="gchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></div></div><div class="gname">本地</div></div><div class="clab"><b>新设计 B</b>：无自定义封面<br>落 image_cover_default</div></div>
+    <div class="ccard"><div class="gcard"><div class="gcoverwrap"><div class="gcover c3">网文</div><div class="gchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></div></div><div class="gname">西幻·克苏鲁·规则怪谈</div></div><div class="clab"><b>新设计 C</b>：长组名<br>13sp 两行居中，超出省略</div></div>
+  </div>
+  <ul class="notes">
+    <li><b>功能与入口（对照现状逐项核对）</b>：① <b>点击进组</b>——整卡即热区，<code>cv_content</code> click → <code>callBack.onItemClick</code>（<code>BooksAdapterGrid.kt:131-138</code>）→ 标题变「书架(组名)」、只显示组内书籍（<code>BookshelfFragment2.kt:210-219</code>），返回键退回根层（<code>BookshelfFragment2.kt:184-191</code>）；② <b>长按编辑</b>——root onLongClick → <code>GroupEditDialog(item)</code>（<code>BookshelfFragment2.kt:221-230</code>，重命名/设封面/删除，样式属 <code>dialog_book_group_edit.xml</code> 不在本稿范围）；③ <b>封面 iv_cover</b>——仍由 CoverImageView 承载 2:3 与圆角（<code>CoverImageView.kt:63-103</code>），空封面落 <code>image_cover_default</code>（<code>BookCover.kt:75</code>），<code>transitionName=img_cover</code> 共享元素转场保留（<code>item_bookshelf_grid_group.xml:34</code>）；④ <b>组名 tv_name</b>——13sp、两行、居中、<code>ellipsize=end</code> 不变，局部刷新链路 <code>groupName/cover</code> payload 不动（<code>BooksAdapterGrid.kt:110-129</code>、<code>BaseBooksAdapter.kt:86-93</code>）；⑤ <b>bv_unread / rl_loading</b>——布局占位与右上锚点（6dp / 2dp）原样保留，GroupViewHolder 现状即未绑定（<code>BooksAdapterGrid.kt:107-140</code> 仅绑定 tvName/ivCover），本稿不新增行为；⑥ <b>vw_foreground</b> 涟漪层不动（<code>item_bookshelf_grid_group.xml:82-90</code>）。</li>
+    <li><b>XML 配方（控件 id 全部不变）</b>：根 <code>cv_content</code> 加 <code>android:background="@drawable/bg_card_item"</code>（<code>surface_container</code> 底 + 12dp 圆角 + 0.5dp <code>outline_variant</code> 描边；其 <code>state_focused</code> 项即 <code>btn_bg_press</code>，顺带补齐 TV 焦点可见性，书籍格根用的是 <code>bg_item_focused_on_tv</code>）；内层 LinearLayout padding 6/6/6/16 → <b>10/10/10/12</b>（卡面内距，外距仍由网格 cell 控制）；<code>iv_cover</code> marginTop 10dp → <b>8dp</b>；新增一枚<b>无 id</b> 的 AppCompatImageView「›」层级指引（与 05 列表稿同做法，<code>item_bookshelf_list_group.xml:77-88</code>）：20×20dp、约束到 <code>iv_cover</code> 右下（bottom/right 各 margin 6dp，对齐徽标 6dp 内缩锚语言）、background 用新 shape <code>bg_chip_nav.xml</code>（oval，solid <code>surface_container_high</code> + 0.5dp stroke <code>outline_variant</code>）、<code>app:srcCompat="@drawable/ic_arrow_right"</code>、<code>app:tint="@color/on_surface_variant"</code>、padding 4dp（64dp viewport 图标视觉 12dp）、<code>importantForAccessibility="no"</code>；<code>tv_name</code> 仅 <code>textColor</code> 改写 <code>@color/on_surface</code>（现 <code>primaryText</code> 为其别名 <code>colors.xml:116</code>，语义对齐 05 稿）。</li>
+    <li><b>令牌对照（明 / 暗）</b>：卡面 <code>surface_container</code> #FFFFFF / #1D1B19；卡描边 <code>outline_variant</code> #E4E1D8 / #36342E；芯片面 <code>surface_container_high</code> #EEECE9 / #242220；箭头 <code>on_surface_variant</code> #60656D / #B4B0AA；组名 <code>on_surface</code> #20242B / #F3F0EB。零 <code>primary/accent</code> 硬编码（MASTER.md §4），默认封面为图片资源明暗同图。</li>
+    <li><b>与书籍格的区分逻辑</b>：书籍格通栏裸封面无卡面（<code>item_bookshelf_grid.xml:8</code> 仅 TV 焦点底）；分组卡 = 卡面 + 内距 + 「›」芯片，扫视即可辨「文件夹入口」。默认封面态两侧同图，区分度由卡面承担，不另造文件夹图标（项目 <code>drawable/</code> 无 ic_folder，避免新增图形语言）。</li>
+    <li><b>列数自适应</b>：span = bookshelfLayout+2（三~四列，<code>BookshelfFragment2.kt:88-92</code>）；卡面内距、芯片 20dp、组名 13sp 不随列数缩放（对齐 01 稿 04 注记「书名字号不缩小」）。</li>
+    <li><b>数据边界</b>：BookGroup 可绑定字段仅 groupName / cover（<code>BookGroup.kt</code>，无成员计数、无未读数），本稿不显示「n 本」计数——需扩展实体与查询，属行为变更另立决策；下拉刷新跟随分组 <code>enableRefresh</code>、排序、溢出菜单、空态等容器行为同 01 稿 05 注记，本稿不涉及。</li>
+    <li><b>[NEED-DECISION]</b> 取舍：整卡卡面化（本稿默认，对齐 05 列表分组卡语言，区辨度最高、网格密度略降）vs 保持裸封面仅加角标（密度不变、区辨弱）。默认按本稿实施；如需保留裸封面形态，删除卡面与内距两步、仅加「›」芯片即可，id 与行为不受影响。</li>
+  </ul>
+</section>
+
+</div>
+</body></html>

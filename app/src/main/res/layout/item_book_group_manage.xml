@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 分组管理行（group-manage 稿）：组名 15sp medium on_surface + 编辑 12sp on_surface_variant（minHeight 48 补足触控）
+     + ThemeSwitch 48dp；左右边距 8→16dp 对齐 v2 全系行，背景 background→surface（legacy alias 等值换名，
+     运行时 convert 仍染 backgroundColor 随卡面） -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background"
+    android:background="@color/surface"
     android:gravity="center_vertical"
+    android:minHeight="48dp"
     android:orientation="horizontal"
-    android:paddingLeft="8dp"
+    android:paddingLeft="16dp"
     android:paddingTop="14dp"
-    android:paddingRight="8dp"
+    android:paddingRight="16dp"
     android:paddingBottom="14dp">
 
     <TextView
@@ -28,6 +32,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
+        android:gravity="center"
+        android:minHeight="48dp"
         android:paddingLeft="12dp"
         android:paddingTop="10dp"
         android:paddingRight="12dp"

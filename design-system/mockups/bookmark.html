@@ -1,0 +1,187 @@
+<!-- design-system: legado v2 · mockups -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>legado · 书签编辑弹窗 · BookmarkDialog 重设计稿</title><style>
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#eceae5;color:#24221e;padding:44px 20px 90px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:980px;margin:0 auto}
+.eyebrow{font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:#8d8878;font-weight:650}
+h1.group{font-size:34px;font-weight:750;margin:8px 0 10px}
+.lede{font-size:14.5px;line-height:1.9;color:#5f5b52;margin:0 0 20px;max-width:780px}
+.sec-nav{display:flex;flex-wrap:wrap;gap:8px}
+.sec-nav a{font-size:12.5px;color:#3f3c35;text-decoration:none;padding:6px 13px;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.07);font-weight:550}
+.sec-nav a:hover{background:#ff6b2c;color:#fff;border-color:#ff6b2c}
+.screen-sec{margin-top:72px}
+.sec-head{display:flex;align-items:baseline;gap:12px}
+.sec-no{font-size:13px;font-weight:750;color:#ff6b2c;letter-spacing:.1em}
+.sec-head h2{font-size:24px;font-weight:700;margin:0}
+.sec-sub{font-size:13.5px;color:#6d6a62;margin:6px 0 24px;line-height:1.8;max-width:880px}
+.pair{display:flex;gap:32px;flex-wrap:wrap}
+figure.phone-col{display:flex;flex-direction:column;gap:9px;margin:0}
+.phone{width:412px;height:900px;border-radius:30px;position:relative;overflow:hidden;border:1px solid rgba(0,0,0,.10);flex:none}
+.phone-tag{font-size:12.5px;color:#8d8878;display:flex;justify-content:space-between}
+.spec{margin:22px 0 0;padding:16px 20px;background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:14px;font-size:13px;line-height:2;color:#5f5b52;max-width:872px}
+.spec code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#f2f0ea;padding:1px 6px;border-radius:6px;color:#45423a}
+.footnote{margin-top:80px;padding-top:20px;border-top:1px solid rgba(0,0,0,.08);font-size:12.5px;color:#8d8878;line-height:2}
+/* ---------- 主题令牌（与 screens 系列一致：MASTER.md 暖纸体系） ---------- */
+.t-light{--bg:#faf9f7;--surface:#ffffff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--outline:#8b8878;--primary:#ff6b2c;--primary-soft:#fff0e6;--ghost:rgba(255,107,44,.08);--track:#e5e2de;--divider:rgba(0,0,0,.07);--err:#ba1a1a;--ok:#3b7a45;background:var(--bg);color:var(--text)}
+.t-dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--text:#f3f0eb;--secondary:#b4b0aa;--outline:#8f8b7f;--primary:#ff6b2c;--primary-soft:#3a241b;--ghost:rgba(255,255,255,.08);--track:#353331;--divider:rgba(255,255,255,.08);--err:#ffb4ab;--ok:#7fd891;background:var(--bg);color:var(--text)}
+/* ---------- 手机壳 ---------- */
+.status{height:34px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:14px;font-weight:600;position:relative;z-index:12}
+.status-right{display:flex;gap:10px;align-items:center}
+.home-indicator{position:absolute;left:50%;bottom:5px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--secondary);opacity:.9;z-index:40;pointer-events:none}
+/* ---------- 被遮罩的宿主屏 ---------- */
+.host{position:absolute;top:34px;left:0;right:0;bottom:0;padding:12px 16px;z-index:1;opacity:.9}
+.host-tb{display:flex;align-items:center;gap:12px;height:54px;font-size:17px;font-weight:650}
+.host-tb i{width:22px;height:22px;border-radius:7px;background:var(--surface2);flex:none}
+.hb{padding:12px 2px;border-bottom:1px solid var(--divider)}
+.hb b{display:block;font-size:15px;font-weight:650;color:var(--text)}
+.hb span{display:block;margin-top:5px;font-size:12px;line-height:1.6;color:var(--secondary)}
+.hb small{display:block;margin-top:5px;font-size:12px;line-height:1.6;color:var(--text)}
+.hb.cur{background:var(--surface2);border-radius:10px;padding:12px 10px;border-bottom-color:transparent}
+.rhost{position:absolute;top:34px;left:0;right:0;bottom:0;padding:12px 18px;z-index:1;font-size:16px;line-height:2.05}
+.t-light .rhost{color:#3e3d3b}.t-dark .rhost{color:#adadad}
+.rhost h4{font-size:17.5px;margin:2px 0 10px;font-weight:700}
+.rhost p{margin:0;text-indent:2em}
+.rhost mark{background:var(--primary-soft);color:inherit;border-radius:2px;padding:0 1px}
+/* ---------- 遮罩与弹窗卡 ---------- */
+.veil{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:10}
+.t-dark .veil{background:rgba(0,0,0,.55)}
+.dlg{position:absolute;z-index:11;left:50%;top:50%;transform:translate(-50%,-50%);width:374px;max-height:742px;background:var(--surface);border:1px solid var(--divider);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.dtb{display:flex;align-items:center;gap:2px;min-height:56px;padding:0 4px 0 18px;flex:none;border-bottom:1px solid var(--divider)}
+.dtb b{flex:1;font-size:17px;font-weight:650;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dbody{padding:6px 0 4px;overflow:hidden;flex:1;min-height:0;position:relative}
+.dfoot{display:flex;align-items:center;gap:2px;padding:8px 12px 12px;flex:none;border-top:1px solid var(--divider)}
+.dfoot .sp{flex:1}
+.dact{border:0;background:transparent;color:var(--text);font-family:inherit;font-size:13.5px;font-weight:600;padding:10px 12px;border-radius:9px;cursor:pointer;white-space:nowrap}
+.dact:hover{background:var(--ghost)}
+.dact.mut{color:var(--secondary)}
+.dact.pri{color:var(--primary)}
+.dact.danger{color:var(--err)}
+/* 亮色主色文字钮可达性：#FF6B2C 压白卡 2.84:1 不达标 → 深主色 #B34A15（12-missed-2 对比修复定稿，压白 5.37:1） */
+.t-light .dact.pri{color:#b34a15}
+/* ---------- field 卡（对齐已落地 dialog_simulated_reading.xml：bg_edit_filled 实底） ---------- */
+.field{background:var(--surface2);border-radius:10px;padding:7px 14px 8px;margin:0 16px 10px}
+.field label{display:block;font-size:11.5px;color:var(--secondary)}
+.field b{display:block;font-weight:500;font-size:14px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);min-height:19px}
+.field b.ph{color:var(--secondary);font-weight:400}
+.field.prose b{white-space:normal;line-height:1.75;font-family:inherit;font-size:14px}
+.field.focus{box-shadow:inset 0 0 0 1.5px var(--primary)}
+.caret{display:inline-block;width:1.5px;height:15px;background:var(--primary);vertical-align:-2px;margin-left:1px}
+</style></head><body><div class="wrap">
+
+<header>
+  <div class="eyebrow">design-system: legado v2 · mockups</div>
+  <h1 class="group">书签编辑弹窗 · BookmarkDialog</h1>
+  <p class="lede">书签编辑弹窗重设计稿：沿用 12-missed-2 #02 的容器与动作结构，输入区对齐已落地的 dialog_simulated_reading.xml（12-missed-2 #03）——「标签上、值下」的 field 卡排版 + bg_edit_filled 输入实底。功能与入口对照 BookmarkDialog.kt / dialog_bookmark.xml 现状逐项核对，无增删：顶栏标题、章节名只读展示、原文摘录输入、备注输入、删除（仅编辑态）、取消、确定。三屏：编辑态（浅色）、新建态（浅色）、深色说明。</p>
+  <nav class="sec-nav">
+    <a href="#s01"><b>01</b> 编辑态 · 浅色</a><a href="#s02"><b>02</b> 新建态 · 浅色</a><a href="#s03"><b>03</b> 编辑态 · 深色</a><a href="#s04"><b>04</b> 设计调整与落地映射</a>
+  </nav>
+</header>
+
+<!-- ============ 01 编辑态 · 浅色 ============ -->
+<section class="screen-sec" id="s01"><div class="sec-head"><span class="sec-no">01</span><h2>编辑态 · 浅色</h2></div>
+<p class="sec-sub">自书签列表（AllBookmarkActivity 点按条目）或目录抽屉书签页（BookmarkFragment 长按条目）进入，editPos ≥ 0：底栏左端出现「删除」。三个 field 卡同栅格：章节名（只读）、内容（书内原文）、备注内容。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="host"><div class="host-tb"><i></i>书签<i></i></div>
+  <div class="hb"><b>第三十一章 书斋异动</b><span>他推开虚掩的门，案上多了一封无署名的信，火漆完好如新。</span><small>备注：无署名信件 → 幕后人伏笔</small></div>
+  <div class="hb cur"><b>第三十二章 夜探藏书楼</b><span>门后是一整面墙的孤本，烛火摇曳间，一册蓝皮旧书正摊在案上。</span><small>备注：蓝皮旧书缺页 → 藏书楼起火伏笔</small></div>
+  <div class="hb"><b>第三十三章 灯下勘书</b><span>他将那页残纸凑近灯焰，背面的暗纹渐渐显出一行小字。</span></div>
+</div>
+<div class="veil"></div>
+<div class="dlg">
+  <div class="dtb"><b>书签</b></div>
+  <div class="dbody" style="flex:none">
+    <div class="field" style="margin-top:8px"><label>章节名</label><b>第三十二章 夜探藏书楼</b></div>
+    <div class="field prose"><label>内容（书内原文）</label><b>门后是一整面墙的孤本，烛火摇曳间，一册蓝皮旧书正摊在案上。</b></div>
+    <div class="field prose"><label>备注内容</label><b>下一卷线索：蓝皮旧书缺页，可能对应「藏书楼起火」伏笔。</b></div>
+  </div>
+  <div class="dfoot">
+    <button class="dact danger" type="button">删除</button><span class="sp"></span>
+    <button class="dact mut" type="button">取消</button><button class="dact pri" type="button">确定</button>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题 · 编辑态（有删除）</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>容器</code> — dialog_bookmark.xml:9-16：FrameLayout(16dp) 内 vw_bg 居中卡（shape_card_view 3dp → BaseDialogFragment 定稿 16dp 圆角，DECISIONS §4）；setLayout(MATCH_PARENT, MATCH_PARENT)（BookmarkDialog.kt:33）→ 全屏遮罩上的居中大卡；adaptationSoftKeyboard=true（BookmarkDialog.kt:20）软键盘顶起卡体。</li>
+<li><code>顶栏</code> — Toolbar title=书签（dialog_bookmark.xml:18-25）；现状 Kotlin 已无顶栏染色，稿面即随卡 surface 底 + on_surface 标题（17px/650）。</li>
+<li><code>章节名（只读）</code> — tv_chapter_name 展示 bookmark.chapterName（dialog_bookmark.xml:27-33、BookmarkDialog.kt:52）→ 只读 field 卡：与输入域同 16px 栅格、surface2 实底、10dp 圆角，但无 caret、无聚焦描边，值 on_surface 14sp。</li>
+<li><code>原文输入</code> — edit_book_text（hint=内容，dialog_bookmark.xml:52-57）存取 bookmark.bookText（BookmarkDialog.kt:54、:60）→ field 卡：label 11.5px secondaryText 上、值 14px primaryText 下；bg_edit_filled 实底（surface_container_high + 10dp 圆角），EditText background=@null 多行自增高。</li>
+<li><code>备注输入</code> — edit_content（hint=备注内容，dialog_bookmark.xml:66-71）存取 bookmark.content（BookmarkDialog.kt:55、:61）→ 同上 field 卡。</li>
+<li><code>删除</code> — tv_footer_left 仅编辑态 visible(editPos ≥ 0)（BookmarkDialog.kt:49），error 色（:51），点击 bookmarkDao.delete 后 dismiss（:69-76）→ 底栏左端 danger 文字钮（#BA1A1A / 深色 #FFB4AB）。</li>
+<li><code>取消 / 确定</code> — tv_cancel dismiss（BookmarkDialog.kt:56-58）；tv_ok 回写 bookText/content 并 bookmarkDao.insert 后 dismiss（:59-67）→ 右端 取消（mut）+ 确定（主色文字钮）。</li>
+<li><code>入口</code> — 书签列表点按条目（AllBookmarkActivity.kt:82，传 position）；目录抽屉书签页长按条目（BookmarkFragment.kt:97，传 pos）→ 均为本屏编辑态。</li>
+</ul></section>
+
+<!-- ============ 02 新建态 · 浅色 ============ -->
+<section class="screen-sec" id="s02"><div class="sec-head"><span class="sec-no">02</span><h2>新建态 · 浅色</h2></div>
+<p class="sec-sub">自阅读页两个入口新建（editPos = -1）：长按选字菜单「书签」（原文 = 选中文本）或阅读菜单「添加书签」（原文 = 当前页全文）。删除按钮隐藏，备注为空时占位提示；稿面演示备注域聚焦态（主色内描边 + 光标）。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-light">
+<div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="rhost"><h4>第三十二章 夜探藏书楼</h4><p>檐角的铜铃在夜风里轻响，他屏住呼吸，沿着书架的暗影一步步挪近那扇虚掩的雕花木门……</p><p><mark>门后是一整面墙的孤本，烛火摇曳间，一册蓝皮旧书正摊在案上。</mark></p></div>
+<div class="veil"></div>
+<div class="dlg">
+  <div class="dtb"><b>书签</b></div>
+  <div class="dbody" style="flex:none">
+    <div class="field" style="margin-top:8px"><label>章节名</label><b>第三十二章 夜探藏书楼</b></div>
+    <div class="field prose"><label>内容（书内原文）</label><b>门后是一整面墙的孤本，烛火摇曳间，一册蓝皮旧书正摊在案上。</b></div>
+    <div class="field prose focus"><label>备注内容</label><b class="ph">填写备注（可留空）<span class="caret"></span></b></div>
+  </div>
+  <div class="dfoot">
+    <span class="sp"></span>
+    <button class="dact mut" type="button">取消</button><button class="dact pri" type="button">确定</button>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>浅色主题 · 新建态（无删除）</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>入口 ×2（新建）</code> — ① 长按选字菜单「书签」：content_select_action.xml:14 → ReadBookActivity.kt:862，bookText = getSelectedText()（ContentTextView.kt:637-651），选不中正文时 toast「创建书签失败」（strings.xml:848）；② 阅读菜单「添加书签」：book_read.xml:48 → ReadBookActivity.kt:1534-1537，bookText = page.text.trim() 当前页全文。两者 chapterName 均取所在章标题。</li>
+<li><code>删除隐藏</code> — tv_footer_left visible(editPos ≥ 0)，新建态 editPos = -1（BookmarkDialog.kt:48-49）→ dfoot 仅 取消/确定，删除位留空（sp 占位，不改变其余元素位置）。</li>
+<li><code>占位</code> — 备注为空时显示 secondaryText 占位文案（对应 EditText hint=备注内容，dialog_bookmark.xml:70；占位文案可沿用 hint 原文，稿面示意扩展写法）。</li>
+<li><code>聚焦态</code> — bg_edit_filled 实底之上叠 1.5px 主色内描边 + 主色光标（同 12-missed-2 #28 辅助按键录入框先例；落地时 EditText background=@null，焦点描边由 field 卡容器 drawable-selector 承担，textCursorDrawable=shape_text_cursor）。</li>
+<li><code>原文回填</code> — 新建态内容域直接带入选中文本/整页文本，可再编辑（BookmarkDialog.kt:60 确定时回写）；章节名只读不参与回写。</li>
+</ul></section>
+
+<!-- ============ 03 编辑态 · 深色 ============ -->
+<section class="screen-sec" id="s03"><div class="sec-head"><span class="sec-no">03</span><h2>编辑态 · 深色</h2></div>
+<p class="sec-sub">同一弹窗在夜间主题（跟随系统 Night 资源，非独立皮肤）：暖黑层级化表面，field 卡实底、描边、文字色按令牌镜像，确定钮回主色 #FF6B2C（深底对比达标，无需亮色的深主色替换）。</p>
+<div class="pair"><figure class="phone-col"><div class="phone t-dark">
+<div class="status"><span>23:41 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+<div class="rhost"><h4>第三十二章 夜探藏书楼</h4><p>檐角的铜铃在夜风里轻响，他屏住呼吸，沿着书架的暗影一步步挪近那扇虚掩的雕花木门……</p><p>门后是一整面墙的孤本，烛火摇曳间，一册蓝皮旧书正摊在案上。</p></div>
+<div class="veil"></div>
+<div class="dlg">
+  <div class="dtb"><b>书签</b></div>
+  <div class="dbody" style="flex:none">
+    <div class="field" style="margin-top:8px"><label>章节名</label><b>第三十二章 夜探藏书楼</b></div>
+    <div class="field prose"><label>内容（书内原文）</label><b>门后是一整面墙的孤本，烛火摇曳间，一册蓝皮旧书正摊在案上。</b></div>
+    <div class="field prose"><label>备注内容</label><b>下一卷线索：蓝皮旧书缺页，可能对应「藏书楼起火」伏笔。</b></div>
+  </div>
+  <div class="dfoot">
+    <button class="dact danger" type="button">删除</button><span class="sp"></span>
+    <button class="dact mut" type="button">取消</button><button class="dact pri" type="button">确定</button>
+  </div>
+</div>
+<div class="home-indicator"></div></div><figcaption class="phone-tag"><span>深色主题 · 编辑态</span><span>412 × 900</span></figcaption></figure></div>
+<ul class="spec">
+<li><code>令牌镜像</code> — surface #1D1B19 / surface2(field 实底=bg_edit_filled 的 surface_container_high 夜值) #242220 / text #F3F0EB / secondary #B4B0AA / divider rgba(255,255,255,.08) / 删除 #FFB4AB（MASTER.md Dark 表）。</li>
+<li><code>确定钮</code> — 深色主色文字 #FF6B2C 压 #1D1B19 对比达标，保持主色原值；亮色才替换为 #B34A15（12-missed-2:62 定稿）。</li>
+<li><code>遮罩</code> — veil 由 rgba(0,0,0,.45) 加深至 .55，弹窗卡保持 1px divider 描边以在暖黑背景上分层。</li>
+</ul></section>
+
+<!-- ============ 04 设计调整与落地映射 ============ -->
+<section class="screen-sec" id="s04"><div class="sec-head"><span class="sec-no">04</span><h2>设计调整与落地映射</h2></div>
+<p class="sec-sub">相对 dialog_bookmark.xml 现状的改动仅排版与皮肤，控件 id 与行为全部保留。</p>
+<ul class="spec">
+<li><code>输入区</code> — TextInputLayout + ThemeEditText ×2（dialog_bookmark.xml:47-73）→ 改 LinearLayout field 卡 + bg_edit_filled 实底（同已落地 dialog_simulated_reading.xml）：label TextView 11.5sp secondaryText 上、EditText 14sp primaryText 下，padding 7/14/8/14dp、卡间距 10dp；<b>edit_book_text / edit_content 控件 id 不变</b>，BookmarkDialog.kt 绑定零改动。</li>
+<li><code>章节名</code> — tv_chapter_name 裸 TextView（dialog_bookmark.xml:27-33）→ 只读 field 卡（TextView，id 不变），与输入域同栅格；无 caret、无聚焦描边以示只读。</li>
+<li><code>聚焦描边</code> — bg_edit_filled 复制一份 selector（默认 surface_container_high，focused 叠 1.5dp 主色描边）用于两张 field 卡容器，EditText 自身保持 background=@null。</li>
+<li><code>底栏</code> — FlexboxLayout 三文字钮结构不变（dialog_bookmark.xml:79-119）：删除(error 色，仅编辑态) / 取消 / 确定(accent)；统一 12dp 触控 padding ≥ 48dp 目标（MASTER.md §1.4）；确定亮色字色用 #B34A15（AccentTextView 亮色定稿同步）。</li>
+<li><code>滚动</code> — NestedScrollView 保留（dialog_bookmark.xml:35-77）：原文/备注过长时 body 滚动，field 卡随内容自增高。</li>
+<li><code>颜色</code> — 全部走令牌：surface / surface_container_high / on_surface / on_surface_variant / error / primary（ThemeStore 换肤不固化），不在布局硬编码 primary/accent（MASTER.md §4）。</li>
+<li><code>功能核对（无增删）</code> — 顶栏标题书签 ✓ 章节名只读 ✓ 原文编辑 ✓ 备注编辑 ✓ 删除(编辑态/error 色) ✓ 取消 dismiss ✓ 确定回写+insert ✓ 软键盘适配 ✓ 全屏遮罩居中卡 ✓ 入口 ×4（选字菜单/阅读菜单/书签列表/目录书签页）✓</li>
+</ul></section>
+
+<div class="footnote">
+设计稿 · design-system/mockups/bookmark.html · 依据 MASTER.md 令牌与 screens 系列组件语言（12-missed-2 #02 容器 / #03 field 卡已落地为 dialog_simulated_reading.xml + bg_edit_filled）· 功能对照 BookmarkDialog.kt:36-78 与 dialog_bookmark.xml 全量核对，未虚构功能。
+</div>
+
+</div></body></html>

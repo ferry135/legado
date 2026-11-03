@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 紧凑网格卡卡面（rss-articles.html #03，articleStyle 2）：surface_container 实底 + corner_radius_md，
+     无描边无阴影（区别于 bg_card 的 0.5dp 描边） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <solid android:color="@color/surface_container" />
+
+    <corners android:radius="@dimen/corner_radius_md" />
+
+</shape>

@@ -24,8 +24,11 @@ import io.legado.app.databinding.ItemBookGroupManageBinding
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
+import io.legado.app.ui.widget.recycler.LiftItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
+import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.launchCollectWithLifecycle
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
@@ -64,10 +67,20 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.addItemDecoration(VerticalDivider(requireContext()))
         binding.recyclerView.adapter = adapter
-        val itemTouchCallback = ItemTouchCallback(adapter)
+        // 拖拽浮起态（稿 .grow.drag / 12-missed-2 #01 语言）：surface_container_high 10dp 圆角 + 4dp 抬升
+        val itemTouchCallback =
+            LiftItemTouchCallback(adapter, cornerRadiusDp = 10, bgColorRes = R.color.surface_container_high, liftZDp = 4)
         itemTouchCallback.isCanDrag = true
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.recyclerView)
-        binding.tvOk.setTextColor(requireContext().accentColor)
+        // 底栏「确认」：亮色主色文字压白卡 2.84:1 不达 AA，按 12-missed-2 定稿改深主色
+        // （on_primary_soft #B34A15，压白 5.37:1）；暗色仍随 ThemeStore.accentColor 换肤
+        binding.tvOk.setTextColor(
+            if (ColorUtils.isColorLight(requireContext().backgroundColor)) {
+                requireContext().getCompatColor(R.color.on_primary_soft)
+            } else {
+                requireContext().accentColor
+            }
+        )
         binding.tvOk.visible()
         binding.tvOk.setOnClickListener {
             dismissAllowingStateLoss()
