@@ -25,10 +25,12 @@ import io.legado.app.utils.FileUtils
 import io.legado.app.utils.delete
 import io.legado.app.utils.find
 import io.legado.app.utils.getFile
+import io.legado.app.utils.gone
 import io.legado.app.utils.list
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
+import io.legado.app.utils.visible
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.isActive
 import java.io.FileFilter
@@ -53,6 +55,14 @@ class CrashLogsDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         binding.recyclerView.adapter = adapter
         viewModel.logLiveData.observe(viewLifecycleOwner) {
             adapter.setItems(it)
+            // generic-list-dialogs 稿 §03/§06 #10：空态复用壳 tv_msg 消息层（默认中性令牌），
+            // 清空后即时刷新不变；非空时恢复 GONE，不触碰其余行为
+            if (it.isEmpty()) {
+                binding.tvMsg.setText(R.string.crash_log_empty)
+                binding.tvMsg.visible()
+            } else {
+                binding.tvMsg.gone()
+            }
         }
         viewModel.initData()
     }

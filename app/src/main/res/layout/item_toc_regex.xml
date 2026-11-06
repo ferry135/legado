@@ -1,40 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 规则选择行（toc-rule-picker 稿 §04/§05：对齐姊妹行 item_txt_toc_rule.xml 05 稿语言）：
+     上行 radio 名称 15sp on_surface + 开关 + 编辑/删除 48dp 热区（tint on_surface_variant），
+     下行示例 12sp on_surface_variant 单行省略；禁用态名称降色由 kt convert 按 enable 切换 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:paddingTop="12dp"
+    android:paddingBottom="10dp"
+    android:paddingStart="14dp"
+    android:paddingEnd="16dp">
 
+    <!-- 上行触控 48dp：radio 即整行选择热区（稿 §05 上行 minHeight 48dp） -->
     <io.legado.app.lib.theme.view.ThemeRadioButton
         android:id="@+id/rb_regex_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:ellipsize="end"
         android:maxLines="1"
+        android:minHeight="48dp"
+        android:singleLine="true"
+        android:textColor="@color/on_surface"
+        android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@id/title_example"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/swt_enabled"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TouchTargetSizeCheck,DuplicateSpeakableTextCheck" />
 
     <io.legado.app.lib.theme.view.ThemeSwitch
         android:id="@+id/swt_enabled"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toTopOf="@id/title_example"
         app:layout_constraintRight_toLeftOf="@id/iv_edit"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
 
+    <!-- 图标热区 36→48dp（24dp 图形 + 12dp padding），tint primaryText→on_surface_variant 语义令牌 -->
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_edit"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_gravity="center"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/edit"
-        android:padding="6dp"
+        android:padding="12dp"
         android:src="@drawable/ic_edit"
-        android:tint="@color/primaryText"
+        android:tint="@color/on_surface_variant"
         android:tooltipText="@string/edit"
         app:layout_constraintBottom_toTopOf="@id/title_example"
         app:layout_constraintRight_toLeftOf="@id/iv_delete"
@@ -43,25 +60,32 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_delete"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/delete"
-        android:padding="6dp"
+        android:padding="12dp"
         android:src="@drawable/ic_clear_all"
-        android:tint="@color/primaryText"
+        android:tint="@color/on_surface_variant"
         android:tooltipText="@string/delete"
         app:layout_constraintBottom_toTopOf="@id/title_example"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="UnusedAttribute" />
 
+    <!-- 示例行：marginStart 40dp 对齐名称文字左缘（radio 圆点 20dp+间距，姊妹行 46dp 按实机微调） -->
     <TextView
         android:id="@+id/title_example"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginStart="40dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/on_surface_variant"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

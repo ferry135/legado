@@ -182,7 +182,11 @@ class AudioPlayActivity :
             AudioPlay.adjustSpeed(-0.1f)
         }
         binding.ivTimer.setOnClickListener {
-            timerSliderPopup.showAsDropDown(it, 0, (-100).dpToPx(), Gravity.TOP)
+            // audio-timer-popup §03 浮层定位修正：改底部锚定，卡底缘恒为控制行上方 8dp，不随卡高探出屏底
+            //（68dp 口径前提 = targetSdk 35 + windowOptOutEdgeToEdgeEnforcement=true（styles.xml:36-37）；
+            // 迁移 enableEdgeToEdge 后须 y = 68dp + navigationBarHeight（llPlayMenu applyNavigationBarPadding
+            // 同口径，utils/ViewExtensions.kt:278-284）或改回锚点相对定位，否则弹窗压住控制行）
+            timerSliderPopup.showAtLocation(it, Gravity.BOTTOM, 0, 68.dpToPx())
         }
         binding.llPlayMenu.applyNavigationBarPadding()
     }

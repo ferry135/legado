@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 空态「添加规则」ghost 描边骨架（toc-rule-picker 稿 §05：9dp 圆角 + 1dp stroke，XML 零色值）；
+     stroke 颜色由使用方 TxtTocRuleDialog kt 运行时 mutate().setStroke(accentColor) 注入随肤
+     （DECISIONS §8 自述疗法，GroupManageDialog tv_add_group 先例） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="9dp" />
+    <stroke
+        android:width="1dp" />
+</shape>

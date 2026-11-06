@@ -14,7 +14,6 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
-import io.legado.app.constant.PreferKey
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.ReplaceRule
 import io.legado.app.databinding.DialogCustomGroupBinding
@@ -58,6 +57,9 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setTitle(R.string.import_replace_rule)
         binding.rotateLoading.visible()
+        // generic-list-dialogs 稿 §05/§06 #2：壳 tv_msg 默认已改中性消息层令牌，本页 tv_msg 仅用于
+        // 错误/格式错误文案（errorLiveData / wrong_format），错误语义色由本页覆盖为 error
+        binding.tvMsg.setTextColor(requireContext().getCompatColor(R.color.error))
         initMenu()
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
@@ -88,6 +90,8 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
         viewModel.errorLiveData.observe(this) {
             binding.rotateLoading.gone()
             binding.tvMsg.apply {
+                // 壳 tv_msg 已改消息层默认观感（generic-list-dialogs 稿 §05），错误语义色由本页覆盖
+                setTextColor(context.getCompatColor(R.color.error))
                 text = it
                 visible()
             }
@@ -99,6 +103,7 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
                 upSelectText()
             } else {
                 binding.tvMsg.apply {
+                    setTextColor(context.getCompatColor(R.color.error))
                     setText(R.string.wrong_format)
                     visible()
                 }
@@ -121,10 +126,6 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_new_group -> alertCustomGroup(item)
-            R.id.menu_keep_original_name -> {
-                item.isChecked = !item.isChecked
-                putPrefBoolean(PreferKey.importKeepName, item.isChecked)
-            }
         }
         return true
     }
@@ -199,11 +200,15 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
         ) {
             binding.run {
                 cbSourceName.isChecked = viewModel.selectStatus[holder.bindingAdapterPosition]
-                cbSourceName.text = if (item.group.isNullOrBlank()) {
+                // 拆名后 cb 不再承载文字：名称移至 tv_source_name（item_source_import 映射 3），
+                // 无障碍走 contentDescription 方案（NEED-DECISION ③），朗读合并规则名
+                val rowName = if (item.group.isNullOrBlank()) {
                     item.name
                 } else {
                     "${item.name}(${item.group})"
                 }
+                cbSourceName.contentDescription = rowName
+                tvSourceName.text = rowName
                 val localRule = viewModel.checkRules[holder.bindingAdapterPosition]
                 tvSourceState.text = when {
                     localRule == null -> "新增"

@@ -21,12 +21,13 @@
             android:layout_height="wrap_content"
             android:background="@color/background_menu"
             android:elevation="0dp"
-            android:theme="?attr/actionBarStyle"
+            android:theme="@style/ThemeOverlay.AppCompat.DayNight"
             app:displayHomeAsUp="false"
             app:fitStatusBar="false"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:title="@string/txt_toc_rule"
-            app:titleTextAppearance="@style/ToolbarTitle" />
+            app:titleTextAppearance="@style/ToolbarTitle"
+            app:titleTextColor="@color/on_surface" />
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"

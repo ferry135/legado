@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 图片全屏查看弹窗（widget-viewer-dialogs §03）：加载链与 PhotoView 缩放行为不动。
+     根背景运行时由 BaseDialogFragment.kt:83-85 覆盖为 16dp 圆角的
+     ThemeStore.backgroundColor()，window 透明由 PhotoDialog.onStart 注入（§05 ②），
+     圆角缺口透出遮罩；PhotoView 本体无背景，centerInside/双指缩放不动。
+     右上 48dp 关闭钮（§05 ⑥ 新增·可移除），删去即回「仅返回键退出」现状 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background">
@@ -10,6 +16,18 @@
         android:layout_height="match_parent"
         android:scaleType="centerInside" />
 
+    <!-- 48dp 触控目标（MASTER §3）；底=圆形 pill_field，图标=ic_close（on_surface 描边） -->
+    <ImageButton
+        android:id="@+id/iv_close"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
+        android:background="@drawable/bg_widget_dialog_photo_dialog_close"
+        android:contentDescription="@string/close"
+        android:padding="12dp"
+        android:src="@drawable/ic_close"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-

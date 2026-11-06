@@ -62,6 +62,9 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
         binding.toolBar.setTitle(R.string.import_rss_source)
         binding.rotateLoading.visible()
+        // generic-list-dialogs 稿 §05/§06 #2：壳 tv_msg 默认已改中性消息层令牌，本页 tv_msg 仅用于
+        // 错误/格式错误文案（errorLiveData / wrong_format），错误语义色由本页覆盖为 error
+        binding.tvMsg.setTextColor(requireContext().getCompatColor(R.color.error))
         initMenu()
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
@@ -92,6 +95,8 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
         viewModel.errorLiveData.observe(this) {
             binding.rotateLoading.gone()
             binding.tvMsg.apply {
+                // 壳 tv_msg 已改消息层默认观感（generic-list-dialogs 稿 §05），错误语义色由本页覆盖
+                setTextColor(context.getCompatColor(R.color.error))
                 text = it
                 visible()
             }
@@ -103,6 +108,7 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
                 upSelectText()
             } else {
                 binding.tvMsg.apply {
+                    setTextColor(context.getCompatColor(R.color.error))
                     setText(R.string.wrong_format)
                     visible()
                 }
@@ -221,7 +227,10 @@ class ImportRssSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view
         ) {
             binding.apply {
                 cbSourceName.isChecked = viewModel.selectStatus[holder.bindingAdapterPosition]
-                cbSourceName.text = item.sourceName
+                // 拆名后 cb 不再承载文字（item_source_import 映射 1）：名称移至 tv_source_name，
+                // 无障碍走 contentDescription 方案（NEED-DECISION ③），朗读合并订阅源名
+                cbSourceName.contentDescription = item.sourceName
+                tvSourceName.text = item.sourceName
                 tvSourceState.text = if (viewModel.checkSources[holder.bindingAdapterPosition] != null) {
                     "已有"
                 } else {

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 图片查看弹窗右上关闭钮底（widget-viewer-dialogs §05 ⑥）：48dp 圆形 pill_field，
+     明暗成对令牌（values/colors.xml:92 #0F000000 / values-night/colors.xml:60 #14FFFFFF），
+     提高任意图片上的可见性；不固化 primary/accent -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/pill_field" />
+</shape>

@@ -1,0 +1,205 @@
+<!doctype html>
+<!-- design-system: legado v2 · mockup -->
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>legado v2 · 启动欢迎页 · 新界面</title><style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Noto Sans SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;background:#eae7e0;color:#3a3833}
+.wrap{max-width:1180px;margin:0 auto;padding:52px 24px 110px;display:flex;flex-direction:column;gap:60px;align-items:center}
+/* ---------- 页头 ---------- */
+.page-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:16px}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.14em;color:#a8623c}
+.h1{font-size:34px;font-weight:750;line-height:1.2;margin:0}
+.h1 small{font-size:15px;font-weight:600;color:#60656d;margin-left:12px}
+.desc{font-size:14px;line-height:1.8;color:#60656d;margin:0;max-width:820px}
+.nav{display:flex;flex-wrap:wrap;gap:10px}
+.nav a{text-decoration:none;font-size:13px;font-weight:600;color:#5a574e;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:999px;padding:9px 16px;transition:.15s}
+.nav a:hover{background:#ff6b2c;color:#fff;border-color:#ff6b2c}
+.nav a b{font-weight:750;color:inherit;opacity:.55;margin-right:6px}
+/* ---------- 屏幕区 ---------- */
+.screen{width:100%;display:flex;flex-direction:column;align-items:center;gap:24px;scroll-margin-top:20px}
+.screen-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:10px}
+.st-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.st-num{font-size:13px;font-weight:750;color:#ff6b2c;letter-spacing:.08em}
+.st-title{font-size:24px;font-weight:750;margin:0}
+.st-src{font-size:12px;color:#60656d}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{font-size:12px;color:#6d6a62;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:7px;padding:5px 10px}
+.chips span.new{color:#a8623c;border-color:rgba(255,107,44,.35);background:#fff7f2}
+.pairs{display:flex;gap:30px;flex-wrap:wrap;justify-content:center}
+.pair{display:flex;flex-direction:column;gap:10px;align-items:center}
+.theme-tag{font-size:12px;font-weight:700;color:#60656d;letter-spacing:.1em}
+/* ---------- 手机壳（与 dict / group-select 完全同规格） ---------- */
+.phone{width:412px;height:900px;border-radius:30px;position:relative;overflow:hidden;background:var(--bg);color:var(--text);border:1px solid rgba(0,0,0,.09);flex:none}
+.phone.light{--bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--feature:#fff1e8;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--on-primary:#fff;--track:#e5e2de;--divider:rgba(0,0,0,.07);--field:rgba(0,0,0,.06);--menu:#fff;--error:#ba1a1a;--ok:#3b7a45;--scrim:rgba(0,0,0,.5);--field-solid:#f1efe9}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--feature:#2b1d15;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--on-primary:#fff;--track:#353331;--divider:rgba(255,255,255,.08);--field:rgba(255,255,255,.08);--menu:#2a2824;--error:#ffb4ab;--ok:#7fd891;--scrim:rgba(0,0,0,.5);--field-solid:#2a2925}
+.status{height:34px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:14px;font-weight:600;position:relative;z-index:2}
+.status-right{display:flex;gap:10px;align-items:center}
+.hi{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--text);opacity:.4;z-index:30;pointer-events:none}
+/* ---------- 欢迎页（activity_welcome 结构同构） ---------- */
+.wl{position:absolute;inset:34px 0 0 0}
+/* 品牌块：竖线 6dp + 竖排标题（display 44sp on_surface）+ 竖排副题（14sp on_surface_variant）
+   对应 tv_legado 容器（xml:10-56，vertical bias 0.4） */
+.wl-brand{position:absolute;top:200px;left:50%;transform:translateX(-55%);display:flex;align-items:flex-start;gap:8px}
+.wl-bar{width:6px;height:99px;border-radius:3px;background:var(--primary);flex:none}
+.wl-title{writing-mode:vertical-rl;font-size:44px;line-height:1.15;font-weight:700;letter-spacing:.12em;color:var(--text)}
+.wl-sub{writing-mode:vertical-rl;font-size:14px;line-height:1.6;font-weight:500;letter-spacing:.3em;color:var(--secondary);margin-top:48px}
+/* 品牌图符：120dp，运行时 accentColor（kt:24） */
+.wl-book{position:absolute;left:50%;bottom:112px;transform:translateX(-50%);width:120px;height:120px;color:var(--primary)}
+/* 底部文案：12sp 辅助层 on_surface_variant，内容逐字保留（xml:74） */
+.wl-gzh{position:absolute;left:0;right:0;bottom:32px;text-align:center;font-size:12px;line-height:1.9;letter-spacing:.02em;color:var(--secondary)}
+/* 自定义欢迎图：decorView 背景（kt:50/60），状态栏透明故延伸至其下方 */
+.wlphoto{position:absolute;inset:0;background:radial-gradient(circle at 72% 26%,rgba(255,255,255,.55),transparent 34%),linear-gradient(168deg,#f5ecdc 0%,#ead9bd 46%,#d8b98c 100%)}
+.wlphoto.darkimg{background:radial-gradient(circle at 70% 24%,rgba(255,184,120,.16),transparent 40%),linear-gradient(168deg,#23211f 0%,#161413 52%,#0e0d0c 100%)}
+/* ---------- 表格 / 注释（与 dict.html §05 同规格） ---------- */
+.tokcap{width:100%;max-width:1080px;font-size:14px;font-weight:750;color:#45423a;margin:34px 0 -8px}
+.tokcap:first-of-type{margin-top:0}
+.tok{width:100%;max-width:1080px;border-collapse:collapse;font-size:13px;color:#45423a}
+.tok th{font-size:12px;font-weight:700;color:#60656d;text-align:left;letter-spacing:.04em;padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.12)}
+.tok td{padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.07);vertical-align:top;line-height:1.7}
+.tok code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px;white-space:nowrap}
+.tok .dim2{color:#60656d}
+.tok .keep{color:#3b7a45;font-weight:600}
+.notes{width:100%;max-width:1080px;font-size:12.5px;line-height:1.9;color:#60656d;border-top:1px dashed rgba(0,0,0,.12);padding-top:12px;margin:0}
+.notes code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px}
+.notes b{color:#45423a}
+.foot{font-size:12px;color:#60656d;text-align:center;line-height:2}
+</style></head>
+<body>
+
+<div class="wrap">
+
+<header class="page-head">
+  <div class="kicker">LEGADO V2 · MOCKUP</div>
+  <h1 class="h1">启动欢迎页 · 新界面<small>Welcome Splash 重设计</small></h1>
+  <p class="desc">重构 <b>WelcomeActivity</b>（activity_welcome.xml）：600ms 品牌闪屏。旧版（2022）遗留三处问题——①标题/副题/推广文案全部使用 <code>AccentTextView</code>（init 强制 accent，整页色彩泼墨）；②标题 49sp 为任意值、不入字阶；③推广文案与品牌题同级抢焦点。本稿<b>结构原样保留</b>（竖线+竖排品牌块 / 120dp 图符 / 底部文案），只换语义令牌与新字阶：品牌题改 on_surface 暖墨色、accent 收敛到竖线+图符两处（均运行时取色、可换肤），文案降为 12sp 辅助层。行为零变更：600ms 自动进入、FLAG 去重、直达阅读、自定义欢迎图全链路照旧。视觉令牌与 dict / group-select 完全一致。</p>
+  <nav class="nav">
+    <a href="#s1"><b>01</b>默认闪屏 · 主形态</a>
+    <a href="#s2"><b>02</b>自定义欢迎图</a>
+    <a href="#s3"><b>03</b>字阶 · 设计调整与落地映射</a>
+  </nav>
+</header>
+
+<!-- ================= 01 默认闪屏 ================= -->
+<section class="screen" id="s1">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">01</span><h2 class="st-title">默认闪屏 · 主形态</h2><span class="st-src">activity_welcome.xml · WelcomeActivity.kt:23-38 · 600ms 后进主界面</span></div>
+    <div class="chips"><span>竖排品牌块 · on_surface 墨色</span><span class="new">accent 收敛：仅竖线+图符（运行时取色）</span><span class="new">标题 49→44sp 新字阶</span><span class="new">底部文案降为 12sp 辅助层</span><span>600ms 自动进入 · 行为不变</span><span>全屏 · 透明状态栏随 surface</span><span>零新增控件 · 零行为变更</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色 -->
+    <div class="pair"><div class="theme-tag">浅色 · 默认闪屏</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="wl">
+        <div class="wl-brand"><i class="wl-bar"></i><div class="wl-title">阅读</div><div class="wl-sub">享受美好时光</div></div>
+        <svg class="wl-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5.5C10.4 4 8.2 3.2 5.5 3.2c-1 0-1.9.1-2.5.3v14.6c.6-.2 1.5-.3 2.5-.3 2.7 0 4.9.8 6.5 2.3 1.6-1.5 3.8-2.3 6.5-2.3 1 0 1.9.1 2.5.3V3.5c-.6-.2-1.5-.3-2.5-.3-2.7 0-4.9.8-6.5 2.3Z"/><path d="M12 5.5v14.6"/></svg>
+        <div class="wl-gzh">关注公众号[开源阅读]<br>看文章点广告支持作者</div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色 -->
+    <div class="pair"><div class="theme-tag">深色 · 同态对照</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="wl">
+        <div class="wl-brand"><i class="wl-bar"></i><div class="wl-title">阅读</div><div class="wl-sub">享受美好时光</div></div>
+        <svg class="wl-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5.5C10.4 4 8.2 3.2 5.5 3.2c-1 0-1.9.1-2.5.3v14.6c.6-.2 1.5-.3 2.5-.3 2.7 0 4.9.8 6.5 2.3 1.6-1.5 3.8-2.3 6.5-2.3 1 0 1.9.1 2.5.3V3.5c-.6-.2-1.5-.3-2.5-.3-2.7 0-4.9.8-6.5 2.3Z"/><path d="M12 5.5v14.6"/></svg>
+        <div class="wl-gzh">关注公众号[开源阅读]<br>看文章点广告支持作者</div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>进入链路（不动）</code> — Launcher1-6 清单别名共用本页（WelcomeActivity.kt:80-85）；onActivityCreated：带 FLAG_ACTIVITY_BROUGHT_TO_FRONT 直接 finish（kt:27-28），否则 600ms 后 startMainActivity（kt:30）→ MainActivity，开了「默认进阅读页」再加开 ReadBookActivity（kt:70-76 defaultToRead）。无对应视觉，行为原样。</li>
+    <li><code>全屏与状态栏</code> — setupSystemBar：<code>fullScreen()</code>（LAYOUT_FULLSCREEN，ActivityExtensions.kt:77-87）+ <code>setStatusBarColorAuto(backgroundColor, true, fullScreen)</code>（kt:34-38，isTransparentStatusBar=true）→ 状态栏透明、随 surface 明暗自动反色，稿面顶部状态行即此。</li>
+    <li><code>品牌块（改动核心）</code> — 结构保留：竖线 6dp + 竖排「阅读」+ 竖排副题，同在 tv_legado 容器（activity_welcome.xml:10-56，vertical bias 0.4）。三处 AccentTextView（AccentTextView.kt:14-15 init 强制 accentColor，XML 无法语义化）换 AppCompatTextView + 语义令牌：标题 <code>on_surface</code>、副题 <code>on_surface_variant</code>；字号 49→44sp、副题 16→14sp、竖排偏移 60→48dp、栏距 6→8dp（spacing_sm）。</li>
+    <li><code>accent 收敛（换肤达标）</code> — 本页 accent 仅存两处且均运行时取色：竖线 kt:25 <code>setBackgroundColor(accentColor)</code>（XML :24 兜底）、图符 kt:24 <code>setColorFilter(accentColor)</code>——用户换肤即跟随（MASTER §4）；稿面 #FF6B2C 仅为默认主题兜底演示。</li>
+    <li><code>底部文案</code> — 内容逐字保留（activity_welcome.xml:74），仅降为 12sp on_surface_variant 辅助层；距底 32dp 不变（:75），与手势条（home indicator）不重叠。</li>
+    <li><code>图符</code> — iv_book 120dp icon_read_book、contentDescription=@string/welcome（activity_welcome.xml:58-68）全部不动。</li>
+  </ul>
+</section>
+
+<!-- ================= 02 自定义欢迎图 ================= -->
+<section class="screen" id="s2">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">02</span><h2 class="st-title">自定义欢迎图（customWelcome=true）</h2><span class="st-src">WelcomeActivity.kt:40-68 · pref_config_welcome.xml · 行为零改动，仅演示令牌叠加</span></div>
+    <div class="chips"><span>明 / 暗各一张背景图铺满 decorView</span><span>显隐开关行为照旧</span><span>文案随「显示文字」开关（现状）</span><span>状态栏图标浮于图上（透明状态栏）</span><span>解码失败静默回退默认闪屏</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：全显 -->
+    <div class="pair"><div class="theme-tag">浅色 · 用户背景图 · 文字/图符/文案全显</div>
+    <div class="phone light">
+      <div class="wlphoto"></div>
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="wl">
+        <div class="wl-brand"><i class="wl-bar"></i><div class="wl-title">阅读</div><div class="wl-sub">享受美好时光</div></div>
+        <svg class="wl-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5.5C10.4 4 8.2 3.2 5.5 3.2c-1 0-1.9.1-2.5.3v14.6c.6-.2 1.5-.3 2.5-.3 2.7 0 4.9.8 6.5 2.3 1.6-1.5 3.8-2.3 6.5-2.3 1 0 1.9.1 2.5.3V3.5c-.6-.2-1.5-.3-2.5-.3-2.7 0-4.9.8-6.5 2.3Z"/><path d="M12 5.5v14.6"/></svg>
+        <div class="wl-gzh">关注公众号[开源阅读]<br>看文章点广告支持作者</div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：关闭显示文字，仅图符 -->
+    <div class="pair"><div class="theme-tag">深色 · 用户背景图 · 关闭「显示文字」（仅图符）</div>
+    <div class="phone dark">
+      <div class="wlphoto darkimg"></div>
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="wl">
+        <svg class="wl-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5.5C10.4 4 8.2 3.2 5.5 3.2c-1 0-1.9.1-2.5.3v14.6c.6-.2 1.5-.3 2.5-.3 2.7 0 4.9.8 6.5 2.3 1.6-1.5 3.8-2.3 6.5-2.3 1 0 1.9.1 2.5.3V3.5c-.6-.2-1.5-.3-2.5-.3-2.7 0-4.9.8-6.5 2.3Z"/><path d="M12 5.5v14.6"/></svg>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>开关链路</code> — 「自定义欢迎页」默认关（pref_config_welcome.xml:7 customWelcome defaultValue=false）；开启后按当前主题取 <code>welcomeImagePath</code> / <code>welcomeImagePathDark</code>，按窗口尺寸解码 Bitmap 铺满 decorView（WelcomeActivity.kt:41-64）；解析失败 runCatching 静默回退默认闪屏（kt:42）。</li>
+    <li><code>显隐映射（现状照绘）</code> — 明：竖排文字←welcomeShowText（kt:57）、图符←welcomeShowIcon（kt:58）、底部文案←welcomeShowText（kt:59）；暗：三者分别←welcomeShowTextDark / welcomeShowIconDark / welcomeShowTextDark（kt:47-49）。四个开关默认均 true（pref_config_welcome.xml:31/41/67/76）。注意 tv_gzh 无独立开关、跟随「显示文字」——现状行为，稿不改。</li>
+    <li><code>浅色态</code> — 全部元素叠于用户图上（welcomeShowText/Icon 默认 true）；文字仍走 on_surface 令牌，可读性由用户选图决定，与现状一致。</li>
+    <li><code>深色态</code> — 演示关闭「显示文字」（welcomeShowTextDark=false）：仅剩 120dp 图符浮于暗图，accent 运行时取色不变。</li>
+    <li><code>占位说明</code> — 稿内渐变仅为示意图；实际为用户所选原图整屏铺满，无任何叠加令牌层（window.decorView.background 直设，kt:50/60）。</li>
+  </ul>
+</section>
+
+<!-- ================= 03 字阶与落地映射 ================= -->
+<section class="screen" id="s3">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">03</span><h2 class="st-title">闪屏字阶 · 设计调整与落地映射</h2><span class="st-src">字阶扩展 MASTER §3（页级覆盖）· 每条改动 → 文件 / 控件</span></div>
+    <div class="chips"><span>页级 display 档：44sp</span><span>副题=正文档 14sp · 文案=辅助档 12sp</span><span>accent 全部运行时取色</span><span>无新增行为</span></div>
+  </div>
+
+  <p class="tokcap">表 A · 闪屏页级字阶与色令牌</p>
+  <table class="tok">
+    <tr><th style="width:20%">角色</th><th style="width:34%">规格</th><th style="width:26%">色令牌（浅 / 深）</th><th>对应控件</th></tr>
+    <tr><td><code>display_brand</code> 竖排品牌题</td><td>44sp / 700 / 行高 1.15 / 字距 .12em / 竖排 ems=1</td><td>on_surface · #20242B / #F3F0EB</td><td><code>tv_title</code>（xml:30-40）</td></tr>
+    <tr><td><code>headline_sub</code> 竖排副题</td><td>14sp / 500 / 字距 .3em / 顶部偏移 48dp</td><td>on_surface_variant · #60656D / #B4B0AA</td><td><code>tv_sub_title</code>（xml:43-53）</td></tr>
+    <tr><td><code>label_promo</code> 底部文案</td><td>12sp / 400 / 行高 1.9 / 距底 32dp</td><td>on_surface_variant · 同上</td><td><code>tv_gzh</code>（xml:71-80）</td></tr>
+    <tr><td><code>品牌竖线</code></td><td>6dp 宽 · 高随标题 · 圆角 3dp（可选打磨）</td><td class="dim2">运行时 accentColor（ThemeStore 兜底 #FF6B2C）</td><td><code>vw_title_line</code>（xml:21-27 · kt:25）</td></tr>
+    <tr><td><code>品牌图符</code></td><td>120dp · icon_read_book</td><td class="dim2">运行时 accentColor（kt:24）</td><td><code>iv_book</code>（xml:59-68）</td></tr>
+    <tr><td><code>页面背景 / 状态栏</code></td><td>全屏沉浸 · 透明状态栏</td><td>surface · #FAF9F7 / #141312（默认主题兜底）</td><td>window.decorView 背景 = <code>applyBackgroundTint(backgroundColor)</code>（BaseActivity.initTheme，BaseActivity.kt:150-172 · ViewExtensions.kt:86-94 · MaterialValueHelper.kt:84-85）+ 状态栏 kt:34-38；<b>根布局必须保持无 background</b>（xml:2-8 现状即无，勿照抄他页给根布局补 @color/background——会盖住 kt:50/60 写入 decorView 的自定义欢迎图）</td></tr>
+  </table>
+
+  <p class="tokcap">表 B · 设计调整与落地映射（逐条）</p>
+  <table class="tok">
+    <tr><th style="width:5%">#</th><th style="width:22%">改动</th><th style="width:33%">现状（出处）</th><th style="width:20%">设计</th><th>落地位置（文件 · 控件）</th></tr>
+    <tr><td>1</td><td>标题改语义墨色</td><td>AccentTextView init 强制 accent（AccentTextView.kt:14-15，XML textColor 无法覆盖）</td><td>on_surface</td><td><code>activity_welcome.xml:29-40</code> tv_title：控件类换 AppCompatTextView + <code>android:textColor="@color/on_surface"</code>（values/colors.xml:13 · values-night/colors.xml:11）</td></tr>
+    <tr><td>2</td><td>副题改语义次要色</td><td>AccentTextView 16sp accent（xml:42-53）</td><td>on_surface_variant · 14sp</td><td><code>activity_welcome.xml:42-53</code> tv_sub_title：同上换类，textSize 16→14sp、textColor=@color/on_surface_variant（values/colors.xml:14 · values-night:12）</td></tr>
+    <tr><td>3</td><td>底部文案降级辅助层</td><td>AccentTextView 默认字号 accent（xml:70-80）</td><td>12sp on_surface_variant</td><td><code>activity_welcome.xml:70-80</code> tv_gzh：同上换类 + textSize 12sp；文案内容与显隐行为逐字不动</td></tr>
+    <tr><td>4</td><td>品牌题字阶收敛</td><td>49sp 任意值（xml:36）</td><td>44sp（≈M3 displayMedium 量级、4dp 栅格）</td><td><code>activity_welcome.xml:36</code> tv_title textSize</td></tr>
+    <tr><td>5</td><td>竖副题偏移调档</td><td>marginTop 60dp（xml:46）</td><td>48dp（2×spacing_xl 节奏）</td><td><code>activity_welcome.xml:46</code> tv_sub_title marginTop</td></tr>
+    <tr><td>6</td><td>栏距令牌化</td><td>竖线/标题/副题间 margin 6dp（xml:33/47）</td><td>8dp（spacing_sm）</td><td><code>activity_welcome.xml:33/47</code> marginLeft 6→8dp</td></tr>
+    <tr><td>7</td><td>竖线 accent 保持换肤 <span class="keep">不改</span></td><td>@color/accent 静态兜底（xml:24）+ kt:25 运行时必覆盖</td><td>维持现状（同 DECISIONS §8 豁免逻辑）；3dp 圆角可选</td><td><code>activity_welcome.xml:20-27</code> vw_title_line；如需严格化仅删 xml:24 兜底一行；圆角走 shape drawable</td></tr>
+    <tr><td>8</td><td>图符 accent 保持换肤 <span class="keep">不改</span></td><td>setColorFilter(accentColor)（kt:24）</td><td>维持现状</td><td><code>WelcomeActivity.kt:24</code> iv_book</td></tr>
+    <tr><td>9</td><td>硬编码文案资源化</td><td>「阅读」「享受美好时光」+ 公众号文案内联 XML（tools:ignore 压制，xml:35/49/74）；内联中文对全部 locale 可见，而默认资源库为英文（strings.xml:227 "Welcome page"），另有 7 个语言目录（values-zh/-rHK/-rTW/ja-rJP/es-rES/pt-rBR/vi）</td><td>提取 string 资源 · 默认库放中文原文</td><td>默认 <code>values/strings.xml</code> 新增 welcome_brand_title / welcome_brand_sub / welcome_gzh，放<b>中文原文</b>＝各 locale 显示与现状一致（行为零变更）；<code>values-zh/strings.xml</code> 与默认同文、冗余可不加；英文译文属新增行为，另行走查后再补进 values/。xml:35/49/74 改引用并移除 tools:ignore</td></tr>
+    <tr><td>10</td><td>页级字阶落档</td><td>—</td><td>表 A 即 <code>pages/welcome-splash.md</code> 蓝本</td><td><code>design-system/legado/pages/</code>（可选，不落档则以表 A 为准）</td></tr>
+  </table>
+
+  <ul class="notes">
+    <li><code>不动项清单</code> — 600ms postDelayed→startMainActivity（kt:30）、FLAG_ACTIVITY_BROUGHT_TO_FRONT finish（kt:27-28）、defaultToRead 直达阅读（kt:70-76）、自定义欢迎图全链路与显隐映射（kt:40-68）、contentDescription（xml:65）、Launcher1-6 别名（kt:80-85）全部保留；本稿零新增控件、零新增行为。</li>
+    <li><code>换肤核查</code> — 改后布局仅余 xml:24 一处 @color/accent 兜底且 kt:25 运行时必覆盖（无 ThemeStore→属性覆盖机制，见 DECISIONS §8 背景说明）——MASTER §4「不固化 primary/accent」达标。文字令牌 <code>@color/on_surface*</code> 只随 uiMode 切换，不随 ThemeStore 背景：默认主题下与页面背景精确一致（day_surface #FAF9F7 / night_surface #141312，values/colors.xml:57/60；applyTheme 夜间强制 lum&lt;0.5，ThemeConfig.kt:240-268 · ColorUtils.kt:16-18）→ 对比达标；用户自定义背景下可读性由选色/选图决定（如夜间 #999999 中灰背景对新标题仅约 2.5:1——非回归：现状 accent 全文字下更差），本稿不引入新风险。accent 默认兜底已是暖橙体系（DECISIONS §1）。</li>
+    <li><code>[NEED-DECISION]</code> — ①标题色：本稿推荐 on_surface 暖墨（呼应「内容优先、图符为唯一强视觉」；竖线+图符仍以 accent 承载品牌色相）；若倾向保留 accent 品牌题，同样以运行时取色落地、映射表 #1 仅改 textColor 来源。②竖线 3dp 圆角为可选打磨，不做不影响验收。</li>
+    <li><code>实现顺序</code> — 先纯 XML（表 B #1-#6：换控件类 + textColor/textSize/margin），再提字符串资源（#9），kt 仅在严格化时删 1 行兜底（#7）；无逻辑改动，回归验证仅需冷启动观察 600ms 流程与「启动界面样式」开关矩阵。</li>
+  </ul>
+</section>
+
+<footer class="foot">legado v2 · mockup · welcome-splash —— 功能对照 WelcomeActivity.kt（classic-base）· 视觉令牌 design-system/legado/MASTER.md · 稿件格式对齐 dict / group-select</footer>
+</div>
+</body></html>

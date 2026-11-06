@@ -1,25 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 导入行（7 个 ImportXxxDialog 共用 · import-dialogs-rule.html §05 映射 3/4/5/9，与 import-dialogs-source 同一套数字）：
+     拆名：cb_source_name 不再承载文字（clickable=false，勾选统一走整行 root.onClick，名称经 contentDescription 合并朗读，
+     tv_source_name 设 importantForAccessibility=no 避免名称被朗读两遍），
+     新增 tv_source_name 14sp/on_surface 单行省略；行 min-height 52dp、纵向 4dp（.irow 4/8/4/16）；
+     tv_open 触控目标 ≥48×52dp；状态/打开文字 on_surface_variant（状态 12sp） -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp">
+    android:minHeight="52dp"
+    android:paddingLeft="16dp"
+    android:paddingTop="4dp"
+    android:paddingRight="8dp"
+    android:paddingBottom="4dp">
 
     <io.legado.app.lib.theme.view.ThemeCheckBox
         android:id="@+id/cb_source_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusable="false"
         android:maxLines="1"
         android:singleLine="true"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/tv_source_state"
+        app:layout_constraintRight_toLeftOf="@+id/tv_source_name"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="TouchTargetSizeCheck" />
+
+    <TextView
+        android:id="@+id/tv_source_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:ellipsize="end"
+        android:importantForAccessibility="no"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="@color/on_surface"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/cb_source_name"
+        app:layout_constraintRight_toLeftOf="@+id/tv_source_state"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_source_state"
@@ -27,10 +53,10 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:singleLine="true"
-        android:textColor="@color/secondaryText"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintLeft_toRightOf="@id/cb_source_name"
+        app:layout_constraintLeft_toRightOf="@id/tv_source_name"
         app:layout_constraintRight_toLeftOf="@id/tv_open"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,9 +66,13 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
         android:background="?attr/selectableItemBackground"
-        android:padding="8dp"
+        android:gravity="center"
+        android:minWidth="52dp"
+        android:minHeight="48dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:text="@string/open"
-        android:textColor="@color/secondaryText"
+        android:textColor="@color/on_surface_variant"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

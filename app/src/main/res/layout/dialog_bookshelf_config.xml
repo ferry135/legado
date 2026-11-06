@@ -1,187 +1,426 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- 书架显示设置弹窗（main/bookshelf/BaseBookshelfFragment · design-system/mockups/bookshelf-config-dialog.html §03）：
+     容器仍走 AlertDialog 正/负按钮框架面板（NEED-DECISION「容器落地路线」：values 禁改无法走①全局
+     alertDialogTheme，按③降级现状容器，仅表单内令牌化；稿面 16dp 圆角卡为设计目标形态）。
+     customView 根改纵向 LinearLayout + ScrollView 包住表单区（小屏窗口封顶时表单内滚动，正/负按钮不被顶出）。
+     分组样式 Spinner → 双胶囊 RadioGroup；四枚 ThemeSwitch 保留带 text 整行热区（不拆 label+开关，仅补 48dp 行高）。
+     视图 5 胶囊拆 4+1 两行 / 排序 6 胶囊拆 3+3 两行（RadioGroup 无换行能力，双行互斥同步走 kt 路线①）。
+     胶囊参数内联（等价映射稿 Widget.Legado.ConfigPill：button=@null · minHeight 48dp · cornerRadius 24dp ·
+     isBottomBackground=true；因 styles.xml 禁改未建 style），选中/未选底与字色全由 ThemeRadioNoButton
+     运行时 accentColor 体系承担（ThemeRadioNoButton.kt:43-69，MASTER §4 无 XML 主色固化）。
+     id 除 sp_group_style → rg_group_style 改名、ll_layout/ll_sort 两栏壳移除外全部保留；两条新字符串
+     group_style_tag/folder 已落 7 个 locale strings.xml（原 @array/group_style 数组已死删除）。 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:padding="16dp">
 
-    <LinearLayout
-        android:id="@+id/ll_group_style"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="parent">
+        android:overScrollMode="ifContentScrolls">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="6dp"
-            android:text="@string/group_style"
-            android:textColor="@color/primaryText" />
-
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/sp_group_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:entries="@array/group_style"
-            android:theme="@style/Spinner"
-            tools:ignore="TouchTargetSizeCheck" />
-
-    </LinearLayout>
-
-    <io.legado.app.lib.theme.view.ThemeSwitch
-        android:id="@+id/sw_show_unread"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:text="@string/show_unread"
-        app:layout_constraintTop_toBottomOf="@+id/ll_group_style"
-        tools:ignore="TouchTargetSizeCheck" />
-
-    <io.legado.app.lib.theme.view.ThemeSwitch
-        android:id="@+id/sw_show_last_update_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:text="@string/show_last_update_time"
-        app:layout_constraintTop_toBottomOf="@+id/sw_show_unread"
-        tools:ignore="TouchTargetSizeCheck" />
-
-    <io.legado.app.lib.theme.view.ThemeSwitch
-        android:id="@+id/sw_show_wait_up_books"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:text="@string/show_wait_up_count"
-        app:layout_constraintTop_toBottomOf="@+id/sw_show_last_update_time"
-        tools:ignore="TouchTargetSizeCheck" />
-
-    <io.legado.app.lib.theme.view.ThemeSwitch
-        android:id="@+id/sw_show_bookshelf_fast_scroller"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:text="@string/show_bookshelf_fast_scroller"
-        app:layout_constraintTop_toBottomOf="@+id/sw_show_wait_up_books"
-        tools:ignore="TouchTargetSizeCheck" />
-
-    <LinearLayout
-        android:id="@+id/ll_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintRight_toLeftOf="@+id/ll_sort"
-        app:layout_constraintTop_toBottomOf="@+id/sw_show_bookshelf_fast_scroller"
-        app:layout_constraintLeft_toLeftOf="parent">
-
-        <io.legado.app.ui.widget.text.AccentTextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="6dp"
-            android:text="@string/view"
-            android:textSize="16sp" />
-
-        <RadioGroup
-            android:id="@+id/rg_layout"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <RadioButton
+            <!-- 分组样式行：label 15sp on_surface + 双胶囊 RadioGroup（索引 0=标签 1=文件夹，文案 group_style_tag/folder，原 @array/group_style 已死删除） -->
+            <LinearLayout
+                android:id="@+id/ll_group_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/layout_list"
-                tools:ignore="TouchTargetSizeCheck" />
+                android:gravity="center_vertical"
+                android:minHeight="48dp"
+                android:orientation="horizontal">
 
-            <RadioButton
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/group_style"
+                    android:textColor="@color/on_surface"
+                    android:textSize="15sp" />
+
+                <RadioGroup
+                    android:id="@+id/rg_group_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <io.legado.app.lib.theme.view.ThemeRadioNoButton
+                        android:id="@+id/rb_group_style_tag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:minHeight="48dp"
+                        android:minWidth="48dp"
+                        android:paddingLeft="14dp"
+                        android:paddingRight="14dp"
+                        android:singleLine="true"
+                        android:text="@string/group_style_tag"
+                        android:textSize="13sp"
+                        app:cornerRadius="24dp"
+                        app:isBottomBackground="true" />
+
+                    <io.legado.app.lib.theme.view.ThemeRadioNoButton
+                        android:id="@+id/rb_group_style_folder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:minHeight="48dp"
+                        android:minWidth="48dp"
+                        android:paddingLeft="14dp"
+                        android:paddingRight="14dp"
+                        android:singleLine="true"
+                        android:text="@string/group_style_folder"
+                        android:textSize="13sp"
+                        app:cornerRadius="24dp"
+                        app:isBottomBackground="true" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <!-- 开关行 ×4：ThemeSwitch 带 text 整行即热区（id 不变不拆），minHeight 48dp + 行间距 8dp -->
+            <io.legado.app.lib.theme.view.ThemeSwitch
+                android:id="@+id/sw_show_unread"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/layout_grid3"
-                tools:ignore="TouchTargetSizeCheck" />
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:minHeight="48dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:text="@string/show_unread"
+                android:textColor="@color/on_surface"
+                android:textSize="15sp" />
 
-            <RadioButton
+            <io.legado.app.lib.theme.view.ThemeSwitch
+                android:id="@+id/sw_show_last_update_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/layout_grid4"
-                tools:ignore="TouchTargetSizeCheck" />
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:minHeight="48dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:text="@string/show_last_update_time"
+                android:textColor="@color/on_surface"
+                android:textSize="15sp" />
 
-            <RadioButton
+            <io.legado.app.lib.theme.view.ThemeSwitch
+                android:id="@+id/sw_show_wait_up_books"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/layout_grid5"
-                tools:ignore="TouchTargetSizeCheck" />
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:minHeight="48dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:text="@string/show_wait_up_count"
+                android:textColor="@color/on_surface"
+                android:textSize="15sp" />
 
-            <RadioButton
+            <io.legado.app.lib.theme.view.ThemeSwitch
+                android:id="@+id/sw_show_bookshelf_fast_scroller"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/layout_grid6"
-                tools:ignore="TouchTargetSizeCheck" />
-        </RadioGroup>
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:minHeight="48dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:text="@string/show_bookshelf_fast_scroller"
+                android:textColor="@color/on_surface"
+                android:textSize="15sp" />
 
-    </LinearLayout>
+            <!-- 稿 .vd 分隔线（outline_variant 语义令牌） -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="6dp"
+                android:background="@color/outline_variant" />
 
-    <LinearLayout
-        android:id="@+id/ll_sort"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintLeft_toRightOf="@+id/ll_layout"
-        app:layout_constraintTop_toBottomOf="@id/sw_show_bookshelf_fast_scroller"
-        app:layout_constraintRight_toRightOf="parent">
+            <!-- 小节标签「视图」：12sp/700 on_surface_variant · 字距 .06em（不再吃 accent 色） -->
+            <TextView
+                android:id="@+id/tv_view_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="2dp"
+                android:letterSpacing="0.06"
+                android:text="@string/view"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
-        <io.legado.app.ui.widget.text.AccentTextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="6dp"
-            android:text="@string/sort"
-            android:textSize="16sp" />
-
-        <RadioGroup
-            android:id="@+id/rg_sort"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <RadioButton
+            <!-- 视图单选组：原 rg_layout id 保留（原纵向 RadioGroup 改为承载两行横向 RadioGroup），
+                 5 胶囊 4+1 两行、tight 规格（paddingH 11dp · 12.5sp · 间距 8dp，MASTER §1.4 相邻间距下限，
+                 未按稿面 tight 6px——稿内 01 与 03 规格矛盾时以 03/MASTER 为准且无 pages 级覆盖依据），勾选索引 0-4 平铺语义不变 -->
+            <LinearLayout
+                android:id="@+id/rg_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/bookshelf_px_0"
-                tools:ignore="TouchTargetSizeCheck" />
+                android:orientation="vertical">
 
-            <RadioButton
+                <RadioGroup
+                    android:id="@+id/rg_layout_row1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <io.legado.app.lib.theme.view.ThemeRadioNoButton
+                        android:id="@+id/rb_layout_list"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:minHeight="48dp"
+                        android:minWidth="48dp"
+                        android:paddingLeft="11dp"
+                        android:paddingRight="11dp"
+                        android:singleLine="true"
+                        android:text="@string/layout_list"
+                        android:textSize="12.5sp"
+                        app:cornerRadius="24dp"
+                        app:isBottomBackground="true" />
+
+                    <io.legado.app.lib.theme.view.ThemeRadioNoButton
+                        android:id="@+id/rb_layout_grid3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:minHeight="48dp"
+                        android:minWidth="48dp"
+                        android:paddingLeft="11dp"
+                        android:paddingRight="11dp"
+                        android:singleLine="true"
+                        android:text="@string/layout_grid3"
+                        android:textSize="12.5sp"
+                        app:cornerRadius="24dp"
+                        app:isBottomBackground="true" />
+
+                    <io.legado.app.lib.theme.view.ThemeRadioNoButton
+                        android:id="@+id/rb_layout_grid4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:minHeight="48dp"
+                        android:minWidth="48dp"
+                        android:paddingLeft="11dp"
+                        android:paddingRight="11dp"
+                        android:singleLine="true"
+                        android:text="@string/layout_grid4"
+                        android:textSize="12.5sp"
+                        app:cornerRadius="24dp"
+                        app:isBottomBackground="true" />
+
+                    <io.legado.app.lib.theme.view.ThemeRadioNoButton
+                        android:id="@+id/rb_layout_grid5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:minHeight="48dp"
+                        android:minWidth="48dp"
+                        android:paddingLeft="11dp"
+                        android:paddingRight="11dp"
+                        android:singleLine="true"
+                        android:text="@string/layout_grid5"
+                        android:textSize="12.5sp"
+                        app:cornerRadius="24dp"
+                        app:isBottomBackground="true" />
+
+                </RadioGroup>
+
+                <RadioGroup
+                    android:id="@+id/rg_layout_row2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <io.legado.app.lib.theme.view.ThemeRadioNoButton
+                        android:id="@+id/rb_layout_grid6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:minHeight="48dp"
+                        android:minWidth="48dp"
+                        android:paddingLeft="11dp"
+                        android:paddingRight="11dp"
+                        android:singleLine="true"
+                        android:text="@string/layout_grid6"
+                        android:textSize="12.5sp"
+                        app:cornerRadius="24dp"
+                        app:isBottomBackground="true" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <!-- 小节标签「排序」：同「视图」小节标签口径 -->
+            <TextView
+                android:id="@+id/tv_sort_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="2dp"
+                android:letterSpacing="0.06"
+                android:text="@string/sort"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <!-- 排序单选组：原 rg_sort id 保留，6 胶囊 3+3 两行（paddingH 14dp · 13sp · 间距 8dp），
+                 勾选索引 0-5 平铺语义不变 -->
+            <LinearLayout
+                android:id="@+id/rg_sort"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/bookshelf_px_1"
-                tools:ignore="TouchTargetSizeCheck" />
+                android:orientation="vertical">
 
-            <RadioButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/bookshelf_px_2"
-                tools:ignore="TouchTargetSizeCheck" />
+                <RadioGroup
+                    android:id="@+id/rg_sort_row1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-            <RadioButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/bookshelf_px_3"
-                tools:ignore="TouchTargetSizeCheck" />
+                    <io.legado.app.lib.theme.view.ThemeRadioNoButton
+                        android:id="@+id/rb_sort_read_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:minHeight="48dp"
+                        android:minWidth="48dp"
+                        android:paddingLeft="14dp"
+                        android:paddingRight="14dp"
+                        android:singleLine="true"
+                        android:text="@string/bookshelf_px_0"
+                        android:textSize="13sp"
+                        app:cornerRadius="24dp"
+                        app:isBottomBackground="true" />
 
-            <RadioButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/bookshelf_px_4"
-                tools:ignore="TouchTargetSizeCheck" />
+                    <io.legado.app.lib.theme.view.ThemeRadioNoButton
+                        android:id="@+id/rb_sort_update_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:minHeight="48dp"
+                        android:minWidth="48dp"
+                        android:paddingLeft="14dp"
+                        android:paddingRight="14dp"
+                        android:singleLine="true"
+                        android:text="@string/bookshelf_px_1"
+                        android:textSize="13sp"
+                        app:cornerRadius="24dp"
+                        app:isBottomBackground="true" />
 
-            <RadioButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/bookshelf_px_5"
-                tools:ignore="TouchTargetSizeCheck" />
+                    <io.legado.app.lib.theme.view.ThemeRadioNoButton
+                        android:id="@+id/rb_sort_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:minHeight="48dp"
+                        android:minWidth="48dp"
+                        android:paddingLeft="14dp"
+                        android:paddingRight="14dp"
+                        android:singleLine="true"
+                        android:text="@string/bookshelf_px_2"
+                        android:textSize="13sp"
+                        app:cornerRadius="24dp"
+                        app:isBottomBackground="true" />
 
-        </RadioGroup>
+                </RadioGroup>
 
-    </LinearLayout>
+                <RadioGroup
+                    android:id="@+id/rg_sort_row2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                    <io.legado.app.lib.theme.view.ThemeRadioNoButton
+                        android:id="@+id/rb_sort_manual"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:minHeight="48dp"
+                        android:minWidth="48dp"
+                        android:paddingLeft="14dp"
+                        android:paddingRight="14dp"
+                        android:singleLine="true"
+                        android:text="@string/bookshelf_px_3"
+                        android:textSize="13sp"
+                        app:cornerRadius="24dp"
+                        app:isBottomBackground="true" />
+
+                    <io.legado.app.lib.theme.view.ThemeRadioNoButton
+                        android:id="@+id/rb_sort_composite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:minHeight="48dp"
+                        android:minWidth="48dp"
+                        android:paddingLeft="14dp"
+                        android:paddingRight="14dp"
+                        android:singleLine="true"
+                        android:text="@string/bookshelf_px_4"
+                        android:textSize="13sp"
+                        app:cornerRadius="24dp"
+                        app:isBottomBackground="true" />
+
+                    <io.legado.app.lib.theme.view.ThemeRadioNoButton
+                        android:id="@+id/rb_sort_author"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:minHeight="48dp"
+                        android:minWidth="48dp"
+                        android:paddingLeft="14dp"
+                        android:paddingRight="14dp"
+                        android:singleLine="true"
+                        android:text="@string/bookshelf_px_5"
+                        android:textSize="13sp"
+                        app:cornerRadius="24dp"
+                        app:isBottomBackground="true" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

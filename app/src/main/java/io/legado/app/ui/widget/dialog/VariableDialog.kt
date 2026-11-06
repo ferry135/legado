@@ -11,9 +11,15 @@ import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
 import io.legado.app.base.BaseViewModel
 import io.legado.app.databinding.DialogVariableBinding
+import io.legado.app.lib.theme.Selector
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.dpToPx
+import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.setLayout
+import io.legado.app.utils.showSoftInput
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import kotlin.math.roundToInt
 
 class VariableDialog() : BaseDialogFragment(R.layout.dialog_variable, true),
     Toolbar.OnMenuItemClickListener {
@@ -45,6 +51,22 @@ class VariableDialog() : BaseDialogFragment(R.layout.dialog_variable, true),
         } ?: let {
             dismiss()
             return
+        }
+        // variable field 卡聚焦描边运行时注入（BookmarkDialog.kt:58-66 先例）：?attr/colorAccent 在
+        // 主题中固化不随 ThemeStore 换肤（MASTER.md §1.2）；默认/聚焦同 surface_container_high 底，
+        // 仅聚焦叠 1.5dp 主色描边，布局不固化 primary/accent
+        val fieldBackground = Selector.shapeBuild()
+            .setCornerRadius(10.dpToPx())
+            .setStrokeWidth(1.5f.dpToPx().roundToInt())
+            .setDefaultBgColor(getCompatColor(R.color.surface_container_high))
+            .setFocusedBgColor(getCompatColor(R.color.surface_container_high))
+            .setFocusedStrokeColor(requireContext().accentColor)
+            .create()
+        binding.vwVariableCard.background = fieldBackground
+        // field 卡可点转焦（url-variable-dialogs §04·11）：点击转焦 tv_variable 弹软键盘，
+        // 补足 ≥48dp 触控目标并阻断点击冒泡到 root dismiss（BaseDialogFragment.kt:78-82）
+        binding.vwVariableCard.setOnClickListener {
+            binding.tvVariable.showSoftInput()
         }
         binding.toolBar.inflateMenu(R.menu.save)
         binding.toolBar.menu.applyTint(requireContext())

@@ -1,0 +1,444 @@
+<!-- design-system: legado v2 · mockup -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>legado v2 · mockup · 文件选择弹窗</title><style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Noto Sans SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;background:#eae7e0;color:#3a3833}
+.wrap{max-width:1180px;margin:0 auto;padding:52px 24px 110px;display:flex;flex-direction:column;gap:60px;align-items:center}
+/* ---------- 页头 ---------- */
+.page-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:16px}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.14em;color:#a8623c}
+.h1{font-size:34px;font-weight:750;line-height:1.2;margin:0}
+.h1 small{font-size:15px;font-weight:600;color:#60656d;margin-left:12px}
+.desc{font-size:14px;line-height:1.8;color:#60656d;margin:0;max-width:820px}
+.nav{display:flex;flex-wrap:wrap;gap:10px}
+.nav a{text-decoration:none;font-size:13px;font-weight:600;color:#5a574e;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:999px;padding:9px 16px;transition:.15s}
+.nav a:hover{background:#ff6b2c;color:#fff;border-color:#ff6b2c}
+.nav a b{font-weight:750;color:inherit;opacity:.55;margin-right:6px}
+/* ---------- 屏幕区 ---------- */
+.screen{width:100%;display:flex;flex-direction:column;align-items:center;gap:24px;scroll-margin-top:20px}
+.screen-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:10px}
+.st-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.st-num{font-size:13px;font-weight:750;color:#ff6b2c;letter-spacing:.08em}
+.st-title{font-size:24px;font-weight:750;margin:0}
+.st-src{font-size:12px;color:#60656d}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{font-size:12px;color:#6d6a62;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:7px;padding:5px 10px}
+.chips span.new{color:#a8623c;border-color:rgba(255,107,44,.35);background:#fff7f2}
+.pairs{display:flex;gap:30px;flex-wrap:wrap;justify-content:center}
+.pair{display:flex;flex-direction:column;gap:10px;align-items:center}
+.theme-tag{font-size:12px;font-weight:700;color:#60656d;letter-spacing:.1em}
+/* ---------- 手机壳（令牌与 screens/12-missed-1 完全一致） ---------- */
+.phone{width:412px;height:900px;border-radius:30px;position:relative;overflow:hidden;background:var(--bg);color:var(--text);border:1px solid rgba(0,0,0,.09);flex:none}
+.phone.light{--bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--feature:#fff1e8;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--on-primary:#fff;--track:#e5e2de;--divider:rgba(0,0,0,.07);--field:rgba(0,0,0,.06);--menu:#fff;--error:#ba1a1a;--ok:#3b7a45;--scrim:rgba(0,0,0,.5);--field-solid:#f1efe9}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--feature:#2b1d15;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--on-primary:#fff;--track:#353331;--divider:rgba(255,255,255,.08);--field:rgba(255,255,255,.08);--menu:#2a2824;--error:#ffb4ab;--ok:#7fd891;--scrim:rgba(0,0,0,.5);--field-solid:#2a2925}
+.status{height:34px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:14px;font-weight:600}
+.status-right{display:flex;gap:10px;align-items:center}
+.hi{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--text);opacity:.4;z-index:30}
+.icon-btn{width:44px;height:44px;border:0;background:transparent;border-radius:22px;display:grid;place-items:center;cursor:pointer;color:var(--text);flex:none}
+.icon{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon.s{width:18px;height:18px}
+/* ---------- 弹窗卡（FilePickerDialog setLayout(0.9f,0.8f) = 371×720；BaseDialogFragment 16dp 圆角） ---------- */
+.dim{position:absolute;inset:0;background:var(--scrim);z-index:5}
+.card{position:absolute;background:var(--surface);border-radius:16px;z-index:9;overflow:hidden;border:1px solid var(--divider);display:flex;flex-direction:column}
+.pkdlg{left:20px;right:20px;top:90px;bottom:90px}
+/* ---------- 工具栏行 ---------- */
+.trow{display:flex;align-items:center;min-height:52px;padding:2px 8px 2px 16px;flex:none}
+.tt{flex:1;min-width:0;font-size:19px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ---------- 路径面包屑（rv_path 24dp → 48dp） ---------- */
+.crumb{position:relative;height:48px;display:flex;align-items:center;padding:0 6px;overflow:hidden;border-bottom:1px solid var(--divider);flex:none}
+.crumb .cseg{flex:none;font-size:13px;color:var(--secondary);padding:4px 7px;white-space:nowrap;cursor:pointer}
+.crumb .cseg.cur{color:var(--text);font-weight:650}
+.crumb .csep{flex:none;width:14px;height:14px;color:var(--secondary);opacity:.75}
+.cfade{position:absolute;right:0;top:0;bottom:0;width:26px;background:linear-gradient(90deg,transparent,var(--surface));pointer-events:none}
+/* ---------- 文件列表（item_file.xml 52dp 行规格） ---------- */
+.flist{flex:1;min-height:0;overflow:hidden}
+.frow{display:flex;align-items:center;gap:14px;min-height:52px;padding:4px 16px;border-bottom:1px solid var(--divider);cursor:pointer}
+.frow:last-child{border-bottom:0}
+.frow .ficon{width:21px;height:21px;color:var(--secondary);flex:none}
+.frow .fname{flex:1;min-width:0;font-size:16px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.frow.dis .fname{color:var(--secondary)}
+.frow.dis{cursor:default}
+.frow.sel{background:var(--primary-soft)}
+.frow.sel .fname{font-weight:650}
+.frow .fchk{width:20px;height:20px;color:var(--primary);flex:none}
+/* ---------- 底栏：已选提示 + 确认钮 ---------- */
+.pkfoot{flex:none;display:flex;align-items:center;gap:12px;padding:10px 14px 14px;border-top:1px solid var(--divider);background:var(--surface)}
+.pkfoot .selinfo{flex:1;min-width:0;font-size:12.5px;color:var(--secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pkfoot .selinfo b{color:var(--text);font-weight:600}
+.okbtn{flex:none;border:0;border-radius:12px;background:var(--primary);color:var(--on-primary);font-size:14.5px;font-weight:650;min-height:48px;padding:0 28px;cursor:pointer;font-family:inherit}
+/* ---------- 居中 alert（lib alert + DialogEditTextBinding） ---------- */
+.alert{position:absolute;left:46px;right:46px;top:320px;z-index:9;background:var(--surface);border-radius:16px;border:1px solid var(--divider);padding:20px 20px 10px;display:flex;flex-direction:column;gap:14px}
+.alert .atitle{font-size:17px;font-weight:650;color:var(--text)}
+.afield{min-height:48px;border-radius:10px;background:var(--field-solid);display:flex;align-items:center;padding:0 14px;font-size:14px;color:var(--secondary)}
+.abtns{display:flex;justify-content:flex-end;gap:4px;padding-bottom:6px}
+.txtbtn{border:0;background:transparent;font-size:14px;font-weight:650;color:var(--secondary);padding:10px 14px;border-radius:10px;cursor:pointer;font-family:inherit;min-height:48px}
+.txtbtn.pri{color:var(--primary)}
+/* ---------- 空态（tv_empty 激活态） ---------- */
+.emptywrap{flex:1;min-height:0;display:grid;place-items:center}
+.ein{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:0 44px}
+.ein .icon{width:42px;height:42px;color:var(--secondary);opacity:.55}
+.etitle{font-size:15px;font-weight:600;color:var(--text)}
+.esub{font-size:12.5px;line-height:1.7;color:var(--secondary)}
+/* ---------- 行规格对照（页内说明块） ---------- */
+.specs{width:100%;max-width:1080px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+@media (max-width:900px){.specs{grid-template-columns:1fr}}
+.specbox{background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;
+ --bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--divider:rgba(0,0,0,.07);--field-solid:#f1efe9}
+.specbox .sf{font-size:13px;font-weight:700;color:#3a3833}
+.specbox .sf code{font-size:11.5px;font-weight:500;color:#60656d;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px;margin-left:8px}
+.specdemo{background:var(--bg);border-radius:10px;padding:4px 10px;overflow:hidden}
+.specmap{display:flex;flex-wrap:wrap;gap:6px}
+.specmap span{font-size:11.5px;color:#6d6a62;background:#faf9f7;border:1px solid rgba(0,0,0,.07);border-radius:6px;padding:4px 8px}
+.specmap span.new{color:#a8623c;border-color:rgba(255,107,44,.35);background:#fff7f2}
+/* ---------- 注释 / 映射表 / 页脚 ---------- */
+.notes{width:100%;max-width:1080px;font-size:12.5px;line-height:1.9;color:#60656d;border-top:1px dashed rgba(0,0,0,.12);padding-top:12px;margin:0}
+.notes code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px}
+.notes b{color:#45423a}
+.tok{width:100%;max-width:1080px;border-collapse:collapse;font-size:13px;color:#45423a}
+.tok th{font-size:12px;font-weight:700;color:#60656d;text-align:left;letter-spacing:.04em;padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.12)}
+.tok td{padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.07);vertical-align:top;line-height:1.7}
+.tok code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px;white-space:nowrap}
+.tok .new{color:#a8623c;font-weight:600}
+.tok .done{color:#3b7a45;font-weight:600}
+.foot{font-size:12px;color:#60656d;text-align:center;line-height:2}
+</style></head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 8a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+<symbol id="i-folder-new" viewBox="0 0 24 24"><path d="M3 8a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 10v6"/><path d="M9 13h6"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"/><path d="M14 3v4h4"/></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></symbol>
+<symbol id="i-arr-r" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></symbol>
+</defs></svg>
+
+<div class="wrap">
+
+<header class="page-head">
+  <div class="kicker">LEGADO V2 · MOCKUP</div>
+  <h1 class="h1">文件选择弹窗 · 新界面<small>FilePickerDialog · 换源 / 备份 / 导入共用内建选择器</small></h1>
+  <p class="desc">迭代自 <b>html/screens/12-missed-1.html §01 文件选择与导出</b>（已画未完全落地），功能与入口逐项保留。本稿补齐四处现状缺口：① 文件行由 5dp 紧凑行<b>对齐 item_file.xml 的 52dp 行规格</b>（≥48dp 触控）；② 路径面包屑由 24dp 升到 48dp 触控热区、当前段加粗、右缘渐隐；③ 选中态由 1dp 描边框改为<b>整行软色高亮 + 尾部对勾</b>；④ 确认钮升到 48dp 并在底栏左侧<b>新增「确定将返回什么」提示行</b>（分组选择弹窗同语汇）。视觉令牌与 screens 系列一致：主色 #FF6B2C（运行时可换肤，布局零硬编码）、暖纸白/暖黑表面、弱分割线、16dp 弹窗圆角、无阴影。入口分发层（HandleFileActivity 模式列表、手动输入）沿用 12-missed-1 §01 左屏，本稿不重画。</p>
+  <nav class="nav">
+    <a href="#s1"><b>01</b>选择文件 · 主态</a>
+    <a href="#s2"><b>02</b>选择文件夹 · DIR 模式</a>
+    <a href="#s3"><b>03</b>新建文件夹 / 空目录</a>
+    <a href="#s4"><b>04</b>行与控件规格</a>
+    <a href="#s5"><b>05</b>设计调整与落地映射</a>
+  </nav>
+</header>
+
+<!-- ================= 01 选择文件 · 主态 ================= -->
+<section class="screen" id="s1">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">01</span><h2 class="st-title">选择文件 · 主态（FILE 模式）</h2><span class="st-src">FilePickerDialog.kt · dialog_file_chooser.xml · item_file_picker.xml · allowExtensions 示例取自 BookSourceActivity.kt:197（txt/json）</span></div>
+    <div class="chips"><span>52dp 行（对齐 item_file.xml）</span><span>面包屑 48dp 热区 · 当前段加粗</span><span>扩展名不符置灰不降透明</span><span>选中行软色高亮+对勾</span><span class="new">底栏「已选」提示 · 新增</span><span>确认钮 48dp · 运行时 accent</span><span>创建文件夹入口在右上</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：已选中文件 -->
+    <div class="pair"><div class="theme-tag">浅色 · 已选中文件</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card pkdlg">
+        <div class="trow"><div class="tt">文件选择</div><button class="icon-btn" type="button" aria-label="创建文件夹"><svg class="icon"><use href="#i-folder-new"/></svg></button></div>
+        <div class="crumb">
+          <span class="cseg">root</span><svg class="csep"><use href="#i-arr-r"/></svg>
+          <span class="cseg">Download</span><svg class="csep"><use href="#i-arr-r"/></svg>
+          <span class="cseg cur">书源</span>
+          <div class="cfade"></div>
+        </div>
+        <div class="flist">
+          <div class="frow"><svg class="ficon"><use href="#i-up"/></svg><span class="fname">..</span></div>
+          <div class="frow"><svg class="ficon"><use href="#i-folder"/></svg><span class="fname">车载书源</span></div>
+          <div class="frow sel"><svg class="ficon"><use href="#i-file"/></svg><span class="fname">我的书源.json</span><svg class="fchk"><use href="#i-check"/></svg></div>
+          <div class="frow"><svg class="ficon"><use href="#i-file"/></svg><span class="fname">书源说明.txt</span></div>
+          <div class="frow dis"><svg class="ficon"><use href="#i-file"/></svg><span class="fname">笔记.md</span></div>
+          <div class="frow dis"><svg class="ficon"><use href="#i-file"/></svg><span class="fname">封面.png</span></div>
+          <div class="frow"><svg class="ficon"><use href="#i-folder"/></svg><span class="fname">更多源</span></div>
+          <div class="frow"><svg class="ficon"><use href="#i-file"/></svg><span class="fname">更新日志.txt</span></div>
+          <div class="frow dis"><svg class="ficon"><use href="#i-file"/></svg><span class="fname">书源备份.zip</span></div>
+        </div>
+        <div class="pkfoot">
+          <span class="selinfo">已选：<b>我的书源.json</b></span>
+          <button class="okbtn" type="button">确定</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：初始未选择 -->
+    <div class="pair"><div class="theme-tag">深色 · 初始未选择</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card pkdlg">
+        <div class="trow"><div class="tt">文件选择</div><button class="icon-btn" type="button" aria-label="创建文件夹"><svg class="icon"><use href="#i-folder-new"/></svg></button></div>
+        <div class="crumb">
+          <span class="cseg">root</span><svg class="csep"><use href="#i-arr-r"/></svg>
+          <span class="cseg cur">Download</span>
+          <div class="cfade"></div>
+        </div>
+        <div class="flist">
+          <div class="frow"><svg class="ficon"><use href="#i-up"/></svg><span class="fname">..</span></div>
+          <div class="frow"><svg class="ficon"><use href="#i-folder"/></svg><span class="fname">Fonts</span></div>
+          <div class="frow dis"><svg class="ficon"><use href="#i-file"/></svg><span class="fname">荆棘鸟.epub</span></div>
+          <div class="frow"><svg class="ficon"><use href="#i-file"/></svg><span class="fname">README.txt</span></div>
+          <div class="frow"><svg class="ficon"><use href="#i-folder"/></svg><span class="fname">备份</span></div>
+          <div class="frow dis"><svg class="ficon"><use href="#i-file"/></svg><span class="fname">notes.md</span></div>
+          <div class="frow"><svg class="ficon"><use href="#i-folder"/></svg><span class="fname">图片</span></div>
+          <div class="frow"><svg class="ficon"><use href="#i-file"/></svg><span class="fname">更新日志.txt</span></div>
+        </div>
+        <div class="pkfoot">
+          <span class="selinfo">未选择文件</span>
+          <button class="okbtn" type="button">确定</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>入口</code> — HandleFileActivity 模式列表（系统/自带选择器/手动输入，HandleFileActivity.kt:91-166、231-251）选「自带文件选择器」后弹出本窗；分发层沿用 12-missed-1 §01 左屏，不重画。弹窗 0.9×0.8（FilePickerDialog.kt:76 setLayout），即稿中 371×720 卡片、16dp 圆角（DECISIONS §4）。注意现状 <code>FilePickerDialog.kt:82 setBackgroundResource</code> 在基类 setSheetBackground（BaseDialogFragment.kt:84 → ViewExtensions.kt:329-333，16dp 圆角容器）之后执行，已把本页覆盖为直角——恢复落点见 §05 首行。</li>
+    <li><code>标题</code> — 入参 title 优先，否则 FILE=「文件选择」/DIR=「文件夹选择」（FilePickerDialog.kt:90-96，values-zh/strings.xml:628-629）；工具栏已去 primaryColor 实底、标题 on_surface（FilePickerDialog.kt:80-82 + dialog_file_chooser.xml:15，12-missed-1 #01 预防项已落地，本稿沿用）。</li>
+    <li><code>文件行</code> — 52dp 规格对齐 item_file.xml（:6 minHeight 52dp、:22-33 文字 16sp medium）；「..」上级仅出现在非根目录（FilePickerViewModel.kt:47-53 组装），点击回上级（FilePickerDialog.kt:230-233）；目录点击进入（:234-237）；文件点击且扩展名匹配才可选中（:238-244）。置灰=on_surface_variant 全色不降透明（:212 已落地，亮 5.87:1 / 暗 7.96:1）。</li>
+    <li><code>选中态</code> — 单选高亮整行软色 + 尾部对勾；现状为 shape_radius_1dp 描边框（FilePickerDialog.kt:216-219、283-288），视觉噪音大且不指示「已选」。高亮色/对勾运行时取 ThemeStore.accentColor/primaryColor（DECISIONS §8 运行时着色疗法），稿面暖橙仅为默认肤演示。</li>
+    <li><code>底栏提示（新增）</code> — 左侧 12.5sp 次要文字实时显示「确定将返回的文件」；未选择时显示「未选择文件」，此时点确定弹 toast「请选择文件」（FilePickerDialog.kt:120-122 行为不变）。与分组选择弹窗底栏「已选 n 组」同语汇（group-select §01）。</li>
+    <li><code>确认钮</code> — 保留 AccentBgTextView 控件（运行时 accentColor 着色、按亮度自动黑/白字，AccentBgTextView.kt:33-48，MASTER §4 合规），几何升为 min-height 48dp、12dp 圆角、左右 14dp 边距；FILE 模式确定即回传 selectFile.path（FilePickerDialog.kt:119-126）。</li>
+    <li><code>创建文件夹</code> — 右上图标（menu/file_chooser.xml 唯一项 menu_create，showAsAction=always；图标经 applyTint 走 on_surface，FilePickerDialog.kt:99-103）→ 居中 alert 输入文件夹名（§03 左屏）。</li>
+  </ul>
+</section>
+
+<!-- ================= 02 选择文件夹 ================= -->
+<section class="screen" id="s2">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">02</span><h2 class="st-title">选择文件夹 · DIR 模式</h2><span class="st-src">FilePickerViewModel.kt:24-25 isSelectDir · FilePickerDialog.kt:113-119 确定回传 lastDir</span></div>
+    <div class="chips"><span>文件全部置灰不可选</span><span>确定=当前所在目录</span><span class="new">底栏显示当前目录路径 · 新增</span><span>面包屑深路径滚动+右渐隐</span><span>「..」与面包屑双回退</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：DIR 常规 -->
+    <div class="pair"><div class="theme-tag">浅色 · 常规浏览</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card pkdlg">
+        <div class="trow"><div class="tt">文件夹选择</div><button class="icon-btn" type="button" aria-label="创建文件夹"><svg class="icon"><use href="#i-folder-new"/></svg></button></div>
+        <div class="crumb">
+          <span class="cseg">root</span><svg class="csep"><use href="#i-arr-r"/></svg>
+          <span class="cseg cur">legado</span>
+          <div class="cfade"></div>
+        </div>
+        <div class="flist">
+          <div class="frow"><svg class="ficon"><use href="#i-up"/></svg><span class="fname">..</span></div>
+          <div class="frow"><svg class="ficon"><use href="#i-folder"/></svg><span class="fname">book</span></div>
+          <div class="frow"><svg class="ficon"><use href="#i-folder"/></svg><span class="fname">cache</span></div>
+          <div class="frow"><svg class="ficon"><use href="#i-folder"/></svg><span class="fname">fonts</span></div>
+          <div class="frow"><svg class="ficon"><use href="#i-folder"/></svg><span class="fname">backup</span></div>
+          <div class="frow dis"><svg class="ficon"><use href="#i-file"/></svg><span class="fname">说明.txt</span></div>
+          <div class="frow dis"><svg class="ficon"><use href="#i-file"/></svg><span class="fname">config.json</span></div>
+          <div class="frow dis"><svg class="ficon"><use href="#i-file"/></svg><span class="fname">crash.log</span></div>
+          <div class="frow"><svg class="ficon"><use href="#i-folder"/></svg><span class="fname">will</span></div>
+        </div>
+        <div class="pkfoot">
+          <span class="selinfo">当前：<b>/storage/emulated/0/legado</b></span>
+          <button class="okbtn" type="button">确定</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：深路径滚动 -->
+    <div class="pair"><div class="theme-tag">深色 · 深路径滚动</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card pkdlg">
+        <div class="trow"><div class="tt">文件夹选择</div><button class="icon-btn" type="button" aria-label="创建文件夹"><svg class="icon"><use href="#i-folder-new"/></svg></button></div>
+        <div class="crumb">
+          <span class="cseg">root</span><svg class="csep"><use href="#i-arr-r"/></svg>
+          <span class="cseg">storage</span><svg class="csep"><use href="#i-arr-r"/></svg>
+          <span class="cseg">emulated</span><svg class="csep"><use href="#i-arr-r"/></svg>
+          <span class="cseg">0</span><svg class="csep"><use href="#i-arr-r"/></svg>
+          <span class="cseg">备份</span><svg class="csep"><use href="#i-arr-r"/></svg>
+          <span class="cseg cur">2026-10</span>
+          <div class="cfade"></div>
+        </div>
+        <div class="flist">
+          <div class="frow"><svg class="ficon"><use href="#i-up"/></svg><span class="fname">..</span></div>
+          <div class="frow"><svg class="ficon"><use href="#i-folder"/></svg><span class="fname">legado</span></div>
+          <div class="frow dis"><svg class="ficon"><use href="#i-file"/></svg><span class="fname">legado-20261004.zip</span></div>
+          <div class="frow dis"><svg class="ficon"><use href="#i-file"/></svg><span class="fname">legado-20261011.zip</span></div>
+          <div class="frow"><svg class="ficon"><use href="#i-folder"/></svg><span class="fname">老备份</span></div>
+          <div class="frow dis"><svg class="ficon"><use href="#i-file"/></svg><span class="fname">说明.txt</span></div>
+          <div class="frow"><svg class="ficon"><use href="#i-folder"/></svg><span class="fname">webdav</span></div>
+          <div class="frow dis"><svg class="ficon"><use href="#i-file"/></svg><span class="fname">cover.jpg</span></div>
+        </div>
+        <div class="pkfoot">
+          <span class="selinfo">当前：<b>/storage/emulated/0/备份/2026-10</b></span>
+          <button class="okbtn" type="button">确定</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>模式行为</code> — DIR 模式下文件行一律置灰、点击无响应（FilePickerDialog.kt:267-271 分支：isSelectDir → disabledTextColor）；目录与「..」正常可点。确定回传当前所在目录 lastDir.path（:113-119），无需显式选中动作。</li>
+    <li><code>底栏路径（新增）</code> — 左侧提示由「已选文件」换成「当前：目录绝对路径」，<code>ellipsize=start</code> 保住层级末段可见（用户确认的正是末段）；与确定按钮的返回值严格一致，消除「点确定到底选了哪个目录」的不确定感。</li>
+    <li><code>面包屑</code> — root + 逐级子目录（PathAdapter 头视图「root」+ 各级目录，FilePickerDialog.kt:169-205）；点击任一段回跳（:189-195 截断 subDocs 并 upFiles）。深路径单行横滑、右缘 26px 渐隐提示可滑，setItems 后自动滚到当前段（落点见 §05「面包屑当前段 + 自动滚动」行）；当前段 on_surface/650、历史段 on_surface_variant。</li>
+    <li><code>几何</code> — rv_path 高 24dp → 48dp，item_path_picker.xml:7 height=match_parent 自动撑满，段落触控热区即整行 48dp（现状 24dp 不达标）。</li>
+  </ul>
+</section>
+
+<!-- ================= 03 新建文件夹 / 空目录 ================= -->
+<section class="screen" id="s3">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">03</span><h2 class="st-title">新建文件夹弹窗与空目录态</h2><span class="st-src">FilePickerDialog.kt:131-150 menu_create alert · dialog_edit_text.xml · FilePickerViewModel.kt:57-70 createFolder</span></div>
+    <div class="chips"><span>alert 居中小卡 + 输入域</span><span>dialog_edit_text 与手动输入共用</span><span>输入域 44→48dp</span><span class="new">空目录空态 · 新增（激活 tv_empty）</span><span class="new">判定：空列表或仅剩「..」行</span><span>非法名/空名校验走 toast</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：新建文件夹 alert -->
+    <div class="pair"><div class="theme-tag">浅色 · 新建文件夹</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card pkdlg">
+        <div class="trow"><div class="tt">文件夹选择</div><button class="icon-btn" type="button" aria-label="创建文件夹"><svg class="icon"><use href="#i-folder-new"/></svg></button></div>
+        <div class="crumb">
+          <span class="cseg">root</span><svg class="csep"><use href="#i-arr-r"/></svg>
+          <span class="cseg cur">legado</span>
+          <div class="cfade"></div>
+        </div>
+        <div class="flist">
+          <div class="frow"><svg class="ficon"><use href="#i-up"/></svg><span class="fname">..</span></div>
+          <div class="frow"><svg class="ficon"><use href="#i-folder"/></svg><span class="fname">book</span></div>
+          <div class="frow dis"><svg class="ficon"><use href="#i-file"/></svg><span class="fname">说明.txt</span></div>
+        </div>
+        <div class="pkfoot">
+          <span class="selinfo">当前：<b>/storage/emulated/0/legado</b></span>
+          <button class="okbtn" type="button">确定</button>
+        </div>
+      </div>
+      <div class="alert">
+        <div class="atitle">创建文件夹</div>
+        <div class="afield">文件夹名</div>
+        <div class="abtns"><button class="txtbtn" type="button">取消</button><button class="txtbtn pri" type="button">确定</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：空目录 -->
+    <div class="pair"><div class="theme-tag">深色 · 空目录（新增空态）</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card pkdlg">
+        <div class="trow"><div class="tt">文件选择</div><button class="icon-btn" type="button" aria-label="创建文件夹"><svg class="icon"><use href="#i-folder-new"/></svg></button></div>
+        <div class="crumb">
+          <span class="cseg">root</span><svg class="csep"><use href="#i-arr-r"/></svg>
+          <span class="cseg cur">空相册</span>
+          <div class="cfade"></div>
+        </div>
+        <div class="flist" style="display:flex;flex-direction:column">
+          <div class="frow"><svg class="ficon"><use href="#i-up"/></svg><span class="fname">..</span></div>
+          <div class="emptywrap" style="flex:1">
+            <div class="ein">
+              <svg class="icon"><use href="#i-folder"/></svg>
+              <div class="etitle">此文件夹为空</div>
+              <div class="esub">点「..」或面包屑返回上级目录，<br>也可从右上角创建文件夹</div>
+            </div>
+          </div>
+        </div>
+        <div class="pkfoot">
+          <span class="selinfo">未选择文件</span>
+          <button class="okbtn" type="button">确定</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>新建文件夹</code> — 右上 menu_create → lib alert + DialogEditTextBinding（hint「文件夹名」，FilePickerDialog.kt:131-150）；确定后 createFolder 校验空名/越界名（FilePickerViewModel.kt:59-65 toastOnUi）并刷新列表（:66-69 onSuccess → upFiles）。输入域即 dialog_edit_text.xml（bg_edit_filled：surface_container_high + 10dp 圆角），minHeight 44→48dp（一处改动同时服务 HandleFileActivity.kt:169-198 手动输入路径弹窗）。</li>
+    <li><code>空态（新增）</code> — 现状 dialog_file_chooser.xml:38-45 已声明 <code>tv_empty</code> 但 FilePickerDialog.kt 全程未引用（死视图，空目录就是一块空白）；本稿激活之：图标 + 「此文件夹为空」+ 引导文案，居中于剩余列表区，「..」行保留在空态上方——子目录空时列表本就只剩该行。判定 = onSuccess 后「列表为空（根目录）<b>或仅剩 .. 行（子目录）</b>」：<code>upFiles</code> 非根目录恒把 parentFile 插在列表头（FilePickerViewModel.kt:44-51），空子目录返回的是仅含一行 .. 的列表（:55 onSuccess），单用 isEmpty 判不到。FILE 模式空目录下确定维持 toast「请选择文件」；DIR 模式空目录确定照常回传该目录（行为不变）。</li>
+    <li><code>防闪烁</code> — FilePickerViewModel.kt:52-53 加载开始先 postValue(emptyList)，直接按 observe 到的空列表显示空态会在加载瞬间闪现；须以「onSuccess 后判定（或加载标志位）」落地，见 §05 映射 #9。</li>
+  </ul>
+</section>
+
+<!-- ================= 04 行与控件规格 ================= -->
+<section class="screen" id="s4">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">04</span><h2 class="st-title">行与控件规格 · 对照现状补齐</h2><span class="st-src">item_file_picker.xml ↔ item_file.xml（52dp 基准）· item_path_picker.xml · dialog_file_chooser.xml 底栏 · dialog_edit_text.xml</span></div>
+    <div class="chips"><span>文件行 34dp→52dp</span><span>面包屑 24dp→48dp</span><span>确认钮 ~43dp→48dp</span><span>输入域 44dp→48dp</span><span>触控目标全部 ≥48dp</span></div>
+  </div>
+  <div class="specs">
+    <div class="specbox">
+      <div class="sf">文件行<code>item_file_picker.xml → 对齐 item_file.xml</code></div>
+      <div class="specdemo">
+        <div class="frow"><svg class="ficon"><use href="#i-folder"/></svg><span class="fname">车载书源</span></div>
+        <div class="frow"><svg class="ficon"><use href="#i-file"/></svg><span class="fname">我的书源.json</span><svg class="fchk"><use href="#i-check"/></svg></div>
+        <div class="frow dis" style="border-bottom:0"><svg class="ficon"><use href="#i-file"/></svg><span class="fname">封面.png</span></div>
+      </div>
+      <div class="specmap"><span>min-height 52dp（item_file.xml:6）</span><span>文字 16sp / medium / on_surface</span><span>图标 20-24dp · on_surface_variant</span><span>不匹配 = on_surface_variant 全色</span><span>选中 = accent 软底 + 对勾</span><span>分隔线 1px outline_variant</span></div>
+    </div>
+    <div class="specbox">
+      <div class="sf">路径面包屑<code>item_path_picker.xml + rv_path</code></div>
+      <div class="specdemo">
+        <div class="crumb" style="border-radius:8px;border-bottom:0">
+          <span class="cseg">root</span><svg class="csep"><use href="#i-arr-r"/></svg>
+          <span class="cseg">storage</span><svg class="csep"><use href="#i-arr-r"/></svg>
+          <span class="cseg cur">Fonts</span>
+          <div class="cfade"></div>
+        </div>
+      </div>
+      <div class="specmap"><span>bar 高 48dp = 段落触控热区（现状 24dp）</span><span>段 13sp on_surface_variant</span><span>当前段 on_surface / 650</span><span>› 14dp 与段间距 4-7dp</span><span>右缘渐隐提示可滑</span><span class="new">当前段加粗 · 增强</span></div>
+    </div>
+    <div class="specbox">
+      <div class="sf">底部确认钮 + 提示行<code>dialog_file_chooser.xml tv_ok</code></div>
+      <div class="specdemo">
+        <div class="pkfoot" style="border-radius:10px;border:1px solid var(--divider);border-top-width:1px">
+          <span class="selinfo">已选：<b>我的书源.json</b></span>
+          <button class="okbtn" type="button">确定</button>
+        </div>
+      </div>
+      <div class="specmap"><span>保留 AccentBgTextView（运行时 accent）</span><span>min-height 48dp（现状 ~43dp）</span><span>圆角 12dp（app:radius）</span><span>文字 14.5sp / 650 · 自动黑/白</span><span class="new">左侧提示行 · 新增</span><span>提示 12.5sp on_surface_variant</span></div>
+    </div>
+    <div class="specbox">
+      <div class="sf">输入域<code>dialog_edit_text.xml</code></div>
+      <div class="specdemo">
+        <div class="afield" style="border:1px solid var(--divider)">文件夹名</div>
+      </div>
+      <div class="specmap"><span>bg_edit_filled 已就绪（surface2+10dp 圆角）</span><span>min-height 44→48dp</span><span>外 padding 22dp · 内 14dp</span><span>文字 14sp on_surface · hint 次要色</span><span>新建文件夹 / 手动输入路径共用</span></div>
+    </div>
+  </div>
+  <ul class="notes">
+    <li><code>密度</code> — 52dp 行与 item_file.xml（书源管理/换源列表同一行基准）对齐后，720px 高弹窗可视约 10 行，与 12-missed-1 §01 稿密度相当；不新增第二行元信息（文件大小/日期在现有 File 数据模型外需额外 IO，且与既有页面单行密度不一致，不做）。</li>
+    <li><code>图标资产</code> — 现状 FilePickerIcon.java 为字节数组 PNG（单色固定灰，明暗同图）；稿内以同形线性图标示意，落地建议换 <code>ic_folder/ic_file/ic_arrow_upward</code> vector 并 tint on_surface_variant（明暗自适应、可跟随换肤），PNG 可整体退役——属可选增强，不阻塞布局改动。</li>
+    <li><code>触控汇总</code> — 文件行 52dp、面包屑整行 48dp、Toolbar 菜单项 48dp（规范默认）、确认钮 48dp、输入域 48dp；相邻行分割线 1px 不侵触控。行内无并排多目标，间距规则自动满足。</li>
+  </ul>
+</section>
+
+<!-- ================= 05 设计调整与落地映射 ================= -->
+<section class="screen" id="s5">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">05</span><h2 class="st-title">设计调整与落地映射</h2><span class="st-src">逐条落点：布局文件 / 控件 / kt 绑定处（行号以 classic-base 现状为准）</span></div>
+  </div>
+  <table class="tok">
+    <tr><th style="width:24%">改动</th><th style="width:38%">落点</th><th>说明</th></tr>
+    <tr><td><span class="done">已落地</span> 工具栏去主色实底<br><span class="new">修正</span> 恢复 16dp 圆角</td><td><code>FilePickerDialog.kt:80-82</code> + <code>dialog_file_chooser.xml:7,25</code>（基类容器 <code>BaseDialogFragment.kt:84</code> → <code>ViewExtensions.kt:329-344</code>）</td><td>工具栏透明、titleTextColor=on_surface 已落地；但 <code>:82 view.setBackgroundResource(background_card)</code> 在 BaseDialogFragment.onViewCreated:84 <code>setSheetBackground(ThemeStore.backgroundColor())</code>（16dp 圆角容器，corner_radius_lg，ViewExtensions.kt:329-333）之后于 onFragmentCreated（BaseDialogFragment.kt:86）执行，把容器覆盖回直角平色——本页现状即直角，稿中 16dp 圆角当前并未生效。落点：<code>:82</code> 替换为 <code>view.background = context.sheetBackground(getCompatColor(R.color.surface_container))</code>（复用同一令牌函数，保 16dp 圆角且卡面与稿面一致；纯删除亦可，卡面则随 ThemeStore.backgroundColor()=surface 令牌）；<code>dialog_file_chooser.xml:7</code> 根布局与 <code>:25</code> rv_path 的平色 android:background 一并删除（:7 虽会被代码覆盖、删除只为消除歧义；:25 纸色横带随卡面统一；列表容器 :31 background_card 与卡面同色可保留）。</td></tr>
+    <tr><td>文件行补齐 52dp</td><td><code>item_file_picker.xml:7-14</code></td><td>现 LinearLayout padding=5dp、无 minHeight（行高约 34dp）。对齐 item_file.xml:6-33：minHeight 52dp、padding 6/8dp+start 16dp、icon 20dp marginStart 16dp、文字 16sp sans-serif-medium on_surface、singleLine+ellipsize=end。</td></tr>
+    <tr><td>行文字色改令牌</td><td><code>FilePickerDialog.kt:209,267-281</code></td><td>getPrimaryTextColor(...) → 直接取 <code>R.color.on_surface</code>；置灰维持 :212 的 on_surface_variant 全色（已落地），不叠透明度。</td></tr>
+    <tr><td>选中态重绘</td><td><code>FilePickerDialog.kt:216-219,283-288</code> + <code>item_file_picker.xml</code>（新增 iv_check）</td><td>弃 shape_radius_1dp 描边框；高亮 drawable = GradientDrawable 8dp 圆角、solid = accentColor 叠 12% alpha（运行时着色，DECISIONS §8 疗法，同 FontAdapter 先例）；尾部对勾 20dp、tint 运行时 primaryColor、默认 gone，convert 按 selectFile 切换。备选零代码方案：solid <code>@color/primary_container</code>（令牌表既有，不随肤），见 NEED-DECISION。</td></tr>
+    <tr><td>面包屑热区 48dp</td><td><code>dialog_file_chooser.xml:19-25</code></td><td>rv_path 高 24dp → 48dp；item_path_picker.xml:7 height=match_parent 自动撑满即整行热区；段落文字 12sp→13sp、箭头 14dp→16dp（:12-28），底色 :25 <code>@color/background</code> → surface_container，下缘补 1px outline_variant 分隔。</td></tr>
+    <tr><td><span class="new">新增</span> 面包屑当前段 + 自动滚动</td><td><code>FilePickerDialog.kt:197-204</code>（convert）+ PathAdapter setItems 四处调用（:176-177、:192-193、:232、:236）</td><td>当前段：末段（layoutPosition==itemCount-1，注意 headerView 偏移）on_surface + 650 字重，历史段 on_surface_variant。自动滚动：RecyclerAdapter.setItems（RecyclerAdapter.kt:96）非 open 不可重写，建议对话框内封私有方法统一——<code>upPath(items){ pathAdapter.setItems(items); binding.rvPath.scrollToPosition(pathAdapter.itemCount - 1) }</code> 替换四处调用（itemCount 含 headerView，末位即当前段；进入/回跳/上级后当前段始终可见）。两者均纯绑定逻辑，无新数据依赖，可整体移除。</td></tr>
+    <tr><td>确认钮升格</td><td><code>dialog_file_chooser.xml:49-56</code></td><td>保留 AccentBgTextView（AccentBgTextView.kt:33-48 运行时 accentColor + 自动黑/白字，无 XML 硬编码）；min-height 48dp（现 padding 10dp ≈43dp）、margin 3dp → 14dp、<code>app:radius="12"</code>、文字 14.5sp/650。</td></tr>
+    <tr><td><span class="new">新增</span> 底栏提示行</td><td><code>dialog_file_chooser.xml</code> 底栏（tv_ok 外包 LinearLayout）+ <code>FilePickerDialog.kt:85-88,283</code></td><td>tv_pick_hint：12.5sp on_surface_variant、单行 ellipsize=start。FILE 模式绑 selectFile 名（convert 选中回调处刷新，无选中显示「未选择文件」）；DIR 模式绑 viewModel.lastDir.path（observe 回调处刷新，前缀「当前：」）。与 group-select 底栏「已选 n 组」同构，可整体移除。</td></tr>
+    <tr><td><span class="new">新增</span> 空目录空态</td><td><code>dialog_file_chooser.xml:38-45</code>（tv_empty 现为死视图）+ <code>FilePickerDialog.kt:85-88</code></td><td>激活 tv_empty：居中「此文件夹为空」+ 引导文案，「..」行保留叠在空态上方。判定 = onSuccess 后「列表为空（根目录）<b>或仅剩 .. 行（子目录）</b>」——upFiles 非根目录恒把 parentFile 插在列表头（FilePickerViewModel.kt:44-51，onSuccess :55），空子目录返回的是仅含一行 .. 的列表，单用 isEmpty 判不到；勿按 observe 空列表直接显示（:52-53 加载中先 post 空列表，防闪烁）。新字符串 <code>empty_directory</code> 入 values / values-zh。</td></tr>
+    <tr><td>输入域 48dp</td><td><code>dialog_edit_text.xml:15</code></td><td>minHeight 44dp → 48dp（可同步移除 :22 的 tools:ignore TouchTargetSizeCheck）；bg_edit_filled（surface_container_high+10dp 圆角）不动；同时服务新建文件夹（FilePickerDialog.kt:131-150）与手动输入路径（HandleFileActivity.kt:169-198）两处 alert。</td></tr>
+    <tr><td>行为不动清单</td><td><code>FilePickerDialog.kt:113-128,226-248,293-295</code> · <code>FilePickerViewModel.kt</code> · <code>HandleFileActivity.kt:91-166</code></td><td>确定回传/扩展名过滤/目录进入与回退/创建文件夹校验/CallBack 回传/onDismiss finish 全部维持现状；本稿无任何行为删除，仅展示层补齐。</td></tr>
+  </table>
+  <ul class="notes">
+    <li><code>[NEED-DECISION]</code> — ①选中高亮：默认「运行时 accent 12% 实底 + primary 对勾」（随换肤，约 5 行 kt）；备选「静态 @color/primary_container」（零代码，但不随肤）；②图标资产：内置 PNG（FilePickerIcon.java）→ vector + on_surface_variant tint 属可选增强；③底栏提示行、面包屑当前段加粗为增强项，可整体移除回到「仅列表+确认钮」；④空态文案需新增 1 条字符串资源。</li>
+    <li><code>换肤</code> — 全稿仅两处出现主色：选中对勾/高亮与确认钮，均走运行时 ThemeStore.accentColor/primaryColor（AccentBgTextView 原生支持）；布局文件零 <code>@color/primary</code>/<code>@color/accent</code> 硬编码（MASTER §4）；稿面 #FF6B2C 仅为默认主题兜底演示。</li>
+    <li><code>无障碍</code> — 行 52dp、面包屑 48dp、确认钮 48dp、输入域 48dp；置灰文件对比度亮 5.87:1 / 暗 7.96:1（12-missed-1 §01 实算）；次要文字 on_surface_variant 不低于 4.5:1；无纯黑/纯白大面积、无 2dp 直角弹窗、无阴影（MASTER §4 反模式清单逐项核对）。</li>
+  </ul>
+</section>
+
+<footer class="foot">legado v2 · mockup · file-picker-dialog —— 功能对照 FilePickerDialog.kt / HandleFileActivity.kt（classic-base）· 前稿 design-system/html/screens/12-missed-1.html §01</footer>
+</div>
+</body></html>

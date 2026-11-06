@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- URL 请求选项编辑弹窗（url-variable-dialogs 稿 §04 映射 1-8）：
+     卡底 bg_dialog_card（16dp 圆角，DECISIONS §4）；8 个输入域 field 卡化（bg_edit_filled + label/值
+     双行，与已落地 dialog_bookmark.xml:44-77 同栅格；hint 保留作空值占位——稿面 .mut 态即 hint）；
+     useWebView 勾选行照 item_group_select.xml:45-68 组件语言（AppCompatCheckBox button=@null 方框 +
+     14dp ic_check 白勾叠层，方框描边/选中实底由 UrlOptionDialog 运行时注入，布局禁硬编码 primary）；
+     field 卡 minHeight 50dp + clickable 点击转焦内部输入框（补足 ≥48dp 触控目标并阻断点击冒泡到
+     root dismiss）；控件 id 与行为不变：cb_use_web_view / edit_method…edit_js / tv_ok / vw_bg -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,41 +17,53 @@
         android:id="@+id/vw_bg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_card_view"
-        android:orientation="vertical"
         android:layout_gravity="center"
-        android:padding="16dp"
+        android:background="@drawable/bg_dialog_card"
+        android:orientation="vertical"
         tools:ignore="UselessParent">
 
+        <!-- 标题行（稿 .dhd）：18sp/650 on_surface；右上 tv_ok 文字钮 min-height 48dp，
+             色 on_primary_soft（亮 #B34A15 / 暗回主色，dialog_bookmark.xml:201-208 同款先例） -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
+            android:minHeight="52dp"
             android:orientation="horizontal"
-            android:paddingBottom="10dp">
+            android:paddingLeft="18dp"
+            android:paddingTop="6dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="2dp">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/url_option"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <Space
                 android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="@string/url_option"
+                android:textColor="@color/primaryText"
+                android:textFontWeight="650"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:ignore="UnusedAttribute" />
 
             <TextView
                 android:id="@+id/tv_ok"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="12dp"
-                android:text="@string/ok" />
+                android:minHeight="48dp"
+                android:paddingLeft="14dp"
+                android:paddingTop="12dp"
+                android:paddingRight="14dp"
+                android:paddingBottom="12dp"
+                android:text="@string/ok"
+                android:textColor="@color/on_primary_soft" />
 
         </LinearLayout>
 
+        <!-- 滚动区保留（稿 .dbody 上下 4/12dp）；标题行固定卡顶不随滚动 -->
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -52,132 +72,403 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingTop="4dp"
+                android:paddingBottom="12dp">
 
-                <io.legado.app.lib.theme.view.ThemeCheckBox
-                    android:id="@+id/cb_use_web_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="useWebView"
-                    tools:ignore="HardcodedText" />
-
-                <io.legado.app.ui.widget.text.TextInputLayout
-                    android:id="@+id/layout_method"
+                <!-- useWebView 勾选行（稿 .cbrow）：min-height 48dp 整行可点翻转勾选态；
+                     22dp 方框槽 + 14dp 白勾叠层随勾选显隐，方框背景运行时注入 -->
+                <LinearLayout
+                    android:id="@+id/vw_use_web_view"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="10dp"
+                    android:clickable="true"
+                    android:gravity="center_vertical"
+                    android:minHeight="48dp"
+                    android:orientation="horizontal"
+                    android:paddingLeft="14dp"
+                    android:paddingTop="12dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="12dp">
+
+                    <FrameLayout
+                        android:layout_width="22dp"
+                        android:layout_height="22dp">
+
+                        <androidx.appcompat.widget.AppCompatCheckBox
+                            android:id="@+id/cb_use_web_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@null"
+                            android:button="@null"
+                            android:clickable="false"
+                            android:focusable="false" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/iv_check"
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_check"
+                            android:visibility="gone"
+                            app:tint="@android:color/white" />
+
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="useWebView"
+                        android:textColor="@color/primaryText"
+                        android:textSize="14sp"
+                        tools:ignore="HardcodedText" />
+
+                </LinearLayout>
+
+                <!-- field 卡① method：label 11.5sp secondaryText + 值 14sp primaryText，
+                     hint 保留作空值占位；卡底/聚焦描边由 UrlOptionDialog 运行时注入 -->
+                <LinearLayout
+                    android:id="@+id/vw_field_method"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="10dp"
+                    android:addStatesFromChildren="true"
+                    android:background="@drawable/bg_edit_filled"
+                    android:clickable="true"
+                    android:minHeight="50dp"
+                    android:orientation="vertical"
+                    android:paddingLeft="14dp"
+                    android:paddingTop="7dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="method"
+                        android:textColor="@color/secondaryText"
+                        android:textSize="11.5sp"
+                        tools:ignore="HardcodedText" />
 
                     <io.legado.app.ui.widget.text.AutoCompleteTextView
                         android:id="@+id/edit_method"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:background="@null"
                         android:hint="method"
-                        tools:ignore="HardcodedText,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+                        android:minHeight="24dp"
+                        android:textColor="@color/primaryText"
+                        android:textColorHint="@color/secondaryText"
+                        android:textCursorDrawable="@drawable/shape_text_cursor"
+                        android:textSize="14sp"
+                        tools:ignore="HardcodedText,SpeakableTextPresentCheck,TouchTargetSizeCheck"
+                        tools:text="GET" />
 
-                </io.legado.app.ui.widget.text.TextInputLayout>
+                </LinearLayout>
 
-                <io.legado.app.ui.widget.text.TextInputLayout
-                    android:id="@+id/layout_charset"
+                <LinearLayout
+                    android:id="@+id/vw_field_charset"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="10dp"
+                    android:addStatesFromChildren="true"
+                    android:background="@drawable/bg_edit_filled"
+                    android:clickable="true"
+                    android:minHeight="50dp"
+                    android:orientation="vertical"
+                    android:paddingLeft="14dp"
+                    android:paddingTop="7dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="charset"
+                        android:textColor="@color/secondaryText"
+                        android:textSize="11.5sp"
+                        tools:ignore="HardcodedText" />
 
                     <io.legado.app.ui.widget.text.AutoCompleteTextView
                         android:id="@+id/edit_charset"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:background="@null"
                         android:hint="charset"
-                        tools:ignore="HardcodedText,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+                        android:minHeight="24dp"
+                        android:textColor="@color/primaryText"
+                        android:textColorHint="@color/secondaryText"
+                        android:textCursorDrawable="@drawable/shape_text_cursor"
+                        android:textSize="14sp"
+                        tools:ignore="HardcodedText,SpeakableTextPresentCheck,TouchTargetSizeCheck"
+                        tools:text="UTF-8" />
 
-                </io.legado.app.ui.widget.text.TextInputLayout>
+                </LinearLayout>
 
-                <io.legado.app.ui.widget.text.TextInputLayout
-                    android:id="@+id/layout_headers"
+                <LinearLayout
+                    android:id="@+id/vw_field_headers"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="10dp"
+                    android:addStatesFromChildren="true"
+                    android:background="@drawable/bg_edit_filled"
+                    android:clickable="true"
+                    android:minHeight="50dp"
+                    android:orientation="vertical"
+                    android:paddingLeft="14dp"
+                    android:paddingTop="7dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="headers"
+                        android:textColor="@color/secondaryText"
+                        android:textSize="11.5sp"
+                        tools:ignore="HardcodedText" />
 
                     <io.legado.app.ui.widget.text.AutoCompleteTextView
                         android:id="@+id/edit_headers"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:background="@null"
                         android:hint="headers"
-                        tools:ignore="HardcodedText,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+                        android:minHeight="24dp"
+                        android:textColor="@color/primaryText"
+                        android:textColorHint="@color/secondaryText"
+                        android:textCursorDrawable="@drawable/shape_text_cursor"
+                        android:textSize="14sp"
+                        tools:ignore="HardcodedText,SpeakableTextPresentCheck,TouchTargetSizeCheck"
+                        tools:text="{&quot;Accept&quot;:&quot;text/html&quot;}" />
 
-                </io.legado.app.ui.widget.text.TextInputLayout>
+                </LinearLayout>
 
-                <io.legado.app.ui.widget.text.TextInputLayout
-                    android:id="@+id/layout_body"
+                <LinearLayout
+                    android:id="@+id/vw_field_body"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="10dp"
+                    android:addStatesFromChildren="true"
+                    android:background="@drawable/bg_edit_filled"
+                    android:clickable="true"
+                    android:minHeight="50dp"
+                    android:orientation="vertical"
+                    android:paddingLeft="14dp"
+                    android:paddingTop="7dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="body"
+                        android:textColor="@color/secondaryText"
+                        android:textSize="11.5sp"
+                        tools:ignore="HardcodedText" />
 
                     <io.legado.app.ui.widget.text.AutoCompleteTextView
                         android:id="@+id/edit_body"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:background="@null"
                         android:hint="body"
+                        android:minHeight="24dp"
+                        android:textColor="@color/primaryText"
+                        android:textColorHint="@color/secondaryText"
+                        android:textCursorDrawable="@drawable/shape_text_cursor"
+                        android:textSize="14sp"
                         tools:ignore="HardcodedText,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
-                </io.legado.app.ui.widget.text.TextInputLayout>
+                </LinearLayout>
 
-                <io.legado.app.ui.widget.text.TextInputLayout
-                    android:id="@+id/layout_type"
+                <LinearLayout
+                    android:id="@+id/vw_field_type"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="10dp"
+                    android:addStatesFromChildren="true"
+                    android:background="@drawable/bg_edit_filled"
+                    android:clickable="true"
+                    android:minHeight="50dp"
+                    android:orientation="vertical"
+                    android:paddingLeft="14dp"
+                    android:paddingTop="7dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="type"
+                        android:textColor="@color/secondaryText"
+                        android:textSize="11.5sp"
+                        tools:ignore="HardcodedText" />
 
                     <io.legado.app.ui.widget.text.AutoCompleteTextView
                         android:id="@+id/edit_type"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:background="@null"
                         android:hint="type"
+                        android:minHeight="24dp"
+                        android:textColor="@color/primaryText"
+                        android:textColorHint="@color/secondaryText"
+                        android:textCursorDrawable="@drawable/shape_text_cursor"
+                        android:textSize="14sp"
                         tools:ignore="HardcodedText,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
-                </io.legado.app.ui.widget.text.TextInputLayout>
+                </LinearLayout>
 
-                <io.legado.app.ui.widget.text.TextInputLayout
-                    android:id="@+id/layout_retry"
+                <LinearLayout
+                    android:id="@+id/vw_field_retry"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="10dp"
+                    android:addStatesFromChildren="true"
+                    android:background="@drawable/bg_edit_filled"
+                    android:clickable="true"
+                    android:minHeight="50dp"
+                    android:orientation="vertical"
+                    android:paddingLeft="14dp"
+                    android:paddingTop="7dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="retry"
+                        android:textColor="@color/secondaryText"
+                        android:textSize="11.5sp"
+                        tools:ignore="HardcodedText" />
 
                     <io.legado.app.ui.widget.text.AutoCompleteTextView
                         android:id="@+id/edit_retry"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:background="@null"
                         android:hint="retry"
                         android:inputType="number"
-                        tools:ignore="HardcodedText,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+                        android:minHeight="24dp"
+                        android:textColor="@color/primaryText"
+                        android:textColorHint="@color/secondaryText"
+                        android:textCursorDrawable="@drawable/shape_text_cursor"
+                        android:textSize="14sp"
+                        tools:ignore="HardcodedText,SpeakableTextPresentCheck,TouchTargetSizeCheck"
+                        tools:text="2" />
 
-                </io.legado.app.ui.widget.text.TextInputLayout>
+                </LinearLayout>
 
-                <io.legado.app.ui.widget.text.TextInputLayout
-                    android:id="@+id/layout_web_js"
+                <LinearLayout
+                    android:id="@+id/vw_field_web_js"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="10dp"
+                    android:addStatesFromChildren="true"
+                    android:background="@drawable/bg_edit_filled"
+                    android:clickable="true"
+                    android:minHeight="50dp"
+                    android:orientation="vertical"
+                    android:paddingLeft="14dp"
+                    android:paddingTop="7dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="webJs"
+                        android:textColor="@color/secondaryText"
+                        android:textSize="11.5sp"
+                        tools:ignore="HardcodedText" />
 
                     <io.legado.app.ui.widget.text.AutoCompleteTextView
                         android:id="@+id/edit_web_js"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:background="@null"
                         android:hint="webJs"
+                        android:minHeight="24dp"
+                        android:textColor="@color/primaryText"
+                        android:textColorHint="@color/secondaryText"
+                        android:textCursorDrawable="@drawable/shape_text_cursor"
+                        android:textSize="14sp"
                         tools:ignore="HardcodedText,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
-                </io.legado.app.ui.widget.text.TextInputLayout>
+                </LinearLayout>
 
-                <io.legado.app.ui.widget.text.TextInputLayout
-                    android:id="@+id/layout_js"
+                <LinearLayout
+                    android:id="@+id/vw_field_js"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="0dp"
+                    android:addStatesFromChildren="true"
+                    android:background="@drawable/bg_edit_filled"
+                    android:clickable="true"
+                    android:minHeight="50dp"
+                    android:orientation="vertical"
+                    android:paddingLeft="14dp"
+                    android:paddingTop="7dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="js"
+                        android:textColor="@color/secondaryText"
+                        android:textSize="11.5sp"
+                        tools:ignore="HardcodedText" />
 
                     <io.legado.app.ui.widget.text.AutoCompleteTextView
                         android:id="@+id/edit_js"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:background="@null"
                         android:hint="js"
+                        android:minHeight="24dp"
+                        android:textColor="@color/primaryText"
+                        android:textColorHint="@color/secondaryText"
+                        android:textCursorDrawable="@drawable/shape_text_cursor"
+                        android:textSize="14sp"
                         tools:ignore="HardcodedText,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
-                </io.legado.app.ui.widget.text.TextInputLayout>
+                </LinearLayout>
 
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
-
 
     </LinearLayout>
 

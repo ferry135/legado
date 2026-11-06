@@ -9,9 +9,10 @@
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="?attr/actionBarStyle"
+        android:theme="@style/ThemeOverlay.AppCompat.DayNight"
         app:popupTheme="@style/AppTheme.PopupOverlay"
-        app:titleTextAppearance="@style/ToolbarTitle" />
+        app:titleTextAppearance="@style/ToolbarTitle"
+        app:titleTextColor="@color/on_surface" />
 
     <!-- 正文自适应高：wrap_content + maxHeight 480dp 封顶（长日志内部滚动，ScrollTextView 自带滚动）。
          不用 0dp+weight：WRAP_CONTENT 窗口（setLayout(0.9f, WRAP_CONTENT)）下竖向 weight 按可用高分配，

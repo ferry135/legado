@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 加载中转圈小窗（widget-viewer-dialogs §05③/⑦）：普通 Dialog 自带圆角底（surface +
+     16dp 圆角 + outline_variant 描边），window 透明在 WaitDialog.kt init 注入；
+     转圈 ThemeProgressBar 运行时 accent、文案 primaryText（别名 on_surface）与 padding 均不动 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@color/background"
+    android:background="@drawable/bg_widget_dialog_wait_dialog_card"
     android:gravity="center"
     android:padding="20dp"
     android:orientation="horizontal">

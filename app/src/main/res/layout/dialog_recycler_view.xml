@@ -10,7 +10,7 @@
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="?attr/actionBarStyle"
+        android:theme="@style/ThemeOverlay.AppCompat.DayNight"
         app:popupTheme="@style/AppTheme.PopupOverlay"
         app:titleTextAppearance="@style/ToolbarTitle"
         app:titleTextColor="@color/on_surface" />
@@ -36,21 +36,72 @@
             android:layout_gravity="center"
             app:loading_width="2dp" />
 
+        <!-- tv_msg 消息层（generic-list-dialogs 稿 §05/§06 #2）：默认令牌 13.5sp on_surface_variant
+             居中、行高 1.7、上下 26dp；id/位置/GONE 不变。兼作 7 个 Import*Dialog 错误文案位——
+             错误语义色（error）与用途由各页覆盖 textColor 决定，壳只给默认空态观感 -->
         <TextView
             android:id="@+id/tv_msg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:paddingStart="16dp"
+            android:paddingTop="26dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="26dp"
             android:layout_gravity="center"
             android:visibility="gone"
-            android:textColor="@color/secondaryText" />
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.7"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="13.5sp" />
+
+        <!-- 空态引导（group-manage 稿 §04/§05）：EmptyTipView 单一实现（drawableTop 描边变体，
+             ic_tag 同 group-select 稿 #i-tag）+ 外挂「添加分组」ghost 钮；默认 gone，仅分组管理三页在
+             collect 得空列表时显隐，其余共用方不受影响 -->
+        <LinearLayout
+            android:id="@+id/vw_empty_group"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <io.legado.app.ui.widget.EmptyTipView
+                android:id="@+id/empty_tip_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="28dp"
+                android:paddingEnd="28dp"
+                app:empty_icon="@drawable/ic_tag"
+                app:empty_title="@string/group_empty_title"
+                app:empty_tip="@string/group_manage_empty_tip" />
+
+            <!-- ghost 描边与主色文案由使用方 kt 运行时注入 accentColor（MASTER §4 布局不固化 primary） -->
+            <TextView
+                android:id="@+id/tv_add_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:minHeight="48dp"
+                android:paddingLeft="16dp"
+                android:paddingTop="9dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="9dp"
+                android:text="@string/add_group"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                tools:ignore="RtlHardcoded" />
+
+        </LinearLayout>
 
     </FrameLayout>
 
+    <!-- 分割线：alias→canonical 等值替换（bg_divider_line 在 values/colors.xml:132 即指向
+         outline_variant，明暗两套同定义，渲染与换肤零差异；稿 §06 #3 视为无改动项，仅令牌规范化） -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/bg_divider_line" />
+        android:background="@color/outline_variant" />
 
     <com.google.android.flexbox.FlexboxLayout
         android:layout_width="match_parent"
@@ -66,6 +117,7 @@
             android:id="@+id/tv_footer_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minHeight="48dp"
             android:paddingLeft="14dp"
             android:paddingTop="10dp"
             android:paddingRight="14dp"
@@ -86,6 +138,7 @@
                 android:id="@+id/tv_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minHeight="48dp"
                 android:paddingLeft="14dp"
                 android:paddingTop="10dp"
                 android:paddingRight="14dp"
@@ -99,6 +152,7 @@
                 android:id="@+id/tv_ok"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minHeight="48dp"
                 android:paddingLeft="14dp"
                 android:paddingTop="10dp"
                 android:paddingRight="14dp"

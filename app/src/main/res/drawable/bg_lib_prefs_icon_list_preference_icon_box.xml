@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 通用列表弹窗稿 §02：item_icon_preference 44dp 图标预览盒，圆角 10dp，
+     填充 surface_container_high（CSS surface2，仅中性令牌，无 primary 固化） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/surface_container_high" />
+    <corners android:radius="10dp" />
+</shape>

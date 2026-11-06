@@ -10,8 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="5dp"
-        android:theme="?attr/actionBarStyle"
+        android:theme="@style/ThemeOverlay.AppCompat.DayNight"
         app:titleTextAppearance="@style/ToolbarTitle"
+        app:titleTextColor="@color/on_surface"
         app:popupTheme="@style/AppTheme.PopupOverlay"
         app:displayHomeAsUp="false"
         app:fitStatusBar="false" />

@@ -16,6 +16,7 @@ import io.legado.app.data.entities.RssReadRecord
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemRssReadRecordBinding
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -74,6 +75,9 @@ class ReadRecordDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
             item: RssReadRecord,
             payloads: MutableList<Any>
         ) {
+            // 稿 §04/§06#14：记录 URL 的链接主色运行时 accentColor（XML 仅 link_color 兜底），
+            // 随 ThemeStore 换肤跟随（MASTER §4 布局禁固化 primary/accent）
+            binding.textRecord.setLinkTextColor(ThemeStore.accentColor(context))
             binding.textTitle.text = item.title
             binding.textRecord.text = item.record
         }

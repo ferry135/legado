@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 键盘辅助键配置宿主列表行（config-form-dialogs §05 展示层改动②）：行 min-height 48dp、
+     删除图标热区补至 48dp（12dp 内边距保持 24dp 图形）。本页私有行布局：item_1line_text_and_del
+     同时被 AutoCompleteTextView 下拉与 CodeViewExtensions 关键字下拉共用，不随本页改；
+     id（text_view / iv_delete）与 KeyAdapter 绑定引用保持；行底透明，露出弹窗卡面
+     surface_container（§06 弹窗容器行） -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:minHeight="48dp"
+    android:orientation="horizontal"
+    android:paddingLeft="16dp"
+    android:paddingTop="4dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="4dp"
+    tools:ignore="UseCompoundDrawables">
+
+    <TextView
+        android:id="@+id/text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:singleLine="true"
+        android:textColor="@color/on_surface"
+        android:textSize="14sp" />
+
+    <ImageView
+        android:id="@+id/iv_delete"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:contentDescription="@string/delete"
+        android:padding="12dp"
+        android:src="@drawable/ic_clear_all"
+        android:visibility="gone"
+        app:tint="@color/on_surface" />
+
+</LinearLayout>

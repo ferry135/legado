@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 文件行（稿 §04 对齐 item_file.xml 52dp 行规格，原 5dp 紧凑行不达 48dp 触控）：
+     minHeight 52dp、图标 20dp/16dp 起点、文字 16sp sans-serif-medium on_surface 单行省略；
+     尾部对勾（选中态，convert 按 selectFile 切换；tint 走运行时 primaryColor，
+     布局不固化 primary——DECISIONS §8 item_font 同疗法） -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,21 +13,49 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:minHeight="52dp"
         android:background="?attr/selectableItemBackground"
-        android:padding="5dp"
+        android:paddingLeft="6dp"
+        android:paddingTop="8dp"
+        android:paddingRight="6dp"
+        android:paddingBottom="8dp"
         tools:ignore="UseCompoundDrawables,UselessParent">
 
         <ImageView
             android:id="@+id/image_view"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
             tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="center_vertical" />
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:textColor="@color/on_surface"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/iv_check"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_check"
+            android:visibility="gone"
+            tools:tint="@color/primary"
+            tools:ignore="UseAppTint" />
 
     </LinearLayout>
 

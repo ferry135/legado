@@ -1,0 +1,406 @@
+<!-- design-system: legado v2 · mockup -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>legado v2 · mockup · 通用列表弹窗</title><style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Noto Sans SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;background:#eae7e0;color:#3a3833}
+.wrap{max-width:1180px;margin:0 auto;padding:52px 24px 110px;display:flex;flex-direction:column;gap:60px;align-items:center}
+/* ---------- 页头 ---------- */
+.page-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:16px}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.14em;color:#a8623c}
+.h1{font-size:34px;font-weight:750;line-height:1.2;margin:0}
+.h1 small{font-size:15px;font-weight:600;color:#60656d;margin-left:12px}
+.desc{font-size:14px;line-height:1.8;color:#60656d;margin:0;max-width:800px}
+.nav{display:flex;flex-wrap:wrap;gap:10px}
+.nav a{text-decoration:none;font-size:13px;font-weight:600;color:#5a574e;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:999px;padding:9px 16px;transition:.15s}
+.nav a:hover{background:#ff6b2c;color:#fff;border-color:#ff6b2c}
+.nav a b{font-weight:750;color:inherit;opacity:.55;margin-right:6px}
+/* ---------- 屏幕区 ---------- */
+.screen{width:100%;display:flex;flex-direction:column;align-items:center;gap:24px;scroll-margin-top:20px}
+.screen-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:10px}
+.st-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.st-num{font-size:13px;font-weight:750;color:#ff6b2c;letter-spacing:.08em}
+.st-title{font-size:24px;font-weight:750;margin:0}
+.st-src{font-size:12px;color:#60656d}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{font-size:12px;color:#6d6a62;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:7px;padding:5px 10px}
+.chips span.new{color:#a8623c;border-color:rgba(255,107,44,.35);background:#fff7f2}
+.pairs{display:flex;gap:30px;flex-wrap:wrap;justify-content:center}
+.pair{display:flex;flex-direction:column;gap:10px;align-items:center}
+.theme-tag{font-size:12px;font-weight:700;color:#60656d;letter-spacing:.1em}
+/* ---------- 手机壳（与 group-select / dict 同规格） ---------- */
+.phone{width:412px;height:900px;border-radius:30px;position:relative;overflow:hidden;background:var(--bg);color:var(--text);border:1px solid rgba(0,0,0,.09);flex:none}
+.phone.light{--bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--feature:#fff1e8;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--on-primary:#fff;--track:#e5e2de;--divider:rgba(0,0,0,.07);--field:rgba(0,0,0,.06);--menu:#fff;--error:#ba1a1a;--ok:#3b7a45;--scrim:rgba(0,0,0,.5);--field-solid:#f1efe9}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--feature:#2b1d15;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--on-primary:#fff;--track:#353331;--divider:rgba(255,255,255,.08);--field:rgba(255,255,255,.08);--menu:#2a2824;--error:#ffb4ab;--ok:#7fd891;--scrim:rgba(0,0,0,.5);--field-solid:#2a2925}
+.status{height:34px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:14px;font-weight:600}
+.status-right{display:flex;gap:10px;align-items:center}
+.hi{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--text);opacity:.4;z-index:30;pointer-events:none}
+/* ---------- 弹窗卡（BaseDialogFragment.setSheetBackground → corner_radius_lg 16dp） ---------- */
+.dim{position:absolute;inset:0;background:var(--scrim);z-index:5}
+.card{position:absolute;background:var(--surface);border-radius:16px;z-index:9;overflow:hidden;border:1px solid var(--divider)}
+.card .trow{padding:4px 8px}
+/* ---------- 卡内顶栏 / 图标 ---------- */
+.trow{display:flex;align-items:center;gap:2px;min-height:50px}
+.tb-title{font-size:18px;font-weight:650;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tcol{flex:1;min-width:0}
+.icon-btn{width:44px;height:44px;border:0;background:transparent;border-radius:22px;display:grid;place-items:center;cursor:pointer;color:var(--text)}
+.icon{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* 顶栏文字菜单项（menu_clear「清除」，showAsAction=always 无图标）：目标 48dp，落地保持 Toolbar 菜单形态而非自定义按钮 */
+.mact{border:0;background:transparent;color:var(--text);font-size:14px;font-weight:650;padding:12px 14px;min-height:48px;display:inline-flex;align-items:center;border-radius:10px;cursor:pointer;font-family:inherit;flex:none}
+/* ---------- 底栏（修复版：按钮 ≥48dp；tv_ok/tv_footer_left=AccentTextView 运行时 accentColor） ---------- */
+.cardfoot{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:2px;padding:4px 18px 12px;border-top:1px solid var(--divider);background:var(--surface)}
+.cardfoot .sel{flex:1;min-width:0;font-size:12px;font-weight:500;color:var(--secondary)}
+.txtbtn{border:0;background:transparent;font-size:14px;font-weight:650;color:var(--secondary);padding:13px 14px;min-height:48px;border-radius:10px;cursor:pointer;font-family:inherit;flex:none}
+.txtbtn.pri{color:var(--primary)}
+/* ---------- ① 日志行（item_log：13sp 次要色 · 行距 1.85 · autoLink · 可选中文本） ---------- */
+.loglist{padding:4px 16px 14px}
+.lrow{font-size:13px;line-height:1.85;color:var(--secondary);padding:2px 0;word-break:break-all}
+/* 链接可点即 item_log 的 autoLink=web + textColorLink，非字段拆分 */
+.lrow .lnk{color:var(--primary);text-decoration:underline;text-underline-offset:3px}
+/* ---------- ② 图标选择行（item_icon_preference 升级稿） ---------- */
+.iclist{padding:4px 6px 10px}
+.irow{display:flex;align-items:center;gap:12px;min-height:56px;padding:4px 10px;border-radius:10px;cursor:pointer}
+.ibox{width:44px;height:44px;border-radius:10px;background:var(--surface2);display:grid;place-items:center;flex:none}
+.glyph{width:30px;height:30px;border-radius:8px;display:grid;place-items:center}
+.glyph svg{width:15px;height:15px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.iname{flex:1;min-width:0;font-size:15px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* 单选 22dp：选中 primary（运行时 ThemeStore.primaryColor，禁 XML 固化） */
+.rd{width:22px;height:22px;border-radius:50%;border:2px solid var(--secondary);flex:none;position:relative}
+.rd.on{border-color:var(--primary)}
+.rd.on::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--primary)}
+/* ---------- ③ 文件行（item_1line_text 升级稿） ---------- */
+.flist{padding:4px 6px 10px}
+.frow{min-height:48px;display:flex;align-items:center;padding:4px 10px;border-radius:10px;font-size:15px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+/* ---------- ④ 阅读记录行（item_rss_read_record 升级稿） ---------- */
+.rlist{padding:4px 6px 10px}
+.rrow{display:flex;flex-direction:column;justify-content:center;gap:3px;min-height:56px;padding:8px 10px;border-radius:10px}
+.rt{font-size:15px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ru{font-size:12.5px;color:var(--secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ru .lnk{color:var(--primary);text-decoration:underline;text-underline-offset:3px}
+/* ---------- 注释 / 规格盒 / 令牌表 ---------- */
+.notes{width:100%;max-width:1080px;font-size:12.5px;line-height:1.9;color:#60656d;border-top:1px dashed rgba(0,0,0,.12);padding-top:12px}
+.notes code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px}
+.notes b{color:#3a3833}
+.specs{width:100%;max-width:1080px;display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.specbox{background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:14px;padding:16px 18px;width:470px;flex:none;display:flex;flex-direction:column;gap:12px;
+ --bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--track:#e5e2de;--divider:rgba(0,0,0,.07)}
+.specbox .sf{font-size:13px;font-weight:700;color:#3a3833}
+.specbox .sf code{font-size:11.5px;font-weight:500;color:#60656d;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px;margin-left:8px}
+.specdemo{background:var(--bg);border-radius:10px;padding:6px 2px}
+.specmap{display:flex;flex-wrap:wrap;gap:6px}
+.specmap span{font-size:11.5px;color:#6d6a62;background:#faf9f7;border:1px solid rgba(0,0,0,.07);border-radius:6px;padding:4px 8px}
+.oldfoot{display:flex;align-items:center;gap:8px;border-top:1px solid var(--divider);margin:0 10px;padding:4px 8px}
+.oldfoot .sp{flex:1}
+.oldbtn{font-size:14px;font-weight:650;color:var(--secondary);padding:10px 14px;border-radius:8px;background:var(--surface2)}
+.oldbtn.pri{color:var(--primary)}
+.badge{display:inline-block;font-size:10.5px;font-weight:700;color:#fff;background:#ba1a1a;border-radius:5px;padding:1px 5px;margin-left:6px;vertical-align:1px}
+.tvmsg{font-size:13.5px;line-height:1.7;color:var(--secondary);text-align:center;padding:26px 16px}
+.tok{width:100%;max-width:1080px;border-collapse:collapse;font-size:13px;color:#45423a}
+.tok th{font-size:12px;font-weight:700;color:#60656d;text-align:left;letter-spacing:.04em;padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.12)}
+.tok td{padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.07);vertical-align:top;line-height:1.7}
+.tok code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px;white-space:nowrap}
+.tok .dim2{color:#60656d}
+.foot{font-size:12px;color:#60656d;text-align:center;line-height:2}
+</style></head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4.5L6 21z"/></symbol>
+</defs></svg>
+
+<div class="wrap">
+
+<header class="page-head">
+  <div class="kicker">LEGADO V2 · MOCKUP</div>
+  <h1 class="h1">通用列表弹窗<small>Generic List Dialogs ×4 · 浅色为主 / 深色对照</small></h1>
+  <p class="desc">四页共用同一弹窗壳 <b>dialog_recycler_view.xml</b>（Toolbar + FastScrollRecyclerView + tv_msg + 底栏槽位），仅行样式四变体：item_log（已升级）、item_icon_preference / item_1line_text / item_rss_read_record（未升级，参照 item_app_log 令牌）。视觉令牌与 group-select / dict 稿完全一致——主色 #FF6B2C（运行时可换肤，稿面仅为默认兜底）、暖纸白/暖黑表面、16dp 圆角对话框（<code style="font-size:12px">BaseDialogFragment → setSheetBackground(corner_radius_lg)</code>）、无阴影、遮罩。两处<b>共同缺口</b>随稿修复：底栏文字按钮触控 &lt;48dp、tv_msg 为素文本无空态规格。功能逐项取自各 kt，见各屏来源注释；<b>末节「设计调整与落地映射」逐条给出改动落点</b>。</p>
+  <nav class="nav">
+    <a href="#s1"><b>01</b>通用文本列表</a>
+    <a href="#s2"><b>02</b>设置图标选择</a>
+    <a href="#s3"><b>03</b>崩溃日志</a>
+    <a href="#s4"><b>04</b>RSS 阅读记录</a>
+    <a href="#s5"><b>05</b>共用壳规格</a>
+    <a href="#s6"><b>06</b>设计调整与落地映射</a>
+  </nav>
+</header>
+
+<!-- ================= 01 通用文本列表 ================= -->
+<section class="screen" id="s1">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">01</span><h2 class="st-title">通用文本列表</h2><span class="st-src">TextListDialog.kt · dialog_recycler_view.xml · item_log.xml · setLayout(0.9f, 0.9f)</span></div>
+    <div class="chips"><span>标题/内容由构造参数传入</span><span>行 = item_log（已升级）</span><span>13sp 次要色 · 行距 1.85</span><span>autoLink web + 链接色</span><span>文本可选（复制日志）</span><span>示例行为纯文本 · 不做字段拆分</span><span class="new">弹窗内水平 16dp 留白 · 修复</span><span class="new">底栏 48dp 触控 · 修复</span><span class="new">底栏启用态模板（现状 GONE）</span></div>
+  </div>
+  <div class="pairs">
+    <div class="pair"><div class="theme-tag">浅色 · 主态</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card" style="left:18px;right:18px;top:70px;bottom:64px">
+        <div class="trow">
+          <div class="tcol"><div class="tb-title">运行日志</div></div>
+        </div>
+        <div class="loglist">
+          <div class="lrow">14:17:59 启动完成 412ms（设计橙色主题 · 夜间关闭）</div>
+          <div class="lrow">14:18:02 书源调试：笔趣阁 搜索「剑来」200 OK · 1.2s</div>
+          <div class="lrow">14:18:07 缓存清理完成，释放 36.2 MB</div>
+          <div class="lrow">14:18:22 <span class="lnk">https://www.example.com/robots.txt</span> 已按规则放行</div>
+          <div class="lrow">14:18:31 TTS 引擎就绪：com.iflytek.speechsuite · 朗读音量归一化峰值 0.97</div>
+          <div class="lrow">14:18:44 同步书架完成：18 本 · 冲突 0 · 跳过本地无变化 5 本，其余按最近阅读时间排序写入分组索引。</div>
+          <div class="lrow">14:18:52 WebDAV 备份成功 2.4 MB → <span class="lnk">https://dav.example.com/legado/2026-11-04.bak</span></div>
+        </div>
+        <div class="cardfoot">
+          <span class="sel">文本可长按选择复制</span>
+          <button class="txtbtn">取消</button>
+          <button class="txtbtn pri">确认</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <div class="pair"><div class="theme-tag">深色 · 同态对照</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card" style="left:18px;right:18px;top:70px;bottom:64px">
+        <div class="trow">
+          <div class="tcol"><div class="tb-title">运行日志</div></div>
+        </div>
+        <div class="loglist">
+          <div class="lrow">14:17:59 启动完成 412ms（设计橙色主题 · 夜间开启）</div>
+          <div class="lrow">14:18:02 书源调试：笔趣阁 搜索「剑来」200 OK · 1.2s</div>
+          <div class="lrow">14:18:07 缓存清理完成，释放 36.2 MB</div>
+          <div class="lrow">14:18:22 <span class="lnk">https://www.example.com/robots.txt</span> 已按规则放行</div>
+          <div class="lrow">14:18:31 TTS 引擎就绪：com.iflytek.speechsuite · 朗读音量归一化峰值 0.97</div>
+          <div class="lrow">14:18:44 同步书架完成：18 本 · 冲突 0 · 跳过本地无变化 5 本，其余按最近阅读时间排序写入分组索引。</div>
+          <div class="lrow">14:18:52 WebDAV 备份成功 2.4 MB → <span class="lnk">https://dav.example.com/legado/2026-11-04.bak</span></div>
+        </div>
+        <div class="cardfoot">
+          <span class="sel">文本可长按选择复制</span>
+          <button class="txtbtn">取消</button>
+          <button class="txtbtn pri">确认</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <p class="notes">来源：<code>TextListDialog.kt:17</code>（通用组件，库内暂无调用点 <code>@Suppress("unused")</code>，作为模板保留）<code>:20-25, :38-40</code>（标题 title / 数据 values 全由构造参数传入——稿中「运行日志」及各行文案均为<b>示例值</b>）<code>:33</code>（setLayout(0.9f, 0.9f) → 稿面 371×766 卡片）<code>:41-43</code>（LinearLayoutManager + TextAdapter）。<b>示例行均为纯文本字符串</b>：values 是 <code>ArrayList&lt;String&gt;</code>，item_log 为单 TextView 单一样式（item_log.xml:3-14），稿面各行即纯文本渲染，<b>不做时间戳等字段拆分、无双色前缀</b>（落地亦不得虚构字符串拆分逻辑）；链接行的主色下划线仅来自 <code>autoLink=web</code> + <code>textColorLink</code> 的自动着色。<b>行样式 item_log.xml 已令牌化</b>（13sp <code>on_surface_variant</code>、行距 3dp、<code>autoLink=web</code>、<code>textIsSelectable</code>、链接 <code>link_color</code>，item_log.xml:4-14），本稿不改行；文本选择的光标闪烁规避监听（<code>TextListDialog.kt:60-72</code>）落地不动。两处稿内修复：① <b>弹窗内水平留白缺口</b>——item_log 的横向边距由宿主 activity_source_debug 的 RecyclerView padding 提供（item_log.xml:2 注释、activity_source_debug.xml:26-29），而壳的 recycler_view 无水平 padding（dialog_recycler_view.xml:23-28），TextListDialog 弹窗形态文字贴边 → 稿面按 16dp 留白呈现，落地约 1 行（见 §06 #4）；② <b>底栏</b>——壳内 tv_footer_left / tv_cancel / tv_ok 三槽位现状全 GONE 且 TextListDialog 未绑定（dialog_recycler_view.xml:65-108、TextListDialog.kt:36-44 无 footer 引用），稿面展示「启用态模板」：左槽提示文案（AccentTextView）+ 取消 + 确认（AccentTextView=运行时 accentColor，AccentTextView.kt:14-15，换肤安全），是否启用由调用方决定。注意：SourcePickerDialog 用的是<b>独立布局</b> <code>dialog_source_picker.xml</code>（SourcePickerDialog.kt:45），其同 id 底栏控件不在本壳内、不受壳改动影响（本壳真实消费者见 §05）。</p>
+</section>
+
+<!-- ================= 02 设置图标选择 ================= -->
+<section class="screen" id="s2">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">02</span><h2 class="st-title">设置图标选择</h2><span class="st-src">IconListPreference.IconDialog.kt · dialog_recycler_view.xml · item_icon_preference.xml · setLayout(0.8f, WRAP)</span></div>
+    <div class="chips"><span>入口：主题设置「切换图标」</span><span>偏好行 50×50 预览</span><span>7 个启动图标单选</span><span>点行即选中并关闭</span><span class="new">22dp 圆形单选 · 运行时着色</span><span class="new">行高 56dp + 44dp 预览盒</span><span class="new">去主题勾选耦合</span></div>
+  </div>
+  <div class="pairs">
+    <div class="pair"><div class="theme-tag">浅色 · 主态</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card" style="left:41px;right:41px;top:186px">
+        <div class="trow">
+          <div class="tcol"><div class="tb-title">切换图标</div></div>
+        </div>
+        <div class="iclist">
+          <div class="irow"><span class="ibox"><span class="glyph" style="background:#ff6b2c"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg></span></span><span class="iname">iconMain</span><span class="rd on"></span></div>
+          <div class="irow"><span class="ibox"><span class="glyph" style="background:#2f6fb3"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg></span></span><span class="iname">icon1</span><span class="rd"></span></div>
+          <div class="irow"><span class="ibox"><span class="glyph" style="background:#3b7a45"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg></span></span><span class="iname">icon2</span><span class="rd"></span></div>
+          <div class="irow"><span class="ibox"><span class="glyph" style="background:#7a4fb3"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg></span></span><span class="iname">icon3</span><span class="rd"></span></div>
+          <div class="irow"><span class="ibox"><span class="glyph" style="background:#0f8a8a"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg></span></span><span class="iname">icon4</span><span class="rd"></span></div>
+          <div class="irow"><span class="ibox"><span class="glyph" style="background:#c2551f"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg></span></span><span class="iname">icon5</span><span class="rd"></span></div>
+          <div class="irow"><span class="ibox"><span class="glyph" style="background:#4a4a48"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg></span></span><span class="iname">icon6</span><span class="rd"></span></div>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <div class="pair"><div class="theme-tag">深色 · 同态对照</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card" style="left:41px;right:41px;top:186px">
+        <div class="trow">
+          <div class="tcol"><div class="tb-title">切换图标</div></div>
+        </div>
+        <div class="iclist">
+          <div class="irow"><span class="ibox"><span class="glyph" style="background:#ff6b2c"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg></span></span><span class="iname">iconMain</span><span class="rd on"></span></div>
+          <div class="irow"><span class="ibox"><span class="glyph" style="background:#2f6fb3"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg></span></span><span class="iname">icon1</span><span class="rd"></span></div>
+          <div class="irow"><span class="ibox"><span class="glyph" style="background:#3b7a45"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg></span></span><span class="iname">icon2</span><span class="rd"></span></div>
+          <div class="irow"><span class="ibox"><span class="glyph" style="background:#7a4fb3"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg></span></span><span class="iname">icon3</span><span class="rd"></span></div>
+          <div class="irow"><span class="ibox"><span class="glyph" style="background:#0f8a8a"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg></span></span><span class="iname">icon4</span><span class="rd"></span></div>
+          <div class="irow"><span class="ibox"><span class="glyph" style="background:#c2551f"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg></span></span><span class="iname">icon5</span><span class="rd"></span></div>
+          <div class="irow"><span class="ibox"><span class="glyph" style="background:#4a4a48"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg></span></span><span class="iname">icon6</span><span class="rd"></span></div>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <p class="notes">来源：<code>pref_config_theme.xml:6-13</code>（IconListPreference key=launcherIcon，defaultValue=ic_launcher）<code>IconListPreference.kt:31-32</code>（偏好行 layout=view_preference、widget=view_icon）<code>:53-69</code>（偏好行 50×50 图标预览）<code>:71-89</code>（onClick → IconDialog，args 传 entries/entryValues/iconNames）<code>:128</code>（setLayout(0.8f, WRAP) → 稿面宽 330）<code>:134</code>（标题 R.string.change_icon「切换图标」，values-zh/strings.xml:234；09 稿已去主色工具栏标题）。<b>选项数据</b>：label=entries=@array/icon_names（iconMain/icon1…icon6，arrays.xml:92-99，原文直显、未翻译——保持现状，友好文案仅改数组不动布局）；图标=entryValues @array/icons（ic_launcher + launcher1-6，array_values.xml:4-12）按名反射 mipmap（IconListPreference.kt:42-50、168-179）——<b>稿面 30dp 色块书签为示意图形</b>，实机为真实启动图标。<b>交互不变</b>：整行点击 → <code>onChanged(value)</code> 回写偏好并 <code>dismissAllowingStateLoss</code>（IconListPreference.kt:181-184）；registerListener 又设一次无 dismiss 的行点击（:192-197）为冗余死代码，落地建议清理（§06 #8）。<b>行升级</b>（item_icon_preference.xml 现状：listPreferredItemHeight + 6dip padding + CheckedTextView 主题勾 <code>?attr/listChoiceIndicatorSingle</code> + <code>?android:textColorAlertDialogListItem</code>，item_icon_preference.xml:2-32）→ 56dp 行 + 44dp 圆角 10dp 预览盒（surface2）+ 名称 15sp <code>on_surface</code> + 行尾 22dp 圆形单选：选中 <b>ThemeStore.primaryColor 运行时着色</b>（勾选圈+内点，XML 禁固化 primary，MASTER §4；稿面 #FF6B2C 为默认兜底），未选 <code>outline</code> 2dp 描边。<b>改绑前提</b>：布局去 CheckedTextView 后，<code>IconListPreference.kt:180</code> 的 <code>label.isChecked = …</code> 不再编译/不再可见，convert 必须同步改绑新 22dp 单选视图（见 §06 #7）；无底栏、无菜单（现状一致）。</p>
+</section>
+
+<!-- ================= 03 崩溃日志 ================= -->
+<section class="screen" id="s3">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">03</span><h2 class="st-title">崩溃日志</h2><span class="st-src">CrashLogsDialog.kt · dialog_recycler_view.xml · item_1line_text.xml · menu/crash_log.xml · setLayout(0.9f, WRAP)</span></div>
+    <div class="chips"><span>入口：关于页 / 启动崩溃提醒</span><span>文件名倒序（最新在前）</span><span>顶栏「清除」直接清空（现状无确认）</span><span>顶栏清除 = Toolbar 菜单形态（非自定义钮）</span><span>点行 → TextDialog 查看全文</span><span>行样式与起效替换规则弹窗共用</span><span class="new">行触控 ≥48dp</span><span class="new">文件名省略号</span><span class="new">空态复用 tv_msg 消息层</span></div>
+  </div>
+  <div class="pairs">
+    <div class="pair"><div class="theme-tag">浅色 · 主态</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card" style="left:18px;right:18px;top:296px">
+        <div class="trow">
+          <div class="tcol"><div class="tb-title">崩溃日志</div></div>
+          <button class="mact" title="清除全部崩溃日志">清除</button>
+        </div>
+        <div class="flist">
+          <div class="frow">crash-2026-11-03-21-45-10-1793786710123.log</div>
+          <div class="frow">crash-2026-10-28-08-12-44-1792212364001.log</div>
+          <div class="frow">crash-2026-10-19-23-02-57-1791310977004.log</div>
+          <div class="frow">crash-2026-09-30-14-40-03-1789116003009.log</div>
+          <div class="frow">crash-2026-09-12-02-18-26-1787122706007.log</div>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <div class="pair"><div class="theme-tag">深色 · 同态对照</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card" style="left:18px;right:18px;top:296px">
+        <div class="trow">
+          <div class="tcol"><div class="tb-title">崩溃日志</div></div>
+          <button class="mact" title="清除全部崩溃日志">清除</button>
+        </div>
+        <div class="flist">
+          <div class="frow">crash-2026-11-03-21-45-10-1793786710123.log</div>
+          <div class="frow">crash-2026-10-28-08-12-44-1792212364001.log</div>
+          <div class="frow">crash-2026-10-19-23-02-57-1791310977004.log</div>
+          <div class="frow">crash-2026-09-30-14-40-03-1789116003009.log</div>
+          <div class="frow">crash-2026-09-12-02-18-26-1787122706007.log</div>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <p class="notes">来源：入口 <code>AboutFragment.kt:66</code>（关于页「崩溃日志」项）与 <code>MainActivity.kt:291-297</code>（启动时检测到崩溃 alert →「打开崩溃日志」）。<code>CrashLogsDialog.kt:45</code>（setLayout(0.9f, WRAP) → 稿面宽 371 高自适应）<code>:49</code>（标题 R.string.crash_log「崩溃日志」，values-zh/strings.xml:870）<code>:50-51</code>（菜单 crash_log.xml 仅 menu_clear「清除」always，crash_log.xml:6-10）<code>:60-65, :141-160</code>（<b>清除直接执行</b>：删 externalCacheDir/crash + 备份目录/crash 后 initData 刷新——<b>现状无确认弹窗，稿面保持该行为</b>；如需与阅读记录弹窗一致加「提醒」确认，列为可选增强待决策，见 §06 #11）<code>:105-125</code>（数据=两处 crash 目录文件，<code>sortedByDescending name</code> 倒序去重——文件名含时间戳即最新在前；格式 <code>crash-yyyy-MM-dd-HH-mm-ss-ms.log</code>，CrashHandler.kt:146，稿面文件名为实格式示例）<code>:67-74, :82-88</code>（点行 readFile → TextDialog(name, 全文)）。<b>行升级</b>（item_1line_text.xml 现状：padding 6dp + <code>primaryText</code> + singleLine 无省略，item_1line_text.xml:8,17-18）→ min-height 48dp + padding 10/16 + 15sp <code>on_surface</code>（primaryText 为 legacy alias，仍建议改引用以过 MASTER §3）+ <code>ellipsize=end</code>（长文件名截断，全文在 TextDialog 内可见）。<b>共用声明</b>：item_1line_text.xml 同时被阅读页「起效替换规则」弹窗消费（EffectiveReplacesDialog.kt:85-86 绑定、:107 显示规则名 <code>item.name</code>）——本稿对它的升级（48dp 行高 / on_surface 令牌 / 10-16 padding）对两页<b>同时生效</b>、属共同收益；<code>ellipsize=end</code> 亦作用于长规则名（全名在 ReplaceEditActivity 编辑界面可见）。若评审后希望规则名保持现状截断行为，可拆出 <code>item_crash_log_line.xml</code> 单独承载（可选，默认共用以维持一文件一语义），见 §06 #9。<b>空态</b>：清空后列表空白，复用壳 tv_msg 消息层显示「暂无崩溃日志」（tv_msg 亦承担 Import 系错误文案，规格见 §05；§06 #10 可选项）。</p>
+</section>
+
+<!-- ================= 04 RSS 阅读记录 ================= -->
+<section class="screen" id="s4">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">04</span><h2 class="st-title">RSS 阅读记录</h2><span class="st-src">ReadRecordDialog.kt · dialog_recycler_view.xml · item_rss_read_record.xml · menu/rss_read_record.xml · setLayout(0.9f, WRAP)</span></div>
+    <div class="chips"><span>入口：RSS 订阅列表菜单「阅读记录」</span><span>顶栏「清除」→ 提醒确认（含条数）</span><span>顶栏清除 = Toolbar 菜单形态（非自定义钮）</span><span>行不可点击（现状）</span><span class="new">去行内横向滚动嵌套</span><span class="new">标题+URL 两行 · 省略号</span><span class="new">行触控 ≥56dp</span></div>
+  </div>
+  <div class="pairs">
+    <div class="pair"><div class="theme-tag">浅色 · 主态</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card" style="left:18px;right:18px;top:306px">
+        <div class="trow">
+          <div class="tcol"><div class="tb-title">阅读记录</div></div>
+          <button class="mact" title="清空全部阅读记录">清除</button>
+        </div>
+        <div class="rlist">
+          <div class="rrow"><span class="rt">少数派周刊 #482：为什么我们还在读 RSS</span><span class="ru lnk">https://sspai.example.com/post/482</span></div>
+          <div class="rrow"><span class="rt">星尘与回声 · 第 12 期：慢新闻的边界</span><span class="ru lnk">https://blog.example.org/stardust-12.html</span></div>
+          <div class="rrow"><span class="rt">纸城巡访：旧书店里的十二个小时（长文）</span><span class="ru lnk">https://paper.example.city/visit/bookstore-12h</span></div>
+          <div class="rrow"><span class="rt">桌面阅读器横评 2026</span><span class="ru lnk">https://review.example.net/eink-2026</span></div>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <div class="pair"><div class="theme-tag">深色 · 同态对照</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card" style="left:18px;right:18px;top:306px">
+        <div class="trow">
+          <div class="tcol"><div class="tb-title">阅读记录</div></div>
+          <button class="mact" title="清空全部阅读记录">清除</button>
+        </div>
+        <div class="rlist">
+          <div class="rrow"><span class="rt">少数派周刊 #482：为什么我们还在读 RSS</span><span class="ru lnk">https://sspai.example.com/post/482</span></div>
+          <div class="rrow"><span class="rt">星尘与回声 · 第 12 期：慢新闻的边界</span><span class="ru lnk">https://blog.example.org/stardust-12.html</span></div>
+          <div class="rrow"><span class="rt">纸城巡访：旧书店里的十二个小时（长文）</span><span class="ru lnk">https://paper.example.city/visit/bookstore-12h</span></div>
+          <div class="rrow"><span class="rt">桌面阅读器横评 2026</span><span class="ru lnk">https://review.example.net/eink-2026</span></div>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <p class="notes">来源：入口 <code>rss_articles.xml:31-35</code>（菜单 menu_read_record「阅读记录」）→ <code>RssSortActivity.kt:94-96</code>（showDialogFragment）。<code>ReadRecordDialog.kt:33</code>（setLayout(0.9f, WRAP)）<code>:38</code>（标题 R.string.read_record「阅读记录」，values-zh/strings.xml:791）<code>:39-40</code>（菜单 rss_read_record.xml 仅 menu_clear「清除」）<code>:47-62</code>（清除 → alert「提醒」确认：文案 =「是否确认删除？」+ <code>\n</code> + 条数 + 「阅读记录」，strings.xml:34/508；确认后 deleteAllRecord + adapter.clearItems）——<b>确认弹窗走系统 alert 壳，稿面不改绘</b>。<code>:77-78</code>（行绑定仅 title + record 两字段；实体 RssReadRecord.kt:7-13 另有 readTime/read 未使用——<b>稿面不加时间展示</b>，避免虚构行为）<code>:81-82</code>（registerListener 为空，<b>行不可点击</b>，稿面保持）。<b>行升级</b>（item_rss_read_record.xml 现状：两个 HorizontalScrollView 各包 singleLine TextView、ellipsize=none，item_rss_read_record.xml:9-34——行内横向滚与列表纵滚手势冲突、TalkBack 顺序混乱、文字无令牌）→ 改为纵向两行 TextView：<b>title 15sp/500 <code>on_surface</code></b>、<b>record 12.5sp <code>on_surface_variant</code> + autoLink=web + 链接运行时 accentColor</b>，均 <code>ellipsize=end</code>（URL 全文不再行内滚动，可后续长按复制或点击链接，不新增行为）；padding 6dp → 10/16，两行约 56dp ≥48dp 触控。行背景 selectableItemBackground 保留（现状不可点，仅作按压一致性预留）。</p>
+</section>
+
+<!-- ================= 05 共用壳规格 ================= -->
+<section class="screen" id="s5">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">05</span><h2 class="st-title">共用壳规格 · dialog_recycler_view</h2><span class="st-src">四页同一壳 · 全库 21 处消费（本组 4 + 清单外 17）：Toolbar + 列表 + tv_msg + 底栏槽位</span></div>
+    <div class="chips"><span>一份稿覆盖行四变体</span><span>壳消费者全库 21 处（清单外 17 个未入稿）</span><span class="new">底栏按钮 ≥48dp · 修复（随壳落到 21 处）</span><span class="new">tv_msg 消息层规格 · 修复（空态+错误通用）</span><span>16dp 圆角卡（setSheetBackground）</span></div>
+  </div>
+  <div class="specs">
+    <div class="specbox">
+      <div class="sf">壳结构与底栏修复<code>dialog_recycler_view.xml</code></div>
+      <div class="specdemo">
+        <div style="font-size:13px;font-weight:700;color:var(--text);padding:6px 10px 4px">└ Toolbar（标题 on_surface）· 菜单/导航槽</div>
+        <div style="font-size:12.5px;color:var(--secondary);padding:2px 10px;line-height:1.8">└ FastScrollRecyclerView ＋ RotateLoading 36dp（加载中）＋ tv_msg（空态层，GONE）</div>
+        <div style="height:1px;background:var(--divider);margin:6px 10px"></div>
+        <div class="oldfoot">
+          <span class="oldbtn" style="opacity:.55">左槽 38px<span class="badge">旧 &lt;48dp</span></span>
+          <span class="sp"></span>
+          <span class="oldbtn" style="opacity:.55">取消 38px</span>
+          <span class="oldbtn pri" style="opacity:.55">确认 38px</span>
+        </div>
+        <div class="cardfoot" style="position:static;margin:8px 10px 10px;border:1px solid var(--divider);border-radius:10px">
+          <span class="sel">左槽（AccentTextView）</span>
+          <button class="txtbtn">取消</button>
+          <button class="txtbtn pri">确认</button>
+        </div>
+      </div>
+      <div class="specmap"><span>旧：10dp 纵 padding ≈ 38dp</span><span>新：min-height 48dp（MASTER §4）</span><span>tv_ok / 左槽 = AccentTextView → 运行时 accentColor</span><span>三槽位现状 GONE，启用由调用方决定</span><span>壳改动触达全部 21 个消费方，17 个未入稿页按本稿同步</span></div>
+    </div>
+    <div class="specbox">
+      <div class="sf">tv_msg 消息层规格（空态+错误通用，四页共用）<code>dialog_recycler_view.xml:39-46</code></div>
+      <div class="specdemo">
+        <div class="tvmsg">暂无崩溃日志<br><span style="font-size:12px;opacity:.8">发生异常时日志将出现在这里</span></div>
+      </div>
+      <div class="specmap"><span>默认令牌：13.5sp · on_surface_variant · 居中 · 行高 1.7 · 上下 26dp</span><span>7 个 Import 弹窗用它显示错误/格式错误（ImportDictRuleDialog.kt:82-97）</span><span>错误语义色（error）由各页覆盖 textColor —— 用途与颜色决定权在各页，壳只给默认值</span><span>id / 位置 / GONE 不变</span></div>
+    </div>
+  </div>
+  <p class="notes">壳解剖（<code>dialog_recycler_view.xml</code>）：Toolbar（标题已 <code>on_surface</code>，:9-16）；FrameLayout 内 FastScrollRecyclerView（:23-28）+ RotateLoading 36dp（:30-37）+ tv_msg（:39-46）；1dp 分割线 <code>bg_divider_line</code>（:50-53，legacy alias 已指向 <code>outline_variant</code>，MASTER §2，无改动）；Flexbox 底栏三槽位（:55-112）。<b>消费者清单（本次会话 grep R.layout.dialog_recycler_view 实测 21 处）</b>：本组 4（TextListDialog / IconListPreference.IconDialog / CrashLogsDialog / ReadRecordDialog）+ <b>清单外 17</b> = 7×Import*Dialog（DictRule/HttpTts/BookSource/ReplaceRule/RssSource/Theme/TxtTocRule）+ GroupManageDialog×4（book/group、book/source/manage、replace、rss/source/manage）+ AppLogDialog、SpeakEngineDialog、ServersDialog、ThemeListDialog、KeyboardAssistsConfig、EffectiveReplacesDialog。注意 <b>SourcePickerDialog 不在本壳</b>——它用独立布局 <code>dialog_source_picker.xml</code>（SourcePickerDialog.kt:45，初版稿误注为共用，已更正）。<b>共同缺口一（触控）</b>：tv_footer_left / tv_cancel / tv_ok 均仅 10dp 纵向 padding，高约 38dp &lt; 48dp（MASTER §1/§4）——修复为 minHeight 48dp（稿面底栏即为修复后形态）。<b>随壳生效声明</b>：底栏 48dp 与 tv_msg 新规格属于壳级改动，将落到全部 21 处消费方；17 个未入稿页不单独出稿，按本稿规格直接实施（仅按钮高度/消息文字观感变化，布局结构与 id 不动）。<b>共同缺口二（tv_msg 消息层）</b>：裸 TextView <code>secondaryText</code> 居中（:39-46），无字号/行距规格——定为<b>消息层</b>而非仅空态：默认令牌 13.5sp <code>on_surface_variant</code> 居中、行高 1.7、上下 26dp；id / 位置 / GONE 默认不变。tv_msg 实际承担多用途文案：7 个 Import 弹窗以它显示错误/格式错误（ImportDictRuleDialog.kt:82-97 <code>errorLiveData</code> → tvMsg visible、<code>wrong_format</code>；ImportHttpTtsDialog.kt:85-96 等同构）——<b>错误语义色（error）与用途由各页覆盖 textColor 决定，壳只给默认空态观感</b>，避免错误提示被统一成中性灰。<b>弹窗卡</b>：BaseDialogFragment.onViewCreated → <code>setSheetBackground(ThemeStore.backgroundColor())</code>（BaseDialogFragment.kt:84）→ <code>corner_radius_lg=16dp</code> 圆角纯色（ViewExtensions.kt:329-340）——稿面卡即 16dp 圆角 + 1px divider 描边 + 遮罩，无阴影，深浅色随主题。四页尺寸差异（TextListDialog 0.9×0.9，其余 0.8/0.9×WRAP）按各自 <code>setLayout</code> 还原于稿面卡宽。</p>
+</section>
+
+<!-- ================= 06 设计调整与落地映射 ================= -->
+<section class="screen" id="s6">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">06</span><h2 class="st-title">设计调整与落地映射</h2><span class="st-src">逐条改动 → 布局文件 / 控件；「行为」列标注是否触碰现有行为</span></div>
+  </div>
+  <table class="tok">
+    <tr><th style="width:10%">页</th><th style="width:33%">改动</th><th style="width:37%">落点（文件 / 控件）</th><th>行为</th></tr>
+    <tr><td>壳</td><td><b>底栏触控 ≥48dp</b>：tv_footer_left / tv_cancel / tv_ok 由 10dp 纵 padding（≈38dp）改为 minHeight 48dp（建议 padding 12dp 纵向 + minWidth 88dp）</td><td><code>dialog_recycler_view.xml:65-108</code> 三个 TextView</td><td>纯展示层，不改点击逻辑；随壳落到全部 21 处消费方（清单外 17 页不单独出稿，见 §05）</td></tr>
+    <tr><td>壳</td><td><b>tv_msg 消息层规格</b>：默认 13.5sp / on_surface_variant / 居中 / 行高 1.7 / 上下 26dp</td><td><code>dialog_recycler_view.xml:39-46</code>（textSize/lineSpacingExtra/textColor + 保留 visibility=gone）</td><td>id、GONE 默认不变；tv_msg 兼作错误文案位（7 个 Import 弹窗，ImportDictRuleDialog.kt:82-97）→ 错误语义色由各页覆盖 textColor，壳只给默认观感</td></tr>
+    <tr><td>壳</td><td>分割线 / Toolbar 标题色已达标，无改动（bg_divider_line→outline_variant alias；titleTextColor=on_surface）</td><td><code>dialog_recycler_view.xml:50-53, :16</code></td><td>—</td></tr>
+    <tr><td>01</td><td><b>弹窗内水平 16dp 留白</b>：item_log 横向边距现依赖宿主 activity_source_debug（20dp），弹窗内文字贴边</td><td><code>TextListDialog.kt</code> onFragmentCreated 给 recyclerView 设 paddingStart/End 16dp（约 1 行；不动 item_log，避免宿主页双重留白）</td><td>不影响 activity_source_debug 显示</td></tr>
+    <tr><td>01</td><td>底栏启用态模板（左槽提示 + 取消/确认）：AccentTextView 运行时 accentColor；行样式 item_log 已升级不动</td><td><code>TextListDialog.kt</code>（可选，调用方按需 setVisibility/onClick）；<code>item_log.xml</code> 无改动</td><td class="dim2">新增能力不强制；现状三槽位 GONE</td></tr>
+    <tr><td>02</td><td><b>行重构</b>：56dp 行（padding 12/16）+ 44dp 圆角 10dp 预览盒（surface2）+ 名称 15sp on_surface + 行尾 22dp 圆形单选（选中 primary 圈+点 / 未选 outline 2dp）</td><td><code>item_icon_preference.xml</code> 全量重写（RelativeLayout → 竖排容器；去 <code>?attr/listChoiceIndicatorSingle</code>、<code>?android:textColorAlertDialogListItem</code> 主题耦合）</td><td>点行选中+关闭不变</td></tr>
+    <tr><td>02</td><td><b>单选运行时着色 + 选中态改绑</b>：选中态圈/点由 convert 内 ThemeStore.primaryColor 着色（禁 XML 固化 primary）；布局去 CheckedTextView 后 <code>IconListPreference.kt:180</code> 的 <code>label.isChecked = …</code> 必须改绑新 22dp 单选视图（如 <code>radio.isSelected = item == dialogValue</code>），否则编译失败或选中态不可见</td><td><code>IconListPreference.kt</code> Adapter.convert（:180 isChecked → 改绑 radio + 约 2 行 tint）；<code>:53-69</code> 偏好行 50×50 预览不动</td><td>点行选中 + 回写 value + dismiss 不变</td></tr>
+    <tr><td>02</td><td>清理冗余行点击：registerListener 的无 dismiss 监听与 convert 的 root 点击重复</td><td><code>IconListPreference.kt:188-197</code>（删除或合并，保留 :181-184 行为）</td><td class="dim2">消除双监听隐患，行为不变</td></tr>
+    <tr><td>03</td><td><b>行触控/令牌/省略</b>：min-height 48dp + padding 10/16 + 15sp on_surface + ellipsize=end</td><td><code>item_1line_text.xml</code>（padding 6dp→10/16；primaryText→on_surface 引用；singleLine 加 ellipsize）——<b>共用布局</b>：同时被「起效替换规则」弹窗消费（EffectiveReplacesDialog.kt:85-86 绑定、:107 显示规则名），升级对两页同时生效；如需规则名维持现状可拆 <code>item_crash_log_line.xml</code>（可选，默认共用）</td><td>点行 → TextDialog 预览不变；替换规则行点击进编辑不变</td></tr>
+    <tr><td>03/04</td><td>顶栏「清除」保持 <b>Toolbar 菜单形态</b>（menu_clear 文字动作 showAsAction=always）；稿面 .mact min-height 48px 仅为热区规格演示，落地不改为自定义按钮</td><td><code>menu/crash_log.xml:6-10</code>、<code>menu/rss_read_record.xml:6-10</code>（不改）；热区如需补足在 Toolbar 菜单视图上处理</td><td>菜单点击链路（CrashLogsDialog.kt:60-65 / ReadRecordDialog.kt:47-62）不变</td></tr>
+    <tr><td>03</td><td>空态：清空后显示 tv_msg「暂无崩溃日志」</td><td><code>CrashLogsDialog.kt:54-57</code> observe 内按列表空非空切 tv_msg visibility（壳已具备）</td><td class="dim2">可选增强；清空即时刷新不变</td></tr>
+    <tr><td>03</td><td class="dim2">清除加「提醒」确认（与 04 页一致化）</td><td class="dim2"><code>CrashLogsDialog.kt:60-65</code>（alert 包裹 clearCrashLog）</td><td class="dim2">可选增强，需决策；默认保持无确认</td></tr>
+    <tr><td>04</td><td><b>去行内横向滚动</b>：双 HorizontalScrollView → 纵向两行 TextView（title 15sp/500 on_surface；record 12.5sp on_surface_variant + autoLink=web），均 ellipsize=end</td><td><code>item_rss_read_record.xml</code> 全量重写；text_title/text_record id 不变（ReadRecordDialog.kt:77-78 绑定零改动）</td><td>行不可点击不变；autoLink 保留</td></tr>
+    <tr><td>04</td><td>行高 56dp（padding 10/16）+ 链接色运行时 accentColor（tv 记录 URL）</td><td><code>item_rss_read_record.xml</code>（textColorLink 用 <code>?attr/…运行时</code> 或 kt setTextLinkTextColor）</td><td>确认弹窗（提醒+条数）走系统 alert，不改绘</td></tr>
+    <tr><td>通用</td><td><b>换肤红线</b>：新增一切强调/选中色（确认钮、单选、链接、清除钮）运行时 accentColor/primaryColor 取色，布局 XML 禁固化 primary/accent；稿面 #FF6B2C 仅为默认兜底</td><td>AccentTextView 已达标（AccentTextView.kt:14-15）；其余见 02/04 各行 kt 注记</td><td>ThemeStore 换肤全量跟随</td></tr>
+  </table>
+  <ul class="notes">
+    <li><code>令牌基准</code> — 全稿沿用 MASTER.md §2/§3：暖纸 surface #FAF9F7 / 卡面 #FFF / 暖黑 #141312→#1D1B19 层级、on_surface #20242B/#F3F0EB、次要 #60656D/#B4B0AA、分割线 outline_variant、弹窗圆角 corner_radius_lg 16dp、行高 ≥48dp、正文对比 ≥4.5:1。</li>
+    <li><code>行四变体一稿覆盖</code> — item_log（已升级，仅补弹窗水平留白）、item_icon_preference / item_1line_text / item_rss_read_record（未升级，按 item_app_log.xml 的既定手法升级：次要小字 11.5-13sp、主文字 14-15sp primaryText/on_surface、padding 10/16、去主题耦合）。其中 item_1line_text 与「起效替换规则」弹窗共用（EffectiveReplacesDialog.kt:85-86,107），改动随布局同时生效于两页，详见映射表 #9。</li>
+    <li><code>不改绘的部分</code> — TextListDialog 的文本选择手势与光标规避（TextListDialog.kt:60-72）、崩溃日志 TextDialog 全文查看（CrashLogsDialog.kt:67-74）、阅读记录系统 alert 确认（ReadRecordDialog.kt:47-62）、IconDialog 无底栏无菜单（现状）——均按现状保留，稿面不虚构。</li>
+    <li><code>清单外依赖</code> — 本壳真实消费者 21 处（grep <code>R.layout.dialog_recycler_view</code> 实测）：本组 4 + 清单外 17 = 7×Import*Dialog + GroupManageDialog×4（book/group、book/source/manage、replace、rss/source/manage）+ AppLogDialog、SpeakEngineDialog、ServersDialog、ThemeListDialog、KeyboardAssistsConfig、EffectiveReplacesDialog；<b>SourcePickerDialog 不在本壳</b>（独立布局 <code>dialog_source_picker.xml</code>，SourcePickerDialog.kt:45）。壳级改动（底栏 48dp、tv_msg 消息层默认令牌）随壳落到 17 个未入稿页，不单独出稿、按 §05 规格直接实施；tv_msg 兼作错误文案位（ImportDictRuleDialog.kt:82-97），错误语义色由各页覆盖。本稿全部改动对 id 与 visibility 语义向后兼容（tv_msg、tv_footer_left、tv_cancel、tv_ok 均不动 id）；view_preference / view_icon 仍为 IconListPreference 偏好行专用（IconListPreference.kt:31-32）。</li>
+  </ul>
+</section>
+
+<footer class="foot">legado v2 · mockup · generic-list-dialogs —— 功能对照 TextListDialog.kt / IconListPreference.kt / CrashLogsDialog.kt / ReadRecordDialog.kt（classic-base）· 视觉令牌与 design-system/legado/MASTER.md 及 group-select / dict 稿一致</footer>
+</div>
+</body></html>

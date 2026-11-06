@@ -52,3 +52,15 @@
   后者在加载视图初始化处 `setIndicatorColor(context.primaryColor)`（约 1 行）；
   默认色兜底已是暖橙体系（见 §1），未换肤用户观感不受影响。
 
+## 9. 书架设置弹窗容器降级为现状 AlertDialog（NEED-DECISION 路线③）
+- 背景：bookshelf-config-dialog.html 的 [NEED-DECISION]「容器落地路线」给过三案：
+  ①styles 新增全局 `alertDialogTheme`（圆角背景 + windowTitleStyle）；②本弹窗迁 `BaseDialogFragment`；
+  ③降级现状容器、仅表单内令牌化。落地按 **③** 执行
+  （`BaseBookshelfFragment.configBookshelf` / `dialog_bookshelf_config.xml`）：保留 androidx AlertDialog
+  框架标题与正/负按钮面板，稿面 16dp 圆角卡/描边/18sp 标题/底栏分隔为设计目标形态，未落地。
+- 约束来源：页面级落地任务规则禁止编辑 `values/*.xml`、`styles.xml`、themes 及既有 drawable
+  （本条为落地轮约束，非本文件原有记录），路线①依赖新增全局资源被阻断；路线②需把
+  alert + okButton/cancelButton 改写为 DialogFragment 自绘底栏，超出「行为不变」最小改动口径。
+- 若后续放开 values 限制：按①新增全局 `alertDialogTheme` 一处生效全库 AlertDialog 即可升级，
+  稿面 03 映射表「表单区各行」不受影响。
+

@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 书籍变量/源变量设置弹窗（url-variable-dialogs §03 + §04·9-13）：
+     卡底 shape_card_view → bg_dialog_card（DECISIONS §4，16dp 圆角，§04·9）；
+     两处小节标签随 field 卡迁移为卡内 label，on_primary_soft → secondaryText 11.5sp（§04·10，
+     on_primary_soft 语义回归「亮色底上的文字钮/强调文字」12-missed-2 #19）；
+     variable 输入与只读说明 field 卡化（bg_edit_filled，同 dialog_bookmark.xml 栅格，§04·11/12）：
+     卡 minHeight 50dp + clickable——variable 卡点击转焦 tv_variable（showSoftInput = requestFocus +
+     showSoftInput，补足 ≥48dp 触控目标并阻断点击冒泡到 root dismiss 防误关丢已输内容，
+     BaseDialogFragment.kt:78-82），说明卡 clickable 吞点击；聚焦描边由卡容器
+     addStatesFromChildren + VariableDialog 运行时注入（BookmarkDialog.kt:58-66 先例）；
+     说明滚动壳 NestedScrollView 原样保留（§04·13），tv_variable 仍在滚动区外；
+     Toolbar/菜单/保存回调行为零改动（§04·14） -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,10 +18,11 @@
     android:padding="16dp">
 
     <LinearLayout
+        android:id="@+id/vw_bg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/shape_card_view"
+        android:background="@drawable/bg_dialog_card"
         android:orientation="vertical"
         tools:ignore="UselessParent">
 
@@ -18,53 +30,105 @@
             android:id="@+id/tool_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="?attr/actionBarStyle"
+            android:theme="@style/ThemeOverlay.AppCompat.DayNight"
             app:displayHomeAsUp="false"
             app:fitStatusBar="false"
             app:title="Set variable"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:titleTextAppearance="@style/ToolbarTitle" />
+            app:titleTextAppearance="@style/ToolbarTitle"
+            app:titleTextColor="@color/on_surface" />
 
-        <!-- 12-missed-2 #25：小节标签按 #29-A 用深主色 on_primary_soft（AccentTextView 运行时主色亮色压白 2.84:1） -->
-        <TextView
+        <!-- field 卡：variable 输入（§04·11，id 不变，kt 绑定零改动） -->
+        <LinearLayout
+            android:id="@+id/vw_variable_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="3dp"
-            android:text="variable"
-            android:textColor="@color/on_primary_soft"
-            tools:ignore="HardcodedText" />
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="10dp"
+            android:addStatesFromChildren="true"
+            android:background="@drawable/bg_edit_filled"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:minHeight="50dp"
+            android:orientation="vertical"
+            android:paddingLeft="14dp"
+            android:paddingTop="7dp"
+            android:paddingRight="14dp"
+            android:paddingBottom="8dp">
 
-        <io.legado.app.lib.theme.view.ThemeEditText
-            android:id="@+id/tv_variable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="variable"
+                android:textColor="@color/secondaryText"
+                android:textSize="11.5sp"
+                tools:ignore="HardcodedText" />
 
+            <io.legado.app.lib.theme.view.ThemeEditText
+                android:id="@+id/tv_variable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:background="@null"
+                android:minHeight="24dp"
+                android:textColor="@color/primaryText"
+                android:textSize="14sp"
+                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        </LinearLayout>
+
+        <!-- 说明滚动壳原样保留（§04·13，含 overScrollMode）：长 variableComment
+             （BookSource.getDisplayVariableComment）滚动展示，tv_variable 在滚动区外 -->
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:overScrollMode="ifContentScrolls">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingBottom="12dp">
 
-                <TextView
+                <!-- 只读说明 field 卡（§04·12）：无聚焦描边，卡 clickable 吞点击防误 dismiss，
+                     textIsSelectable 保留（复制仍可用），字色 secondaryText（on_surface_variant 等值令牌） -->
+                <LinearLayout
+                    android:id="@+id/vw_comment_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="3dp"
-                    android:text="@string/variable_comment"
-                    android:textColor="@color/on_primary_soft" />
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/bg_edit_filled"
+                    android:clickable="true"
+                    android:gravity="center_vertical"
+                    android:minHeight="50dp"
+                    android:orientation="vertical"
+                    android:paddingLeft="14dp"
+                    android:paddingTop="7dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="8dp">
 
-                <TextView
-                    android:id="@+id/tv_comment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="3dp"
-                    android:textColor="@color/secondaryText"
-                    android:textIsSelectable="true" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/variable_comment"
+                        android:textColor="@color/secondaryText"
+                        android:textSize="11.5sp" />
+
+                    <TextView
+                        android:id="@+id/tv_comment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:lineSpacingMultiplier="1.8"
+                        android:minHeight="24dp"
+                        android:textColor="@color/secondaryText"
+                        android:textIsSelectable="true"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
 
             </LinearLayout>
 

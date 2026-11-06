@@ -17,3 +17,7 @@ package-lock.json
 # Kotlin 2.0
 .kotlin/
 .verify/
+
+# 模拟器验收工作产物
+.acceptance-fixtures/
+.acceptance-shots/

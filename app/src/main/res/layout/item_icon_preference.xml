@@ -1,34 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- 通用列表弹窗稿 §02/§06#7 行升级：56dp 行 + 44dp 圆角 10dp 预览盒（surface_container_high，
+     CSS surface2）+ 名称 15sp on_surface + 行尾 22dp 圆形单选（未选 outline 2dp 描边，选中态
+     圈+点由 IconListPreference convert 运行时 ThemeStore.primaryColor 着色，MASTER §4 禁 XML
+     固化 primary）；去 CheckedTextView 的 ?attr/listChoiceIndicatorSingle /
+     ?android:textColorAlertDialogListItem 主题耦合。点行选中+关闭行为不变（IconListPreference.kt） -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
-    android:padding="6dip">
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:minHeight="56dp"
+    android:orientation="horizontal"
+    android:paddingLeft="16dp"
+    android:paddingTop="4dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="4dp"
+    tools:ignore="RtlHardcoded">
 
+    <!-- 44dp 预览盒：bg 占位圆角卡，7dp 内边距留出稿面 30dp 字形区；装饰图不进无障碍树 -->
     <ImageView
         android:id="@+id/icon"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:adjustViewBounds="true"
-        android:contentDescription="ICON"
-        android:padding="10dip"
-        tools:ignore="HardcodedText" />
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/bg_lib_prefs_icon_list_preference_icon_box"
+        android:contentDescription="@null"
+        android:importantForAccessibility="no"
+        android:padding="7dp"
+        android:scaleType="fitCenter" />
 
-    <CheckedTextView
+    <!-- 稿 .iname：15sp/500 on_surface，长名省略号（全名即 entries 文案，无二级查看页） -->
+    <TextView
         android:id="@+id/label"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingRight="10dp"
-        android:layout_alignParentEnd="true"
-        android:layout_toRightOf="@+id/icon"
-        android:checkMark="?android:attr/listChoiceIndicatorSingle"
-        android:ellipsize="marquee"
-        android:gravity="center_vertical"
-        android:minHeight="?android:attr/listPreferredItemHeight"
-        android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="?android:attr/textColorAlertDialogListItem"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:maxLines="1"
+        android:textColor="@color/on_surface"
+        android:textSize="15sp"
         android:textIsSelectable="false"
-        tools:ignore="RtlHardcoded,RtlSymmetry" />
+        tools:ignore="RtlSymmetry" />
 
-</RelativeLayout>
+    <!-- 行尾 22dp 单选：背景由 kt 按选中态注入（未选 outline 描边 / 选中 primary 圈+内点），
+         isSelected 保留选中语义（无障碍朗读「已选中」） -->
+    <View
+        android:id="@+id/radio"
+        android:layout_width="22dp"
+        android:layout_height="22dp" />
+
+</LinearLayout>

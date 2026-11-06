@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- widget/dialog/CodeDialog「只读」徽标底（widget-viewer-dialogs §05⑧）：
+     pill_field 明暗成对令牌（values/colors.xml:92 #0F000000 / values-night/colors.xml:60 #14FFFFFF）
+     + 6dp 圆角（稿 .ro border-radius:6px），提高任意标题底色上的可见性 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/pill_field" />
+    <corners android:radius="6dp" />
+</shape>

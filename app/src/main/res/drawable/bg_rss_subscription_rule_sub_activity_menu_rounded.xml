@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 规则订阅 sp_type 下拉浮层底（rule-sub-edit 稿 §04·8）：surface_container_high（菜单/弹层语义，
+     MASTER.md §2）+ 12dp 圆角（corner_radius_md），替换 Holo 直角弹层（MASTER.md §4 反模式）；
+     语义令牌引用，明暗随 values(-night) 换肤 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/surface_container_high" />
+    <corners android:radius="12dp" />
+</shape>

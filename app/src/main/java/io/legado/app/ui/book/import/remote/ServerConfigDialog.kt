@@ -1,5 +1,6 @@
 package io.legado.app.ui.book.import.remote
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.InputType
 import android.view.MenuItem
@@ -13,8 +14,10 @@ import io.legado.app.data.entities.Server
 import io.legado.app.data.entities.rule.RowUi
 import io.legado.app.databinding.DialogWebdavServerBinding
 import io.legado.app.databinding.ItemSourceEditBinding
+import io.legado.app.ui.widget.text.TextInputLayout
 import io.legado.app.utils.GSON
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import org.json.JSONObject
@@ -43,6 +46,10 @@ class ServerConfigDialog() : BaseDialogFragment(R.layout.dialog_webdav_server, t
     }
 
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        // 设计稿 §04⑨：hint 浮标 on_surface_variant。theme 类 TextInputLayout 构造即
+        // defaultHintTextColor=accentColor（TextInputLayout.kt:13-14），须在本弹窗逐实例覆盖；
+        // til_name 与动态行必须一起换，只换其一会同弹窗两种 hint 色（改全局类牵连面大）
+        applyHintColor(binding.tilName)
         binding.toolBar.inflateMenu(R.menu.server_config)
         binding.toolBar.menu.applyTint(requireContext())
         binding.toolBar.setOnMenuItemClickListener(this)
@@ -85,6 +92,7 @@ class ServerConfigDialog() : BaseDialogFragment(R.layout.dialog_webdav_server, t
                     binding.flexbox.addView(it.root)
                     it.root.id = index + 1000
                     it.textInputLayout.hint = rowUi.name
+                    applyHintColor(it.textInputLayout)
                     it.editText.setText(config?.getString(rowUi.name))
                 }
                 RowUi.Type.password -> ItemSourceEditBinding.inflate(
@@ -95,12 +103,23 @@ class ServerConfigDialog() : BaseDialogFragment(R.layout.dialog_webdav_server, t
                     binding.flexbox.addView(it.root)
                     it.root.id = index + 1000
                     it.textInputLayout.hint = rowUi.name
+                    applyHintColor(it.textInputLayout)
                     it.editText.inputType =
                         InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
                     it.editText.setText(config?.getString(rowUi.name))
                 }
             }
         }
+    }
+
+    // 设计稿 §04⑨：hint 浮标 on_surface_variant（聚焦浮标同色，稿面聚焦态标签同为次要色；
+    // 写法同 CheckSourceConfig.kt:49-54 / CoverRuleConfigDialog.kt:95，运行时取语义令牌可换肤）
+    private fun applyHintColor(layout: TextInputLayout) {
+        val hintColors = ColorStateList.valueOf(
+            layout.context.getCompatColor(R.color.on_surface_variant)
+        )
+        layout.defaultHintTextColor = hintColors
+        layout.hintTextColor = hintColors
     }
 
     private fun getServer(): Server {
