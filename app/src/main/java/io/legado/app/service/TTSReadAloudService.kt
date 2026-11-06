@@ -31,6 +31,7 @@ import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
+import kotlin.math.sqrt
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
@@ -187,8 +188,8 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
                         } else {
                             synthErrorNo = 0
                             val file = getSpeakFile(fileName)
-                            // 峰值归一化后再入缓存：语音电平远低于音乐母带，同音量条听感偏小
-                            normalizeWavPeak(file)
+                            // 响度归一化后再入缓存：拉齐段间响度并提升电平，低音量下不再忽大忽小
+                            normalizeWavLoudness(file)
                             // 单段音频精确时长 → 基准节奏校准（首段即准，后续持续精化）
                             onExactPaceSample(wavDurationMs(file), speakText.length)
                         }
@@ -432,11 +433,16 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
     override fun paceStoreKey(): String = "sysTts-" + (ttsEngineName ?: "default")
 
     /**
-     * 峰值归一化：TTS 引擎输出电平远低于音乐母带（峰值常见 -6~-12dBFS），
-     * 同音量条下朗读明显偏小；把峰值拉到约 -1dBFS 再入缓存，
-     * 只放大不衰减，增益上限 4 倍，近满幅/近静音的文件原样保留
+     * 响度归一化：TTS 引擎输出电平远低于音乐母带（峰值常见 -6~-12dBFS），
+     * 同音量条下朗读明显偏小；且各段峰值/波峰系数不同，逐段必须按「响度」拉齐，
+     * 否则段间响度差在低音量下被放大为忽大忽小。峰值只用于防削波：
+     * - 活跃区 = |样本| ≥ 峰值/8（约-18dB 相对门限），排除首尾/段内停顿对 RMS 的稀释
+     * - 增益 = 目标RMS / 活跃RMS，最多放大 12 倍、最多衰减 6dB，并受防削波上界
+     *   （增益后峰值 ≤ ~0.92 满幅）约束，动态再大的段也不削波
+     * - 近静音（峰值过低/活跃样本过少/活跃RMS过低）原样保留，避免抬升底噪
+     * - 对已归一文件幂等（增益≈1 直接跳过）
      */
-    private fun normalizeWavPeak(file: File) {
+    private fun normalizeWavLoudness(file: File) {
         try {
             val bytes = file.readBytes()
             if (bytes.size <= 44) return
@@ -465,6 +471,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
             val bits = ((bytes[35].toInt() and 0xFF) shl 8) or (bytes[34].toInt() and 0xFF)
             if (bits != 16 || channels < 1) return
             val end = dataStart + dataSize
+            // 第一遍：峰值（定活跃门限与防削波上界）
             var peak = 0
             var i = dataStart
             while (i + 1 < end) {
@@ -474,10 +481,30 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
                 if (a > peak) peak = a
                 i += 2
             }
-            val target = 29200 // ≈0.89 满幅（-1dBFS）
-            if (peak < 100 || peak > target) return
-            val gain = (target.toFloat() / peak).coerceAtMost(4f)
-            if (gain <= 1.05f) return
+            if (peak < 200) return // 近静音（≈-44dBFS 以下），多为静音占位，原样保留
+            // 第二遍：语音活跃区 RMS（排除停顿稀释，保证段间可比）
+            val gate = peak / 8
+            var sumSq = 0.0
+            var activeCount = 0
+            i = dataStart
+            while (i + 1 < end) {
+                val raw = (bytes[i].toInt() and 0xFF) or ((bytes[i + 1].toInt() and 0xFF) shl 8)
+                val v = if (raw >= 0x8000) raw - 0x10000 else raw
+                val a = if (v < 0) -v else v
+                if (a >= gate) {
+                    sumSq += v.toDouble() * v
+                    activeCount++
+                }
+                i += 2
+            }
+            if (activeCount < 32) return // 活跃样本过少（近纯静音），不处理
+            val activeRms = sqrt(sumSq / activeCount)
+            if (activeRms < 80) return // 活跃区也接近静音（≈-52dBFS），避免抬噪
+            val targetRms = 6000.0 // ≈-14.8dBFS：对齐上次峰值归一的实际响度（音乐App级听感），段间拉齐的目标
+            var gain = targetRms / activeRms
+            gain = gain.coerceAtMost(30100.0 / peak) // 防削波：增益后峰值 ≤ ~0.92 满幅
+            gain = gain.coerceIn(0.5, 12.0)          // 最多衰减 6dB / 最多放大 12 倍
+            if (gain in 0.97..1.03) return           // 已在目标响度（含幂等二次处理）
             i = dataStart
             while (i + 1 < end) {
                 val raw = (bytes[i].toInt() and 0xFF) or ((bytes[i + 1].toInt() and 0xFF) shl 8)
@@ -488,9 +515,9 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
                 i += 2
             }
             file.writeBytes(bytes)
-            LogUtils.d(TAG, "峰值归一化: peak=$peak gain=${gain}x ${file.name}")
+            LogUtils.d(TAG, "响度归一化: peak=$peak activeRms=${activeRms.toInt()} gain=%.2fx %s".format(gain, file.name))
         } catch (e: Exception) {
-            AppLog.put("朗读音频归一化失败", e)
+            AppLog.put("朗读音频响度归一化失败", e)
         }
     }
 
@@ -525,7 +552,8 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
     }
 
     private fun md5SpeakFileName(content: String): String {
-        return MD5Utils.md5Encode16(textChapter?.title ?: "") + "_" +
+        // 前缀 loudv2：响度归一化算法版本标记，升级后旧缓存（峰值归一化版）自动失效重合成
+        return "loudv2_" + MD5Utils.md5Encode16(textChapter?.title ?: "") + "_" +
                 MD5Utils.md5Encode16("sysTts-|-${ttsEngineName}-|-$speechRate-|-$content")
     }
 
