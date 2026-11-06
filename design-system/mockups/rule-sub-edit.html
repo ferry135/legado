@@ -1,0 +1,309 @@
+<!-- design-system: legado v2 · mockup -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>legado v2 · 规则订阅内嵌编辑弹窗 · 新界面</title><style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Noto Sans SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;background:#eae7e0;color:#3a3833}
+.wrap{max-width:1180px;margin:0 auto;padding:52px 24px 110px;display:flex;flex-direction:column;gap:60px;align-items:center}
+/* ---------- 页头 ---------- */
+.page-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:16px}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.14em;color:#a8623c}
+.h1{font-size:34px;font-weight:750;line-height:1.2;margin:0}
+.h1 small{font-size:15px;font-weight:600;color:#60656d;margin-left:12px}
+.desc{font-size:14px;line-height:1.8;color:#60656d;margin:0;max-width:820px}
+.desc code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px}
+.nav{display:flex;flex-wrap:wrap;gap:10px}
+.nav a{text-decoration:none;font-size:13px;font-weight:600;color:#5a574e;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:999px;padding:9px 16px;transition:.15s}
+.nav a:hover{background:#ff6b2c;color:#fff;border-color:#ff6b2c}
+.nav a b{font-weight:750;color:inherit;opacity:.55;margin-right:6px}
+/* ---------- 屏幕区 ---------- */
+.screen{width:100%;display:flex;flex-direction:column;align-items:center;gap:24px;scroll-margin-top:20px}
+.screen-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:10px}
+.st-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.st-num{font-size:13px;font-weight:750;color:#ff6b2c;letter-spacing:.08em}
+.st-title{font-size:24px;font-weight:750;margin:0}
+.st-src{font-size:12px;color:#60656d}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{font-size:12px;color:#6d6a62;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:7px;padding:5px 10px}
+.chips span.new{color:#a8623c;border-color:rgba(255,107,44,.35);background:#fff7f2}
+.pairs{display:flex;gap:30px;flex-wrap:wrap;justify-content:center}
+.pair{display:flex;flex-direction:column;gap:10px;align-items:center}
+.theme-tag{font-size:12px;font-weight:700;color:#60656d;letter-spacing:.1em}
+/* ---------- 手机壳（令牌与 dict / url-variable-dialogs 完全一致） ---------- */
+.phone{width:412px;height:900px;border-radius:30px;position:relative;overflow:hidden;background:var(--bg);color:var(--text);border:1px solid rgba(0,0,0,.09);flex:none}
+.phone.light{--bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--feature:#fff1e8;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--on-primary:#fff;--pri-deep:#b34a15;--track:#e5e2de;--divider:rgba(0,0,0,.07);--field:rgba(0,0,0,.06);--menu:#fff;--error:#ba1a1a;--ok:#3b7a45;--scrim:rgba(0,0,0,.5);--field-solid:#f1efe9}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--feature:#2b1d15;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--on-primary:#fff;--pri-deep:#ff6b2c;--track:#353331;--divider:rgba(255,255,255,.08);--field:rgba(255,255,255,.08);--menu:#2a2824;--error:#ffb4ab;--ok:#7fd891;--scrim:rgba(0,0,0,.5);--field-solid:#2a2925}
+.status{height:34px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:14px;font-weight:600}
+.status-right{display:flex;gap:10px;align-items:center}
+.hi{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--text);opacity:.4;z-index:30;pointer-events:none}
+/* ---------- 宿主页顶栏（TitleBar blend · menu_add 常驻） ---------- */
+.trow{display:flex;align-items:center;gap:2px;min-height:50px}
+.tb-title{font-size:18px;font-weight:650;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:8px}
+.icon-btn{width:44px;height:44px;border:0;background:transparent;border-radius:22px;display:grid;place-items:center;cursor:pointer;color:var(--text);flex:none}
+.icon{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* ---------- 规则订阅行（item_rule_sub.xml S8 现状，原样呈现） ---------- */
+.rsrow{display:flex;align-items:center;padding:13px 20px}
+.rsmain{flex:1;min-width:0}
+.rsl1{display:flex;align-items:center;gap:8px;min-width:0}
+.rsname{font-size:16px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:210px}
+.bdg{flex:none;background:var(--primary-soft);color:var(--pri-deep);font-size:11px;font-weight:600;padding:2px 8px;border-radius:8px;white-space:nowrap}
+.rsurl{margin-top:5px;font-size:12px;color:var(--secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ib36{width:36px;height:36px;border:0;background:transparent;border-radius:18px;display:grid;place-items:center;cursor:pointer;color:var(--text);flex:none;padding:0}
+.ib36 svg{width:24px;height:24px}
+.vd{height:1px;background:var(--divider)}
+/* ---------- 空态（EmptyTipView 圆底图标变体，activity_rule_sub.xml v3 现状） ---------- */
+.etip{position:absolute;left:0;right:0;top:150px;bottom:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;text-align:center}
+.etip .cir{width:76px;height:76px;border-radius:50%;background:var(--surface2);display:grid;place-items:center;color:var(--secondary)}
+.etip .cir svg{width:34px;height:34px}
+.etip .t{margin-top:12px;font-size:14px;font-weight:700;color:var(--text)}
+.etip .s{margin-top:6px;font-size:12px;line-height:1.7;color:var(--secondary);max-width:236px}
+/* ---------- 弹窗容器（alert() AppCompat 居中卡） ---------- */
+.dim{position:absolute;inset:0;background:var(--scrim);z-index:5}
+.card{position:absolute;background:var(--surface);border-radius:16px;z-index:9;overflow:hidden;border:1px solid var(--divider)}
+.acard{left:36px;right:36px;top:300px;border-radius:16px}
+.atitle{padding:20px 22px 10px;font-size:17px;font-weight:650;color:var(--text)}
+.abody{padding:4px 20px 8px}
+.afoot{display:flex;justify-content:flex-end;gap:2px;padding:8px 10px 12px}
+.txtbtn{border:0;background:transparent;font-size:14px;font-weight:650;color:var(--secondary);min-height:48px;padding:0 14px;border-radius:10px;cursor:pointer;font-family:inherit;flex:none}
+.txtbtn.pri{color:var(--pri-deep)}
+/* ---------- field 卡（bg_edit_filled：surface_container_high + 10dp 圆角，与 dialog_bookmark.xml 同栅格） ---------- */
+.fcard{background:var(--surface2);border-radius:10px;padding:7px 14px 8px;margin-bottom:10px;min-height:52px;display:flex;flex-direction:column;justify-content:center}
+.fcard.focus{box-shadow:inset 0 0 0 1.5px var(--primary)}
+.flab{font-size:11.5px;font-weight:600;color:var(--secondary);letter-spacing:.02em}
+.fval{margin-top:2px;font-size:14px;line-height:1.5;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:20px}
+.fval.mut{color:var(--secondary);opacity:.8}
+/* 类型分发卡：label/值左列 + 尾部下拉箭头（替换 Holo Spinner） */
+.fcard.sel{flex-direction:row;align-items:center;gap:10px;cursor:pointer}
+.fcard.sel .fcol{flex:1;min-width:0;display:flex;flex-direction:column}
+.chev{width:20px;height:20px;flex:none;fill:none;stroke:var(--secondary);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* ---------- 类型下拉浮层（spinner popup：menu 底 12dp 圆角 · 行高 48dp） ---------- */
+.dd{position:absolute;z-index:12;left:56px;right:56px;background:var(--menu);border:1px solid var(--divider);border-radius:12px;box-shadow:0 10px 26px rgba(0,0,0,.18);padding:6px 0;overflow:hidden}
+.dd .dd-i{min-height:48px;display:flex;align-items:center;padding:0 16px;font-size:14px;color:var(--text)}
+.dd .dd-i.on{background:var(--primary-soft);color:var(--pri-deep);font-weight:650}
+/* ---------- toast（重复 URL 提示，group-manage 稿同款） ---------- */
+.toast{position:absolute;left:50%;bottom:70px;transform:translateX(-50%);z-index:20;background:rgba(20,19,18,.85);color:#f3f0eb;font-size:12.5px;padding:9px 16px;border-radius:10px;white-space:nowrap}
+/* ---------- 注释 / 映射表 ---------- */
+.notes{width:100%;max-width:1080px;font-size:12.5px;line-height:1.9;color:#60656d;border-top:1px dashed rgba(0,0,0,.12);padding-top:12px}
+.notes code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px}
+.notes b{color:#45423a}
+.tok{width:100%;max-width:1080px;border-collapse:collapse;font-size:13px;color:#45423a}
+.tok th{font-size:12px;font-weight:700;color:#60656d;text-align:left;letter-spacing:.04em;padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.12)}
+.tok td{padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.07);vertical-align:top;line-height:1.7}
+.tok code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px;white-space:nowrap}
+.tok .dim2{color:#60656d}
+.foot{font-size:12px;color:#60656d;text-align:center;line-height:2}
+</style></head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-add" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></symbol>
+<symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="18.5" r="1.5" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-chev-d" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-import" viewBox="0 0 24 24"><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/><path d="M12 4v9"/><path d="m8 9.5 4 4 4-4"/></symbol>
+</defs></svg>
+
+<div class="wrap">
+
+<header class="page-head">
+  <div class="kicker">LEGADO V2 · MOCKUP</div>
+  <h1 class="h1">规则订阅 · 内嵌编辑弹窗<small>RuleSub Edit Dialog 重设计</small></h1>
+  <p class="desc">重构 <b>dialog_rule_sub_edit.xml</b>——RuleSubActivity.editSubscription 以 <code>alert(R.string.rule_subscription)</code> 弹出的内嵌编辑弹窗（新建与编辑共用，RuleSubActivity.kt:97-124）。<b>主页已新</b>：activity_rule_sub.xml（v3 EmptyTipView 空态）与 item_rule_sub.xml（S8 规则订阅行）已随前批落新，本稿仅原样呈现为宿主，不作改动。弹窗重点两处：① 名称 / Url 输入域换 <b>filled field 卡</b>（<code>bg_edit_filled</code>：surface_container_high + 10dp 圆角 + label/值双行栅格，与已落地 dialog_bookmark.xml / url-variable-dialogs 稿同栅格）；② 类型行 <b>Holo Spinner 替换</b>（styles.xml:54 <code>Spinner</code> parent android:Theme.Holo.Light）为填充分发样式（field 卡 + 尾部箭头 + 圆角 menu 弹层）。控件 id（sp_type / et_name / et_url）与保存行为全部保留；主色一律运行时 accentColor（ThemeStore 可换肤），稿面 #FF6B2C / #B34A15 仅为默认兜底。</p>
+  <nav class="nav">
+    <a href="#s1"><b>01</b>新建态 · filled field</a>
+    <a href="#s2"><b>02</b>编辑态 · 类型下拉</a>
+    <a href="#s3"><b>03</b>宿主页 · 重复提示 / 空态</a>
+    <a href="#s4"><b>04</b>设计调整与落地映射</a>
+  </nav>
+</header>
+
+<!-- ================= 01 新建态 ================= -->
+<section class="screen" id="s1">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">01</span><h2 class="st-title">新建态 · filled field</h2><span class="st-src">RuleSubActivity.kt:55-58 menu_add → editSubscription(RuleSub(customOrder = maxOrder+1)) · dialog_rule_sub_edit.xml</span></div>
+    <div class="chips"><span>alert 标题「规则订阅」</span><span class="new">3 张 field 卡 bg_edit_filled · 10dp 圆角</span><span class="new">类型分发卡替换 Holo Spinner</span><span>id 全保留：sp_type / et_name / et_url</span><span>取消 / 确定 ≥48dp</span><span>空值留白 · hint 删除防双显</span><span class="new">整卡触控需 kt 桥接 performClick</span><span>空值可保存（现状无校验）</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：新建空表单 -->
+    <div class="pair"><div class="theme-tag">浅色 · 新建（空表单）</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="trow"><div class="tb-title">规则订阅</div><button class="icon-btn" type="button" aria-label="添加"><svg class="icon"><use href="#i-add"/></svg></button></div>
+      <div class="rsrow"><div class="rsmain"><div class="rsl1"><span class="rsname">开源阅读书源</span><span class="bdg">书源</span></div><div class="rsurl">https://shuyuan.miaogongzi.n…/shuyuan.json</div></div><button class="ib36" type="button" aria-label="编辑"><svg class="icon"><use href="#i-edit"/></svg></button><button class="ib36" type="button" aria-label="更多"><svg class="icon"><use href="#i-more"/></svg></button></div>
+      <div class="vd"></div>
+      <div class="rsrow"><div class="rsmain"><div class="rsl1"><span class="rsname">三九RSS源</span><span class="bdg">订阅源</span></div><div class="rsurl">https://ku.miaogongzi.net/kj/mgrss.json</div></div><button class="ib36" type="button" aria-label="编辑"><svg class="icon"><use href="#i-edit"/></svg></button><button class="ib36" type="button" aria-label="更多"><svg class="icon"><use href="#i-more"/></svg></button></div>
+      <div class="vd"></div>
+      <div class="rsrow"><div class="rsmain"><div class="rsl1"><span class="rsname">精选替换规则</span><span class="bdg">替换规则</span></div><div class="rsurl">https://www.yuque.com/legado/…/replace.json</div></div><button class="ib36" type="button" aria-label="编辑"><svg class="icon"><use href="#i-edit"/></svg></button><button class="ib36" type="button" aria-label="更多"><svg class="icon"><use href="#i-more"/></svg></button></div>
+      <div class="dim"></div>
+      <div class="card acard">
+        <div class="atitle">规则订阅</div>
+        <div class="abody">
+          <div class="fcard sel"><div class="fcol"><span class="flab">类型</span><span class="fval">书源</span></div><svg class="chev"><use href="#i-chev-d"/></svg></div>
+          <div class="fcard"><span class="flab">名称</span><span class="fval mut">&nbsp;</span></div>
+          <div class="fcard" style="margin-bottom:0"><span class="flab">Url</span><span class="fval mut">&nbsp;</span></div>
+        </div>
+        <div class="afoot"><button class="txtbtn" type="button">取消</button><button class="txtbtn pri" type="button">确定</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：新建 · 名称输入中 -->
+    <div class="pair"><div class="theme-tag">深色 · 新建（名称输入中）</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="trow"><div class="tb-title">规则订阅</div><button class="icon-btn" type="button" aria-label="添加"><svg class="icon"><use href="#i-add"/></svg></button></div>
+      <div class="rsrow"><div class="rsmain"><div class="rsl1"><span class="rsname">开源阅读书源</span><span class="bdg">书源</span></div><div class="rsurl">https://shuyuan.miaogongzi.n…/shuyuan.json</div></div><button class="ib36" type="button" aria-label="编辑"><svg class="icon"><use href="#i-edit"/></svg></button><button class="ib36" type="button" aria-label="更多"><svg class="icon"><use href="#i-more"/></svg></button></div>
+      <div class="vd"></div>
+      <div class="rsrow"><div class="rsmain"><div class="rsl1"><span class="rsname">三九RSS源</span><span class="bdg">订阅源</span></div><div class="rsurl">https://ku.miaogongzi.net/kj/mgrss.json</div></div><button class="ib36" type="button" aria-label="编辑"><svg class="icon"><use href="#i-edit"/></svg></button><button class="ib36" type="button" aria-label="更多"><svg class="icon"><use href="#i-more"/></svg></button></div>
+      <div class="dim"></div>
+      <div class="card acard">
+        <div class="atitle">规则订阅</div>
+        <div class="abody">
+          <div class="fcard sel"><div class="fcol"><span class="flab">类型</span><span class="fval">书源</span></div><svg class="chev"><use href="#i-chev-d"/></svg></div>
+          <div class="fcard focus"><span class="flab">名称</span><span class="fval">灯塔书源合集</span></div>
+          <div class="fcard" style="margin-bottom:0"><span class="flab">Url</span><span class="fval mut">&nbsp;</span></div>
+        </div>
+        <div class="afoot"><button class="txtbtn" type="button">取消</button><button class="txtbtn pri" type="button">确定</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>入口</code> — 主页顶栏 menu_add（ic_add 常驻动作，menu/source_subscription.xml，RuleSubActivity.kt:55-58）：<code>editSubscription(RuleSub(customOrder = appDb.ruleSubDao.maxOrder + 1))</code>，新建与编辑走同一弹窗。</li>
+    <li><code>容器</code> — <code>alert()</code> 为 AppCompat AlertDialog（AndroidAlertBuilder.kt:14 <code>AlertDialog.Builder(ctx)</code>）：标题「规则订阅」（R.string.rule_subscription，values-zh/strings.xml:842）+ customView + 底部按钮条；居中卡宽度随内容，稿面 340px 示意。16dp 圆角与 DECISIONS §4 弹窗语言一致，随主题 alertDialogTheme 生效（见 §04 映射 6）。</li>
+    <li><code>类型分发卡（新增形态）</code> — 现状为 Holo Spinner（styles.xml:54 <code>&lt;style name="Spinner" parent="android:Theme.Holo.Light"/&gt;</code>）+ AccentTextView「类型：」同排裸行；改为 field 卡：label「类型」11.5sp 次要色 + 值（rule_type 数组选中项，中文机型显示「书源/订阅源/替换规则」，values-zh/arrays.xml:100-104 已汉化）+ 尾部 20px 下拉箭头，整卡 ≥52dp 触控。<b>整卡触控需 kt 桥接</b>：AppCompat Spinner 仅响应自身 bounds 点击，点 label/箭头/卡空白不弹下拉，须在 editSubscription 内对分发卡 root <code>setOnClickListener { spType.performClick() }</code>（§04 映射 4）。下拉浮层见 §02。</li>
+    <li><code>名称 / Url</code> — 现状 TextInputLayout + ThemeEditText 裸 hint（dialog_rule_sub_edit.xml:31-54）→ field 卡 label/值双行栅格：原 hint 词迁移为 label（「名称」= @string/name，values-zh/strings.xml:679；「Url」= 原硬编码 hint），值 14sp on_surface；hint 删除避免 label+hint 双显，<b>空态值行留白</b>（稿面空表单帧即留白、无占位文字，字段名由 label 承载）。</li>
+    <li><code>按钮</code> — okButton / cancelButton = android.R.string.ok / cancel（AlertBuilder.kt:95-99）→「确定 / 取消」；取消仅 dismiss，确定触发保存校验（§03）。按钮 min-height 48dp。</li>
+    <li><code>无校验</code> — 名称/Url 允许为空直接入库（RuleSubActivity.kt:107-109 原样读取，无非空校验）；本稿不虚构必填校验，仅视觉层。如需校验属行为增强，列 NEED-DECISION。</li>
+  </ul>
+</section>
+
+<!-- ================= 02 编辑态与类型下拉 ================= -->
+<section class="screen" id="s2">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">02</span><h2 class="st-title">编辑态 · 类型下拉展开</h2><span class="st-src">RuleSubAdapter.kt:37-39 iv_edit → editSubscription(ruleSub) · RuleSubActivity.kt:100 setSelection(ruleSub.type)</span></div>
+    <div class="chips"><span>编辑态回填 类型/名称/Url</span><span class="new">下拉浮层 menu 底 · 12dp 圆角 · 行高 48dp</span><span>选中行 primary-soft 高亮</span><span class="new">聚焦 1.5dp 主色描边（运行时）</span><span>3 选 1：书源 / 订阅源 / 替换规则（rule_type zh）</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：编辑态回填 + Url 聚焦 -->
+    <div class="pair"><div class="theme-tag">浅色 · 编辑态（Url 聚焦）</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="trow"><div class="tb-title">规则订阅</div><button class="icon-btn" type="button" aria-label="添加"><svg class="icon"><use href="#i-add"/></svg></button></div>
+      <div class="rsrow"><div class="rsmain"><div class="rsl1"><span class="rsname">开源阅读书源</span><span class="bdg">书源</span></div><div class="rsurl">https://shuyuan.miaogongzi.n…/shuyuan.json</div></div><button class="ib36" type="button" aria-label="编辑"><svg class="icon"><use href="#i-edit"/></svg></button><button class="ib36" type="button" aria-label="更多"><svg class="icon"><use href="#i-more"/></svg></button></div>
+      <div class="dim"></div>
+      <div class="card acard">
+        <div class="atitle">规则订阅</div>
+        <div class="abody">
+          <div class="fcard sel"><div class="fcol"><span class="flab">类型</span><span class="fval">书源</span></div><svg class="chev"><use href="#i-chev-d"/></svg></div>
+          <div class="fcard"><span class="flab">名称</span><span class="fval">开源阅读书源</span></div>
+          <div class="fcard focus" style="margin-bottom:0"><span class="flab">Url</span><span class="fval">https://shuyuan.miaogongzi.net/shuyuan.json</span></div>
+        </div>
+        <div class="afoot"><button class="txtbtn" type="button">取消</button><button class="txtbtn pri" type="button">确定</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：类型下拉展开 -->
+    <div class="pair"><div class="theme-tag">深色 · 类型下拉展开</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="trow"><div class="tb-title">规则订阅</div><button class="icon-btn" type="button" aria-label="添加"><svg class="icon"><use href="#i-add"/></svg></button></div>
+      <div class="rsrow"><div class="rsmain"><div class="rsl1"><span class="rsname">三九RSS源</span><span class="bdg">订阅源</span></div><div class="rsurl">https://ku.miaogongzi.net/kj/mgrss.json</div></div><button class="ib36" type="button" aria-label="编辑"><svg class="icon"><use href="#i-edit"/></svg></button><button class="ib36" type="button" aria-label="更多"><svg class="icon"><use href="#i-more"/></svg></button></div>
+      <div class="dim"></div>
+      <div class="card acard">
+        <div class="atitle">规则订阅</div>
+        <div class="abody">
+          <div class="fcard sel focus"><div class="fcol"><span class="flab">类型</span><span class="fval">订阅源</span></div><svg class="chev" style="stroke:var(--primary)"><use href="#i-chev-d"/></svg></div>
+          <div class="fcard"><span class="flab">名称</span><span class="fval">三九RSS源</span></div>
+          <div class="fcard" style="margin-bottom:0"><span class="flab">Url</span><span class="fval">https://ku.miaogongzi.net/kj/mgrss.json</span></div>
+        </div>
+        <div class="afoot"><button class="txtbtn" type="button">取消</button><button class="txtbtn pri" type="button">确定</button></div>
+      </div>
+      <div class="dd" style="top:414px">
+        <div class="dd-i">书源</div>
+        <div class="dd-i on">订阅源</div>
+        <div class="dd-i">替换规则</div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>编辑入口</code> — 行内 iv_edit（item_rule_sub.xml:64-76）→ RuleSubAdapter.kt:37-39 <code>callBack.editSubscription(…)</code>；回填 <code>spType.setSelection(ruleSub.type)</code> / <code>etName.setText</code> / <code>etUrl.setText</code>（RuleSubActivity.kt:100-102），id 与回填调用零改动。</li>
+    <li><code>下拉浮层</code> — 3 个选项即 <code>@array/rule_type</code>（默认 values/arrays.xml:142-146 为 BookSource/RssSource/ReplaceRule；<b>values-zh/arrays.xml:100-104 已汉化「书源/订阅源/替换规则」</b>，中文机型类型卡值与下拉选项均显示中文，稿面按 zh 呈现，宿主徽章文案同源 RuleSubAdapter.kt:20 getResources.getStringArray）；浮层为稿面示意：menu 底（浅 #FFF / 深 #2A2824）、12dp 圆角、48dp 行高、选中行 primary-soft 高亮 + 主色文字；落地由 <code>android:popupBackground</code> 圆角 drawable 提供，不改 spinner 行为。</li>
+    <li><code>聚焦描边</code> — field 卡容器 addStatesFromChildren + Selector：默认/聚焦同 surface_container_high 底，focused 叠 1.5dp 运行时 accentColor 描边（BookmarkDialog.kt:58-66 已落地先例，url-variable 稿 §02 同语汇）。</li>
+    <li><code>长 URL</code> — 单行输入不变，超长横向省略（稿面 fval 省略号示意）；Url 粘贴长链接为该弹窗主要用法，聚焦描边给出清晰输入区。</li>
+  </ul>
+</section>
+
+<!-- ================= 03 宿主页与保存校验 ================= -->
+<section class="screen" id="s3">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">03</span><h2 class="st-title">宿主页 · 重复 URL 提示与空态</h2><span class="st-src">RuleSubActivity.kt:110-119 findByUrl 查重 → toast 不保存 · activity_rule_sub.xml（已新，原样呈现）</span></div>
+    <div class="chips"><span>确定 → findByUrl 查重</span><span class="new">重复 → toast「此 URL 已订阅(名称)」不保存</span><span>行点击 → Import{Book/Rss}Source / ReplaceRule Dialog</span><span>更多 → PopupMenu 删除</span><span>长按拖拽排序 customOrder</span><span>空态 EmptyTipView（圆底图标，已新）</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：保存重复 URL → toast -->
+    <div class="pair"><div class="theme-tag">浅色 · 重复 URL 提示</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="trow"><div class="tb-title">规则订阅</div><button class="icon-btn" type="button" aria-label="添加"><svg class="icon"><use href="#i-add"/></svg></button></div>
+      <div class="rsrow"><div class="rsmain"><div class="rsl1"><span class="rsname">开源阅读书源</span><span class="bdg">书源</span></div><div class="rsurl">https://shuyuan.miaogongzi.n…/shuyuan.json</div></div><button class="ib36" type="button" aria-label="编辑"><svg class="icon"><use href="#i-edit"/></svg></button><button class="ib36" type="button" aria-label="更多"><svg class="icon"><use href="#i-more"/></svg></button></div>
+      <div class="vd"></div>
+      <div class="rsrow"><div class="rsmain"><div class="rsl1"><span class="rsname">三九RSS源</span><span class="bdg">订阅源</span></div><div class="rsurl">https://ku.miaogongzi.net/kj/mgrss.json</div></div><button class="ib36" type="button" aria-label="编辑"><svg class="icon"><use href="#i-edit"/></svg></button><button class="ib36" type="button" aria-label="更多"><svg class="icon"><use href="#i-more"/></svg></button></div>
+      <div class="vd"></div>
+      <div class="rsrow"><div class="rsmain"><div class="rsl1"><span class="rsname">精选替换规则</span><span class="bdg">替换规则</span></div><div class="rsurl">https://www.yuque.com/legado/…/replace.json</div></div><button class="ib36" type="button" aria-label="编辑"><svg class="icon"><use href="#i-edit"/></svg></button><button class="ib36" type="button" aria-label="更多"><svg class="icon"><use href="#i-more"/></svg></button></div>
+      <div class="toast">此 URL 已订阅(开源阅读书源)</div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：空态 -->
+    <div class="pair"><div class="theme-tag">深色 · 空态（已新，原样呈现）</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="trow"><div class="tb-title">规则订阅</div><button class="icon-btn" type="button" aria-label="添加"><svg class="icon"><use href="#i-add"/></svg></button></div>
+      <div class="etip">
+        <div class="cir"><svg class="icon"><use href="#i-import"/></svg></div>
+        <div class="t">还没有规则订阅</div>
+        <div class="s">添加大佬们提供的规则导入地址<br>添加后点击可导入规则</div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>确定保存链</code> — okButton（RuleSubActivity.kt:105-121）：读取 spType.selectedItemPosition / etName / etUrl → <code>appDb.ruleSubDao.findByUrl</code> 查重 → 重复 <code>toastOnUi("此 URL 已订阅(${rs.name})")</code>（R.string.url_already，values-zh/strings.xml:881）<b>不保存</b>、弹窗已随按钮点击关闭；不重复 <code>ruleSubDao.insert</code> 入库，列表 flowAll 实时刷新（:73-78）。</li>
+    <li><code>toast 形态</code> — 稿面 toast 为系统 toast 默认形态示意（底部居中深色药丸），落码零改动；本组不新增 snackbar 等组件。</li>
+    <li><code>宿主页（不改）</code> — 行点击 <code>openSubscription</code> 按 type 分发 ImportBookSourceDialog / ImportRssSourceDialog / ImportReplaceRuleDialog（RuleSubActivity.kt:83-95）；iv_menu_more → PopupMenu menu_del 删除（RuleSubAdapter.kt:40-56，menu/source_sub_item.xml）；长按拖拽交换 customOrder（RuleSubActivity.kt:66-68 isCanDrag + RuleSubAdapter.kt:62-87）。以上入口与行为全部保留，稿面如实呈现。</li>
+    <li><code>空态（已新）</code> — EmptyTipView 圆底图标变体（activity_rule_sub.xml:29-40：empty_icon=ic_import · circled · 76dp 圆底 surface_container_high · 21dp 内边距；标题 14sp/700 on_surface、副行 12sp on_surface_variant maxWidth 236dp，view_empty_tip.xml），由 <code>emptyTip.isGone = 列表非空</code> 控制（RuleSubActivity.kt:76）。</li>
+    <li><code>遗留项（非本稿引入，不阻塞）</code> — 行内 iv_edit / iv_menu_more 触控目标 36dp（item_rule_sub.xml:64-90，<48dp 不达 MASTER §1.4/§4）系前批 e0964f821「按 v2 设计稿实施全应用界面（55 屏，8 组）」已落地遗留（git log 核实该文件最近落地即此批）；建议后续单独修（min-height 48dp 或扩展点击区），本稿不动宿主。</li>
+  </ul>
+</section>
+
+<!-- ================= 04 设计调整与落地映射 ================= -->
+<section class="screen" id="s4">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">04</span><h2 class="st-title">设计调整与落地映射</h2><span class="st-src">改动集中在 dialog_rule_sub_edit.xml + editSubscription 内 2 处 kt 装配（描边注入 / spinner 桥接）；控件 id 不变，行为 0 增删</span></div>
+    <div class="chips"><span>主页 activity_rule_sub.xml / item_rule_sub.xml 不改（已新）</span><span>id 保留：sp_type / et_name / et_url</span><span class="new">kt 装配仅 2 处：聚焦描边注入 + performClick 桥接</span><span>无 primary/accent 硬编码新增</span></div>
+  </div>
+  <table class="tok">
+    <tr><th style="width:26%">改动</th><th style="width:34%">落点（布局 · 控件）</th><th>说明</th></tr>
+    <tr><td><code>1</code> 弹窗容器</td><td><code>alert()</code>（AndroidAlertBuilder.kt:14）主题层</td><td>AppCompat AlertDialog 结构不变：标题「规则订阅」+ customView + 按钮条；标题 17sp/650 on_surface。稿面 16dp 圆角随 <code>alertDialogTheme</code> 生效（DECISIONS §4 同款），属全局主题决策不落本组必改；行为（取消 dismiss / 确定走校验）不变。</td></tr>
+    <tr><td><code>2</code> 根容器栅格</td><td><code>dialog_rule_sub_edit.xml:8</code> 根 LinearLayout padding</td><td>padding 16dp → paddingTop 4dp / 水平 20dp / paddingBottom 6dp，与 alert 标题、底部按钮条栅格衔接（buttonBar 文字钮右侧对齐，min-height 48dp）。</td></tr>
+    <tr><td><code>3</code> 类型行重构</td><td><code>dialog_rule_sub_edit.xml:10-29</code>（AccentTextView + AppCompatSpinner）</td><td>裸行 → <b>field 分发卡</b>：LinearLayout（<code>bg_edit_filled</code>，min-height 52dp，padding 7/14/8/14dp）= label「类型」11.5sp on_surface_variant（沿用 @string/book_type，现值「类型：」values-zh/strings.xml:635，冒号去除为文案微调）+ 值（中文机型显示 rule_type zh 文案）/尾部 20dp 下拉箭头，整卡 ≥52dp 触控（整卡点击桥接见映射 4）。原行内 AccentTextView 移除。</td></tr>
+    <tr><td><code>4</code> Holo Spinner 替换</td><td><code>dialog_rule_sub_edit.xml:22-27</code> sp_type + <code>styles.xml:54</code> Spinner 样式</td><td><b>id 与行为保留</b>（setSelection RuleSubActivity.kt:100、selectedItemPosition :107）：sp_type <code>android:background="@null"</code> 由卡容器承载底色、<code>android:popupBackground="@drawable/bg_menu_rounded"</code>（surface_container_high 系 + 12dp 圆角，见映射 8）、dropDownVerticalOffset 4dp；styles.xml 的 <code>Spinner</code>（parent android:Theme.Holo.Light）本布局不再引用。<b>整卡点击桥接（kt）</b>：AppCompat 栈 Spinner 仅响应自身 bounds 点击，点 label/箭头/卡空白区不会弹下拉——在 editSubscription 内对分发卡 root <code>setOnClickListener { spType.performClick() }</code>（约 2 行，RuleSubActivity.kt:99-103 装配处），否则映射 3/7 的整卡触控承诺不成立。备选路线：TextInputLayout + ExposedDropdownMenu（M3），需升级控件类，非必选。</td></tr>
+    <tr><td><code>5</code> 名称 / Url 输入域</td><td><code>dialog_rule_sub_edit.xml:31-41</code>（til_name/et_name）、<code>:43-54</code>（til_url/et_url）</td><td>TextInputLayout 外壳移除 → field 卡（bg_edit_filled 同栅格）：label 11.5sp on_surface_variant（「名称」=@string/name values-zh/strings.xml:679；「Url」=原硬编码 hint dialog_rule_sub_edit.xml:47）+ et_name / et_url 保留（<code>background="@null"</code>、hint 删除避免 label+hint 双显、textSize 14sp、textColor primaryText）。hint 删除后<b>空态值行留白、字段名由 label 承载</b>（稿面 §01 空表单帧=留白，不渲染占位文字）。kt 仅引用 etName/etUrl（RuleSubActivity.kt:101-102,108-109），外壳移除无绑定改动。</td></tr>
+    <tr><td><code>6</code> 聚焦描边（kt 注入）</td><td><code>RuleSubActivity.editSubscription</code> 内（alertBinding 装配处，RuleSubActivity.kt:99-103 后）</td><td><b>必须 kt 运行时注入、非纯 XML</b>：BookmarkDialog.kt:57-66 先例即 kt <code>Selector.shapeBuild()</code>（setDefaultBgColor/setFocusedBgColor = surface_container_high、setFocusedStrokeColor = <code>accentColor</code>）对容器 setBackground；DECISIONS §8 已证本库无 ThemeStore→attr 机制，纯 XML selector 的描边色会固化、不随换肤。对映射 3/5 三张 field 卡容器统一注入（约 8 行）；XML 侧 field 卡仅 <code>addStatesFromChildren="true"</code> 让子 EditText 焦点透传。</td></tr>
+    <tr><td><code>7</code> 触控目标</td><td>映射 3/5 field 卡；<code>dialog_rule_sub_edit.xml</code> 按钮条</td><td>类型分发卡 min-height 52dp（现状 Holo spinner 行高约 40dp 不达标）、输入卡 min-height 52dp（MASTER §1.4 ≥48dp）；「取消 / 确定」min-height 48dp。相邻目标间距 ≥8dp（卡间距 10dp）。分发卡「整卡」触控以映射 4 的 performClick 桥接为前提。</td></tr>
+    <tr><td><code>8</code> menu 圆角 drawable（新增）</td><td><code>res/drawable/bg_menu_rounded.xml</code>（新建）</td><td>solid <code>?attr/backgroundMenu</code>（surface_container_high 语义）+ corners 12dp（corner_radius_md）；供映射 4 的 popupBackground 使用。现状 Holo spinner 弹层为平台原生白底直角，属反模式 MASTER §4「直角弹窗菜单」。</td></tr>
+    <tr><td><code>9</code> 按钮文字色</td><td>alert 主题层（非 dialog_rule_sub_edit.xml）</td><td>「确定」亮色取 on_primary_soft #B34A15（对白 5.4:1 ≥4.5，AA）/ 深色主色 #FF6B2C（values-night/colors.xml:24 同值），「取消」on_surface_variant；由主题 colorAccent 驱动、运行时随 accent 换肤。亮色 AA 映射与 url-variable 稿「确定」同一决策，如需最小 diff 可维持默认 accent 色。</td></tr>
+    <tr><td><code>10</code> 宿主页</td><td class="dim2">activity_rule_sub.xml / item_rule_sub.xml（不改）</td><td>已随 v3 / S8 落新：v3 EmptyTipView 空态（activity_rule_sub.xml:29-40）、S8 行（名称 16sp 粗体 + 徽章同行 bg_chip_accent_soft、URL 12sp 中间省略、编辑/更多 36dp+6dp padding、1dp 分割线，item_rule_sub.xml:2-3）。本稿仅作宿主原样呈现。<b>遗留项（不阻塞本稿）</b>：iv_edit/iv_menu_more 触控目标 36dp（item_rule_sub.xml:64-90，<48dp）系前批 e0964f821 已落地遗留、非本稿引入，建议后续单独修至 ≥48dp。</td></tr>
+  </table>
+  <ul class="notes">
+    <li><code>行为清单（逐项保留，0 增删）</code> — menu_add 新建（customOrder=maxOrder+1）· 行内编辑回填（setSelection/setText ×3）· 类型 3 选 1（rule_type 数组）· 确定 → findByUrl 查重 → 重复 toast 不保存 / 不重复 insert · 取消 dismiss · 名称/Url 允许为空（现状无校验，不虚构）· 行点击按 type 分发导入弹窗（0/1/2）· 更多 → PopupMenu 删除 · 长按拖拽交换 customOrder · 空态 EmptyTipView 显隐随数据流。</li>
+    <li><code>id 与绑定</code> — sp_type / et_name / et_url 全部保留；DialogRuleSubEditBinding 引用仅 spType/etName/etUrl（RuleSubActivity.kt:100-109），TextInputLayout 外壳与 AccentTextView 移除不触碰既有绑定。<b>kt 新增装配仅 2 处、均落在 editSubscription（RuleSubActivity.kt:97-124）</b>：①映射 6 聚焦描边 Selector 注入；②映射 4 分发卡 performClick 桥接；合计约 10 行，不动任何既有绑定与行为。</li>
+    <li><code>令牌来源</code> — field 卡底 surface_container_high（#EEECE9/#242220）、文字 on_surface（#20242B/#F3F0EB）、label on_surface_variant（#60656D/#B4B0AA）、徽章 primary_soft/on_primary_soft（#FFF0E6+#B34A15 / #3A241B+#FF6B2C）、遮罩 rgba(0,0,0,.5)，出自 design-system/legado/MASTER.md §2；圆角 16dp=corner_radius_lg、10dp/12dp 为 field/menu 中圆角（§3）。</li>
+    <li><code>换肤</code> — 聚焦描边 /「确定」按钮色运行时 accentColor（ThemeStore），布局零 primary/accent 硬编码（MASTER §4）；稿面 #FF6B2C / #B34A15 仅为默认主题兜底演示。原 AccentTextView 的 accent 依赖（AccentTextView.kt:15）随类型行重构移除，label 回归中性 on_surface_variant。</li>
+    <li><code>[NEED-DECISION]</code> — ①「确定」亮色 AA 深主色映射（映射 9）属主题层全局改动；②名称/Url 是否补非空校验（现状允许为空入库）；③label「类型：」是否去冒号（一处字符串微调）。均不影响其余映射落地。</li>
+  </ul>
+</section>
+
+<div class="foot">legado v2 · 规则订阅内嵌编辑弹窗设计稿 · 功能对照 RuleSubActivity.kt / RuleSubAdapter.kt（classic-base）· field 卡/聚焦描边范式与已落地 dialog_bookmark.xml（8 页批次）一致 · 令牌来源 design-system/legado/MASTER.md</div>
+</div>
+</body></html>

@@ -1,0 +1,256 @@
+<!-- design-system: legado v2 · mockup -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>legado v2 · 网页登录页 · 新界面</title><style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Noto Sans SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;background:#eae7e0;color:#3a3833}
+.wrap{max-width:1180px;margin:0 auto;padding:52px 24px 110px;display:flex;flex-direction:column;gap:60px;align-items:center}
+/* ---------- 页头 ---------- */
+.page-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:16px}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.14em;color:#a8623c}
+.h1{font-size:34px;font-weight:750;line-height:1.2;margin:0}
+.h1 small{font-size:15px;font-weight:600;color:#60656d;margin-left:12px}
+.desc{font-size:14px;line-height:1.8;color:#60656d;margin:0;max-width:820px}
+.nav{display:flex;flex-wrap:wrap;gap:10px}
+.nav a{text-decoration:none;font-size:13px;font-weight:600;color:#5a574e;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:999px;padding:9px 16px;transition:.15s}
+.nav a:hover{background:#ff6b2c;color:#fff;border-color:#ff6b2c}
+.nav a b{font-weight:750;color:inherit;opacity:.55;margin-right:6px}
+/* ---------- 屏幕区 ---------- */
+.screen{width:100%;display:flex;flex-direction:column;align-items:center;gap:24px;scroll-margin-top:20px}
+.screen-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:10px}
+.st-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.st-num{font-size:13px;font-weight:750;color:#ff6b2c;letter-spacing:.08em}
+.st-title{font-size:24px;font-weight:750;margin:0}
+.st-src{font-size:12px;color:#60656d}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{font-size:12px;color:#6d6a62;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:7px;padding:5px 10px}
+.pairs{display:flex;gap:30px;flex-wrap:wrap;justify-content:center}
+.pair{display:flex;flex-direction:column;gap:10px;align-items:center}
+.theme-tag{font-size:12px;font-weight:700;color:#60656d;letter-spacing:.1em}
+/* ---------- 手机壳（与 dict / group-select 同规格） ---------- */
+.phone{width:412px;height:900px;border-radius:30px;position:relative;overflow:hidden;background:var(--bg);color:var(--text);border:1px solid rgba(0,0,0,.09);flex:none;display:flex;flex-direction:column}
+.phone.light{--bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--on-primary:#fff;--track:#e5e2de;--divider:rgba(0,0,0,.07);--field:rgba(0,0,0,.06);--error:#ba1a1a;--ok:#3b7a45;--scrim:rgba(0,0,0,.5)}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--on-primary:#fff;--track:#353331;--divider:rgba(255,255,255,.08);--field:rgba(255,255,255,.08);--error:#ffb4ab;--ok:#7fd891;--scrim:rgba(0,0,0,.5)}
+.status{height:34px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:14px;font-weight:600}
+.status-right{display:flex;gap:10px;align-items:center}
+.hi{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--text);opacity:.4;z-index:30;pointer-events:none}
+/* ---------- 融入式顶栏（themeMode=blend：与 surface 同色、无阴影、无分割线） ---------- */
+.appbar{flex:none;display:flex;align-items:center;gap:2px;min-height:52px;padding:2px 8px 0;background:transparent}
+.tb-title{font-size:18px;font-weight:650;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.icon-btn{width:44px;height:44px;border:0;background:transparent;border-radius:22px;display:grid;place-items:center;cursor:pointer;color:var(--text);flex:none}
+.icon{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon.f{fill:currentColor;stroke:none}
+/* ---------- 顶部 1dp 进度线（RefreshProgressBar，运行时 accentColor） ---------- */
+.prog{flex:none;height:2px;position:relative;overflow:hidden}
+.prog i{position:absolute;left:0;top:0;bottom:0;background:var(--primary);border-radius:0 2px 2px 0}
+/* ---------- WebView 区（内容色随网站自身，稿内以中性令牌示意） ---------- */
+.web{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.mast{flex:none;display:flex;align-items:center;gap:10px;padding:16px 20px 10px}
+.mast .logo{width:30px;height:30px;border-radius:8px;background:var(--text);color:var(--bg);display:grid;place-items:center;font-size:15px;font-weight:800;flex:none}
+.mast .nm{font-size:15px;font-weight:700;color:var(--text)}
+.mast .tg{font-size:11px;color:var(--secondary);margin-left:auto;white-space:nowrap}
+.lgcard{margin:6px 20px 0;background:var(--surface);border:1px solid var(--divider);border-radius:12px;padding:18px 16px;display:flex;flex-direction:column;gap:11px}
+.lgtitle{font-size:16px;font-weight:700;color:var(--text)}
+.fin{height:44px;border-radius:9px;background:var(--field);display:flex;align-items:center;gap:9px;padding:0 12px;font-size:13.5px;color:var(--secondary)}
+.fin.v{color:var(--text)}
+.fin.focus{box-shadow:inset 0 0 0 1.5px var(--primary)}
+.fin .ic{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none;opacity:.8}
+.cap{display:flex;gap:10px}
+.cap .fin{flex:1;min-width:0}
+.captcha{width:104px;height:44px;border-radius:9px;background:var(--surface2);display:grid;place-items:center;font-size:16px;font-weight:700;letter-spacing:.18em;color:var(--text);flex:none;position:relative;overflow:hidden}
+.captcha::after{content:"";position:absolute;left:-6px;right:-6px;top:50%;height:1.5px;background:var(--secondary);opacity:.4;transform:rotate(-8deg)}
+.sbtn{height:46px;border-radius:9px;background:var(--text);color:var(--bg);font-size:15px;font-weight:650;display:grid;place-items:center;letter-spacing:.3em;text-indent:.3em}
+.lrow{display:flex;gap:20px;font-size:12.5px;color:var(--secondary)}
+.lrow u{text-underline-offset:3px;cursor:pointer}
+.agr{font-size:11px;line-height:1.7;color:var(--secondary);display:flex;gap:7px;align-items:flex-start}
+.agr .dot{width:13px;height:13px;border-radius:50%;border:1.5px solid var(--secondary);flex:none;margin-top:2px}
+/* 加载骨架（onPageStarted → 正在打开） */
+.skl{height:44px;border-radius:9px;background:var(--field)}
+.skl.sm{height:14px;border-radius:7px;width:46%}
+/* ---------- Snackbar（Material 默认反色，无自定义样式） ---------- */
+.snk{position:absolute;left:14px;right:14px;bottom:22px;z-index:9;display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:10px;font-size:13px;line-height:1.55;box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.phone.light .snk{background:#35332f;color:#f3f0eb}
+.phone.dark .snk{background:#e8e5df;color:#20242b}
+.snk .act{margin-left:auto;flex:none;font-weight:750;font-size:13px;cursor:pointer}
+.phone.light .snk .act{color:#ffb27a}
+.phone.dark .snk .act{color:#b5500f}
+/* ---------- 注释 / 落地映射表 ---------- */
+.notes{width:100%;max-width:1080px;font-size:12.5px;line-height:1.9;color:#60656d;border-top:1px dashed rgba(0,0,0,.12);padding-top:12px}
+.notes code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px}
+.notes b{color:#45423a}
+.tok{width:100%;max-width:1080px;border-collapse:collapse;font-size:13px;color:#45423a}
+.tok th{font-size:12px;font-weight:700;color:#60656d;text-align:left;letter-spacing:.04em;padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.12)}
+.tok td{padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.07);vertical-align:top;line-height:1.7}
+.tok code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px;white-space:nowrap}
+.foot{font-size:12px;color:#60656d;text-align:center;line-height:2}
+</style></head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></symbol>
+<symbol id="i-ok" viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 19c.8-3 3.4-4.6 6.5-4.6s5.7 1.6 6.5 4.6"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="6" y="10.5" width="12" height="9" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.5 19 6v5.5c0 4.6-3 7.6-7 9-4-1.4-7-4.4-7-9V6z"/></symbol>
+</defs></svg>
+
+<div class="wrap">
+
+<header class="page-head">
+  <div class="kicker">LEGADO V2 · MOCKUP</div>
+  <h1 class="h1">网页登录页 · 新界面<small>WebViewLoginFragment</small></h1>
+  <p class="desc">重构 <b>WebViewLoginFragment</b>（fragment_web_view_login.xml）：无 loginUi 书源 / RSS 源 / httpTts 的网页登录页。现状结构（TitleBar + WebView + 1dp 进度线）与 browser/WebViewActivity（activity_web_view.xml）逐件相同，<b>唯一对齐项 = TitleBar 补 <code>app:themeMode="blend"</code></b>——融入式顶栏与页面背景同色、零阴影，去掉 auto 模式的 surface_container 底色与分割阴影；其余功能（menu_ok 确认、Cookie 自动采集、外链拦截、进度线 accent 运行时着色）逐项保留，<b>零 kt 改动</b>。WebView 内为网站自有内容，其配色不受 App 令牌控制，稿内仅以中性令牌示意。视觉令牌（暖纸白/暖黑、主色 #FF6B2C 兜底、16dp 弹层语汇）与 dict / group-select 完全一致。</p>
+  <nav class="nav">
+    <a href="#s1"><b>01</b>主形态 · 加载中 / 已加载</a>
+    <a href="#s2"><b>02</b>确认登录 · 提示条</a>
+    <a href="#s3"><b>03</b>设计调整与落地映射</a>
+  </nav>
+</header>
+
+<!-- ================= 01 主形态 ================= -->
+<section class="screen" id="s1">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">01</span><h2 class="st-title">主形态 · 加载中 / 已加载</h2><span class="st-src">fragment_web_view_login.xml · WebViewLoginFragment.kt:40-46,66-150 · 对照 activity_web_view.xml:14-33</span></div>
+    <div class="chips"><span>结构 = activity_web_view 同件：TitleBar+WebView+进度线</span><span>唯一改动：TitleBar 补 themeMode=blend</span><span>标题「登录 {书源标签}」动态</span><span>menu_ok 常驻（确认）</span><span>Cookie onPageStarted/Finished 自动采集</span><span>进度线 accent 运行时着色 · 100% 隐藏</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：加载中 -->
+    <div class="pair"><div class="theme-tag">浅色 · 正在打开登录页（onPageStarted）</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="appbar"><button class="icon-btn" type="button" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><div class="tb-title">登录 青柠书城</div><button class="icon-btn" type="button" aria-label="确认登录"><svg class="icon f"><use href="#i-ok"/></svg></button></div>
+      <div class="prog"><i style="width:62%"></i></div>
+      <div class="web">
+        <div class="mast"><span class="logo">柠</span><span class="nm">青柠书城</span><span class="tg">m.qingning.site</span></div>
+        <div class="lgcard">
+          <div class="lgtitle">账号登录</div>
+          <div class="skl"></div>
+          <div class="skl"></div>
+          <div class="skl sm"></div>
+          <div class="skl"></div>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：已加载 -->
+    <div class="pair"><div class="theme-tag">深色 · 登录表单已加载（进度线已隐藏）</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="appbar"><button class="icon-btn" type="button" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><div class="tb-title">登录 青柠书城</div><button class="icon-btn" type="button" aria-label="确认登录"><svg class="icon f"><use href="#i-ok"/></svg></button></div>
+      <div class="web">
+        <div class="mast"><span class="logo">柠</span><span class="nm">青柠书城</span><span class="tg">m.qingning.site</span></div>
+        <div class="lgcard">
+          <div class="lgtitle">账号登录</div>
+          <div class="fin v focus"><svg class="ic"><use href="#i-user"/></svg>138****6688</div>
+          <div class="fin"><svg class="ic"><use href="#i-lock"/></svg>请输入密码</div>
+          <div class="cap">
+            <div class="fin"><svg class="ic"><use href="#i-shield"/></svg>验证码</div>
+            <div class="captcha">7X4K</div>
+          </div>
+          <div class="sbtn">登录</div>
+          <div class="lrow"><u>注册账号</u><u>忘记密码</u></div>
+          <div class="agr"><span class="dot"></span><span>已阅读并同意《用户协议》《隐私政策》，登录状态将以 Cookie 自动保存</span></div>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>顶栏（唯一改动）</code> — <code>fragment_web_view_login.xml:8-14</code> TitleBar 现为缺省 auto 模式（surface_container 底 + elevation 阴影）；本稿补 <code>app:themeMode="blend"</code>，与 <code>activity_web_view.xml:19</code>（浏览器页）逐字对齐。落 <code>TitleBar.kt:198-205</code> 融入式：bg=surface（#FAF9F7 / #141312）、elevation=0、标题/图标 on_surface——状态栏自然过渡到内容区，与页面背景无缝。</li>
+    <li><code>标题</code> — 动态「登录 {tag}」（WebViewLoginFragment.kt:43 <code>login_source</code>=「登录 %s」，values-zh/strings.xml:396）；XML 静态 <code>app:title="@string/login"</code>（strings.xml:395「登录」）保留作 source 未就绪兜底。<code>attachToActivity="false"</code> 不动（Fragment 经 kt:41 <code>setSupportToolbar</code> 自行挂载菜单）。</li>
+    <li><code>动作</code> — 返回键 displayHomeAsUp（TitleBar 缺省 true）；右侧 menu_ok（menu/source_webview_login.xml:7-11，ic_check「确认」showAsAction=always）为本页唯一菜单项，行为见 §02。</li>
+    <li><code>进度线</code> — RefreshProgressBar 1dp 横线（fragment_web_view_login.xml:23-28），<code>fontColor=accentColor</code> 运行时着色（kt:68 已有，稿面 #FF6B2C 仅为默认兜底）；onProgressChanged 更新、100% 隐藏（kt:136-140）。稿内画 2px 仅为可视。</li>
+    <li><code>WebView 行为保留</code> — JS/DOM/wide viewport/内置缩放（kt:69-76）、UA 以 headerMap 覆写（kt:77-79）、onPageStarted/Finished 双回调把 Cookie 存入 CookieStore（kt:83-96）、SSL 异常 proceed（kt:126-132）、loadUrl 携带 headers（kt:146-150）、onDestroy destroy（kt:152-155）——全部不动。</li>
+    <li><code>WebView 内容</code> — 色彩随网站自身（示例站以中性令牌示意，非 App 令牌约束）；夜间现状未强制暗化（本 Fragment 无 <code>setDarkeningAllowed</code>，对照 WebViewActivity.kt:166 有）——差异仅注记，未擅改，见 §03 NEED-DECISION。</li>
+  </ul>
+</section>
+
+<!-- ================= 02 确认与提示条 ================= -->
+<section class="screen" id="s2">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">02</span><h2 class="st-title">确认登录 · 提示条</h2><span class="st-src">WebViewLoginFragment.kt:52-64,92-94,110-123 · menu/source_webview_login.xml</span></div>
+    <div class="chips"><span>menu_ok → 重载 loginUrl + snackbar</span><span>onPageFinished 自动 finish 返回主界面</span><span>非 http(s) scheme → 「跳转其它应用 · 确认」</span><span>Snackbar 为 Material 默认反色（无自定义样式）</span><span>本页无对话框 · 无遮罩卡</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：menu_ok 确认后重载 -->
+    <div class="pair"><div class="theme-tag">浅色 · 点击「确认」后（checking=true）</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="appbar"><button class="icon-btn" type="button" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><div class="tb-title">登录 青柠书城</div><button class="icon-btn" type="button" aria-label="确认登录"><svg class="icon f"><use href="#i-ok"/></svg></button></div>
+      <div class="prog"><i style="width:35%"></i></div>
+      <div class="web">
+        <div class="mast"><span class="logo">柠</span><span class="nm">青柠书城</span><span class="tg">m.qingning.site</span></div>
+        <div class="lgcard">
+          <div class="lgtitle">账号登录</div>
+          <div class="fin v"><svg class="ic"><use href="#i-user"/></svg>138****6688</div>
+          <div class="fin v"><svg class="ic"><use href="#i-lock"/></svg>••••••••</div>
+          <div class="cap">
+            <div class="fin v"><svg class="ic"><use href="#i-shield"/></svg>7x4k</div>
+            <div class="captcha">7X4K</div>
+          </div>
+          <div class="sbtn">登录</div>
+          <div class="lrow"><u>注册账号</u><u>忘记密码</u></div>
+        </div>
+      </div>
+      <div class="snk">正在打开首页，成功自动返回主界面</div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：外链拦截 -->
+    <div class="pair"><div class="theme-tag">深色 · 非 http(s) 链接拦截</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="appbar"><button class="icon-btn" type="button" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button><div class="tb-title">登录 青柠书城</div><button class="icon-btn" type="button" aria-label="确认登录"><svg class="icon f"><use href="#i-ok"/></svg></button></div>
+      <div class="web">
+        <div class="mast"><span class="logo">柠</span><span class="nm">青柠书城</span><span class="tg">m.qingning.site</span></div>
+        <div class="lgcard">
+          <div class="lgtitle">账号登录</div>
+          <div class="fin v"><svg class="ic"><use href="#i-user"/></svg>138****6688</div>
+          <div class="fin v"><svg class="ic"><use href="#i-lock"/></svg>••••••••</div>
+          <div class="cap">
+            <div class="fin v"><svg class="ic"><use href="#i-shield"/></svg>7x4k</div>
+            <div class="captcha">7X4K</div>
+          </div>
+          <div class="sbtn">登录</div>
+          <div class="lrow"><u>注册账号</u><u>忘记密码</u></div>
+          <div class="agr"><span class="dot"></span><span>已阅读并同意《用户协议》《隐私政策》</span></div>
+        </div>
+      </div>
+      <div class="snk">跳转其它应用<span class="act">确认</span></div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>确认链路</code> — 点 menu_ok → <code>checking=true</code>，在 TitleBar 上发 snackbar「正在打开首页，成功自动返回主界面」（kt:54-62 <code>check_host_cookie</code>，strings.xml:524）并 <code>loadUrl(source)</code> 重载登录页（浅机所示：进度线 35% 重走）；下一次 onPageFinished 时 <code>activity.finish()</code> 自动返回（kt:92-94）——「登录成功判定」依赖书源 Cookie，无成功/失败 UI，本稿不虚构成功态。</li>
+    <li><code>外链拦截</code> — shouldOverrideUrlLoading 对非 http/https scheme（如 alipays/weixin）拦截并发 longSnackbar「跳转其它应用」，动作「确认」→ <code>openUrl</code> 唤起外部应用（kt:110-123，strings.xml:1112/1111）。深机所示。</li>
+    <li><code>Snackbar 呈现</code> — Material 默认样式（utils/Snackbars.kt，全项目无自定义 Snackbar 主题）：浅色主题=深底浅字、深色主题=浅底深字（反色），动作文字随主题 accentColor；稿内反色卡为示意，不新增样式资源。</li>
+    <li><code>弹窗规范</code> — 本页无对话框 / 底部弹层，遮罩+圆角卡规范不涉及；SourceLoginDialog（有 loginUi 的表单登录）为兄弟页面，不在本组。</li>
+    <li><code>触控</code> — 顶栏返回/确认走 MaterialToolbar 动作位（触控目标 48dp，≥48 达标）；WebView 内表单控件尺寸由网站决定，不在落地范围。</li>
+  </ul>
+</section>
+
+<!-- ================= 03 设计调整与落地映射 ================= -->
+<section class="screen" id="s3">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">03</span><h2 class="st-title">设计调整与落地映射</h2><span class="st-src">布局仅 1 行属性改动 · 零 kt / 零新资源</span></div>
+  </div>
+  <table class="tok">
+    <tr><th style="width:20%">改动点</th><th style="width:38%">落点（文件 · 控件）</th><th>值与说明</th></tr>
+    <tr><td><code>顶栏融入式</code></td><td><code>fragment_web_view_login.xml:8-14</code> TitleBar 增加 <code>app:themeMode="blend"</code>（对齐 activity_web_view.xml:19）</td><td>TitleBar.kt:198-205：bg=surface（#FAF9F7 / #141312）、elevation=0、标题/图标 on_surface；去掉 auto 模式 surface_container 底 + 分割阴影，状态栏自然过渡</td></tr>
+    <tr><td><code>标题</code></td><td>同上 <code>app:title="@string/login"</code> 兜底保留；动态值 WebViewLoginFragment.kt:43 不动</td><td>「登录 {tag}」（login_source，strings.xml:396）；source 未就绪时显示兜底「登录」</td></tr>
+    <tr><td><code>返回 / 确认</code></td><td>TitleBar displayHomeAsUp（缺省 true）+ menu/source_webview_login.xml:7-11</td><td>menu_ok（ic_check「确认」，always）为唯一菜单项；MaterialToolbar 动作触控 48dp</td></tr>
+    <tr><td><code>进度线</code></td><td><code>fragment_web_view_login.xml:23-28</code> RefreshProgressBar 不动</td><td>fontColor=accentColor 运行时着色（kt:68 已有）；实际 1dp、进度 100 隐藏（kt:136-140）；稿内 2px 仅为可视</td></tr>
+    <tr><td><code>Snackbar</code></td><td>kt:57「正在打开首页…」、kt:117-119「跳转其它应用」+动作「确认」</td><td>Material 默认反色（Snackbars.kt，无自定义样式），动作色随 accentColor；不新增资源</td></tr>
+    <tr><td><code>WebView 区</code></td><td><code>fragment_web_view_login.xml:16-21</code> 不动</td><td>内容色随网站自身，不受 App 令牌/换肤控制；夜间未强制暗化（对照 WebViewActivity.kt:166，见 NEED-DECISION）</td></tr>
+    <tr><td><code>行为保留</code></td><td>kt:69-76 WebView 设置 · kt:77-79 UA · kt:83-96 Cookie 采集 · kt:126-132 SSL proceed · kt:146-150 loginUrl+headers · kt:152-155 destroy</td><td>全部保留，零 kt 改动</td></tr>
+    <tr><td><code>换肤豁免</code></td><td>全页中性令牌，无 primary/accent 固化（MASTER §4）</td><td>进度线 / snackbar 动作 / 稿内表单焦点环等主色出现处均运行时 accentColor/primaryColor 取色；稿面 #FF6B2C 仅为默认主题兜底演示</td></tr>
+  </table>
+  <ul class="notes">
+    <li><code>入口链</code> — SourceLoginActivity.kt:26-34：<code>loginUi</code> 为空 → 本页（WebViewLoginFragment）；非空 → SourceLoginDialog。调用方：BookInfoActivity.kt:232（书籍详情 menu_login）、ReadBookActivity.kt:1268（阅读页 showLogin）、AudioPlayActivity.kt:123（听书 menu_login）、HttpTtsEditDialog.kt:104 与 SpeakEngineDialog.kt:308（httpTts 登录）；type ∈ bookSource / rssSource / httpTts（SourceLoginViewModel.kt:22-26）。</li>
+    <li><code>信息密度</code> — 与本组既有稿件一致：顶栏 18sp/650 标题 + 44px 图标位、正文表单 13.5sp、辅助 11-12.5sp；暖纸白/暖黑、1px 弱分割线、无阴影（顶栏 blend 后连分割阴影一并消失）。</li>
+    <li><code>[NEED-DECISION]</code> — ①夜间是否对齐 WebViewActivity.kt:166 开 <code>setDarkeningAllowed</code> 强制暗化网页（可能影响验证码/表单可用性，默认不改）；②标题是否仿 WebViewActivity.kt:283-288 用网页 title 动态替换「登录 {tag}」（会丢失书源上下文，默认不改）。</li>
+  </ul>
+</section>
+
+<div class="foot">legado v2 · 网页登录页设计稿 · 令牌来源 design-system/legado/MASTER.md · 结构基准 app/src/main/res/layout/activity_web_view.xml</div>
+</div>
+</body></html>

@@ -1,0 +1,408 @@
+<!doctype html>
+<!-- design-system: legado v2 · mockup -->
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>legado v2 · mockup · 分组管理弹窗（书源/替换规则/订阅源）</title><style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Noto Sans SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;background:#eae7e0;color:#3a3833}
+.wrap{max-width:1180px;margin:0 auto;padding:52px 24px 110px;display:flex;flex-direction:column;gap:60px;align-items:center}
+/* ---------- 页头 ---------- */
+.page-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:16px}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.14em;color:#a8623c}
+.h1{font-size:34px;font-weight:750;line-height:1.2;margin:0}
+.h1 small{font-size:15px;font-weight:600;color:#60656d;margin-left:12px}
+.desc{font-size:14px;line-height:1.8;color:#60656d;margin:0;max-width:780px}
+.nav{display:flex;flex-wrap:wrap;gap:10px}
+.nav a{text-decoration:none;font-size:13px;font-weight:600;color:#5a574e;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:999px;padding:9px 16px;transition:.15s}
+.nav a:hover{background:#ff6b2c;color:#fff;border-color:#ff6b2c}
+.nav a b{font-weight:750;color:inherit;opacity:.55;margin-right:6px}
+/* ---------- 屏幕区 ---------- */
+.screen{width:100%;display:flex;flex-direction:column;align-items:center;gap:24px;scroll-margin-top:20px}
+.screen-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:10px}
+.st-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.st-num{font-size:13px;font-weight:750;color:#ff6b2c;letter-spacing:.08em}
+.st-title{font-size:24px;font-weight:750;margin:0}
+.st-src{font-size:12px;color:#60656d}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{font-size:12px;color:#6d6a62;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:7px;padding:5px 10px}
+.chips span.new{color:#a8623c;border-color:rgba(255,107,44,.35);background:#fff7f2}
+.pairs{display:flex;gap:30px;flex-wrap:wrap;justify-content:center}
+.pair{display:flex;flex-direction:column;gap:10px;align-items:center}
+.theme-tag{font-size:12px;font-weight:700;color:#60656d;letter-spacing:.1em}
+/* ---------- 手机壳（与 group-select/dict 同规格） ---------- */
+.phone{width:412px;height:900px;border-radius:30px;position:relative;overflow:hidden;background:var(--bg);color:var(--text);border:1px solid rgba(0,0,0,.09);flex:none}
+.phone.light{--bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--feature:#fff1e8;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--on-primary:#fff;--track:#e5e2de;--divider:rgba(0,0,0,.07);--field:rgba(0,0,0,.06);--menu:#fff;--error:#ba1a1a;--ok:#3b7a45;--scrim:rgba(0,0,0,.5);--field-solid:#f1efe9}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--feature:#2b1d15;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--on-primary:#fff;--track:#353331;--divider:rgba(255,255,255,.08);--field:rgba(255,255,255,.08);--menu:#2a2824;--error:#ffb4ab;--ok:#7fd891;--scrim:rgba(0,0,0,.5);--field-solid:#2a2925}
+.status{height:34px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:14px;font-weight:600}
+.status-right{display:flex;gap:10px;align-items:center}
+.hi{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--text);opacity:.4;z-index:30}
+/* ---------- 顶栏 / 图标 ---------- */
+.trow{display:flex;align-items:center;gap:2px;min-height:50px}
+.tb-title{font-size:18px;font-weight:650;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tcol{flex:1;min-width:0}
+.icon-btn{width:44px;height:44px;border:0;background:transparent;border-radius:22px;display:grid;place-items:center;cursor:pointer;color:var(--text)}
+.icon{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* ---------- 分组行（对照已落地 item_book_group_manage：16/14 通排 + 48dp 动作钮） ---------- */
+.vd{height:1px;background:var(--divider)}
+.grow{display:flex;align-items:center;gap:8px;padding:14px 16px;min-height:48px}
+.grow .gname{flex:1;min-width:0;font-size:15px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tbtn{border:0;background:transparent;color:var(--secondary);font-size:12px;padding:0 12px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;font-family:inherit;flex:none}
+.tbtn.del{color:var(--error)}
+/* ---------- 对话框（90%×90% = setLayout(0.9f, 0.9f)） ---------- */
+.dim{position:absolute;inset:0;background:var(--scrim);z-index:5}
+.dim2{position:absolute;inset:0;background:var(--scrim);z-index:12}
+.card{position:absolute;background:var(--surface);border-radius:16px;z-index:9;overflow:hidden;border:1px solid var(--divider)}
+.card .trow{padding:4px 8px}
+.cardfoot{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:2px;padding:6px 18px 14px;border-top:1px solid var(--divider);background:var(--surface)}
+.cardfoot .sel{flex:1;min-width:0;font-size:12px;font-weight:500;color:var(--secondary)}
+.txtbtn{border:0;background:transparent;font-size:14px;font-weight:650;color:var(--secondary);padding:10px 14px;border-radius:10px;cursor:pointer;font-family:inherit}
+.txtbtn.pri{color:var(--primary)}
+.ghost{border:1px solid var(--track);background:transparent;color:var(--text);border-radius:9px;padding:9px 16px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:650;cursor:pointer;font-family:inherit;flex:none}
+.ghost.pri{border-color:var(--primary);color:var(--primary)}
+/* ---------- 子弹窗（alert · AppCompat AlertDialog + dialog_edit_text） ---------- */
+.subdlg{position:absolute;left:46px;right:46px;top:336px;z-index:13;background:var(--surface);border-radius:16px;overflow:hidden;border:1px solid var(--divider);box-shadow:0 12px 32px rgba(0,0,0,.28)}
+.subdlg .stt{padding:18px 20px 12px;font-size:16.5px;font-weight:700;color:var(--text)}
+.subdlg .fwrap{padding:0 16px 6px}
+.field{background:var(--field-solid);border-radius:10px;min-height:44px;display:flex;align-items:center;padding:0 14px;font-size:14px;color:var(--text)}
+.field .hint{color:var(--secondary)}
+.subdlg .sbtns{display:flex;justify-content:flex-end;gap:2px;padding:8px 10px 12px}
+/* ---------- 空态 ---------- */
+.emptywrap{position:absolute;left:0;right:0;top:54px;bottom:58px;display:grid;place-items:center}
+.ein{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:0 44px}
+.ein .icon{width:44px;height:44px;color:var(--secondary);opacity:.55}
+.etitle{font-size:15px;font-weight:600;color:var(--text)}
+.esub{font-size:12.5px;line-height:1.7;color:var(--secondary)}
+/* ---------- 行规格对照 ---------- */
+.specs{width:100%;max-width:1080px;display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.specbox{background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:14px;padding:16px 18px;width:470px;flex:none;display:flex;flex-direction:column;gap:12px;
+ --bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--track:#e5e2de;--divider:rgba(0,0,0,.07);--error:#ba1a1a}
+.specbox .sf{font-size:13px;font-weight:700;color:#3a3833}
+.specbox .sf code{font-size:11.5px;font-weight:500;color:#60656d;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px;margin-left:8px}
+.specdemo{background:var(--bg);border-radius:10px;padding:2px 0}
+.specmap{display:flex;flex-wrap:wrap;gap:6px}
+.specmap span{font-size:11.5px;color:#6d6a62;background:#faf9f7;border:1px solid rgba(0,0,0,.07);border-radius:6px;padding:4px 8px}
+/* ---------- 注释 / 落地映射表 ---------- */
+.notes{width:100%;max-width:1080px;font-size:12.5px;line-height:1.9;color:#60656d;border-top:1px dashed rgba(0,0,0,.12);padding-top:12px}
+.notes code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px}
+.notes b{color:#3a3833}
+.tok{width:100%;max-width:1080px;border-collapse:collapse;font-size:13px;color:#45423a}
+.tok th{font-size:12px;font-weight:700;color:#60656d;text-align:left;letter-spacing:.04em;padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.12)}
+.tok td{padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.07);vertical-align:top;line-height:1.7}
+.tok code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px;white-space:nowrap}
+.tok .nd{color:#a8623c;font-weight:600}
+.foot{font-size:12px;color:#60656d;text-align:center;line-height:2}
+</style></head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></symbol>
+<symbol id="i-tag" viewBox="0 0 24 24"><path d="M12.6 3H4v8.6l8.7 8.7a1.6 1.6 0 0 0 2.3 0l6.3-6.3a1.6 1.6 0 0 0 0-2.3z"/><circle cx="8.2" cy="7.2" r="1.4"/></symbol>
+</defs></svg>
+
+<div class="wrap">
+
+<header class="page-head">
+  <div class="kicker">LEGADO V2 · MOCKUP</div>
+  <h1 class="h1">分组管理弹窗<small>书源 / 替换规则 / 订阅源 · 浅色为主 / 深色对照</small></h1>
+  <p class="desc">三个 <b>GroupManageDialog</b>（book.source.manage / replace / rss.source.manage）共用同一套壳：<code>dialog_recycler_view.xml</code>（Toolbar + FastScrollRecyclerView + 底栏）与 <code>item_group_manage.xml</code> 行，三个 kt 各自平涂行底（<code>backgroundColor</code>），差异仅在数据流（各自 DAO 的 flowGroups）与订阅源版多一个「确认」钮。本稿一份覆盖三页：行语言对照已落地的 <code>item_book_group_manage.xml</code>（07 分组管理稿）——名称 15sp/500 <code>on_surface</code>、动作钮 12sp、48dp 触控、16/14 通排；尾槽由书架版的「显示开关」换成本稿的「删除」。视觉令牌（暖纸白/暖黑、主色 #FF6B2C、16dp 圆角对话框、无阴影）与 group-select / dict 稿完全一致；主色仅出现在确认钮与空态引导（运行时 accentColor，布局不固化 primary，MASTER §4）。</p>
+  <nav class="nav">
+    <a href="#s1"><b>01</b>书源分组 · 主态</a>
+    <a href="#s2"><b>02</b>替换规则 / 订阅源变体</a>
+    <a href="#s3"><b>03</b>添加 / 编辑子弹窗</a>
+    <a href="#s4"><b>04</b>空态 · 共用行规格</a>
+    <a href="#s5"><b>05</b>设计调整与落地映射</a>
+  </nav>
+</header>
+
+<!-- ================= 01 书源分组 · 主态 ================= -->
+<section class="screen" id="s1">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">01</span><h2 class="st-title">书源分组管理 · 主态</h2><span class="st-src">ui/book/source/manage/GroupManageDialog.kt · dialog_recycler_view.xml · item_group_manage.xml · menu/group_manage.xml</span></div>
+    <div class="chips"><span>menu_add「添加分组」常驻动作</span><span>行内 编辑 + 删除</span><span>删除即时生效（现状无确认）</span><span class="new">底栏「共 n 组」计数 · 新增</span><span>实时流 flowGroups 派生列表</span><span>触控 ≥48dp</span></div>
+  </div>
+  <div class="pairs">
+    <div class="pair"><div class="theme-tag">浅色 · 主态</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card" style="left:18px;right:18px;top:70px;bottom:64px">
+        <div class="trow">
+          <div class="tcol"><div class="tb-title">分组管理</div></div>
+          <button class="icon-btn" title="添加分组"><svg class="icon"><use href="#i-plus"/></svg></button>
+        </div>
+        <div style="padding:2px 0 0">
+          <div class="grow"><span class="gname">网文</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">出版图书</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">漫画</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">有声书</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">图片源</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">英文原版</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">二次元</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">失效备份</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+        </div>
+        <div class="cardfoot">
+          <span class="sel">共 8 组</span>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <div class="pair"><div class="theme-tag">深色 · 同态对照</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card" style="left:18px;right:18px;top:70px;bottom:64px">
+        <div class="trow">
+          <div class="tcol"><div class="tb-title">分组管理</div></div>
+          <button class="icon-btn" title="添加分组"><svg class="icon"><use href="#i-plus"/></svg></button>
+        </div>
+        <div style="padding:2px 0 0">
+          <div class="grow"><span class="gname">网文</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">出版图书</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">漫画</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">有声书</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">图片源</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">英文原版</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">二次元</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">失效备份</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+        </div>
+        <div class="cardfoot">
+          <span class="sel">共 8 组</span>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <p class="notes">来源（<code>ui/book/source/manage/GroupManageDialog.kt</code>）：<code>:39-42</code> setLayout(0.9f,0.9f)，即稿中 371×766 卡片；<code>:44-53</code> 标题「分组管理」（values-zh/strings.xml:591）+ inflateMenu(R.menu.group_manage) + applyTint + LinearLayoutManager + VerticalDivider + adapter；<code>:56-63</code> appDb.bookSourceDao.flowGroups() 实时流——<b>分组列表是派生数据</b>（BookSourceDao.kt:355-360 dealGroups 取自来源 group 字段，非独立表），行随增删改自动回填；<code>:65-70</code> menu_add → addGroup；<code>:72-88</code> / <code>:90-103</code> 添加 / 编辑均走 alert + dialog_edit_text（见 §03）；<code>:105-136</code> adapter：convert 平涂 <code>root.setBackgroundColor(context.backgroundColor)</code> + tvGroup 文本，tvEdit → editGroup、tvDel → viewModel.delGroup。行为逐项保留：添加分组 = 把未分组来源归入新组（<code>BookSourceViewModel.kt:251-258</code> noGroup 批量赋组）；编辑分组 = 全来源同步重命名（<code>:261-274</code>）；删除 = 从所有来源移除该组、<b>无确认弹窗</b>（<code>:276-286</code> source.removeGroup）。入口：书源页「分组管理」<code>BookSourceActivity.kt:194</code>。相对现状的三处演进（均为展示层，不动数据与行为）：① 行布局对齐已落地 <code>item_book_group_manage.xml</code>——背景 background→surface、padding 8→16/14、minHeight 48dp、名称 15sp/500 on_surface + singleLine 省略；② 「删除」用 error 令牌显性（行为不变，仍无确认；如需二次确认属行为变更，见 §05 NEED-DECISION）；③ 底栏左补「共 n 组」计数（复用 <code>tv_footer_left</code> 现成槽位，dialog_recycler_view.xml:66；AccentTextView 需 kt 内覆盖着色，见 §05）。</p>
+</section>
+
+<!-- ================= 02 替换规则 / 订阅源变体 ================= -->
+<section class="screen" id="s2">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">02</span><h2 class="st-title">变体 · 替换规则与订阅源</h2><span class="st-src">ui/replace/GroupManageDialog.kt · ui/rss/source/manage/GroupManageDialog.kt · 壳与行完全同构</span></div>
+    <div class="chips"><span>替换规则：flowGroups().conflate()</span><span>订阅源：多「确认」钮（tvOk accent）</span><span>添加/编辑/删除行为三页一致</span><span class="new">底栏计数同样适用</span></div>
+  </div>
+  <div class="pairs">
+    <div class="pair"><div class="theme-tag">浅色 · 替换规则分组</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card" style="left:18px;right:18px;top:70px;bottom:64px">
+        <div class="trow">
+          <div class="tcol"><div class="tb-title">分组管理</div></div>
+          <button class="icon-btn" title="添加分组"><svg class="icon"><use href="#i-plus"/></svg></button>
+        </div>
+        <div style="padding:2px 0 0">
+          <div class="grow"><span class="gname">净化广告</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">章节修正</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">繁简转换</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">排版优化</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">本地导入</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">内文替换</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+        </div>
+        <div class="cardfoot">
+          <span class="sel">共 6 组</span>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <div class="pair"><div class="theme-tag">深色 · 订阅源分组（含确认）</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card" style="left:18px;right:18px;top:70px;bottom:64px">
+        <div class="trow">
+          <div class="tcol"><div class="tb-title">分组管理</div></div>
+          <button class="icon-btn" title="添加分组"><svg class="icon"><use href="#i-plus"/></svg></button>
+        </div>
+        <div style="padding:2px 0 0">
+          <div class="grow"><span class="gname">资讯</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">漫画</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">小说</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">视频</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">科技</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">工具</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+        </div>
+        <div class="cardfoot">
+          <span class="sel">共 6 组</span>
+          <button class="txtbtn pri">确认</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <p class="notes"><b>替换规则版</b>（<code>ui/replace/GroupManageDialog.kt</code>）：与书源版逐行同构——<code>:40-43</code> setLayout(0.9f,0.9f)、<code>:51-59</code> 标题/菜单/分线/adapter、<code>:61-68</code> appDb.replaceRuleDao.flowGroups().conflate()（ReplaceRuleDao.kt:109-114）、<code>:77-93</code> addGroup、<code>:95-108</code> editGroup、<code>:110-142</code> adapter 同款平涂与监听；ViewModel 行为同语义：<code>ReplaceRuleViewModel.kt:96</code> addGroup（未分组规则归入新组）、<code>:106</code> upGroup、<code>:121</code> delGroup（均无确认）。入口：<code>ReplaceRuleActivity.kt:255</code>。<b>订阅源版</b>（<code>ui/rss/source/manage/GroupManageDialog.kt</code>）：唯一差异在底栏——<code>:55-59</code> tvOk.setTextColor(accentColor) + visible + 点击 dismissAllowingStateLoss，即稿中右下「确认」（文案取 @string/ok，values-zh/strings.xml:120「确认」）；数据 <code>:63-70</code> appDb.rssSourceDao.flowGroups().conflate()（RssSourceDao.kt:145-150）；ViewModel <code>RssSourceViewModel.kt:115</code>/<code>:125</code>/<code>:140</code> addGroup/upGroup/delGroup 同语义。入口：<code>RssSourceActivity.kt:157</code>。稿面给订阅源底栏左补「共 n 组」、替换规则底栏同 §01，其余零差异；「确认」钮保留 accent 运行时着色（换肤跟随，MASTER §4）。</p>
+</section>
+
+<!-- ================= 03 添加 / 编辑子弹窗 ================= -->
+<section class="screen" id="s3">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">03</span><h2 class="st-title">添加 / 编辑分组子弹窗</h2><span class="st-src">alert()（AndroidAlertBuilder）+ dialog_edit_text.xml · 三页共用同一实现</span></div>
+    <div class="chips"><span>添加分组：空输入 + hint「分组名称」</span><span>编辑分组：预填原名</span><span>自动拉起输入法（requestInputMethod）</span><span>空名不落库（isNotBlank 校验）</span></div>
+  </div>
+  <div class="pairs">
+    <div class="pair"><div class="theme-tag">浅色 · 添加分组</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card" style="left:18px;right:18px;top:70px;bottom:64px">
+        <div class="trow">
+          <div class="tcol"><div class="tb-title">分组管理</div></div>
+          <button class="icon-btn" title="添加分组"><svg class="icon"><use href="#i-plus"/></svg></button>
+        </div>
+        <div style="padding:2px 0 0">
+          <div class="grow"><span class="gname">网文</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">出版图书</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">漫画</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+        </div>
+      </div>
+      <div class="dim2"></div>
+      <div class="subdlg">
+        <div class="stt">添加分组</div>
+        <div class="fwrap"><div class="field"><span class="hint">分组名称</span></div></div>
+        <div class="sbtns">
+          <button class="txtbtn">取消</button>
+          <button class="txtbtn pri">确定</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <div class="pair"><div class="theme-tag">深色 · 编辑分组</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card" style="left:18px;right:18px;top:70px;bottom:64px">
+        <div class="trow">
+          <div class="tcol"><div class="tb-title">分组管理</div></div>
+          <button class="icon-btn" title="添加分组"><svg class="icon"><use href="#i-plus"/></svg></button>
+        </div>
+        <div style="padding:2px 0 0">
+          <div class="grow"><span class="gname">网文</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">出版图书</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+          <div class="vd"></div>
+          <div class="grow"><span class="gname">漫画</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+        </div>
+      </div>
+      <div class="dim2"></div>
+      <div class="subdlg">
+        <div class="stt">编辑分组</div>
+        <div class="fwrap"><div class="field">网文</div></div>
+        <div class="sbtns">
+          <button class="txtbtn">取消</button>
+          <button class="txtbtn pri">确定</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <p class="notes">三页的添加 / 编辑共用同一实现（<code>GroupManageDialog.kt</code> 各自 addGroup / editGroup：书源版 :72-88 / :90-103，替换版 :77-93 / :95-108，订阅版 :80-95 / :97-110）：<code>alert()</code> 基于 <code>AndroidAlertBuilder.kt:9-11</code>（AppCompat AlertDialog + 主题应用 applyTint），标题取 @string/add_group「添加分组」/ @string/group_edit「编辑分组」（values-zh/strings.xml:595 / :593），customView 为 <code>dialog_edit_text.xml</code>——<b>该布局已是 v2 filled field</b>（bg_edit_filled：surface_container_high 底 + 10dp 圆角，14sp on_surface，minHeight 44dp），稿面照实渲染，<b>无布局改动</b>。<code>.requestInputMethod()</code>（:87/:102）自动拉起输入法；确定时「添加」做空名校验（isNotBlank，:80-84），「编辑」直接 upGroup 原名+新名。行为注记（稿不改，仅提示）：① 添加分组确定后把<b>未分组来源</b>归入新组（BookSourceViewModel.kt:251-258 等），若不存在未分组来源，新组不会出现在列表（列表派生自来源数据，BookSourceDao.kt:355）；② 编辑分组清空名称后确定 = 移除该组（upGroup 对空新名不回填，:261-274），与「删除」等效。</p>
+</section>
+
+<!-- ================= 04 空态 · 共用行规格 ================= -->
+<section class="screen" id="s4">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">04</span><h2 class="st-title">空态与共用行规格</h2><span class="st-src">边界状态（浅色）· item_group_manage.xml ↔ item_book_group_manage.xml（已落地）</span></div>
+    <div class="chips"><span class="new">空态引导 · 新增（现状为空白列表）</span><span>空态入口仍走 menu_add</span><span>同一行结构：名称 + 编辑 + 尾槽</span><span>源分组尾槽 = 删除</span><span>书架分组尾槽 = 显示开关</span></div>
+  </div>
+  <div class="pairs">
+    <div class="pair"><div class="theme-tag">浅色 · 空态</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="dim"></div>
+      <div class="card" style="left:18px;right:18px;top:70px;bottom:64px">
+        <div class="trow">
+          <div class="tcol"><div class="tb-title">分组管理</div></div>
+          <button class="icon-btn" title="添加分组"><svg class="icon"><use href="#i-plus"/></svg></button>
+        </div>
+        <div class="emptywrap">
+          <div class="ein">
+            <svg class="icon"><use href="#i-tag"/></svg>
+            <div class="etitle">还没有分组</div>
+            <div class="esub">在来源编辑里填写分组，<br>或「添加分组」把未分组来源归入新组</div>
+            <button class="ghost pri">添加分组</button>
+          </div>
+        </div>
+        <div class="cardfoot">
+          <span class="sel">共 0 组</span>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <div class="specs">
+    <div class="specbox">
+      <div class="sf">源分组管理行（本稿）<code>item_group_manage.xml · 三个 GroupManageDialog</code></div>
+      <div class="specdemo">
+        <div class="grow"><span class="gname">网文</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+        <div class="vd"></div>
+        <div class="grow"><span class="gname">出版图书</span><button class="tbtn">编辑</button><button class="tbtn del">删除</button></div>
+      </div>
+      <div class="specmap"><span>尾槽 = 删除（error 令牌）</span><span>编辑 = on_surface_variant</span><span>删除即时生效（现状）</span></div>
+    </div>
+    <div class="specbox">
+      <div class="sf">书架分组管理行（已落地）<code>item_book_group_manage.xml · BookGroup GroupManageDialog</code></div>
+      <div class="specdemo">
+        <div class="grow"><span class="gname">追更</span><button class="tbtn">编辑</button><span style="width:40px;height:24px;border-radius:12px;background:var(--primary);position:relative;flex:none"><i style="position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:19px;box-shadow:0 1px 2px rgba(0,0,0,.2)"></i></span></div>
+        <div class="vd"></div>
+        <div class="grow"><span class="gname">养肥</span><button class="tbtn">编辑</button><span style="width:40px;height:24px;border-radius:12px;background:var(--track);position:relative;flex:none"><i style="position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;box-shadow:0 1px 2px rgba(0,0,0,.2)"></i></span></div>
+      </div>
+      <div class="specmap"><span>尾槽 = ThemeSwitch 48dp</span><span>开关 = show 字段</span><span>名称/编辑槽完全同构</span></div>
+    </div>
+  </div>
+  <p class="notes"><b>空态（新增）</b>：现状 <code>GroupManageDialog.kt:56-63</code>（书源版，三页同构）直接 collect flowGroups，无分组时 RecyclerView 空白、无任何提示；稿中补居中空态——i-tag 图标 + 「还没有分组」+ 引导文案（点明「列表派生自来源数据」的事实）+ 「添加分组」ghost 按钮，点击与 toolbar menu_add 走同一 alert 入口，不新增代码路径；落地为共享壳 <code>dialog_recycler_view.xml</code> 内的<b>独立 gone 空态块</b>（<code>vw_empty_group</code>：复用项目已有 <code>view_empty_tip.xml</code> / EmptyTipView drawableTop 描边变体 + 外挂「添加分组」ghost 钮，48dp 触控；默认 gone，21 个共用方中仅三个分组管理 kt 引用其新 id，其余共用方零影响——grep DialogRecyclerViewBinding 复核），<b>不复用壳里的 tv_msg</b>——该壳被 21 个弹窗共用、tv_msg 正被 7 个 Import*Dialog 用于文本显示，改它有跨页副作用（详见 §05「空态引导」行）。<b>共用行规格</b>：四处分组行（书架 / 书源 / 替换规则 / 订阅源）共用同一结构 <b>[名称 flex:1][编辑][尾槽]</b>，仅尾槽语义不同——源分组管理尾槽是「删除」（destructive，error 令牌），书架分组管理尾槽是「显示开关」（ThemeSwitch）。共用参数全部对齐已落地的 <code>item_book_group_manage.xml</code>：容器 padding 16/14、minHeight 48dp；名称 15sp/500 on_surface、singleLine + ellipsize=end（现状 item_group_manage.xml:10-15 无省略，长组名会撑行）；编辑钮 12sp on_surface_variant、minHeight 48dp + padding 12/10；删除钮同规格换 error 色（#BA1A1A / #FFB4AB，MASTER §2）；分割线保留 kt 的 VerticalDivider（ic_divider 1px，bg_divider_line → outline_variant 令牌），通排不分段。</p>
+</section>
+
+<!-- ================= 05 设计调整与落地映射 ================= -->
+<section class="screen" id="s5">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">05</span><h2 class="st-title">设计调整与落地映射</h2><span class="st-src">每个改动 → 布局文件 / 控件；涉及 kt 处均标注文件与行为边界</span></div>
+  </div>
+  <table class="tok">
+    <tr><th style="width:24%">改动</th><th style="width:36%">落点（文件 / 控件）</th><th>说明</th></tr>
+    <tr><td><code>壳背景</code> 删除根平涂，保住 16dp 圆角</td><td><code>ui/book/source/manage/GroupManageDialog.kt:45</code>、<code>ui/replace/GroupManageDialog.kt:46</code>：<b>删除</b> <code>view.setBackgroundColor(backgroundColor)</code> 两行；rss 版本无根平涂（其 :126 是 adapter 行平涂，保留）</td><td>BaseDialogFragment.onViewCreated 先铺圆角弹层底（:84 setSheetBackground → utils/ViewExtensions.kt:342，corner_radius_lg=16dp，dimens.xml:12），:85 才调 onFragmentCreated——kt 根平涂在其后执行，会用纯色<b>覆盖圆角退回直角</b>（稿面弹窗四角将变直角）；已落地参照 <code>ui/book/group/GroupManageDialog.kt:57-63</code> 即无根平涂。行级 backgroundColor 平涂三页均保留（随卡面 surface 令牌）</td></tr>
+    <tr><td><code>行升级</code> 背景、间距、触控、单行省略</td><td><code>item_group_manage.xml</code>：根 LinearLayout（background→@color/surface、padding 8dp→16/14、minHeight 48dp）；<code>tv_group</code>（15sp sans-serif-medium、on_surface、singleLine + ellipsize=end）</td><td>逐项复制已落地 <code>item_book_group_manage.xml:9-28</code> 的规格；长组名不再撑行；行高 76dp（14×2 + 48）与书架版一致</td></tr>
+    <tr><td><code>「编辑」次要化</code></td><td><code>item_group_manage.xml</code>：<code>tv_edit</code> primaryText→on_surface_variant 12sp、minHeight 48dp、padding 12/10</td><td>对齐 item_book_group_manage.xml:30-43；次要操作不与名称争色；热区由现状 8dp padding（约 34px）补足 ≥48dp</td></tr>
+    <tr><td><code>「删除」语义色</code></td><td><code>item_group_manage.xml</code>：<code>tv_del</code> primaryText→@color/error（浅 #BA1A1A / 深 #FFB4AB）、12sp、minHeight 48dp、保留 marginEnd 12dp</td><td>破坏性动作显性（MASTER §2 error 令牌）；<b>行为不变</b>：仍无确认、点击即 delGroup（GroupManageDialog.kt:131-133 / :137-139 / :139-143）</td></tr>
+    <tr><td><code>底栏计数</code>「共 n 组」</td><td><code>dialog_recycler_view.xml</code>：<code>tv_footer_left</code>（:66，AccentTextView，现成 gone 槽位）；三个 kt initData / collect 处 setText + visible + <code>setTextColor(R.color.on_surface_variant)</code></td><td>唯一新增 kt 行为（约 3 行/文件）；<b>注意</b>：tv_footer_left 是 AccentTextView（<code>AccentTextView.kt:13-16</code> init 强制 <code>setTextColor(accentColor)</code>），在 XML 设 textColor 会被 init 覆盖仍显 accent——须在 kt 内补 setTextColor，或把该槽换成普通 TextView（改共享壳控件前先核对 21 个使用方，见「空态引导」行）；与 group-select 稿「已选 n 组」同一语汇</td></tr>
+    <tr><td><code>订阅源「确认」保留</code></td><td><code>dialog_recycler_view.xml</code>：<code>tv_ok</code>（RssSource 版 GroupManageDialog.kt:55-59 现状 accentColor）</td><td>不动；换肤跟随运行时 accentColor，布局无硬编码</td></tr>
+    <tr><td><code>空态引导</code>（新增）</td><td>共享壳 <code>dialog_recycler_view.xml</code> 内<b>独立 gone 空态块</b>（<code>vw_empty_group</code> / <code>empty_tip_group</code> / <code>tv_add_group</code>）：复用项目已有 <code>view_empty_tip.xml</code>（EmptyTipView drawableTop 描边变体）+ 外挂「添加分组」ghost 钮；<b>不改 tv_msg</b>（dialog_recycler_view.xml:40）</td><td>落地修订（原「各自挂独立 include」注记）：空态块内嵌共享壳，默认 gone，仅三页 kt collect 控制显隐（非空 GONE）——21 个共用方中仅三个分组管理 kt 引用新 id（grep DialogRecyclerViewBinding 复核），其余零影响；每个共用方多 inflate 3 个 gone 视图，已核可接受。<code>tv_msg</code> 不能动：该壳被 21 个弹窗共用（grep DialogRecyclerViewBinding），且 tv_msg 正被 7 个 Import*Dialog 用于加载/结果文本（ImportBookSourceDialog.kt 等），改它有跨页副作用；且单个 TextView 装不下稿中「图标+标题+副文+按钮」组合。纯展示层；点击走既有 menu_add → alert 路径，不新增入口；空态副行文案在壳内默认 <code>group_manage_empty_tip</code>（书源域），replace 版 kt 运行时覆写 <code>replace_group_empty_tip</code>（ui/replace/GroupManageDialog.kt）——后续共用方接线空态须先按域覆写文案，或迁为各自 include</td></tr>
+    <tr><td><code>子弹窗不动</code></td><td><code>dialog_edit_text.xml</code>（已是 v2 filled field：bg_edit_filled surface_container_high + 10dp 圆角）；alert 主题层</td><td>添加 / 编辑呈现照现状；「取消 / 确定」由 AlertDialog 主题按钮着色，布局零改动</td></tr>
+    <tr><td><code>保留不动</code></td><td><code>dialog_recycler_view.xml</code> 的 FastScrollRecyclerView（:23）、RotateLoading（:30，本三页未启用）、Toolbar menu_add（menu/group_manage.xml，showAsAction=always）</td><td>快滚条、加载态、添加入口全部保留；Toolbar 槽位约 44-48dp 触控达标</td></tr>
+    <tr><td><code>换肤豁免核查</code></td><td>全稿无布局内 primary/accent 硬编码；新增引用仅 @color/error 与 @color/on_surface_variant</td><td>符合 MASTER §4；确认钮 / 空态引导钮的主色走运行时 accentColor，稿面 #FF6B2C 仅为默认主题兜底演示</td></tr>
+    <tr><td class="nd">[NEED-DECISION] 删除二次确认</td><td>如采纳：kt tvDel 监听处先 alert 确认再 delGroup（约 5 行/文件）；无布局新增</td><td>现状删除即时生效且不可撤销（从全部来源移除分组，BookSourceViewModel.kt:276-286）；本稿<b>默认不改行为</b>，仅以 error 色提示风险；是否加确认属行为变更，留用户决策</td></tr>
+  </table>
+  <ul class="notes">
+    <li><code>共用实现提示</code> — 三页 GroupManageDialog / GroupAdapter 为复制粘贴同构代码（各 ~140 行，仅 ViewModel 与 RSS tvOk 差异）；落地行升级时若三处 item_group_manage.xml 同名共享（本就同一文件），改一处即三页生效；kt 侧「共 n 组」计数需各补 2 行，顺带可考虑抽公共 BaseGroupManageDialog（架构级，超出本稿范围，仅提示）。</li>
+    <li><code>对照口径</code> — 本稿行规格与 design-system/mockups/group-manage.html（书架分组管理，已落地 item_book_group_manage.xml）完全一致，仅尾槽「开关 → 删除」不同；弹窗几何与 group-select.html 相同（setLayout(0.9f,0.9f) → 371×766 卡片），底栏语汇（左信息 + 右文字钮）与两稿一致。</li>
+    <li><code>数据口径</code> — 分组列表为派生数据（BookSourceDao.kt:355 / ReplaceRuleDao.kt:109 / RssSourceDao.kt:145 的 flowGroups → dealGroups），只显示已被来源使用的分组；稿面组名均为示意。</li>
+  </ul>
+</section>
+
+<footer class="foot">legado v2 · mockup · group-manage-dialogs —— 功能对照三个 GroupManageDialog.kt（classic-base）· 行规格对照已落地 item_book_group_manage.xml · 令牌来源 design-system/legado/MASTER.md</footer>
+</div>
+</body></html>

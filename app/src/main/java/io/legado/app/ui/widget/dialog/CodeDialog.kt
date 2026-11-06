@@ -29,6 +29,10 @@ class CodeDialog() : BaseDialogFragment(R.layout.dialog_code_view) {
 
     override fun onStart() {
         super.onStart()
+        // widget-viewer-dialogs §05①：window 设透明，根 View 的 16dp 圆角底
+        // （BaseDialogFragment.kt:84 setSheetBackground）才不会被不透明 window 填平四角，
+        // 遮罩可透出；先例 BaseDialogFragment.kt:42-43 adaptationSoftKeyboard 分支
+        dialog?.window?.setBackgroundDrawableResource(R.color.transparent)
         setLayout(1f, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
@@ -36,6 +40,8 @@ class CodeDialog() : BaseDialogFragment(R.layout.dialog_code_view) {
         if (arguments?.getBoolean("disableEdit") == true) {
             binding.toolBar.title = "code view"
             binding.codeView.disableEdit()
+            // widget-viewer-dialogs §05⑧：「只读」徽标仅查看态显示（展示层增强，删去即回现状）
+            binding.tvReadOnlyBadge.visibility = View.VISIBLE
         } else {
             initMenu()
         }

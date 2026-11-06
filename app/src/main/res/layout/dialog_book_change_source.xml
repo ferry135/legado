@@ -12,13 +12,14 @@
         android:layout_height="wrap_content"
         android:background="@color/background_menu"
         android:elevation="5dp"
-        android:theme="?attr/actionBarStyle"
+        android:theme="@style/ThemeOverlay.AppCompat.DayNight"
         app:contentInsetStartWithNavigation="0dp"
         app:displayHomeAsUp="false"
         app:fitStatusBar="false"
         app:layout_constraintTop_toTopOf="parent"
         app:popupTheme="@style/AppTheme.PopupOverlay"
-        app:titleTextAppearance="@style/ToolbarTitle" />
+        app:titleTextAppearance="@style/ToolbarTitle"
+        app:titleTextColor="@color/on_surface" />
 
     <io.legado.app.ui.widget.anima.RefreshProgressBar
         android:id="@+id/refresh_progress_bar"

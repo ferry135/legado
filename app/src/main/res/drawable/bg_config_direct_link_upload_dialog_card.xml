@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- config-form-dialogs §06 弹窗容器：卡面 surface_container（#FFFFFF/#1D1B19，与页面底色 surface
+     #FAF9F7/#141312 分层）+ 16dp 圆角（corner_radius_lg 令牌）+ outline_variant 描边。
+     中性令牌均由明暗资源切换，不涉 primary/accent，换肤安全。
+     本页 DirectLinkUploadConfig.kt 运行时覆盖（BaseDialogFragment.kt:84 全局路径不动）。 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/surface_container" />
+    <corners android:radius="@dimen/corner_radius_lg" />
+    <stroke android:width="1dp" android:color="@color/outline_variant" />
+</shape>

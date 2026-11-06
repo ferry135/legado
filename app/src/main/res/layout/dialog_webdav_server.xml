@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- WebDAV 服务器编辑弹窗（webdav-server-config v4 收尾）：控件 id 与行为不变，仅容器层；
+     卡底 bg_dialog_card（surface + 16dp 圆角，仅 corners+solid，稿面 1px 描边仅为纸面层次
+     XML 不落 stroke）、工具栏去 background_menu 与卡面 blend、工具栏以下内容区
+     水平 16dp / 底部 16dp（逐子项 padding，Toolbar 全宽）、TYPE 行与 sp_type 触控 ≥48dp
+     （hint 浮标 on_surface_variant 由 ServerConfigDialog 逐实例覆盖；
+     Spinner 药丸化=@style/Spinner 全局共用牵连其他页，本次不动） -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -11,8 +17,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/shape_card_view"
+        android:background="@drawable/bg_dialog_card"
         android:orientation="vertical"
+        android:paddingBottom="16dp"
         tools:ignore="UselessParent">
 
         <androidx.appcompat.widget.Toolbar
@@ -20,8 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="3dp"
-            android:background="@color/background_menu"
-            android:theme="?attr/actionBarStyle"
+            android:theme="@style/ThemeOverlay.AppCompat.DayNight"
             app:title="@string/server_config"
             app:displayHomeAsUp="false"
             app:fitStatusBar="false"
@@ -35,6 +41,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:hint="@string/name">
 
             <io.legado.app.lib.theme.view.ThemeEditText
@@ -44,11 +52,15 @@
                 tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
         </io.legado.app.ui.widget.text.TextInputLayout>
 
+        <!-- 触控 ≥48dp：行容器 minHeight + sp_type minHeight（稿 §04⑥，删 tools:ignore） -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="48dp"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
 
             <!-- 12-missed-1 #10：13px 短标签不属大文本，主色文字实算 2.84:1 弃用（同 16 屏
                  「文字颜色/背景颜色」标签同规），改 on_surface_variant -->
@@ -66,9 +78,9 @@
                 android:id="@+id/sp_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minHeight="48dp"
                 android:entries="@array/server_type"
-                android:theme="@style/Spinner"
-                tools:ignore="TouchTargetSizeCheck" />
+                android:theme="@style/Spinner" />
 
         </LinearLayout>
 
@@ -76,6 +88,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:overScrollMode="ifContentScrolls"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             tools:ignore="SpeakableTextPresentCheck">
 
             <com.google.android.flexbox.FlexboxLayout
@@ -84,7 +98,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:clipToPadding="false"
-                android:padding="3dp"
+                android:paddingTop="3dp"
                 app:dividerDrawable="@drawable/shape_space_divider"
                 app:flexDirection="row"
                 app:flexWrap="wrap"

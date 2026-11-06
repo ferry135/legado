@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 听书定时滑条弹窗·快捷预设芯片默认态（audio-timer-popup §02：999dp 胶囊，对齐播放页 bg_player_pill 语言）。
+     芯片 View 高 48dp 保触控目标（MASTER §4），垂直 inset 8dp×2 保持 32dp 视觉稿面高度；
+     选中态由 TimerSliderPopup 以 ThemeStore.accentColor GradientDrawable + LayerDrawable 同款 inset
+     运行时着色（DECISIONS §8 疗法，同 FontAdapter.convert 先例），布局不固化 primary/accent（MASTER §4） -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetTop="8dp"
+    android:insetBottom="8dp">
+
+    <shape android:shape="rectangle">
+        <solid android:color="@color/surface_container_high" />
+        <corners android:radius="999dp" />
+    </shape>
+
+</inset>

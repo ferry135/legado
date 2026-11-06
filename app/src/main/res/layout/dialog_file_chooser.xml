@@ -1,28 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 文件选择弹窗（design-system/mockups/file-picker-dialog.html）：
+     卡面 16dp 圆角 + surface_container 由代码注入（FilePickerDialog.onFragmentCreated sheetBackground），
+     本布局不再声明根/面包屑平色背景（避免再次覆盖基类圆角容器）；
+     面包屑 48dp 热区 + 下缘 1px 分隔（稿 .crumb border-bottom）；
+     空态激活（稿 §03 ein，「..」行保留在空态上方）；底栏提示行 + 确认钮 48dp/12dp 圆角 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background">
+    android:layout_height="match_parent">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="?attr/actionBarStyle"
+        android:theme="@style/ThemeOverlay.AppCompat.DayNight"
         app:titleTextAppearance="@style/ToolbarTitle"
         app:titleTextColor="@color/on_surface"
         app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-    <!-- 12-missed-1 #01：路径面包屑置 surface 底、去掉 5dp 阴影，分隔交给列表分隔线 -->
+    <!-- 面包屑 24dp → 48dp：整行即段落触控热区（item_path_picker height=match_parent 撑满） -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_path"
         android:layout_width="match_parent"
-        android:layout_height="24dp"
+        android:layout_height="48dp"
         android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:background="@color/background" />
+        android:paddingRight="10dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/outline_variant" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -35,24 +43,97 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <TextView
+        <!-- 空态（稿 .ein）：透明叠层居中于「..」行以下的剩余区（paddingTop 避开一行 52dp）；
+             判定 = onSuccess 后列表为空（根目录）或仅剩 .. 行（子目录），
+             见 FilePickerDialog.updateEmptyState（加载中先 post 空列表，直接判空会闪烁） -->
+        <LinearLayout
             android:id="@+id/tv_empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:textSize="13.5sp"
-            android:textColor="@color/secondaryText"
-            android:visibility="gone" />
+            android:orientation="vertical"
+            android:paddingLeft="44dp"
+            android:paddingTop="52dp"
+            android:paddingRight="44dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/iv_empty_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:alpha="0.55"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_folder_outline"
+                app:tint="@color/on_surface_variant" />
+
+            <TextView
+                android:id="@+id/tv_empty_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/empty_directory"
+                android:textColor="@color/on_surface"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_empty_sub"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:lineSpacingMultiplier="1.7"
+                android:text="@string/empty_directory_guide"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="12.5sp" />
+
+        </LinearLayout>
 
     </FrameLayout>
 
-    <io.legado.app.ui.widget.text.AccentBgTextView
-        android:id="@+id/tv_ok"
+    <!-- 底栏（稿 .pkfoot）：上缘 1px 分隔 + 左提示行 + 确认钮（保留 AccentBgTextView 运行时 accent） -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/outline_variant" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:layout_margin="3dp"
-        android:text="@string/ok"
-        android:gravity="center" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="14dp"
+        android:paddingTop="10dp"
+        android:paddingRight="14dp"
+        android:paddingBottom="14dp">
+
+        <!-- FILE 模式：已选文件名 / 未选择文件；DIR 模式：当前目录绝对路径（ellipsize=start 保末段可见） -->
+        <TextView
+            android:id="@+id/tv_pick_hint"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="start"
+            android:singleLine="true"
+            android:text="@string/no_file_selected"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="12.5sp" />
+
+        <io.legado.app.ui.widget.text.AccentBgTextView
+            android:id="@+id/tv_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginLeft="12dp"
+            android:gravity="center"
+            android:minHeight="48dp"
+            android:paddingLeft="28dp"
+            android:paddingRight="28dp"
+            android:text="@string/ok"
+            android:textSize="14.5sp"
+            android:textStyle="bold"
+            app:radius="12dp" />
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -1,0 +1,509 @@
+<!-- design-system: legado v2 · mockup -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>legado v2 · mockup · TXT目录规则选择弹窗</title><style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Noto Sans SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;background:#eae7e0;color:#3a3833}
+.wrap{max-width:1180px;margin:0 auto;padding:52px 24px 110px;display:flex;flex-direction:column;gap:60px;align-items:center}
+/* ---------- 页头 ---------- */
+.page-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:16px}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.14em;color:#a8623c}
+.h1{font-size:34px;font-weight:750;line-height:1.2;margin:0}
+.h1 small{font-size:15px;font-weight:600;color:#60656d;margin-left:12px}
+.desc{font-size:14px;line-height:1.8;color:#60656d;margin:0;max-width:820px}
+.nav{display:flex;flex-wrap:wrap;gap:10px}
+.nav a{text-decoration:none;font-size:13px;font-weight:600;color:#5a574e;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:999px;padding:9px 16px;transition:.15s}
+.nav a:hover{background:#ff6b2c;color:#fff;border-color:#ff6b2c}
+.nav a b{font-weight:750;color:inherit;opacity:.55;margin-right:6px}
+/* ---------- 屏幕区 ---------- */
+.screen{width:100%;display:flex;flex-direction:column;align-items:center;gap:24px;scroll-margin-top:20px}
+.screen-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:10px}
+.st-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.st-num{font-size:13px;font-weight:750;color:#ff6b2c;letter-spacing:.08em}
+.st-title{font-size:24px;font-weight:750;margin:0}
+.st-src{font-size:12px;color:#60656d}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{font-size:12px;color:#6d6a62;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:7px;padding:5px 10px}
+.chips span.new{color:#a8623c;border-color:rgba(255,107,44,.35);background:#fff7f2}
+.pairs{display:flex;gap:30px;flex-wrap:wrap;justify-content:center}
+.pair{display:flex;flex-direction:column;gap:10px;align-items:center}
+.theme-tag{font-size:12px;font-weight:700;color:#60656d;letter-spacing:.1em}
+/* ---------- 手机壳（令牌与 file-picker-dialog 完全一致） ---------- */
+.phone{width:412px;height:900px;border-radius:30px;position:relative;overflow:hidden;background:var(--bg);color:var(--text);border:1px solid rgba(0,0,0,.09);flex:none}
+.phone.light{--bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--feature:#fff1e8;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--on-primary:#fff;--track:#e5e2de;--ctl:#9a968c;--divider:rgba(0,0,0,.07);--field:rgba(0,0,0,.06);--menu:#fff;--error:#ba1a1a;--ok:#3b7a45;--scrim:rgba(0,0,0,.5);--field-solid:#f1efe9}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--feature:#2b1d15;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--on-primary:#fff;--track:#353331;--ctl:#6b675f;--divider:rgba(255,255,255,.08);--field:rgba(255,255,255,.08);--menu:#2a2824;--error:#ffb4ab;--ok:#7fd891;--scrim:rgba(0,0,0,.5);--field-solid:#2a2925}
+.hi{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--text);opacity:.4;z-index:30;pointer-events:none}
+.icon-btn{width:44px;height:44px;border:0;background:transparent;border-radius:22px;display:grid;place-items:center;cursor:pointer;color:var(--text);flex:none}
+.icon{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon.s{width:20px;height:20px}
+/* ---------- 阅读页背景（同 dict.html 入口语境） ---------- */
+.read{position:absolute;top:34px;left:0;right:0;bottom:0;display:flex;flex-direction:column;padding:12px 18px 14px}
+.read-head,.read-foot{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--secondary)}
+.read-head>span:first-child,.read-foot>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.read-head>span:last-child,.read-foot>span:last-child{flex:none;white-space:nowrap;padding-left:12px}
+.read-body{flex:1;overflow:hidden;margin:12px 2px 10px;font-size:16.5px;line-height:2.05;color:var(--text)}
+.read-body p{margin:0 0 10px;text-indent:2em;text-align:justify}
+/* ---------- 弹窗卡（TxtTocRuleDialog setLayout(0.9f,0.8f) = 371×720；BaseDialogFragment 16dp 圆角） ---------- */
+.dim{position:absolute;inset:0;background:var(--scrim);z-index:5}
+.card{position:absolute;left:20px;right:20px;top:90px;bottom:90px;background:var(--surface);border-radius:16px;z-index:9;overflow:hidden;border:1px solid var(--divider);display:flex;flex-direction:column}
+/* ---------- 弹窗工具栏 ---------- */
+.trow{display:flex;align-items:center;min-height:56px;padding:2px 6px 2px 16px;flex:none}
+.tt{flex:1;min-width:0;font-size:19px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ---------- 规则行（对齐姊妹行 item_txt_toc_rule.xml · 05 稿语言） ---------- */
+.rlist{flex:1;min-height:0;overflow:hidden}
+.rrow{padding:9px 4px 10px 10px}
+.rline{display:flex;align-items:center;gap:10px;min-height:48px}
+.rd{width:20px;height:20px;flex:none;border-radius:50%;border:2px solid var(--ctl);position:relative}
+.rd.on{border-color:var(--primary)}
+.rd.on::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--primary)}
+.rname{flex:1;min-width:0;font-size:15px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sw{width:40px;height:24px;border-radius:12px;background:var(--track);position:relative;flex:none;margin:0 4px 0 2px}
+.sw::after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.sw.on{background:var(--primary)}.sw.on::after{left:19px}
+.ric{width:48px;height:48px;flex:none;border:0;background:transparent;border-radius:24px;display:grid;place-items:center;cursor:pointer;color:var(--secondary);font-family:inherit;padding:0}
+.ric+.ric{margin-left:-4px}
+.rex{margin:2px 8px 0 30px;font-size:12px;color:var(--secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rrow.off .rname,.rrow.off .rex{color:var(--secondary)}
+.vd2{height:1px;background:var(--divider);margin-left:10px;flex:none}
+/* ---------- 溢出菜单（toolbar ⋮ applyTint） ---------- */
+.omenu{position:absolute;right:30px;top:148px;z-index:10;background:var(--menu);border:1px solid var(--divider);border-radius:12px;padding:6px;min-width:178px;display:flex;flex-direction:column}
+.mitem{display:flex;align-items:center;gap:12px;height:48px;padding:0 14px;border-radius:8px;font-size:14px;color:var(--text);cursor:pointer;white-space:nowrap}
+.mitem .icon{color:var(--secondary);flex:none}
+/* ---------- 底栏（tv_cancel / tv_ok + 新增提示行） ---------- */
+.dfoot{flex:none;display:flex;align-items:center;gap:2px;padding:6px 8px 12px;border-top:1px solid var(--divider);background:var(--surface)}
+.dfoot .hint{flex:1;min-width:0;font-size:12.5px;color:var(--secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:8px}
+.dfoot .hint b{color:var(--text);font-weight:600}
+.txtbtn{border:0;background:transparent;font-size:14px;font-weight:650;color:var(--secondary);min-height:48px;padding:10px 14px;border-radius:10px;cursor:pointer;font-family:inherit;flex:none}
+.txtbtn.pri{color:var(--primary)}
+/* ---------- 居中 alert（lib alert + DialogEditTextBinding） ---------- */
+.alert{position:absolute;left:46px;right:46px;top:300px;z-index:11;background:var(--surface);border-radius:16px;border:1px solid var(--divider);padding:20px 20px 10px;display:flex;flex-direction:column;gap:14px}
+.alert .atitle{font-size:17px;font-weight:650;color:var(--text)}
+.amsg{font-size:14px;line-height:1.7;color:var(--text);white-space:pre-line}
+.afield{min-height:48px;border-radius:10px;background:var(--field-solid);display:flex;align-items:center;padding:0 14px;font-size:14px;color:var(--secondary)}
+.adrop{margin:-6px 0 0;border:1px solid var(--divider);border-radius:10px;background:var(--surface2);overflow:hidden}
+.adrop div{height:38px;display:flex;align-items:center;padding:0 12px;font-size:11.5px;color:var(--secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.adrop div.cur{color:var(--text);font-weight:600}
+.abtns{display:flex;justify-content:flex-end;gap:4px;padding-bottom:6px}
+/* ---------- 空态（新增） ---------- */
+.emptywrap{flex:1;min-height:0;display:grid;place-items:center}
+.ein{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:0 44px}
+.ein .icon{width:42px;height:42px;color:var(--secondary);opacity:.55}
+.etitle{font-size:15px;font-weight:600;color:var(--text)}
+.esub{font-size:12.5px;line-height:1.7;color:var(--secondary)}
+.ghost{border:1px solid var(--primary);background:transparent;color:var(--primary);border-radius:9px;padding:9px 18px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:650;cursor:pointer;font-family:inherit;flex:none}
+/* ---------- 拖拽浮起行 ---------- */
+.lift{background:var(--surface);border-radius:12px;box-shadow:0 8px 22px rgba(0,0,0,.22);position:relative;z-index:2;transform:scale(1.02)}
+.gaprow{height:13px}
+/* ---------- 行规格对照（页内说明块） ---------- */
+.specs{width:100%;max-width:1080px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+@media (max-width:900px){.specs{grid-template-columns:1fr}}
+.specbox{background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;
+ --bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--track:#e5e2de;--ctl:#9a968c;--divider:rgba(0,0,0,.07)}
+.specbox .sf{font-size:13px;font-weight:700;color:#3a3833}
+.specbox .sf code{font-size:11.5px;font-weight:500;color:#60656d;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px;margin-left:8px}
+.specdemo{background:var(--bg);border-radius:10px;padding:4px 10px;overflow:hidden}
+.specdemo .vd2{margin-left:6px}
+.specmap{display:flex;flex-wrap:wrap;gap:6px}
+.specmap span{font-size:11.5px;color:#6d6a62;background:#faf9f7;border:1px solid rgba(0,0,0,.07);border-radius:6px;padding:4px 8px}
+.specmap span.new{color:#a8623c;border-color:rgba(255,107,44,.35);background:#fff7f2}
+/* ---------- 注释 / 映射表 / 页脚 ---------- */
+.notes{width:100%;max-width:1080px;font-size:12.5px;line-height:1.9;color:#60656d;border-top:1px dashed rgba(0,0,0,.12);padding-top:12px;margin:0}
+.notes code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px}
+.notes b{color:#45423a}
+.tok{width:100%;max-width:1080px;border-collapse:collapse;font-size:13px;color:#45423a}
+.tok th{font-size:12px;font-weight:700;color:#60656d;text-align:left;letter-spacing:.04em;padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.12)}
+.tok td{padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.07);vertical-align:top;line-height:1.7}
+.tok code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px;white-space:nowrap}
+.tok .new{color:#a8623c;font-weight:600}
+.foot{font-size:12px;color:#60656d;text-align:center;line-height:2}
+</style></head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-add" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4.5L20 8.5a2.1 2.1 0 0 0-3-3L5.5 17z"/><path d="M13.5 6.5l3 3"/></symbol>
+<symbol id="i-del" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6.5 7l1 12a1.5 1.5 0 0 0 1.5 1.4h6a1.5 1.5 0 0 0 1.5-1.4l1-12"/></symbol>
+<symbol id="i-imp" viewBox="0 0 24 24"><path d="M12 3v11"/><path d="m8 10 4 4 4-4"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.4 2.4 0 1 1 3.5 2.2c-.8.5-1.1 1-1.1 1.9"/><path d="M12 16.6h.01"/></symbol>
+<symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="18.5" r="1.7" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-rule" viewBox="0 0 24 24"><circle cx="5" cy="6.5" r="1.6"/><path d="M10 6.5h9"/><circle cx="5" cy="12" r="1.6"/><path d="M10 12h9"/><circle cx="5" cy="17.5" r="1.6"/><path d="M10 17.5h9"/></symbol>
+</defs></svg>
+
+<div class="wrap">
+
+<header class="page-head">
+  <div class="kicker">LEGADO V2 · MOCKUP</div>
+  <h1 class="h1">TXT目录规则选择弹窗 · 新界面<small>TxtTocRuleDialog · 单选分章规则并回填</small></h1>
+  <p class="desc">重构 <b>TxtTocRuleDialog</b>（dialog_toc_regex.xml + item_toc_regex.xml，网络导入 alert 复用 dialog_edit_text.xml）。入口两处：阅读界面正文菜单 <code>menu_toc_regex</code>（ReadBookActivity.kt:567-569）与目录页菜单（TocActivity.kt:143-145），确定后把规则回填 <code>book.tocUrl</code> 并重载目录。本稿主线一处：<b>行布局落后同包姊妹行 item_txt_toc_rule（html/screens/05-source-rules.html §07 已落地稿）</b>——按其语言补齐名称/示例的语义令牌、48dp 触控热区与禁用态；另补底栏「将使用」提示行与空态（均为展示层增强，可移除）。视觉令牌与 screens 系列一致：主色 #FF6B2C（ThemeRadioButton/ThemeSwitch/AccentTextView 运行时取色，布局零硬编码）、暖纸白/暖黑表面、弱分割线、16dp 弹窗圆角、无阴影。规则示例取自 assets/defaultData/txtTocRule.json。</p>
+  <nav class="nav">
+    <a href="#s1"><b>01</b>主形态 · 规则选择</a>
+    <a href="#s2"><b>02</b>溢出菜单 / 拖拽排序</a>
+    <a href="#s3"><b>03</b>删除确认 / 网络导入</a>
+    <a href="#s4"><b>04</b>空态 · 行规格</a>
+    <a href="#s5"><b>05</b>设计调整与落地映射</a>
+  </nav>
+</header>
+
+<!-- ================= 01 主形态 ================= -->
+<section class="screen" id="s1">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">01</span><h2 class="st-title">主形态 · 单选规则并回填</h2><span class="st-src">TxtTocRuleDialog.kt:55-88（0.9×0.8=371×720 卡）· dialog_toc_regex.xml · item_toc_regex.xml · 列表=txtTocRuleDao.observeAll 全量</span></div>
+    <div class="chips"><span>radio 单选 · isPressed 翻转</span><span>行 ≈72dp · 图标热区 48dp</span><span>启用开关独立于选择</span><span>示例 12sp 单行省略</span><span class="new">底栏「将使用」提示 · 新增</span><span>确定=回填规则重载目录</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：已选中当前规则 -->
+    <div class="pair"><div class="theme-tag">浅色 · 已选中规则</div>
+    <div class="phone light">
+      <div class="read"><div class="read-head"><span>第一百零三章 山腰小憩</span><span>14:18</span></div>
+      <div class="read-body"><p>陈平安背着剑匣，沿着青石阶一路向上。</p><p>渡口的乌篷船泊在岸边，艄公收了长篓。</p></div>
+      <div class="read-foot"><span>3/24 · 12%</span><span>14:18 · 85%</span></div></div>
+      <div class="dim"></div>
+      <div class="card">
+        <div class="trow"><div class="tt">TXT 目录规则</div><button class="icon-btn" type="button" aria-label="添加"><svg class="icon"><use href="#i-add"/></svg></button><button class="icon-btn" type="button" aria-label="更多菜单"><svg class="icon"><use href="#i-more"/></svg></button></div>
+        <div class="rlist">
+          <div class="rrow"><div class="rline"><span class="rd on"></span><div class="rname">目录(去空白)</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">第一章 假装第一章前面有空白但我不要</div></div>
+          <div class="vd2"></div>
+          <div class="rrow"><div class="rline"><span class="rd"></span><div class="rname">目录</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">第一章 标准的粤语就是这样</div></div>
+          <div class="vd2"></div>
+          <div class="rrow off"><div class="rline"><span class="rd"></span><div class="rname">目录(匹配简介)</div><span class="sw"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">简介 老夫诸葛村夫</div></div>
+          <div class="vd2"></div>
+          <div class="rrow"><div class="rline"><span class="rd"></span><div class="rname">数字 分隔符 标题名称</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">1、这个就是标题</div></div>
+          <div class="vd2"></div>
+          <div class="rrow"><div class="rline"><span class="rd"></span><div class="rname">大写数字 分隔符 标题名称</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">一、只有前面的数字有差别</div></div>
+          <div class="vd2"></div>
+          <div class="rrow off"><div class="rline"><span class="rd"></span><div class="rname">数字混合 分隔符 标题名称</div><span class="sw"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">1、人参公鸡</div></div>
+          <div class="vd2"></div>
+          <div class="rrow"><div class="rline"><span class="rd"></span><div class="rname">特殊符号 序号 标题</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">【第一章 后面的符号可以没有</div></div>
+        </div>
+        <div class="dfoot">
+          <span class="hint">将使用：<b>目录(去空白)</b></span>
+          <button class="txtbtn" type="button">取消</button>
+          <button class="txtbtn pri" type="button">确认</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：未选中（当前书籍规则不匹配任何一条） -->
+    <div class="pair"><div class="theme-tag">深色 · 未选中（确定无动作）</div>
+    <div class="phone dark">
+      <div class="read"><div class="read-head"><span>第一百零三章 山腰小憩</span><span>14:18</span></div>
+      <div class="read-body"><p>雨雪初霁，屋檐还在滴水，山道泥泞。</p><p>陈平安提着灯，深一脚浅一脚往上走。</p></div>
+      <div class="read-foot"><span>3/24 · 12%</span><span>14:18 · 85%</span></div></div>
+      <div class="dim"></div>
+      <div class="card">
+        <div class="trow"><div class="tt">TXT 目录规则</div><button class="icon-btn" type="button" aria-label="添加"><svg class="icon"><use href="#i-add"/></svg></button><button class="icon-btn" type="button" aria-label="更多菜单"><svg class="icon"><use href="#i-more"/></svg></button></div>
+        <div class="rlist">
+          <div class="rrow"><div class="rline"><span class="rd"></span><div class="rname">目录</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">第一章 标准的粤语就是这样</div></div>
+          <div class="vd2"></div>
+          <div class="rrow off"><div class="rline"><span class="rd"></span><div class="rname">目录(古典、轻小说备用)</div><span class="sw"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">第一章 比上面只多了回和话</div></div>
+          <div class="vd2"></div>
+          <div class="rrow off"><div class="rline"><span class="rd"></span><div class="rname">数字(纯数字标题)</div><span class="sw"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">12</div></div>
+          <div class="vd2"></div>
+          <div class="rrow"><div class="rline"><span class="rd"></span><div class="rname">Chapter/Section/Part/Episode 序号 标题</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">Chapter 1 MyGrandmaIsNB</div></div>
+          <div class="vd2"></div>
+          <div class="rrow"><div class="rline"><span class="rd"></span><div class="rname">特殊符号 标题(单个)</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">☆、晋江作者最喜欢的格式</div></div>
+          <div class="vd2"></div>
+          <div class="rrow"><div class="rline"><span class="rd"></span><div class="rname">章/卷 序号 标题</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">卷五 开源盛世</div></div>
+          <div class="vd2"></div>
+          <div class="rrow off"><div class="rline"><span class="rd"></span><div class="rname">双标题(前向)</div><span class="sw"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">第一章 真正的标题</div></div>
+        </div>
+        <div class="dfoot">
+          <span class="hint">未选择规则</span>
+          <button class="txtbtn" type="button">取消</button>
+          <button class="txtbtn pri" type="button">确认</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>入口</code> — 阅读界面正文菜单 <code>menu_toc_regex → TxtTocRuleDialog(ReadBook.book?.tocUrl)</code>（ReadBookActivity.kt:567-569）与目录页同 id 菜单（TocActivity.kt:143-145）；确定回填 <code>book.tocUrl = rule</code> 并重载目录（ReadBookActivity.kt:1447-1452 / TocActivity.kt:187-192）。对 TXT 书而言 tocUrl 即当前分章规则，弹窗据此反显选中（TxtTocRuleDialog.kt:59-63,133-145）。</li>
+    <li><code>列表</code> — <code>txtTocRuleDao.observeAll()</code> 全量（启用+禁用都列，TxtTocRuleDialog.kt:122-128），行间 VerticalDivider（:101）。选中态=name 与 selectedName 比对（:258），radio 仅 isPressed 翻转并广播 <code>"upSelect"</code>（:278-283）；启用开关独立 <code>viewModel.update</code>（:284-291）。深色屏=当前书籍规则不匹配任何条目时 selectedName 置空串（:141-143），此时确定无动作（:110-117 找不到即不回调）——底栏「未选择规则」提示如实验出该边界。</li>
+    <li><code>行语言（对齐姊妹行）</code> — 名称 radio+文字 15sp on_surface、示例 12sp on_surface_variant 单行省略、行内图标 tint on_surface_variant，全部对齐 05 稿已落地的 item_txt_toc_rule.xml:19-21,49,62,76-77（现状 item_toc_regex.xml 均未声明，见 §05 #1/#2）；图标热区 36→48dp（姊妹行为 38dp，本稿按 MASTER §4 拉满 48，姊妹行可随后跟进）。禁用行文字降次要色为增强（§05 #5）。</li>
+    <li><code>底栏</code> — 取消=dismissAllowingStateLoss（:106-108）；确认=AccentTextView 运行时 accentColor 文字按钮（dialog_toc_regex.xml:43-50），行为保留不变。左提示行（新增）随选中即时刷新，与 file-picker 底栏「已选文件」、group-select「已选 n 组」同语汇。</li>
+    <li><code>几何</code> — setLayout(0.9f, 0.8f)（TxtTocRuleDialog.kt:87）= 稿中 371×720 卡片，16dp 圆角（BaseDialogFragment v2，DECISIONS §4）；可视约 7-8 行，长列表滚动。</li>
+  </ul>
+</section>
+
+<!-- ================= 02 溢出菜单 / 拖拽 ================= -->
+<section class="screen" id="s2">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">02</span><h2 class="st-title">溢出菜单与拖拽排序</h2><span class="st-src">TxtTocRuleDialog.kt:92-95,147-159（menu/txt_toc_rule.xml）· :103-105,309-326（ItemTouchCallback 拖拽）</span></div>
+    <div class="chips"><span>＋添加 常驻动作</span><span>⋮：本地/网络/二维码/默认规则/帮助</span><span>长按拖拽排序</span><span>serialNumber=index+1 持久化</span><span>浮起行投影 · 拖拽不改选中</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：溢出菜单展开 -->
+    <div class="pair"><div class="theme-tag">浅色 · ⋮ 菜单展开</div>
+    <div class="phone light">
+      <div class="read"><div class="read-head"><span>第一百零三章 山腰小憩</span><span>14:18</span></div>
+      <div class="read-body"><p>渡口的乌篷船泊在岸边，艄公收了长篓。</p></div>
+      <div class="read-foot"><span>3/24 · 12%</span><span>14:18 · 85%</span></div></div>
+      <div class="dim"></div>
+      <div class="card">
+        <div class="trow"><div class="tt">TXT 目录规则</div><button class="icon-btn" type="button" aria-label="添加"><svg class="icon"><use href="#i-add"/></svg></button><button class="icon-btn" type="button" aria-label="更多菜单"><svg class="icon"><use href="#i-more"/></svg></button></div>
+        <div class="rlist">
+          <div class="rrow"><div class="rline"><span class="rd on"></span><div class="rname">目录(去空白)</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">第一章 假装第一章前面有空白但我不要</div></div>
+          <div class="vd2"></div>
+          <div class="rrow"><div class="rline"><span class="rd"></span><div class="rname">目录</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">第一章 标准的粤语就是这样</div></div>
+          <div class="vd2"></div>
+          <div class="rrow"><div class="rline"><span class="rd"></span><div class="rname">数字 分隔符 标题名称</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">1、这个就是标题</div></div>
+          <div class="vd2"></div>
+          <div class="rrow"><div class="rline"><span class="rd"></span><div class="rname">特殊符号 序号 标题</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">【第一章 后面的符号可以没有</div></div>
+        </div>
+        <div class="dfoot">
+          <span class="hint">将使用：<b>目录(去空白)</b></span>
+          <button class="txtbtn" type="button">取消</button>
+          <button class="txtbtn pri" type="button">确认</button>
+        </div>
+      </div>
+      <div class="omenu">
+        <div class="mitem"><svg class="icon s"><use href="#i-imp"/></svg>本地导入</div>
+        <div class="mitem"><svg class="icon s"><use href="#i-imp"/></svg>网络导入</div>
+        <div class="mitem"><svg class="icon s"><use href="#i-imp"/></svg>二维码导入</div>
+        <div class="mitem"><svg class="icon s"><use href="#i-imp"/></svg>导入默认规则</div>
+        <div class="mitem"><svg class="icon s"><use href="#i-help"/></svg>帮助</div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：拖拽排序中 -->
+    <div class="pair"><div class="theme-tag">深色 · 长按拖拽排序中</div>
+    <div class="phone dark">
+      <div class="read"><div class="read-head"><span>第一百零三章 山腰小憩</span><span>14:18</span></div>
+      <div class="read-body"><p>渡口的乌篷船泊在岸边，艄公收了长篓。</p></div>
+      <div class="read-foot"><span>3/24 · 12%</span><span>14:18 · 85%</span></div></div>
+      <div class="dim"></div>
+      <div class="card">
+        <div class="trow"><div class="tt">TXT 目录规则</div><button class="icon-btn" type="button" aria-label="添加"><svg class="icon"><use href="#i-add"/></svg></button><button class="icon-btn" type="button" aria-label="更多菜单"><svg class="icon"><use href="#i-more"/></svg></button></div>
+        <div class="rlist">
+          <div class="rrow"><div class="rline"><span class="rd"></span><div class="rname">目录</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">第一章 标准的粤语就是这样</div></div>
+          <div class="gaprow"></div>
+          <div class="rrow lift"><div class="rline"><span class="rd on"></span><div class="rname">目录(去空白)</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">第一章 假装第一章前面有空白但我不要</div></div>
+          <div class="gaprow"></div>
+          <div class="rrow"><div class="rline"><span class="rd"></span><div class="rname">数字 分隔符 标题名称</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">1、这个就是标题</div></div>
+          <div class="vd2"></div>
+          <div class="rrow"><div class="rline"><span class="rd"></span><div class="rname">大写数字 分隔符 标题名称</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">一、只有前面的数字有差别</div></div>
+          <div class="vd2"></div>
+          <div class="rrow off"><div class="rline"><span class="rd"></span><div class="rname">数字混合 分隔符 标题名称</div><span class="sw"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">1、人参公鸡</div></div>
+          <div class="vd2"></div>
+          <div class="rrow"><div class="rline"><span class="rd"></span><div class="rname">正文 标题/序号</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">正文 我奶常山赵子龙</div></div>
+        </div>
+        <div class="dfoot">
+          <span class="hint">将使用：<b>目录(去空白)</b> · 拖拽仅调整顺序</span>
+          <button class="txtbtn" type="button">取消</button>
+          <button class="txtbtn pri" type="button">确认</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>工具栏</code> — 标题 <code>R.string.txt_toc_rule</code>「TXT 目录规则」（TxtTocRuleDialog.kt:92，values-zh/strings.xml:360）；menu_add「添加」常驻（menu/txt_toc_rule.xml:10-17，→ TxtTocRuleEditDialog 新建态，:149，编辑表单见 05 稿 §07，不在本组范围）；其余五项走 ⋮ 溢出，图标经 applyTint 着色（:94）。菜单项 48dp 行高为 overflow 规范默认。</li>
+    <li><code>五个入口（全部保留）</code> — 本地导入 → HandleFileContract(FILE, txt/json) 读文本（:75-83,150-153）；网络导入 → alert+dialog_edit_text（§03 深色屏，:154,167-200）；二维码导入 → QrCodeResult（:71-74,155）；导入默认规则 → DefaultData.importDefaultTocRules()（:156，TxtTocRuleViewModel.kt:28-30）；帮助 → showHelp("txtTocRuleHelp")（:157）。前三者与扫码结果最终都进 ImportTxtTocRuleDialog（:73,78,195），该确认弹窗见姊妹稿 import-dialogs-rule.html §02，本稿不重画。</li>
+    <li><code>拖拽</code> — ItemTouchCallback isCanDrag=true、默认长按触发（:103-105），swap 后 <code>serialNumber=index+1</code> 批量持久化（:309-326）；浮起行 surface 实底+12dp 圆角+投影浮出列表平面、上下留 13dp 让位（与 group-select §02 同语汇）。拖拽不改变选中与开关（底栏提示不变）。</li>
+    <li><code>图标资产</code> — 本地/网络/二维码/默认规则四个导入动作现状共用 ic_import（menu/txt_toc_rule.xml:20,32,44），稿内照实绘制同一下载图形；如需辨识度可给二维码导入换 ic_qr，属资产变更列 NEED-DECISION。</li>
+  </ul>
+</section>
+
+<!-- ================= 03 删除确认 / 网络导入 ================= -->
+<section class="screen" id="s3">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">03</span><h2 class="st-title">删除确认与网络导入（两层 alert）</h2><span class="st-src">TxtTocRuleDialog.kt:295-305（删除 alert）· :166-200（网络导入 alert + dialog_edit_text.xml）</span></div>
+    <div class="chips"><span>删除需确认（现状即有，无行为改动）</span><span>URL 候选=ACache 缓存</span><span>默认 gitee 地址置顶</span><span>删除候选即清缓存</span><span>确定→ImportTxtTocRuleDialog</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：删除确认 -->
+    <div class="pair"><div class="theme-tag">浅色 · 删除二次确认</div>
+    <div class="phone light">
+      <div class="read"><div class="read-head"><span>第一百零三章 山腰小憩</span><span>14:18</span></div>
+      <div class="read-body"><p>渡口的乌篷船泊在岸边，艄公收了长篓。</p></div>
+      <div class="read-foot"><span>3/24 · 12%</span><span>14:18 · 85%</span></div></div>
+      <div class="dim"></div>
+      <div class="card">
+        <div class="trow"><div class="tt">TXT 目录规则</div><button class="icon-btn" type="button" aria-label="添加"><svg class="icon"><use href="#i-add"/></svg></button><button class="icon-btn" type="button" aria-label="更多菜单"><svg class="icon"><use href="#i-more"/></svg></button></div>
+        <div class="rlist">
+          <div class="rrow"><div class="rline"><span class="rd on"></span><div class="rname">目录(去空白)</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">第一章 假装第一章前面有空白但我不要</div></div>
+          <div class="vd2"></div>
+          <div class="rrow"><div class="rline"><span class="rd"></span><div class="rname">目录</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">第一章 标准的粤语就是这样</div></div>
+          <div class="vd2"></div>
+          <div class="rrow off"><div class="rline"><span class="rd"></span><div class="rname">目录(匹配简介)</div><span class="sw"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">简介 老夫诸葛村夫</div></div>
+          <div class="vd2"></div>
+          <div class="rrow"><div class="rline"><span class="rd"></span><div class="rname">数字 分隔符 标题名称</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">1、这个就是标题</div></div>
+        </div>
+        <div class="dfoot">
+          <span class="hint">将使用：<b>目录(去空白)</b></span>
+          <button class="txtbtn" type="button">取消</button>
+          <button class="txtbtn pri" type="button">确认</button>
+        </div>
+      </div>
+      <div class="alert">
+        <div class="atitle">提醒</div>
+        <div class="amsg">是否确认删除？
+目录(匹配简介)</div>
+        <div class="abtns"><button class="txtbtn" type="button">否</button><button class="txtbtn pri" type="button">是</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：网络导入 URL -->
+    <div class="pair"><div class="theme-tag">深色 · 网络导入（URL 候选）</div>
+    <div class="phone dark">
+      <div class="read"><div class="read-head"><span>第一百零三章 山腰小憩</span><span>14:18</span></div>
+      <div class="read-body"><p>渡口的乌篷船泊在岸边，艄公收了长篓。</p></div>
+      <div class="read-foot"><span>3/24 · 12%</span><span>14:18 · 85%</span></div></div>
+      <div class="dim"></div>
+      <div class="card">
+        <div class="trow"><div class="tt">TXT 目录规则</div><button class="icon-btn" type="button" aria-label="添加"><svg class="icon"><use href="#i-add"/></svg></button><button class="icon-btn" type="button" aria-label="更多菜单"><svg class="icon"><use href="#i-more"/></svg></button></div>
+        <div class="rlist">
+          <div class="rrow"><div class="rline"><span class="rd"></span><div class="rname">目录</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">第一章 标准的粤语就是这样</div></div>
+          <div class="vd2"></div>
+          <div class="rrow"><div class="rline"><span class="rd"></span><div class="rname">Chapter/Section/Part/Episode 序号 标题</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">Chapter 1 MyGrandmaIsNB</div></div>
+          <div class="vd2"></div>
+          <div class="rrow"><div class="rline"><span class="rd"></span><div class="rname">特殊符号 标题(单个)</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">☆、晋江作者最喜欢的格式</div></div>
+        </div>
+        <div class="dfoot">
+          <span class="hint">未选择规则</span>
+          <button class="txtbtn" type="button">取消</button>
+          <button class="txtbtn pri" type="button">确认</button>
+        </div>
+      </div>
+      <div class="alert">
+        <div class="atitle">网络导入</div>
+        <div class="afield">url</div>
+        <div class="adrop">
+          <div class="cur">https://gitee.com/fisher52/YueDuJson/raw/master/myTxtChapterRule.json</div>
+          <div>https://www.yuque.com/legado/wiki/rule-txt-toc</div>
+        </div>
+        <div class="abtns"><button class="txtbtn" type="button">取消</button><button class="txtbtn pri" type="button">确定</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>删除确认（现状即有）</code> — 行内删除 → <code>alert(R.string.draw 提醒)</code>，消息=「是否确认删除？\n规则名」（TxtTocRuleDialog.kt:295-305；values-zh/strings.xml:34,508）；按钮照实为「否/是」：<code>noButton</code>=negativeButton(R.string.no「否」，AlertBuilder.kt:104-105，values-zh/strings.xml:506)、<code>yesButton</code>=positiveButton(R.string.yes「是」，AlertBuilder.kt:101-102，values-zh/strings.xml:505) → <code>viewModel.del</code>。本稿不改行为，仅以 alert 居中小卡呈现（16dp 圆角+遮罩，同 lib alert 实际窗体）。</li>
+    <li><code>网络导入</code> — ⋮ 网络导入 → alert 标题「网络导入」（strings.xml:200）+ DialogEditTextBinding 自定义视图（hint「url」，TxtTocRuleDialog.kt:178-187）；候选=ACache 缓存的历史 URL，默认 gitee 地址无则置顶（:168-177）；删除候选即从缓存移除（delCallBack :182-185）；「确定」校验 isAbsUrl 后新地址入缓存并进 ImportTxtTocRuleDialog（:188-198，下一步弹窗见 import-dialogs-rule.html §02）。按钮照实为平台字串：<code>okButton</code>=positiveButton(android.R.string.ok「确定」)、<code>cancelButton</code>=negativeButton(android.R.string.cancel「取消」)（AlertBuilder.kt:95-99），与本弹窗底栏 AccentTextView 的 R.string.ok「确认」（values-zh/strings.xml:120）用词不同，稿面照实区分。AutoCompleteTextView 候选下拉为控件原生行为，稿内示意两条。</li>
+    <li><code>输入域</code> — dialog_edit_text.xml 现状 minHeight 44dp（:15）→ 48dp（一处改动服务本稿与 file-picker §03 两处 alert，见 §05 #9）；bg_edit_filled（surface_container_high+10dp 圆角）不动。</li>
+  </ul>
+</section>
+
+<!-- ================= 04 空态 · 行规格 ================= -->
+<section class="screen" id="s4">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">04</span><h2 class="st-title">空态与行规格 · 对照姊妹行补齐</h2><span class="st-src">item_toc_regex.xml ↔ item_txt_toc_rule.xml（05 稿已落地）· dialog_toc_regex.xml 底栏 · dialog_edit_text.xml</span></div>
+    <div class="chips"><span class="new">空态引导 · 新增（现状为空白列表）</span><span>「添加规则」= menu_add 同入口</span><span>名称/示例语义令牌补齐</span><span>触控目标全部 ≥48dp</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：空态 -->
+    <div class="pair"><div class="theme-tag">浅色 · 空态（新增）</div>
+    <div class="phone light">
+      <div class="read"><div class="read-head"><span>第一百零三章 山腰小憩</span><span>14:18</span></div>
+      <div class="read-body"><p>渡口的乌篷船泊在岸边，艄公收了长篓。</p></div>
+      <div class="read-foot"><span>3/24 · 12%</span><span>14:18 · 85%</span></div></div>
+      <div class="dim"></div>
+      <div class="card">
+        <div class="trow"><div class="tt">TXT 目录规则</div><button class="icon-btn" type="button" aria-label="添加"><svg class="icon"><use href="#i-add"/></svg></button><button class="icon-btn" type="button" aria-label="更多菜单"><svg class="icon"><use href="#i-more"/></svg></button></div>
+        <div class="emptywrap">
+          <div class="ein">
+            <svg class="icon"><use href="#i-rule"/></svg>
+            <div class="etitle">还没有规则</div>
+            <div class="esub">点「＋」新建正则规则<br>或从 ⋮ 菜单导入默认规则</div>
+            <button class="ghost" type="button">添加规则</button>
+          </div>
+        </div>
+        <div class="dfoot">
+          <span class="hint">未选择规则</span>
+          <button class="txtbtn" type="button">取消</button>
+          <button class="txtbtn pri" type="button">确认</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：空态对照 -->
+    <div class="pair"><div class="theme-tag">深色 · 空态对照</div>
+    <div class="phone dark">
+      <div class="read"><div class="read-head"><span>第一百零三章 山腰小憩</span><span>14:18</span></div>
+      <div class="read-body"><p>雨雪初霁，屋檐还在滴水，山道泥泞。</p></div>
+      <div class="read-foot"><span>3/24 · 12%</span><span>14:18 · 85%</span></div></div>
+      <div class="dim"></div>
+      <div class="card">
+        <div class="trow"><div class="tt">TXT 目录规则</div><button class="icon-btn" type="button" aria-label="添加"><svg class="icon"><use href="#i-add"/></svg></button><button class="icon-btn" type="button" aria-label="更多菜单"><svg class="icon"><use href="#i-more"/></svg></button></div>
+        <div class="emptywrap">
+          <div class="ein">
+            <svg class="icon"><use href="#i-rule"/></svg>
+            <div class="etitle">还没有规则</div>
+            <div class="esub">点「＋」新建正则规则<br>或从 ⋮ 菜单导入默认规则</div>
+            <button class="ghost" type="button">添加规则</button>
+          </div>
+        </div>
+        <div class="dfoot">
+          <span class="hint">未选择规则</span>
+          <button class="txtbtn" type="button">取消</button>
+          <button class="txtbtn pri" type="button">确认</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <div class="specs">
+    <div class="specbox">
+      <div class="sf">规则选择行<code>item_toc_regex.xml → 对齐 item_txt_toc_rule.xml（05 稿）</code></div>
+      <div class="specdemo">
+        <div class="rrow"><div class="rline"><span class="rd on"></span><div class="rname">目录(去空白)</div><span class="sw on"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">第一章 假装第一章前面有空白但我不要</div></div>
+        <div class="vd2"></div>
+        <div class="rrow off"><div class="rline"><span class="rd"></span><div class="rname">目录(匹配简介)</div><span class="sw"></span><span class="ric" aria-label="编辑"><svg class="icon s"><use href="#i-edit"/></svg></span><span class="ric" aria-label="删除"><svg class="icon s"><use href="#i-del"/></svg></span></div><div class="rex">简介 老夫诸葛村夫</div></div>
+      </div>
+      <div class="specmap"><span>名称 = radio 20dp + 文字 15sp/500 on_surface（现状未设字号字色）</span><span>示例 12sp on_surface_variant · 单行省略（现状未设字色）</span><span>图标热区 36→48dp · tint primaryText→on_surface_variant</span><span>开关 40×24 · on=primary（ThemeSwitch 运行时）</span><span>分割线 1px outline_variant（VerticalDivider）</span><span>整行 ≈72dp ≥48dp 触控</span></div>
+    </div>
+    <div class="specbox">
+      <div class="sf">底栏<code>dialog_toc_regex.xml tv_cancel / tv_ok</code></div>
+      <div class="specdemo">
+        <div class="dfoot" style="border-radius:10px;border:1px solid var(--divider)">
+          <span class="hint">将使用：<b>目录(去空白)</b></span>
+          <button class="txtbtn" type="button">取消</button>
+          <button class="txtbtn pri" type="button">确认</button>
+        </div>
+      </div>
+      <div class="specmap"><span>文字按钮语言保留（AccentTextView=运行时 accent）</span><span>热区 43→48dp（padding 12dp→minHeight 48dp）</span><span>取消 secondaryText→on_surface_variant（别名等价）</span><span class="new">左侧提示行 · 新增</span><span>顶部分隔线 1px outline_variant · 新增</span></div>
+    </div>
+    <div class="specbox">
+      <div class="sf">输入域<code>dialog_edit_text.xml</code></div>
+      <div class="specdemo">
+        <div class="afield" style="border:1px solid var(--divider)">url</div>
+      </div>
+      <div class="specmap"><span>bg_edit_filled 已就绪（surface2 + 10dp 圆角）</span><span>minHeight 44→48dp</span><span>文字 14sp on_surface · hint 次要色</span><span>网络导入 / 新建文件夹 / 手动输入路径共用</span></div>
+    </div>
+  </div>
+  <ul class="notes">
+    <li><code>空态（新增）</code> — 现状删光规则后 <code>observeAll</code> 推空列表、RecyclerView 空白无提示（TxtTocRuleDialog.kt:122-128 无空分支）；稿中补居中空态：i-rule 图标 + 「还没有规则」+ 引导文案 + 「添加规则」ghost（min-height 48dp 触控，描边/文字运行时 accentColor 着色，XML 零色值，落点见 §05），点击与 toolbar <code>menu_add</code> 走同一入口（TxtTocRuleEditDialog 新建态），不新增代码路径。Room flow 首帧即回放当前库内容，无「加载中闪空」问题（对比 file-picker §03 防闪烁注记，此处不需要标志位）。</li>
+    <li><code>行规格</code> — 对齐姊妹行后可视密度：720px 高弹窗除工具栏/底栏约 606px 列表区 ≈ 8 行，与 file-picker（10 行 52dp）同密度档；不新增第三行元信息（正则串本身不放列表行，属编辑弹窗内容，见 05 稿 §07 menunote）。</li>
+    <li><code>触控汇总</code> — 行 ≈72dp、行内图标 48dp、开关 ThemeSwitch 默认热区、底栏按钮 48dp、输入域 48dp、工具栏/溢出菜单项 48dp、空态「添加规则」ghost 48dp；相邻目标间距：开关与图标间 ≥8dp（§05 #3），分割线 1px 不侵触控。</li>
+  </ul>
+</section>
+
+<!-- ================= 05 设计调整与落地映射 ================= -->
+<section class="screen" id="s5">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">05</span><h2 class="st-title">设计调整与落地映射</h2><span class="st-src">逐条落点：布局文件 / 控件 / kt 绑定处（行号以 classic-base 现状为准）</span></div>
+  </div>
+  <table class="tok">
+    <tr><th style="width:24%">改动</th><th style="width:36%">落点</th><th>说明</th></tr>
+    <tr><td>名称令牌补齐</td><td><code>item_toc_regex.xml:9-18</code>（rb_regex_name）</td><td>现状未设 textSize/textColor（落在主题默认 primaryText），补 <code>textSize=15sp</code>、<code>textColor=@color/on_surface</code>、singleLine+ellipsize=end（姊妹行 item_txt_toc_rule.xml:19-21 同值）；kt 绑定零改动（TxtTocRuleDialog.kt:256,265 只 set text）。控件保持 ThemeRadioButton（单选语义，kt:258,278 依赖），不换行高亮形态。</td></tr>
+    <tr><td>示例行令牌补齐</td><td><code>item_toc_regex.xml:59-65</code>（title_example）</td><td>现状无 textColor、无省略；补 <code>textColor=@color/on_surface_variant</code>、<code>maxLines=1</code>+ellipsize=end、<code>marginStart=40dp</code> 对齐名称文字左缘（radio 圆点 20dp+间距；姊妹行 :73 为 46dp，按实机文字左缘微调）；宽度改 0dp 约束（现状 match_parent 与上下约束冗余）。</td></tr>
+    <tr><td>行内图标 48dp + 语义 tint</td><td><code>item_toc_regex.xml:28-57</code>（iv_edit / iv_delete）</td><td>36dp/6dp padding/<code>@color/primaryText</code> → 48dp 热区（24dp 图标 + 12dp padding）、tint <code>@color/on_surface_variant</code>（姊妹行 :49 语义令牌同值，明暗自适应）；swt_enabled 与 iv_edit 间补 ≥8dp 间距（现状 0，相邻目标违 MASTER §1.4）。ic_clear_all → ic_delete 语义化属可选（NEED-DECISION）。</td></tr>
+    <tr><td>上行触控 48dp</td><td><code>item_toc_regex.xml:7</code>（根 padding）</td><td>对齐姊妹行 padding 结构（item_txt_toc_rule.xml:9-12：纵向 12/10、横向 14/16），上行 minHeight 48dp；整行 ≈72dp（上行 48 + 示例行 ~24）。</td></tr>
+    <tr><td><span class="new">增强</span> 禁用行降色</td><td><code>TxtTocRuleDialog.kt:256-259,267</code>（convert 与 "enabled" payload 分支）</td><td>按 item.enable 切名称/示例 on_surface ↔ on_surface_variant（约 4 行，挂已有 payload 分支即可）；对齐 05 稿 .off 视觉；选择与启用相互独立、行为不变；可整体移除。</td></tr>
+    <tr><td>底栏按钮 48dp</td><td><code>dialog_toc_regex.xml:33-50</code>（tv_cancel / tv_ok）</td><td>padding 12dp（高 ≈43dp）→ minHeight 48dp + 水平 padding 14dp；tv_cancel textColor <code>@color/secondaryText</code>（legacy alias → on_surface_variant，可不改）；tv_ok 保留 AccentTextView（运行时 accentColor，无 XML 硬编码，MASTER §4 合规）。</td></tr>
+    <tr><td><span class="new">新增</span> 底栏分隔线+提示行</td><td><code>dialog_toc_regex.xml:24-26</code>（底部 LinearLayout）+ <code>TxtTocRuleDialog.kt:106-118,133-145</code></td><td>容器补 background=surface_container + 顶部 1dp outline_variant 分隔（现状与列表无界）；新增 tv_ok_hint：12.5sp on_surface_variant 单行 ellipsize=end，在 initSelectedName 后与 <code>"upSelect"</code> 更新处刷新「将使用：&lt;名称&gt;」/「未选择规则」（选中为空时确定本就无动作 kt:110-117，提示消除死按钮感）。与 file-picker 底栏提示、group-select「已选 n 组」同构；可整体移除。</td></tr>
+    <tr><td><span class="new">新增</span> 空态</td><td><code>dialog_toc_regex.xml</code>（新增居中空态组，默认 gone）+ <code>TxtTocRuleDialog.kt:121-131</code>（显示/隐藏处）</td><td>collect 后 items 为空时显示（Room flow 首帧即当前库内容，无闪空）；「添加规则」ghost = TextView（btn_rule_add）+ shape 描边骨架（9dp 圆角、1dp stroke、min-height 48dp 触控），<b>XML 零色值</b>——显示空态处 <code>btn_rule_add.setTextColor(context.accentColor)</code> 并以 GradientDrawable.mutate().setStroke(dp(1), context.accentColor) 着色（约 4 行，DECISIONS §8 自述疗法，同 FontAdapter.convert / ClickActionConfigDialog.onFragmentCreated 先例；本应用无主题属性覆盖机制，新建 drawable 写 @color/primary 即固化换肤）；点击与 menu_add 同入口（:149），不新增代码路径；文案需新增字符串（empty_toc_rule 等）入 values / values-zh。</td></tr>
+    <tr><td>输入域 48dp</td><td><code>dialog_edit_text.xml:15</code></td><td>minHeight 44dp → 48dp（可同步移除 :22 的 tools:ignore TouchTargetSizeCheck）；bg_edit_filled 不动；与 file-picker-dialog.html §05 为同一改动，两稿共用一处落地。</td></tr>
+    <tr><td>行背景（无落点）</td><td><code>TxtTocRuleDialog.kt:255</code>（setBackgroundColor(backgroundColor)）</td><td>运行时取主题背景色（background → surface legacy alias，MASTER §2），与弹窗卡面同源，已达令牌要求，本稿不改；如需按压涟漪可叠 ？attr/selectableItemBackground（对齐姊妹行 :8），涉及移除该行 setBackgroundColor，列 NEED-DECISION。</td></tr>
+    <tr><td>行为不动清单</td><td><code>TxtTocRuleDialog.kt:109-118,147-159,278-291,292-305,309-326</code></td><td>确定回填 rule → book.tocUrl 并重载目录（ReadBookActivity.kt:1447-1452 / TocActivity.kt:187-192）、五个导入/帮助入口、radio isPressed 单选 + 开关 update、行内编辑/删除确认 alert、长按拖拽 serialNumber 持久化——全部维持现状；本稿无任何行为删除。</td></tr>
+  </table>
+  <ul class="notes">
+    <li><code>[NEED-DECISION]</code> — ①底栏提示行、空态、禁用行降色均为展示层增强，可整体移除回到「仅列表+取消/确认」；②行内删除图标 ic_clear_all → ic_delete 属资产语义化（可选）；③四个导入动作共用 ic_import（menu/txt_toc_rule.xml:20,32,44），如需辨识度可换 ic_qr，属资产变更；④示例行 marginStart 40dp 按实机 radio 文字左缘微调；⑤行按压涟漪（需改 kt:255）；⑥空态 ghost 着色：默认运行时 accentColor（§05 空态行，约 4 行 kt），备选静态 drawable 引 @color/primary_container（零代码但不随肤，与 file-picker 选中高亮备选同款取舍，禁用 @color/primary）。</li>
+    <li><code>换肤</code> — 全稿主色出现处：radio 选中圆点、开关 on、确认按钮文字（ThemeRadioButton / ThemeSwitch / AccentTextView 均运行时 ThemeStore 取色，lib/theme view 栈原生支持）与空态 ghost 描边（运行时 accentColor）；布局文件零 <code>@color/primary</code>/<code>@color/accent</code> 硬编码（MASTER §4），换任意肤色本稿形态不变；稿面 #FF6B2C 仅为默认主题兜底演示。</li>
+    <li><code>无障碍</code> — 行 ≈72dp、行内图标/底栏按钮/输入域/菜单项 48dp；次要文字 on_surface_variant 对比度亮 5.87:1 / 暗 7.96:1（12-missed-1 §01 实算同源令牌）；禁用行降色后仍为 on_surface_variant 不低于 4.5:1；无纯黑/纯白大面积、无 2dp 直角弹窗、无阴影（MASTER §4 反模式逐项核对）。</li>
+  </ul>
+</section>
+
+<footer class="foot">legado v2 · mockup · toc-rule-picker —— 功能对照 TxtTocRuleDialog.kt / TxtTocRuleViewModel.kt（classic-base）· 前稿 html/screens/05-source-rules.html §07（姊妹行 item_txt_toc_rule）· 姊妹稿 import-dialogs-rule.html §02（导入确认）</footer>
+</div>
+</body></html>

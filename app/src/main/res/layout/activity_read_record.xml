@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 阅读记录页（read-record-page.html）：顶栏/搜索胶囊不动；总时长卡重排为 surface_container 卡
+     （bg_read_record_summary 12dp 圆角，§05 第 4 条）；列表上叠两组空态 EmptyTipView（§05 第 8 条：
+     searchKey 为空且无记录 → 开启记录引导；searchKey 非空无命中 → 独立搜索无命中文案），
+     显隐由 kt initData 判空处按 searchKey 分支控制（ReadRecordActivity.upEmptyTip） -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -11,59 +15,114 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:contentLayout="@layout/view_search"
-        app:title="@string/read_record" 
+        app:title="@string/read_record"
         app:themeMode="blend" />
 
+    <!-- 总时长卡：标签 12sp medium（文字仍由 kt:100 setText(R.string.all_read_time)）+
+         值 18sp/700 on_surface + 「清除」48dp 最小触控文字钮（on_surface_variant，稿 .clr 次要色） -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/bg_read_record_summary"
+        android:paddingLeft="16dp"
+        android:paddingTop="14dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="14dp"
+        tools:ignore="RtlHardcoded">
 
         <TextView
             android:id="@+id/tv_book_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="6dp"
+            android:fontFamily="sans-serif-medium"
             android:singleLine="true"
-            android:textColor="@color/on_surface"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="12sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/tv_remove"
             app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="RtlHardcoded"
-            tools:text="name" />
+            tools:text="总阅读时间" />
 
         <TextView
             android:id="@+id/tv_reading_time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="6dp"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
             android:singleLine="true"
-            android:textColor="@color/on_surface_variant"
+            android:textColor="@color/on_surface"
+            android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/tv_remove"
             app:layout_constraintTop_toBottomOf="@id/tv_book_name"
-            tools:text="readingTime" />
+            tools:text="26天5小时22分钟" />
 
         <TextView
             android:id="@+id/tv_remove"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
-            android:padding="6dp"
+            android:gravity="center"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
             android:text="@string/clear"
-            android:textColor="@color/on_surface"
+            android:textColor="@color/on_surface_variant"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="RtlHardcoded" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        <!-- 空态①（§04 左机）：searchKey 为空且无记录 → 时钟 + 开启记录引导；
+             无按钮——不虚构跳转，引导文案指向 ⋮ 菜单真实入口 -->
+        <io.legado.app.ui.widget.EmptyTipView
+            android:id="@+id/empty_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingLeft="24dp"
+            android:paddingTop="32dp"
+            android:paddingRight="24dp"
+            android:paddingBottom="32dp"
+            android:visibility="gone"
+            app:empty_icon="@drawable/ic_read_record_clock"
+            app:empty_tip="@string/read_record_empty_tip"
+            app:empty_title="@string/read_record_empty_title" />
+
+        <!-- 空态②（§04 右机）：searchKey 非空且无命中 → 独立文案，不显开启记录引导 -->
+        <io.legado.app.ui.widget.EmptyTipView
+            android:id="@+id/empty_tip_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingLeft="24dp"
+            android:paddingTop="32dp"
+            android:paddingRight="24dp"
+            android:paddingBottom="32dp"
+            android:visibility="gone"
+            app:empty_icon="@drawable/ic_search"
+            app:empty_tip="@string/read_record_search_empty_tip"
+            app:empty_title="@string/read_record_search_empty_title" />
+
+    </FrameLayout>
 
 </LinearLayout>

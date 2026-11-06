@@ -1,0 +1,337 @@
+<!-- design-system: legado v2 · mockup -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>legado v2 · 在线导入弹窗（主题 / TXT目录规则 / 词典规则） · 新界面</title><style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Noto Sans SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;background:#eae7e0;color:#3a3833}
+.wrap{max-width:1180px;margin:0 auto;padding:52px 24px 110px;display:flex;flex-direction:column;gap:60px;align-items:center}
+/* ---------- 页头 ---------- */
+.page-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:16px}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.14em;color:#a8623c}
+.h1{font-size:34px;font-weight:750;line-height:1.2;margin:0}
+.h1 small{font-size:15px;font-weight:600;color:#60656d;margin-left:12px}
+.desc{font-size:14px;line-height:1.8;color:#60656d;margin:0;max-width:820px}
+.nav{display:flex;flex-wrap:wrap;gap:10px}
+.nav a{text-decoration:none;font-size:13px;font-weight:600;color:#5a574e;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:999px;padding:9px 16px;transition:.15s}
+.nav a:hover{background:#ff6b2c;color:#fff;border-color:#ff6b2c}
+.nav a b{font-weight:750;color:inherit;opacity:.55;margin-right:6px}
+/* ---------- 屏幕区 ---------- */
+.screen{width:100%;display:flex;flex-direction:column;align-items:center;gap:24px;scroll-margin-top:20px}
+.screen-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:10px}
+.st-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.st-num{font-size:13px;font-weight:750;color:#ff6b2c;letter-spacing:.08em}
+.st-title{font-size:24px;font-weight:750;margin:0}
+.st-src{font-size:12px;color:#60656d}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{font-size:12px;color:#6d6a62;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:7px;padding:5px 10px}
+.chips span.new{color:#a8623c;border-color:rgba(255,107,44,.35);background:#fff7f2}
+.pairs{display:flex;gap:30px;flex-wrap:wrap;justify-content:center}
+.pair{display:flex;flex-direction:column;gap:10px;align-items:center}
+.theme-tag{font-size:12px;font-weight:700;color:#60656d;letter-spacing:.1em}
+/* ---------- 手机壳（令牌与 group-select / 12-missed-1 完全一致） ---------- */
+.phone{width:412px;height:900px;border-radius:30px;position:relative;overflow:hidden;background:var(--bg);color:var(--text);border:1px solid rgba(0,0,0,.09);flex:none}
+.phone.light{--bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--feature:#fff1e8;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--on-primary:#fff;--track:#e5e2de;--divider:rgba(0,0,0,.07);--field:rgba(0,0,0,.06);--menu:#fff;--error:#ba1a1a;--ok:#3b7a45;--scrim:rgba(0,0,0,.5);--field-solid:#f1efe9}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--feature:#2b1d15;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--on-primary:#fff;--track:#353331;--divider:rgba(255,255,255,.08);--field:rgba(255,255,255,.08);--menu:#2a2824;--error:#ffb4ab;--ok:#7fd891;--scrim:rgba(0,0,0,.5);--field-solid:#2a2925}
+.hi{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--text);opacity:.4;z-index:30;pointer-events:none}
+/* ---------- 透明宿主（OnLineImportActivity AppTheme.Transparent / FileAssociationActivity 背后的任意内容，同 12-missed-1 §02/§03） ---------- */
+.hostbg{position:absolute;inset:0;padding:44px 26px;background:#e7e4dd;z-index:1}
+.phone.dark .hostbg{background:#232120}
+.hostbg .hr1{height:14px;border-radius:7px;background:rgba(0,0,0,.08);margin-bottom:12px;width:46%}
+.hostbg .hr2{height:56px;border-radius:12px;background:rgba(0,0,0,.06);margin-bottom:10px}
+.hostbg .hr3{height:56px;border-radius:12px;background:rgba(0,0,0,.05);margin-bottom:10px;width:88%}
+/* ---------- 弹窗容器：setLayout(MATCH_PARENT, WRAP_CONTENT) → 全宽内容自适应卡，垂直居中 ---------- */
+.dim{position:absolute;inset:0;background:var(--scrim);z-index:5}
+.card{position:absolute;background:var(--surface);border-radius:16px;z-index:9;overflow:hidden;border:1px solid var(--divider)}
+.dlgctr{left:0;right:0;top:50%;transform:translateY(-50%);border-radius:16px}
+/* ---------- 对话框内结构（dialog_recycler_view.xml：Toolbar + 列表 + 分隔线 + Flexbox 按钮条） ---------- */
+.dbar{display:flex;align-items:center;gap:2px;min-height:52px;padding:6px 6px 0}
+.dbar .tt{flex:1;font-size:17px;font-weight:650;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:8px}
+.vr{height:1px;background:var(--divider)}
+/* 导入行（item_source_import.xml：勾选框 / 名称 / 状态 / 打开 · 规格与 import-dialogs-source.html .irow 同一套数字） */
+.irow{display:flex;align-items:center;gap:12px;min-height:52px;padding:4px 8px 4px 16px}
+.irow .nm{flex:1;min-width:0;font-size:14.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.irow .sub{font-size:12px;color:var(--secondary);flex:none}
+/* 复选框：22px、选中实底 primary + 白勾（ThemeCheckBox 运行时 accentColor） */
+.cb{width:22px;height:22px;flex:none;display:grid;place-items:center;border-radius:6px;border:2px solid var(--secondary);color:transparent;background:transparent}
+.cb svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cb.on{background:var(--primary);border-color:var(--primary);color:#fff}
+/* 文本按钮（tv_footer_left / tv_cancel / tv_ok / tv_open）：min 48dp 触控目标 */
+.txtbtn{border:0;background:transparent;font-size:14px;font-weight:650;color:var(--secondary);min-height:48px;display:inline-flex;align-items:center;padding:0 14px;border-radius:10px;cursor:pointer;font-family:inherit;flex:none}
+.txtbtn.pri{color:var(--primary)}
+.txtbtn.sel{color:var(--primary);font-size:13.5px}
+.txtbtn.sm{font-size:13px;min-height:48px;min-width:52px;padding:0 10px;border-radius:10px}
+/* 底部按钮条（FlexboxLayout spaceBetween） */
+.dfoot{display:flex;align-items:center;gap:2px;padding:8px 12px 12px}
+.dfoot .sp{flex:1}
+/* 状态区（tv_msg / RotateLoading） */
+.dload{height:168px;display:grid;place-items:center}
+.spinner{width:40px;height:40px;border-radius:50%;border:2.5px solid var(--divider);border-top-color:var(--primary);animation:rot 1.1s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+.tvm{padding:26px 24px 30px;font-size:13.5px;color:var(--secondary);text-align:center;line-height:1.8}
+.tvm.err{color:var(--error)}
+.tvm b{font-weight:700}
+/* ---------- 注释 / 映射表 ---------- */
+.notes{width:100%;max-width:1080px;font-size:12.5px;line-height:1.9;color:#60656d;border-top:1px dashed rgba(0,0,0,.12);padding-top:12px}
+.notes code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px}
+.notes b{color:#45423a}
+.tok{width:100%;max-width:1080px;border-collapse:collapse;font-size:13px;color:#45423a}
+.tok th{font-size:12px;font-weight:700;color:#60656d;text-align:left;letter-spacing:.04em;padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.12)}
+.tok td{padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.07);vertical-align:top;line-height:1.7}
+.tok code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px;white-space:nowrap}
+.tok .dim2{color:#60656d}
+.foot{font-size:12px;color:#60656d;text-align:center;line-height:2}
+</style></head>
+<body>
+
+<div class="wrap">
+
+<header class="page-head">
+  <div class="kicker">LEGADO V2 · MOCKUP</div>
+  <h1 class="h1">在线导入弹窗 · 主题 / TXT 目录规则 / 词典规则<small>ImportThemeDialog · ImportTxtTocRuleDialog · ImportDictRuleDialog</small></h1>
+  <p class="desc">与 <b>html/screens/12-missed-1.html §03 URL 导入确认列表</b>同模板同稿——7 个 ImportXxxDialog 共用 dialog_recycler_view.xml + item_source_import.xml；因每组 ≤6 页约束，书源/订阅源/替换规则/在线 TTS 落在 <b>import-dialogs-source</b> 组，本稿复用同一设计稿承载另外三个（导入主题 / 导入 TXT 目录规则 / 导入字典规则）。行与底栏取<b>同一套数字</b>（行 min-height 52dp · 根纵向 padding 4dp · 名称 14sp · 「打开」≥48×52dp · 底栏按钮 ≥48dp），两稿逐字一致、可互换对照。宿主为透明 Activity（OnLineImportActivity <code>AppTheme.Transparent</code> / 文件关联），故稿面以骨架占位 + 遮罩 + 全宽 16dp 圆角卡呈现（<code>setLayout(MATCH_PARENT, WRAP_CONTENT)</code>，BaseDialogFragment 运行时 <code>ThemeStore.backgroundColor</code> 圆角背景）。功能逐项取自各 Dialog/ViewModel 代码，见各屏来源注释。</p>
+  <nav class="nav">
+    <a href="#s1"><b>01</b>主题导入弹窗</a>
+    <a href="#s2"><b>02</b>TXT 目录规则导入弹窗</a>
+    <a href="#s3"><b>03</b>词典规则导入弹窗</a>
+    <a href="#s4"><b>04</b>边界态 · 加载 / 格式错误</a>
+    <a href="#s5"><b>05</b>设计调整与落地映射</a>
+  </nav>
+</header>
+
+<!-- ================= 01 主题导入弹窗 ================= -->
+<section class="screen" id="s1">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">01</span><h2 class="st-title">主题导入弹窗</h2><span class="st-src">ImportThemeDialog.kt · ImportThemeViewModel.kt · dialog_recycler_view.xml · item_source_import.xml</span></div>
+    <div class="chips"><span>解析主题 JSON/链接/文件</span><span>行内状态 新增/更新/已有</span><span class="new">默认勾选 新增+更新</span><span>整行点击切换勾选</span><span>打开 → CodeDialog</span><span>全选（n/m）/ 取消全选（n/m）</span><span>取消 / 确认</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：混合状态 -->
+    <div class="pair"><div class="theme-tag">浅色 · 混合状态</div>
+    <div class="phone light">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div><div class="hr3"></div></div>
+      <div class="dim"></div>
+      <div class="card dlgctr">
+        <div class="dbar"><div class="tt">导入主题</div></div>
+        <div class="vr"></div>
+        <div class="irow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">暖纸护眼</span><span class="sub">新增</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">墨韵深灰</span><span class="sub">更新</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb"></span><span class="nm">羊皮纸</span><span class="sub">已有</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">青竹韵</span><span class="sub">新增</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb"></span><span class="nm">仿宋读库</span><span class="sub">已有</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="vr"></div>
+        <div class="dfoot"><button class="txtbtn sel" type="button">全选（3/5）</button><span class="sp"></span><button class="txtbtn" type="button">取消</button><button class="txtbtn pri" type="button">确认</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：全选态（展示「取消全选」标签切换） -->
+    <div class="pair"><div class="theme-tag">深色 · 全选态</div>
+    <div class="phone dark">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div><div class="hr3"></div></div>
+      <div class="dim"></div>
+      <div class="card dlgctr">
+        <div class="dbar"><div class="tt">导入主题</div></div>
+        <div class="vr"></div>
+        <div class="irow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">暖纸护眼</span><span class="sub">新增</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">墨韵深灰</span><span class="sub">更新</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">羊皮纸</span><span class="sub">已有</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">青竹韵</span><span class="sub">新增</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">仿宋读库</span><span class="sub">已有</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="vr"></div>
+        <div class="dfoot"><button class="txtbtn sel" type="button">取消全选（5/5）</button><span class="sp"></span><button class="txtbtn" type="button">取消</button><button class="txtbtn pri" type="button">确认</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>入口</code> — ①在线导入链接分发：OnLineImportActivity.kt:37-39 <code>"theme" → showDialogFragment(ImportThemeDialog(it.second, true))</code>（<code>legado://…/theme?src=…</code>，AndroidManifest.xml:338-348）；②文件关联打开主题 JSON：FileAssociationActivity.kt:79。均 <code>finishOnDismiss=true</code>，dismiss 后关闭宿主（ImportThemeDialog.kt:45-50）。</li>
+    <li><code>标题</code> — <code>binding.toolBar.setTitle(R.string.import_theme)</code>（ImportThemeDialog.kt:54，strings.xml:1024「导入主题」）；三弹窗均不 inflateMenu，工具栏仅标题无动作项，稿面 dbar 仅标题。</li>
+    <li><code>行内状态</code> — 与本地 ThemeConfig.configList 按 themeName 比对：无→「新增」、内容不同→「更新」、相同→「已有」（ImportThemeDialog.kt:141-146；ImportThemeViewModel.kt:101-112 comparisonSource，按 themeName :104-105）。</li>
+    <li><code>默认勾选</code> — 新增/更新默认勾选、已有默认不勾选（ImportThemeViewModel.kt:108 <code>selectStatus.add(source == null || source != config)</code>）。</li>
+    <li><code>勾选交互</code> — checkbox 本体（isPressed 判定，ImportThemeDialog.kt:152-159）与整行点击（root.onClick 翻转，:160-166）均可切换；稿面热区=整行 ≥48dp。</li>
+    <li><code>打开</code> — <code>tv_open</code> → CodeDialog 展示 <code>GSON.toJson(source)</code>，可编辑（disableEdit=false，ImportThemeDialog.kt:167-178）；CodeDialog 属编辑弹窗另稿，本稿不画。</li>
+    <li><code>底栏</code> — 左 <code>tv_footer_left</code>＝全选（n/m）/取消全选（n/m）（upSelectText，ImportThemeDialog.kt:109-123；strings.xml:223-224）；右「取消 / 确认」（strings.xml:120-121「取消/确认」）；确认＝导入勾选项 <code>ThemeConfig.addConfig</code>（ImportThemeViewModel.kt:47-57，addConfig :51），期间 WaitDialog 遮罩后 dismiss（ImportThemeDialog.kt:63-70）。</li>
+  </ul>
+</section>
+
+<!-- ================= 02 TXT 目录规则导入弹窗 ================= -->
+<section class="screen" id="s2">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">02</span><h2 class="st-title">TXT 目录规则导入弹窗</h2><span class="st-src">ImportTxtTocRuleDialog.kt · ImportTxtTocRuleViewModel.kt · dialog_recycler_view.xml · item_source_import.xml（行结构与 §01 完全同构）</span></div>
+    <div class="chips"><span>解析 TXT 目录识别规则 JSON/链接</span><span>行内状态 新增/更新/已有</span><span>默认勾选 新增+更新</span><span>打开 → CodeDialog</span><span>全选（n/m）/ 取消全选（n/m）</span><span>取消 / 确认</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色 -->
+    <div class="pair"><div class="theme-tag">浅色 · 混合状态</div>
+    <div class="phone light">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div><div class="hr3"></div></div>
+      <div class="dim"></div>
+      <div class="card dlgctr">
+        <div class="dbar"><div class="tt">导入 TXT 目录规则</div></div>
+        <div class="vr"></div>
+        <div class="irow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">起点中文网</span><span class="sub">新增</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">晋江文学城</span><span class="sub">更新</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb"></span><span class="nm">纵横中文</span><span class="sub">已有</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">飞卢小说网</span><span class="sub">新增</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb"></span><span class="nm">17K小说网</span><span class="sub">已有</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="vr"></div>
+        <div class="dfoot"><button class="txtbtn sel" type="button">全选（3/5）</button><span class="sp"></span><button class="txtbtn" type="button">取消</button><button class="txtbtn pri" type="button">确认</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色 -->
+    <div class="pair"><div class="theme-tag">深色 · 全选态</div>
+    <div class="phone dark">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div><div class="hr3"></div></div>
+      <div class="dim"></div>
+      <div class="card dlgctr">
+        <div class="dbar"><div class="tt">导入 TXT 目录规则</div></div>
+        <div class="vr"></div>
+        <div class="irow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">起点中文网</span><span class="sub">新增</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">晋江文学城</span><span class="sub">更新</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">纵横中文</span><span class="sub">已有</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">飞卢小说网</span><span class="sub">新增</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">17K小说网</span><span class="sub">已有</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="vr"></div>
+        <div class="dfoot"><button class="txtbtn sel" type="button">取消全选（5/5）</button><span class="sp"></span><button class="txtbtn" type="button">取消</button><button class="txtbtn pri" type="button">确认</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>入口</code> — ①在线导入：OnLineImportActivity.kt:40-42 <code>"txtRule" → ImportTxtTocRuleDialog(it.second, true)</code> 与 :69-71 <code>/textTocRule</code> 直链分支；②文件关联打开规则 JSON：FileAssociationActivity.kt:80。</li>
+    <li><code>标题</code> — <code>R.string.import_txt_toc_rule</code>（ImportTxtTocRuleDialog.kt:54，strings.xml:1025「导入 TXT 目录规则」）。</li>
+    <li><code>行内状态</code> — 与 txtTocRuleDao 本地规则比对：<b>按 id 查</b>（ImportTxtTocRuleViewModel.kt:112 <code>appDb.txtTocRuleDao.get(it.id)</code>，非按 name；词典规则才是按 name，ImportDictRuleViewModel.kt:111 <code>getByName</code>）：无→「新增」、内容不同→「更新」、相同→「已有」（ImportTxtTocRuleDialog.kt:141-146）；默认勾选 新增+更新（ImportTxtTocRuleViewModel.kt:114 selectStatus.add）。</li>
+    <li><code>确认</code> — 导入勾选项 <code>appDb.txtTocRuleDao.insert</code>（ImportTxtTocRuleViewModel.kt:53-65）→ WaitDialog → dismiss。</li>
+    <li><code>同构复用</code> — 行/底栏几何与 §01、§03 及 import-dialogs-source 组稿完全一致；仅数据实体（TxtTocRule）与标题不同，落地共享同一套布局改动。</li>
+  </ul>
+</section>
+
+<!-- ================= 03 词典规则导入弹窗 ================= -->
+<section class="screen" id="s3">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">03</span><h2 class="st-title">词典规则导入弹窗</h2><span class="st-src">ImportDictRuleDialog.kt · ImportDictRuleViewModel.kt · dialog_recycler_view.xml · item_source_import.xml（唯一差异：状态仅 新增/已有）</span></div>
+    <div class="chips"><span>解析词典规则 JSON/链接</span><span>状态仅 新增/已有（无「更新」）</span><span>默认勾选 仅新增</span><span>打开 → CodeDialog 可编辑</span><span class="new">编辑保存回写本行 · 新增</span><span>取消 / 确认</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色 -->
+    <div class="pair"><div class="theme-tag">浅色 · 混合状态</div>
+    <div class="phone light">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div><div class="hr3"></div></div>
+      <div class="dim"></div>
+      <div class="card dlgctr">
+        <div class="dbar"><div class="tt">导入字典规则</div></div>
+        <div class="vr"></div>
+        <div class="irow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">汉典</span><span class="sub">新增</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb"></span><span class="nm">百度汉语</span><span class="sub">已有</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">必应词典</span><span class="sub">新增</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb"></span><span class="nm">维基词典</span><span class="sub">已有</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="vr"></div>
+        <div class="dfoot"><button class="txtbtn sel" type="button">全选（2/4）</button><span class="sp"></span><button class="txtbtn" type="button">取消</button><button class="txtbtn pri" type="button">确认</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色 -->
+    <div class="pair"><div class="theme-tag">深色 · 同态对照</div>
+    <div class="phone dark">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div><div class="hr3"></div></div>
+      <div class="dim"></div>
+      <div class="card dlgctr">
+        <div class="dbar"><div class="tt">导入字典规则</div></div>
+        <div class="vr"></div>
+        <div class="irow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">汉典</span><span class="sub">新增</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb"></span><span class="nm">百度汉语</span><span class="sub">已有</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb on"><svg viewBox="0 0 24 24"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg></span><span class="nm">必应词典</span><span class="sub">新增</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="irow"><span class="cb"></span><span class="nm">维基词典</span><span class="sub">已有</span><button class="txtbtn sm" type="button">打开</button></div>
+        <div class="vr"></div>
+        <div class="dfoot"><button class="txtbtn sel" type="button">全选（2/4）</button><span class="sp"></span><button class="txtbtn" type="button">取消</button><button class="txtbtn pri" type="button">确认</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>入口</code> — ①在线导入：OnLineImportActivity.kt:43-45 <code>"dictRule"</code> 与 <code>/dictRule</code> 直链分支；②文件关联：FileAssociationActivity.kt:81。</li>
+    <li><code>标题</code> — <code>R.string.import_dict_rule</code>（ImportDictRuleDialog.kt:52，strings.xml:1122「导入字典规则」）。</li>
+    <li><code>状态差异</code> — 仅按 name 判 <code>null→新增 / else→已有</code>，无「更新」态（ImportDictRuleDialog.kt:140-143；本地比对 ImportDictRuleViewModel.kt:111 <code>getByName(it.name)</code>）；默认仅新增勾选（ImportDictRuleViewModel.kt:113 <code>selectStatus.add(source == null)</code>）。稿面如实只出现两种状态文案，不虚构第三态。</li>
+    <li><code>编辑回写（本弹窗特有）</code> — Dialog 实现 <code>CodeDialog.Callback</code>：在打开的 CodeDialog 中编辑保存后 <code>onCodeSave</code> 按 requestId 定位行，<code>allSources[it] = source; adapter.setItem(it, source)</code> 原地更新（ImportDictRuleDialog.kt:24-25,175-182）；行内状态/勾选随新对象在后续比对中体现。</li>
+    <li><code>确认</code> — 导入勾选项 <code>appDb.dictRuleDao.insert</code>（ImportDictRuleViewModel.kt:53-65）。</li>
+  </ul>
+</section>
+
+<!-- ================= 04 边界态 ================= -->
+<section class="screen" id="s4">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">04</span><h2 class="st-title">边界态 · 解析中 / 格式错误（三弹窗共用）</h2><span class="st-src">ImportThemeDialog.kt:82-99 同构分支（errorLiveData / successLiveData==0）</span></div>
+    <div class="chips"><span>解析期间 RotateLoading 居中</span><span>空参数静默 dismiss</span><span>解析结果为空 → 「格式不对」</span><span>异常 → ImportError 消息</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：解析中 -->
+    <div class="pair"><div class="theme-tag">浅色 · 解析中</div>
+    <div class="phone light">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div><div class="hr3"></div></div>
+      <div class="dim"></div>
+      <div class="card dlgctr">
+        <div class="dbar"><div class="tt">导入主题</div></div>
+        <div class="vr"></div>
+        <div class="dload"><div class="spinner"></div></div>
+        <div class="vr"></div>
+        <div class="dfoot" style="justify-content:flex-end"><button class="txtbtn" type="button">取消</button><button class="txtbtn pri" type="button">确认</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：格式错误 -->
+    <div class="pair"><div class="theme-tag">深色 · 格式错误</div>
+    <div class="phone dark">
+      <div class="hostbg"><div class="hr1"></div><div class="hr2"></div><div class="hr3"></div></div>
+      <div class="dim"></div>
+      <div class="card dlgctr">
+        <div class="dbar"><div class="tt">导入字典规则</div></div>
+        <div class="vr"></div>
+        <div class="dload" style="height:120px"></div>
+        <div class="tvm err"><b>格式不对</b></div>
+        <div class="dload" style="height:120px"></div>
+        <div class="vr"></div>
+        <div class="dfoot" style="justify-content:flex-end"><button class="txtbtn" type="button">取消</button><button class="txtbtn pri" type="button">确认</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>加载</code> — 打开即 <code>rotateLoading.visible()</code>（ImportThemeDialog.kt:55，dialog_recycler_view.xml:30-37 RotateLoading 36dp 居中），收到 errorLiveData / successLiveData 任一回调即隐藏（:82-90）。请求网络/文件读取期间列表区空白居中转圈。</li>
+    <li><code>格式错误</code> — 解析成功但条目数为 0 → <code>tv_msg</code> 显示 <code>wrong_format</code>「格式不对」（ImportThemeDialog.kt:94-99，strings.xml:784）；非 JSON 且非 URL → ViewModel 抛同文案（ImportThemeViewModel.kt:82-84）。现状 tv_msg 仅此<b>单串文本</b>，不拼第二行引导语——本稿如实只画一行。</li>
+    <li><code>异常</code> — 网络等异常 → <code>errorLiveData = "ImportError:${localizedMessage}"</code> 原文展示于 tv_msg（ImportThemeViewModel.kt:62-64；ImportThemeDialog.kt:82-88），AppLog 另记。现状 tv_msg 为次要文字色，本稿改 error 色令牌（§05 映射 6），文案内容零改动。</li>
+    <li><code>空参数</code> — source 为空 → 静默 dismiss（ImportThemeDialog.kt:101-105），本稿不画。</li>
+    <li><code>确认按钮可用性</code> — 解析未完成/失败时勾选集为空，点确认导入 0 项后照常 dismiss（viewModel.importSelect 空转，:63-70）；行为不变，不新增禁用逻辑。</li>
+  </ul>
+</section>
+
+<!-- ================= 05 设计调整与落地映射 ================= -->
+<section class="screen" id="s5">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">05</span><h2 class="st-title">设计调整与落地映射</h2><span class="st-src">每个改动 → 布局文件 / 控件；行为改动为 0（映射 3 含 7 处展示层 Kotlin 赋值改动，其余为布局级）</span></div>
+  </div>
+  <table class="tok">
+    <tr><th style="width:26%">改动</th><th style="width:34%">落点（布局 · 控件）</th><th>说明</th></tr>
+    <tr><td><code>1</code> 弹窗容器</td><td>无需改码（BaseDialogFragment 已就位）</td><td>运行时 <code>setSheetBackground(ThemeStore.backgroundColor)</code> + 16dp 圆角（ViewExtensions.kt:329-340，corner_radius_lg）；<code>setLayout(MATCH_PARENT, WRAP_CONTENT)</code> 全宽内容自适应（ImportThemeDialog.kt:40-43）→ 稿面全宽圆角卡垂直居中、遮罩 .5。</td></tr>
+    <tr><td><code>2</code> 工具栏标题</td><td><code>dialog_recycler_view.xml:9-16</code> Toolbar（默认零改动）</td><td>titleTextColor 已 on_surface（:16），无菜单动作（三 Dialog 均不 inflateMenu）。字号落点：全局共享样式 <code>ToolbarTitle=20sp</code>（styles.xml:82-84）直接生效；MASTER §3 的 Title 18sp 与共享样式不一致，如需对齐须新增<b>仅弹窗引用</b>的局部 textAppearance（18sp/Medium 挂 app:titleTextAppearance），不改全局样式以免波及全 App 工具栏（[NEED-DECISION]）；稿面 dbar 17px 为视觉示意，与姊妹稿同值。</td></tr>
+    <tr><td><code>3</code> 行结构重排</td><td><code>item_source_import.xml</code> 新增 <code>tv_source_name</code>（14sp/on_surface 单行省略）；<code>cb_source_name</code>（:9-22）不再承载文字，约束链 [cb][name][state][open]</td><td>现状 7 个 Dialog 均在 Kotlin 写 cbSourceName.text，拆名须<b>逐处改赋值 7 行</b>：ImportThemeDialog.kt:140（themeName）、ImportTxtTocRuleDialog.kt:140（name）、ImportDictRuleDialog.kt:138（name）、ImportBookSourceDialog.kt:245（bookSourceName）、ImportRssSourceDialog.kt:224（sourceName）、ImportReplaceRuleDialog.kt:202-205（条件式 name(group)）、ImportHttpTtsDialog.kt:141（name）→ 改为 tvSourceName.text=…；无障碍：cb 补 android:contentDescription 或行容器 labelFor=tv_source_name（合并朗读，见映射 4/9）；整行点击勾选行为保留（ImportThemeDialog.kt:160-166）。</td></tr>
+    <tr><td><code>4</code> 行触控目标</td><td><code>item_source_import.xml</code> root padding 8dp → 纵向 4dp + minHeight 52dp；<code>tv_open</code>（:37-48）padding 8dp → minHeight 48dp / minWidth 52dp（selectableItemBackground 保留）</td><td>现状行高约 38dp（padding 8dp+单行文本）、tv_open 约 38dp，均不达标（MASTER §3 ≥48dp）；52dp / 纵向 4dp / 48×52dp 与姊妹稿映射 #2/#3 为同一套数字。拆名后 cb_source_name 为 22dp 独立节点：设 android:clickable=false（勾选统一走整行 root.onClick，ImportThemeDialog.kt:160-166），不再产生 &lt;48dp 独立热区；朗读标签经 contentDescription/labelFor 合并（映射 3）。</td></tr>
+    <tr><td><code>5</code> 状态/打开文字令牌</td><td><code>item_source_import.xml:30</code>（tv_source_state）、<code>:45</code>（tv_open）</td><td><code>@color/secondaryText</code> → <code>on_surface_variant</code>（别名已映射 #60656D/#B4B0AA；本稿复算对比度 浅 5.9:1 / 深 8.0:1 ≥4.5:1）；状态文案仍纯文本 12sp，不加徽章/新色。</td></tr>
+    <tr><td><code>6</code> 错误消息颜色</td><td><code>dialog_recycler_view.xml:39-46</code> tv_msg</td><td><code>@color/secondaryText</code> → <code>@color/error</code>（#BA1A1A / #FFB4AB）；「格式不对」与 ImportError 消息为错误态，用语义色（dict 稿 derr 同语汇）；仅着色，<b>不新增引导副文案</b>（现状 tv_msg 为单串文本，ImportThemeDialog.kt:95-98 / :82-88）；居中排版不变。</td></tr>
+    <tr><td><code>7</code> 底栏按钮触控</td><td><code>dialog_recycler_view.xml:65-74</code>（tv_footer_left）、<code>:85-96</code>（tv_cancel）、<code>:98-108</code>（tv_ok）</td><td>paddingTop/Bottom 10dp → minHeight 48dp（与姊妹稿映射 #5 同一落法，现状文本按钮约 44dp）；FlexboxLayout spaceBetween 结构不变：左 全选（n/m）·右 取消/确认。</td></tr>
+    <tr><td><code>8</code> 底栏分隔线令牌</td><td><code>dialog_recycler_view.xml:50-53</code> View</td><td><code>@color/bg_divider_line</code> → <code>outline_variant</code>（别名已映射，1dp 不变）。</td></tr>
+    <tr><td><code>9</code> 勾选框换肤</td><td><code>item_source_import.xml:9-22</code> ThemeCheckBox（着色不改；拆名后补 android:contentDescription 或行容器 labelFor=tv_source_name，并设 android:clickable="false"）</td><td>已运行时 <code>accentColor</code> 着色（ThemeCheckBox.kt:11-15），合规 MASTER §4；稿面 22px 实底白勾仅为默认主题 #FF6B2C 兜底演示。拆名后可访问名称经 contentDescription/labelFor 合并朗读（映射 3），clickable=false 后不再是 &lt;48dp 独立触控目标（映射 4）。</td></tr>
+    <tr><td><code>10</code> 底栏主操作换肤</td><td><code>dialog_recycler_view.xml:65-74 / 98-108</code> AccentTextView（不改）</td><td><code>tv_footer_left</code>/<code>tv_ok</code> 已运行时 accentColor（AccentTextView.kt:14）；<code>tv_cancel</code> 保持次要色。布局零 primary/accent 硬编码。</td></tr>
+    <tr><td><code>11</code> 加载指示器</td><td><code>dialog_recycler_view.xml:30-37</code> RotateLoading（不改）</td><td>36dp 居中保留；解析完成前列表区空白、无骨架屏（不虚构）。</td></tr>
+  </table>
+  <ul class="notes">
+    <li><code>共享落地</code> — 布局级改动（映射 2/4/5/6/7/8）落在 dialog_recycler_view.xml / item_source_import.xml 两个共用布局，7 个 ImportXxxDialog（含 import-dialogs-source 组的书源/订阅源/替换规则/在线 TTS）一处改七处生效；<b>映射 3（拆名）例外</b>：须逐 Dialog 改 7 处 cbSourceName.text 赋值（行号见映射 3，Kotlin 内写死的名称文本），其余 Kotlin 行为零改动。</li>
+    <li><code>行为清单（逐项保留）</code> — 整行/勾选框双路勾选（isPressed 判定防重入）· 打开 → CodeDialog（disableEdit=false）· 词典规则 onCodeSave 回写本行 · 全选（n/m）⇄ 取消全选（n/m）标签切换 · 默认勾选 新增+更新（词典仅新增）· 确认 → WaitDialog → 导入入库 → dismiss · finishOnDismiss 关闭宿主 · 空参数静默 dismiss。本稿未新增/删除任何数据路径。</li>
+    <li><code>令牌来源</code> — 表面色 surface(#FFFFFF/#1D1B19)、文字 on_surface(#20242B/#F3F0EB)、次要 on_surface_variant(#60656D/#B4B0AA)、描边 outline_variant、error(#BA1A1A/#FFB4AB)、遮罩 rgba(0,0,0,.5)，全部出自 design-system/legado/MASTER.md §2；圆角 16dp=corner_radius_lg（§3）。</li>
+    <li><code>[NEED-DECISION]</code> — ① tv_msg 改 error 色（映射 6），如需绝对最小 diff 可保留 secondaryText；② 弹窗标题字号：维持共享 ToolbarTitle 20sp（零改动，姊妹稿同此）或新增弹窗局部 18sp textAppearance 对齐 MASTER §3（映射 2），二者取一，均不改全局样式；③ cb_source_name 无障碍合并朗读用 contentDescription 还是行容器 labelFor（映射 3/9），实现者二选一。</li>
+  </ul>
+</section>
+
+<div class="foot">legado v2 · 在线导入弹窗（主题 / TXT 目录规则 / 词典规则）设计稿 · 模板同 html/screens/12-missed-1.html §03 · 令牌来源 design-system/legado/MASTER.md</div>
+</div>
+</body></html>

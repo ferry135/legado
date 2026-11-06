@@ -1,6 +1,7 @@
 package io.legado.app.ui.book.cache
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -33,6 +34,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.SelectItem
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.dialogs.selector
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.CacheBook
 import io.legado.app.service.ExportBookService
 import io.legado.app.ui.about.AppLogDialog
@@ -44,8 +46,10 @@ import io.legado.app.utils.applyOpenTint
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.checkWrite
 import io.legado.app.utils.cnCompare
+import io.legado.app.utils.dpToPx
 import io.legado.app.utils.enableCustomExport
 import io.legado.app.utils.flowWithLifecycleAndDatabaseChange
+import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.iconItemOnLongClick
 import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.launchCollectWithLifecycle
@@ -385,6 +389,31 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                         }
                     }
                 }
+
+                // 稿 §06 FILLED 路线运行时注入：浮标/辅助文本 on_surface_variant，
+                // 聚焦描边=运行时 accentColor（描边宽度已在 XML 定为聚焦 1.5dp / 非聚焦 0dp，
+                // XML 禁固化 primary/accent，故颜色统一此处运行时取 ThemeStore 值）
+                fun applyFilledFieldSpec(lyEt: TextInputLayout) {
+                    val secondary = this@CacheActivity.getCompatColor(R.color.on_surface_variant)
+                    // Material 语义：defaultHintTextColor=非聚焦浮标、hintTextColor=聚焦浮标（稿 .fl 恒次要色）
+                    lyEt.defaultHintTextColor = ColorStateList.valueOf(secondary)
+                    lyEt.hintTextColor = ColorStateList.valueOf(secondary)
+                    lyEt.setHelperTextColor(ColorStateList.valueOf(secondary))
+                    lyEt.boxStrokeColor = this@CacheActivity.accentColor
+                }
+
+                // 稿 §06 级联禁用可视化：导出所有 → 三域 42% 透明渲染
+                //（isEnabled 禁用逻辑不变，仅补禁用态渲染，稿 .field.dis opacity .42）
+                fun setCustomExportFieldsDisabled(disabled: Boolean) {
+                    val alpha = if (disabled) 0.42f else 1f
+                    lyEtEpubFilename.alpha = alpha
+                    lyEtEpubSize.alpha = alpha
+                    lyEtInputScope.alpha = alpha
+                }
+
+                applyFilledFieldSpec(lyEtEpubFilename)
+                applyFilledFieldSpec(lyEtEpubSize)
+                applyFilledFieldSpec(lyEtInputScope)
                 etEpubSize.setText("1")
                 // lyEtEpubFilename.endIconMode = TextInputLayout.END_ICON_NONE
                 etEpubFilename.text?.append(AppConfig.episodeExportFileName)
@@ -400,10 +429,11 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                         }
                     }
                 }
-                tvAllExport.setOnClickListener {
+                // 单选行整行可点（触控达标）：触发的仍是原 cb 的 callOnClick 互斥链路，行为不变
+                rowAllExport.setOnClickListener {
                     cbAllExport.callOnClick()
                 }
-                tvSelectExport.setOnClickListener {
+                rowSelectExport.setOnClickListener {
                     cbSelectExport.callOnClick()
                 }
                 cbSelectExport.onCheckedChangeListener = { _, isChecked ->
@@ -412,6 +442,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                         etInputScope.isEnabled = true
                         etEpubFilename.isEnabled = true
                         enableLyEtEpubFilenameIcon()
+                        setCustomExportFieldsDisabled(false)
                         cbAllExport.isChecked = false
                     }
                 }
@@ -421,6 +452,7 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
                         etInputScope.isEnabled = false
                         etEpubFilename.isEnabled = false
                         lyEtEpubFilename.endIconMode = TextInputLayout.END_ICON_NONE
+                        setCustomExportFieldsDisabled(true)
                         cbSelectExport.isChecked = false
                     }
                 }
@@ -441,6 +473,16 @@ class CacheActivity : VMBaseActivity<ActivityCacheBookBinding, CacheViewModel>()
             customView { alertBinding.root }
             positiveButton(R.string.ok)
             cancelButton()
+        }
+        // 稿 §06 底栏：逐弹窗重着色（不改全局 applyTint）——取消=on_surface_variant、
+        // 确定=运行时 accentColor，两钮 min-height 48dp
+        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).apply {
+            setTextColor(getCompatColor(R.color.on_surface_variant))
+            minHeight = 48.dpToPx()
+        }
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).apply {
+            setTextColor(this@CacheActivity.accentColor)
+            minHeight = 48.dpToPx()
         }
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             alertBinding.apply {

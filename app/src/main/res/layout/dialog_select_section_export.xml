@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 章节导出方式选择弹窗（config-form-dialogs §04 + §06 表单规格落地映射）：
+     ①单选行 48dp + SmoothCheckBox 22dp + 文字 16sp/600（§04 展示层改动①，整行可点触控达标）；
+     ②三个输入域定死 FILLED 路线：boxBackgroundMode=filled + boxBackgroundColor=surface_container_high
+       + 聚焦 1.5dp 描边（描边色为运行时 accentColor，由 CacheActivity.configExportSection 注入，
+       XML 禁固化 primary/accent；与 bg_edit_filled/bookmark 的 LinearLayout field 卡路线不混用）；
+     ③导出文件名 helper 为单一槽位整体替换语义（初始 Variable 说明 ↔ 点播放后解析示例/Error，
+       CacheActivity.kt 不变），播放键保持 TextInputLayout endIcon 默认 48dp 触控区；
+     ④底栏为 AlertDialog 正/负按钮：确定=运行时 accentColor、取消=on_surface_variant、min-height 48dp，
+       由 CacheActivity.configExportSection 逐弹窗重着色（不改全局 applyTint）。
+     控件 id 与行为（单选互斥/域禁用/播放试算/范围校验）零改动 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,65 +18,89 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- 单选行①：导出所有（稿 .crow：22dp 框 + 48dp 行 + 12dp 间距） -->
         <LinearLayout
+            android:id="@+id/row_all_export"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="4dp"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
             android:orientation="horizontal">
 
             <io.legado.app.ui.widget.checkbox.SmoothCheckBox
                 android:id="@+id/cb_all_export"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center"
-                android:layout_marginStart="6dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="12dp" />
 
             <TextView
                 android:id="@+id/tv_all_export"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical"
+                android:minHeight="48dp"
                 android:text="@string/export_all"
-                android:textSize="18sp" />
+                android:textColor="@color/on_surface"
+                android:textSize="16sp" />
 
         </LinearLayout>
 
+        <!-- 单选行②：自定义导出（默认勾选，行为见 CacheActivity.kt:438） -->
         <LinearLayout
+            android:id="@+id/row_select_export"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="2dp"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
             android:orientation="horizontal">
 
             <io.legado.app.ui.widget.checkbox.SmoothCheckBox
                 android:id="@+id/cb_select_export"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center"
-                android:layout_marginStart="6dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="12dp" />
 
             <TextView
                 android:id="@+id/tv_select_export"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical"
+                android:minHeight="48dp"
                 android:text="@string/custom_export"
-                android:textSize="18sp" />
+                android:textColor="@color/on_surface"
+                android:textSize="16sp" />
 
         </LinearLayout>
 
+        <!-- 导出文件名：filled field + ic_play endIcon（试算 helper，整体替换语义 kt:368-387） -->
         <io.legado.app.ui.widget.text.TextInputLayout
             android:id="@+id/ly_et_epub_filename"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
             android:hint="@string/export_file_name"
+            app:boxBackgroundMode="filled"
+            app:boxBackgroundColor="@color/surface_container_high"
+            app:boxCornerRadiusTopStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusBottomEnd="10dp"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="1.5dp"
             app:endIconCheckable="true"
             app:endIconContentDescription="Execute script"
             app:endIconDrawable="@drawable/ic_play_24dp"
             app:endIconMode="custom"
+            app:endIconTint="@color/on_surface_variant"
             app:helperText="Variable: name, author, epubIndex">
 
             <io.legado.app.lib.theme.view.ThemeEditText
@@ -75,16 +109,26 @@
                 android:layout_height="wrap_content"
                 android:enabled="false"
                 android:inputType="text"
+                android:textSize="15sp"
                 tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
         </io.legado.app.ui.widget.text.TextInputLayout>
 
-
+        <!-- 每个文件包含的章节数量：filled field（原 TIL 无 id，新增 ly_et_epub_size 供禁用态渲染） -->
         <io.legado.app.ui.widget.text.TextInputLayout
+            android:id="@+id/ly_et_epub_size"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="@string/file_contains_number">
+            android:layout_marginTop="10dp"
+            android:hint="@string/file_contains_number"
+            app:boxBackgroundMode="filled"
+            app:boxBackgroundColor="@color/surface_container_high"
+            app:boxCornerRadiusTopStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusBottomEnd="10dp"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="1.5dp">
 
             <io.legado.app.lib.theme.view.ThemeEditText
                 android:id="@+id/et_epub_size"
@@ -92,20 +136,33 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:maxLength="6"
+                android:textSize="15sp"
                 tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
         </io.legado.app.ui.widget.text.TextInputLayout>
 
+        <!-- 需要输出的章节：filled field；聚焦 hint 1-5,8,10-18（kt:428-435 不变），
+             确定校验失败 et_input_scope.error（kt:452-457 不变） -->
         <io.legado.app.ui.widget.text.TextInputLayout
             android:id="@+id/ly_et_input_scope"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/export_chapter_index">
+            android:layout_marginTop="10dp"
+            android:hint="@string/export_chapter_index"
+            app:boxBackgroundMode="filled"
+            app:boxBackgroundColor="@color/surface_container_high"
+            app:boxCornerRadiusTopStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusBottomEnd="10dp"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="1.5dp">
 
             <io.legado.app.lib.theme.view.ThemeEditText
                 android:id="@+id/et_input_scope"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textSize="15sp"
                 tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
         </io.legado.app.ui.widget.text.TextInputLayout>

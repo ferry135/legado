@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 网页登录页（webview-login 稿 §01-§03）：结构 = activity_web_view 同件（TitleBar+WebView+1dp 进度线），
+     唯一改动 = TitleBar 补 themeMode="blend"（对齐 activity_web_view.xml:19），落 TitleBar.kt:198-205
+     融入式（bg=surface、elevation=0、标题/图标 on_surface）；attachToActivity=false 保留（Fragment 经
+     WebViewLoginFragment.kt:41 setSupportToolbar 自行挂菜单），app:title 为 source 未就绪兜底（kt:43 动态覆盖） -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,7 +15,8 @@
         android:layout_height="wrap_content"
         app:attachToActivity="false"
         app:title="@string/login"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:themeMode="blend" />
 
     <WebView
         android:id="@+id/web_view"

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- read-bg-text-config#05：背景图条选中角标对勾（.badge 白勾，圆底 primaryColor 由代码设，
+     禁 XML 固化主色；本页前缀命名。源自 ic_check 路径，填充白色以在主色圆底上可读） -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24.0"
+    android:viewportHeight="24.0">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M9,16.17L4.83,12l-1.42,1.41L9,19 21,7l-1.41,-1.41z" />
+</vector>

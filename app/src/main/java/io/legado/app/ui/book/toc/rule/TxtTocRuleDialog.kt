@@ -2,6 +2,7 @@ package io.legado.app.ui.book.toc.rule
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -25,6 +26,7 @@ import io.legado.app.databinding.DialogEditTextBinding
 import io.legado.app.databinding.DialogTocRegexBinding
 import io.legado.app.databinding.ItemTocRegexBinding
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.ui.association.ImportTxtTocRuleDialog
 import io.legado.app.ui.file.HandleFileContract
@@ -33,6 +35,8 @@ import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.ui.widget.recycler.VerticalDivider
 import io.legado.app.utils.ACache
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.dpToPx
+import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.launch
 import io.legado.app.utils.launchCollectWithLifecycle
@@ -116,6 +120,16 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
                 }
             }
         }
+        // 空态 ghost「添加规则」（稿 §04/§05）：描边与文字运行时 accentColor 注入（XML 零色值，
+        // MASTER §4 布局不固化 primary；DECISIONS §8 自述疗法，GroupManageDialog tv_add_group 先例），
+        // 点击与 toolbar menu_add 同一入口（TxtTocRuleEditDialog 新建态），不新增代码路径
+        btnRuleAdd.setTextColor(requireContext().accentColor)
+        (btnRuleAdd.background.mutate() as? GradientDrawable)?.setStroke(
+            1.dpToPx(), requireContext().accentColor
+        )
+        btnRuleAdd.setOnClickListener {
+            showDialogFragment(TxtTocRuleEditDialog())
+        }
     }
 
     private fun initData() {
@@ -125,8 +139,41 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
             }.flowOn(IO).conflate().collect { tocRules ->
                 initSelectedName(tocRules)
                 adapter.setItems(tocRules, adapter.diffItemCallBack)
+                reconcileSelectedName(tocRules)
+                // 空态显隐（稿 §04，纯展示层：Room flow 首帧即当前库内容，无闪空）+ 底栏提示行刷新
+                binding.vwEmptyRule.visibility =
+                    if (tocRules.isEmpty()) View.VISIBLE else View.GONE
+                updateOkHint()
             }
 
+        }
+    }
+
+    /**
+     * 选中一致性（审查修复，展示层）：selectedName 指向的规则被删除或更名后不再存在——
+     * 先按既有 durRegex（规则串）重解析（更名场景保持选中不丢），仍无匹配则置空串并广播
+     * "upSelect" 让各行按名字重求勾选态；随后 updateOkHint 回退「未选择规则」，
+     * 提示/勾选/tvOk（找不到即不回调的既有 no-op）三者一致。
+     */
+    private fun reconcileSelectedName(tocRules: List<TxtTocRule>) {
+        val name = selectedName ?: return
+        if (tocRules.any { it.name == name }) {
+            return
+        }
+        selectedName = if (durRegex != null) {
+            tocRules.firstOrNull { durRegex == it.rule }?.name ?: ""
+        } else {
+            ""
+        }
+        adapter.updateItems(0, adapter.itemCount - 1, bundleOf("upSelect" to null))
+    }
+
+    /** 底栏提示行（稿 §05，展示层）：「将使用：<规则名>」/「未选择规则」，随选中即时刷新 */
+    private fun updateOkHint() {
+        binding.tvOkHint.text = if (selectedName.isNullOrBlank()) {
+            getString(R.string.no_rule_selected)
+        } else {
+            getString(R.string.using_rule, selectedName)
         }
     }
 
@@ -257,6 +304,13 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
                     titleExample.text = item.example
                     rbRegexName.isChecked = item.name == selectedName
                     swtEnabled.isChecked = item.enable
+                    // 禁用行降色（稿 §05 增强，展示层）：名称随 enable 在 on_surface ↔
+                    // on_surface_variant 间切换；示例行 XML 固定 on_surface_variant 两态一致
+                    rbRegexName.setTextColor(
+                        context.getCompatColor(
+                            if (item.enable) R.color.on_surface else R.color.on_surface_variant
+                        )
+                    )
                 } else {
                     for (i in payloads.indices) {
                         val bundle = payloads[i] as Bundle
@@ -264,7 +318,15 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
                             when (it) {
                                 "upName" -> rbRegexName.text = item.name
                                 "upExample" -> titleExample.text = item.example
-                                "enabled" -> swtEnabled.isChecked = item.enable
+                                "enabled" -> {
+                                    swtEnabled.isChecked = item.enable
+                                    rbRegexName.setTextColor(
+                                        context.getCompatColor(
+                                            if (item.enable) R.color.on_surface
+                                            else R.color.on_surface_variant
+                                        )
+                                    )
+                                }
                                 "upSelect" -> rbRegexName.isChecked = item.name == selectedName
                             }
                         }
@@ -279,6 +341,7 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
                     if (buttonView.isPressed && isChecked) {
                         selectedName = getItem(holder.layoutPosition)?.name
                         updateItems(0, itemCount - 1, bundleOf("upSelect" to null))
+                        updateOkHint()
                     }
                 }
                 swtEnabled.setOnCheckedChangeListener { buttonView, isChecked ->

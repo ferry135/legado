@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 总时长卡卡面（read-record-page.html §05 第 4 条）：surface_container 实底 + corner_radius_md（12dp），
+     无描边无阴影（同 bg_rss_card 卡面语汇） -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <solid android:color="@color/surface_container" />
+
+    <corners android:radius="@dimen/corner_radius_md" />
+
+</shape>

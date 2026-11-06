@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 校验书源设置弹窗（config-form-dialogs §01 / §06 表单规格）：
+     卡面 surface_container + outline_variant 描边由 CheckSourceConfig.kt 运行时重涂
+     （BaseDialogFragment 默认涂 backgroundColor 页面底色，会被此页覆盖以实现弹窗与页面分层）；
+     输入域按 §06 定死的 FILLED 路线：boxBackgroundMode=filled + boxBackgroundColor=surface_container_high
+     + 聚焦描边运行时 accentColor（kt 注入 boxStrokeColorStateList）；
+     勾选行左对齐换行、每项 48dp；底栏 48dp 主次色（取消=on_surface_variant / 确认=运行时 accent）。
+     控件 id 与联动行为零改动 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,92 +17,166 @@
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="?attr/actionBarStyle"
+        android:theme="@style/ThemeOverlay.AppCompat.DayNight"
         app:title="@string/check_source_config"
         app:popupTheme="@style/AppTheme.PopupOverlay"
-        app:titleTextAppearance="@style/ToolbarTitle" />
+        app:titleTextAppearance="@style/ToolbarTitle"
+        app:titleTextColor="@color/on_surface" />
 
+    <!-- 超时域：裸 EditText → filled field（实底 surface_container_high · 10dp 圆角 · 聚焦 1.5dp 主色描边） -->
     <io.legado.app.ui.widget.text.TextInputLayout
+        android:id="@+id/til_check_source_timeout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
-        android:paddingTop="3dp">
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginBottom="10dp"
+        android:hint="@string/check_source_timeout"
+        app:boxBackgroundMode="filled"
+        app:boxBackgroundColor="@color/surface_container_high"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusTopStart="10dp"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="1.5dp">
 
         <io.legado.app.lib.theme.view.ThemeEditText
             android:id="@+id/check_source_timeout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/check_source_timeout"
             android:digits="1234567890"
-            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+            android:minHeight="48dp"
+            android:textColor="@color/on_surface"
+            android:textSize="15sp"
+            tools:ignore="SpeakableTextPresentCheck" />
 
     </io.legado.app.ui.widget.text.TextInputLayout>
 
-    <io.legado.app.ui.widget.text.AccentTextView
-        android:paddingLeft="12dp"
-        android:layout_width="match_parent"
+    <!-- 小节标签：AccentTextView → 普通 TextView（12sp/700/on_surface_variant · 字距 .06em，不再吃 accent） -->
+    <TextView
+        android:id="@+id/label_check_item"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/check_source_item" />
+        android:layout_marginStart="16dp"
+        android:letterSpacing="0.06"
+        android:text="@string/check_source_item"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="12sp"
+        android:textStyle="bold" />
 
+    <!-- 勾选行：space_between → 左对齐换行 + 每项 48dp 行（触控达标）；联动禁用 42% 透明由 kt 渲染 -->
     <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/flx_check_items"
         android:layout_width="match_parent"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
         android:layout_height="wrap_content"
-        app:flexWrap="wrap"
-        app:justifyContent="space_between">
+        android:paddingStart="10dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="8dp"
+        app:flexWrap="wrap">
 
         <io.legado.app.lib.theme.view.ThemeCheckBox
             android:id="@+id/check_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/search" />
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:minHeight="48dp"
+            android:text="@string/search"
+            android:textColor="@color/on_surface"
+            android:textSize="15sp" />
+
         <io.legado.app.lib.theme.view.ThemeCheckBox
             android:id="@+id/check_discovery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/discovery" />
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:minHeight="48dp"
+            android:text="@string/discovery"
+            android:textColor="@color/on_surface"
+            android:textSize="15sp" />
+
         <io.legado.app.lib.theme.view.ThemeCheckBox
             android:id="@+id/check_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/source_tab_info" />
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:minHeight="48dp"
+            android:text="@string/source_tab_info"
+            android:textColor="@color/on_surface"
+            android:textSize="15sp" />
+
         <io.legado.app.lib.theme.view.ThemeCheckBox
             android:id="@+id/check_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/chapter_list" />
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:minHeight="48dp"
+            android:text="@string/chapter_list"
+            android:textColor="@color/on_surface"
+            android:textSize="15sp" />
+
         <io.legado.app.lib.theme.view.ThemeCheckBox
             android:id="@+id/check_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/main_body" />
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:minHeight="48dp"
+            android:text="@string/main_body"
+            android:textColor="@color/on_surface"
+            android:textSize="15sp" />
 
     </com.google.android.flexbox.FlexboxLayout>
+
+    <!-- 底栏：outline_variant 1dp 分隔（§06 底栏行 border-top） -->
+    <View
+        android:id="@+id/divider_footer"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/outline_variant" />
 
     <com.google.android.flexbox.FlexboxLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
+        android:paddingStart="12dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="11dp"
         app:justifyContent="flex_end">
 
-        <io.legado.app.ui.widget.text.AccentTextView
+        <!-- 取消收敛为次要色 on_surface_variant（原 AccentTextView 运行时 accent） -->
+        <TextView
             android:id="@+id/tv_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="12dp"
+            android:gravity="center"
+            android:minHeight="48dp"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
             android:text="@string/cancel"
-            tools:ignore="RtlHardcoded" />
+            android:textColor="@color/on_surface_variant"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
+        <!-- 确认保留运行时 accentColor（AccentTextView 运行时着色体系，MASTER §4 不固化主色） -->
         <io.legado.app.ui.widget.text.AccentTextView
             android:id="@+id/tv_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="12dp"
+            android:layout_marginStart="8dp"
+            android:gravity="center"
+            android:minHeight="48dp"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
             android:text="@string/ok"
-            tools:ignore="RtlHardcoded" />
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
     </com.google.android.flexbox.FlexboxLayout>
 </LinearLayout>

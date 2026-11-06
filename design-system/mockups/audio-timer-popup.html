@@ -1,0 +1,344 @@
+<!doctype html>
+<!-- design-system: legado v2 · mockup -->
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>legado v2 · 听书定时滑条弹窗 · 新界面</title><style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Noto Sans SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;background:#eae7e0;color:#3a3833}
+.wrap{max-width:1180px;margin:0 auto;padding:52px 24px 110px;display:flex;flex-direction:column;gap:60px;align-items:center}
+/* ---------- 页头 ---------- */
+.page-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:16px}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.14em;color:#a8623c}
+.h1{font-size:34px;font-weight:750;line-height:1.2;margin:0}
+.h1 small{font-size:15px;font-weight:600;color:#60656d;margin-left:12px}
+.desc{font-size:14px;line-height:1.8;color:#60656d;margin:0;max-width:820px}
+.nav{display:flex;flex-wrap:wrap;gap:10px}
+.nav a{text-decoration:none;font-size:13px;font-weight:600;color:#5a574e;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:999px;padding:9px 16px;transition:.15s}
+.nav a:hover{background:#ff6b2c;color:#fff;border-color:#ff6b2c}
+.nav a b{font-weight:750;color:inherit;opacity:.55;margin-right:6px}
+/* ---------- 屏幕区 ---------- */
+.screen{width:100%;display:flex;flex-direction:column;align-items:center;gap:24px;scroll-margin-top:20px}
+.screen-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:10px}
+.st-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.st-num{font-size:13px;font-weight:750;color:#ff6b2c;letter-spacing:.08em}
+.st-title{font-size:24px;font-weight:750;margin:0}
+.st-src{font-size:12px;color:#60656d}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{font-size:12px;color:#6d6a62;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:7px;padding:5px 10px}
+.chips span.new{color:#a8623c;border-color:rgba(255,107,44,.35);background:#fff7f2}
+.pairs{display:flex;gap:30px;flex-wrap:wrap;justify-content:center}
+.pair{display:flex;flex-direction:column;gap:10px;align-items:center}
+.theme-tag{font-size:12px;font-weight:700;color:#60656d;letter-spacing:.1em}
+/* ---------- 手机壳（令牌与 dict.html 完全一致） ---------- */
+.phone{width:412px;height:900px;border-radius:30px;position:relative;overflow:hidden;background:var(--bg);color:var(--text);border:1px solid rgba(0,0,0,.09);flex:none}
+.phone.light{--bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--feature:#fff1e8;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-soft:#fff0e6;--on-primary:#fff;--track:#e5e2de;--divider:rgba(0,0,0,.07);--field:rgba(0,0,0,.06);--menu:#fff;--error:#ba1a1a;--ok:#3b7a45;--scrim:rgba(0,0,0,.5);--field-solid:#f1efe9}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--feature:#2b1d15;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-soft:#3a241b;--on-primary:#fff;--track:#353331;--divider:rgba(255,255,255,.08);--field:rgba(255,255,255,.08);--menu:#2a2824;--error:#ffb4ab;--ok:#7fd891;--scrim:rgba(0,0,0,.5);--field-solid:#2a2925}
+.hi{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--text);opacity:.4;z-index:30;pointer-events:none}
+.icon{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon.f{fill:currentColor;stroke:none}
+.icon.s{width:18px;height:18px}
+/* ---------- 听书播放页底稿（08-system.html s13 同款，恒定暗色不随日夜切换） ---------- */
+.player{position:absolute;inset:0;background:
+radial-gradient(120% 80% at 30% 0%,rgba(255,128,66,.4),transparent 55%),
+radial-gradient(130% 90% at 75% 30%,rgba(150,84,48,.38),transparent 60%),
+radial-gradient(160% 120% at 50% 115%,rgba(38,22,12,.92),transparent 72%),#1a120c}
+.pscrim{position:absolute;inset:0;background:rgba(12,8,5,.42)}
+.ptop{position:absolute;top:0;left:0;right:0;z-index:6}
+.pstatus{height:34px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:14px;font-weight:600;color:#fff}
+.pstatus .sright{display:flex;gap:10px;align-items:center}
+.ptbar{display:flex;align-items:center;gap:2px;min-height:50px;padding:0 6px}
+.ptbar .t{flex:1;min-width:0;text-align:center;font-size:18px;font-weight:650;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.picon{width:44px;height:44px;border:0;background:transparent;border-radius:22px;display:grid;place-items:center;color:#fff;flex:none;cursor:pointer}
+.pills{position:absolute;top:104px;left:0;right:0;display:flex;justify-content:space-between;padding:0 16px;z-index:6}
+.pill{font-size:12.5px;color:#fff;background:rgba(255,255,255,.16);border-radius:999px;padding:4px 11px;display:flex;gap:5px;align-items:center}
+.pill .icon{width:14px;height:14px}
+.covcircle{width:240px;height:240px;border-radius:50%;margin:0 auto;border:2.5px solid var(--primary);overflow:hidden;position:absolute;top:190px;left:86px;z-index:4;background:linear-gradient(150deg,#7a4423,#3c2a1a 60%,#57351c);display:grid;place-items:center;color:rgba(255,255,255,.85)}
+.covcircle .icon{width:56px;height:56px;stroke-width:1.4}
+.subt{position:absolute;left:0;right:0;top:452px;text-align:center;font-size:14.5px;color:rgba(255,255,255,.92);padding:0 32px;z-index:4;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;line-height:1.45}
+.progrow{position:absolute;left:0;right:0;bottom:150px;display:flex;align-items:center;gap:12px;padding:0 26px;font-size:12px;color:rgba(255,255,255,.8);z-index:4}
+.pseek{flex:1;height:4px;border-radius:3px;background:rgba(255,255,255,.22);position:relative}
+.pseek i{position:absolute;left:0;top:0;bottom:0;width:11%;border-radius:3px;background:var(--primary)}
+.pseek b{position:absolute;left:11%;top:50%;transform:translate(-50%,-50%);width:13px;height:13px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.ctrls{position:absolute;left:0;right:0;bottom:44px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:4}
+.cbtn{width:48px;height:48px;border:0;background:rgba(255,255,255,.13);border-radius:50%;display:grid;place-items:center;color:#fff;cursor:pointer;flex:none}
+.cbtn .icon{width:21px;height:21px}
+.cbtn.anch{box-shadow:0 0 0 2px rgba(255,255,255,.38);background:rgba(255,255,255,.2)}
+.fab{width:72px;height:72px;border:0;border-radius:50%;background:#fff;color:#211f1c;display:grid;place-items:center;cursor:pointer;flex:none}
+.fab .icon{width:30px;height:30px}
+/* ---------- 弹层（PopupWindow：稿面遮罩仅为示意，实际无遮罩） ---------- */
+.dim{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:5}
+.pcard{position:absolute;left:12px;right:12px;bottom:68px;background:var(--surface);border-radius:16px;border:1px solid var(--divider);z-index:9;padding:14px 20px 16px;display:flex;flex-direction:column;gap:4px}
+.plabel{font-size:12.5px;font-weight:600;color:var(--secondary);letter-spacing:.04em}
+.pval{text-align:center;font-size:22px;font-weight:650;color:var(--text);padding:6px 0 8px}
+.pval small{font-size:15px;font-weight:600;color:var(--secondary);margin-left:4px}
+.pslide{display:flex;align-items:center;gap:12px;min-height:48px}
+.endlab{font-size:11.5px;font-weight:600;color:var(--secondary);flex:none}
+.tseek{flex:1;height:4px;border-radius:3px;background:var(--track);position:relative}
+.tseek i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--primary)}
+.tseek b{position:absolute;top:50%;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:var(--primary);box-shadow:0 1px 3px rgba(0,0,0,.35)}
+/* 快捷预设芯片（bg_player_pill 的 999dp 胶囊语言；行 min 48dp 保触控） */
+.pchips{display:flex;align-items:center;gap:8px;min-height:48px;padding-top:2px}
+.chip{height:32px;padding:0 14px;border-radius:999px;background:var(--field);color:var(--secondary);font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;border:0;cursor:pointer;font-family:inherit;flex:none}
+.chip.on{background:var(--primary);color:var(--on-primary);font-weight:700}
+.chip.off{padding:0 12px}
+/* ---------- 注释 / 令牌表 ---------- */
+.notes{width:100%;max-width:1080px;font-size:12.5px;line-height:1.9;color:#60656d;border-top:1px dashed rgba(0,0,0,.12);padding-top:12px}
+.notes code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px}
+.notes b{color:#45423a}
+.tok{width:100%;max-width:1080px;border-collapse:collapse;font-size:13px;color:#45423a}
+.tok th{font-size:12px;font-weight:700;color:#60656d;text-align:left;letter-spacing:.04em;padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.12)}
+.tok td{padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.07);vertical-align:top;line-height:1.7}
+.tok code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px;white-space:nowrap}
+.tok .new{color:#a8623c;font-weight:600}
+.tok .done{color:#3b7a45;font-weight:600}
+.foot{font-size:12px;color:#60656d;text-align:center;line-height:2}
+</style></head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
+<symbol id="i-swap" viewBox="0 0 24 24"><path d="M4 7h13m0 0-3-3m3 3-3 3M20 17H7m0 0 3-3m-3 3 3 3"/></symbol>
+<symbol id="i-dots" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></symbol>
+<symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.5 1.5M9 2h6"/></symbol>
+<symbol id="i-rew" viewBox="0 0 24 24"><path d="M11 12l8-5v10zM3 12l8-5v10z"/></symbol>
+<symbol id="i-prev" viewBox="0 0 24 24"><path d="M6 5v14M20 5l-11 7 11 7z"/></symbol>
+<symbol id="i-next" viewBox="0 0 24 24"><path d="M18 5v14M4 5l11 7-11 7z"/></symbol>
+<symbol id="i-ffwd" viewBox="0 0 24 24"><path d="M13 12 5 7v10zM21 12l-8-5v10z"/></symbol>
+<symbol id="i-toc" viewBox="0 0 24 24"><path d="M4 6h2M4 12h2M4 18h2M9 6h11M9 12h11M9 18h11"/></symbol>
+</defs></svg>
+
+<div class="wrap">
+
+<header class="page-head">
+  <div class="kicker">LEGADO V2 · MOCKUP</div>
+  <h1 class="h1">听书定时滑条弹窗 · 新界面<small>TimerSliderPopup 重设计</small></h1>
+  <p class="desc">重构 <b>TimerSliderPopup</b>（popup_seek_bar.xml）：听书播放页点左下「定时」键后弹出的分钟数滑条 PopupWindow。现状卡体是 <code>shape_card_view</code>（3dp 小圆角矩形、无描边），与播放页 <code>bg_player_pill</code>（999dp 胶囊）的圆角语言脱节。本稿三处：① 卡体升为 <b>16dp 圆角 + 1dp outline_variant 描边</b>（MASTER §3 弹层级），胶囊语言落在卡内小件；② 数值从次要文字升为主内容（22sp on_surface 居中），补「定时」标签与 0/180 端点刻度；③ <b>快捷预设芯片为新增可移除项</b>。滑条沿用 ThemeSeekBar（运行时 accentColor，换肤安全），<b>max=180、拖动即设值、显示时回填 timeMinute 等行为全部维持</b>。底稿取 08-system.html s13 听书播放页（恒定暗色，不随日夜切换）；弹窗卡面随主题——浅色=白卡、深色=暖黑卡，即本稿两态唯一差异。</p>
+  <nav class="nav">
+    <a href="#s1"><b>01</b>主形态 · 定时滑条</a>
+    <a href="#s2"><b>02</b>快捷预设与关闭态</a>
+    <a href="#s3"><b>03</b>设计调整与落地映射</a>
+  </nav>
+</header>
+
+<!-- ================= 01 主形态 ================= -->
+<section class="screen" id="s1">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">01</span><h2 class="st-title">主形态 · 定时滑条（30 分钟已设）</h2><span class="st-src">TimerSliderPopup.kt:27-38（max=180 · 拖动即设值）· popup_seek_bar.xml · AudioPlayActivity.kt:184-186（ivTimer 入口）</span></div>
+    <div class="chips"><span>PopupWindow 全宽 · 浮于控制行上方</span><span>16dp 圆角卡 + 1dp 描边</span><span>「定时」标签复用 set_timer</span><span>数值 22sp on_surface 居中</span><span>端点 0 / 180 刻度</span><span>滑条触控 48dp</span><span>拖动即设值（现状不动）</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：30 分钟 -->
+    <div class="pair"><div class="theme-tag">浅色 · 已设 30 分钟</div>
+    <div class="phone light">
+      <div class="player"><div class="pscrim"></div></div>
+      <div class="ptop">
+        <div class="pstatus"><span>14:18 ◇</span><span class="sright"><span>5G</span><span>▮▮▮</span><span>▮</span></span></div>
+        <div class="ptbar">
+          <button class="picon" type="button" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button>
+          <div class="t">凡人修仙传</div>
+          <button class="picon" type="button" aria-label="换源"><svg class="icon"><use href="#i-swap"/></svg></button>
+          <button class="picon" type="button" aria-label="更多"><svg class="icon f"><use href="#i-dots"/></svg></button>
+        </div>
+      </div>
+      <div class="pills">
+        <span class="pill"><svg class="icon"><use href="#i-timer"/></svg>30m</span>
+        <span class="pill">1.2X</span>
+      </div>
+      <div class="covcircle"><svg class="icon"><use href="#i-timer"/></svg></div>
+      <div class="subt">第一千二百二十四章 · 龙神辉光照彻星海，斗气化马处再见故人</div>
+      <div class="progrow"><span>03:24</span><div class="pseek"><i></i><b></b></div><span>45:00</span></div>
+      <div class="ctrls">
+        <button class="cbtn anch" type="button" aria-label="定时"><svg class="icon"><use href="#i-timer"/></svg></button>
+        <button class="cbtn" type="button" aria-label="减速"><svg class="icon f"><use href="#i-rew"/></svg></button>
+        <button class="cbtn" type="button" aria-label="上一个"><svg class="icon f"><use href="#i-prev"/></svg></button>
+        <button class="fab" type="button" aria-label="播放暂停"><svg class="icon f"><use href="#i-next"/></svg></button>
+        <button class="cbtn" type="button" aria-label="下一个"><svg class="icon f"><use href="#i-next"/></svg></button>
+        <button class="cbtn" type="button" aria-label="加速"><svg class="icon f"><use href="#i-ffwd"/></svg></button>
+        <button class="cbtn" type="button" aria-label="目录"><svg class="icon"><use href="#i-toc"/></svg></button>
+      </div>
+      <div class="dim"></div>
+      <div class="pcard">
+        <div class="plabel">定时</div>
+        <div class="pval">30<small>分钟</small></div>
+        <div class="pslide"><span class="endlab">0</span><div class="tseek"><i style="width:16.7%"></i><b style="left:16.7%"></b></div><span class="endlab">180</span></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：同态对照 -->
+    <div class="pair"><div class="theme-tag">深色 · 同态对照</div>
+    <div class="phone dark">
+      <div class="player"><div class="pscrim"></div></div>
+      <div class="ptop">
+        <div class="pstatus"><span>14:18 ◇</span><span class="sright"><span>5G</span><span>▮▮▮</span><span>▮</span></span></div>
+        <div class="ptbar">
+          <button class="picon" type="button" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button>
+          <div class="t">凡人修仙传</div>
+          <button class="picon" type="button" aria-label="换源"><svg class="icon"><use href="#i-swap"/></svg></button>
+          <button class="picon" type="button" aria-label="更多"><svg class="icon f"><use href="#i-dots"/></svg></button>
+        </div>
+      </div>
+      <div class="pills">
+        <span class="pill"><svg class="icon"><use href="#i-timer"/></svg>30m</span>
+        <span class="pill">1.2X</span>
+      </div>
+      <div class="covcircle"><svg class="icon"><use href="#i-timer"/></svg></div>
+      <div class="subt">第一千二百二十四章 · 龙神辉光照彻星海，斗气化马处再见故人</div>
+      <div class="progrow"><span>03:24</span><div class="pseek"><i></i><b></b></div><span>45:00</span></div>
+      <div class="ctrls">
+        <button class="cbtn anch" type="button" aria-label="定时"><svg class="icon"><use href="#i-timer"/></svg></button>
+        <button class="cbtn" type="button" aria-label="减速"><svg class="icon f"><use href="#i-rew"/></svg></button>
+        <button class="cbtn" type="button" aria-label="上一个"><svg class="icon f"><use href="#i-prev"/></svg></button>
+        <button class="fab" type="button" aria-label="播放暂停"><svg class="icon f"><use href="#i-next"/></svg></button>
+        <button class="cbtn" type="button" aria-label="下一个"><svg class="icon f"><use href="#i-next"/></svg></button>
+        <button class="cbtn" type="button" aria-label="加速"><svg class="icon f"><use href="#i-ffwd"/></svg></button>
+        <button class="cbtn" type="button" aria-label="目录"><svg class="icon"><use href="#i-toc"/></svg></button>
+      </div>
+      <div class="dim"></div>
+      <div class="pcard">
+        <div class="plabel">定时</div>
+        <div class="pval">30<small>分钟</small></div>
+        <div class="pslide"><span class="endlab">0</span><div class="tseek"><i style="width:16.7%"></i><b style="left:16.7%"></b></div><span class="endlab">180</span></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>入口</code> — 听书播放页左下「定时」圆键（activity_audio_play.xml:151-160 iv_timer，48dp bg_player_cbtn）→ <code>timerSliderPopup.showAsDropDown(it, 0, (-100).dpToPx(), Gravity.TOP)</code>（AudioPlayActivity.kt:184-186；popup 实例 AudioPlayActivity.kt:66 lazy）。入口与点击路径不变。</li>
+    <li><code>浮层定位（修正）</code> — 现状 yoff=-100dp 为写死值，卡体加高后会探出屏底；本稿改为 <code>showAtLocation(anchor, Gravity.BOTTOM, 0, 68dp)</code>：卡底缘恒为控制行上方 8dp（iv_timer 顶 840 − 8 − 底部 12dp 安全区），不随卡高漂移，见 §03 映射第 5 条。<b>68dp 口径的前提</b>：targetSdk 35 + <code>windowOptOutEdgeToEdgeEnforcement=true</code>（styles.xml:36-37，窗口底不含导航栏）；一旦按 styles.xml:36 注记迁移 enableEdgeToEdge（targetSdk 36 前），须叠加导航栏 inset——<code>y = 68dp + navigationBarHeight</code>（与 llPlayMenu 的 <code>applyNavigationBarPadding</code> 同口径，AudioPlayActivity.kt:187 → utils/ViewExtensions.kt:278-284），或改回锚点相对定位（动态 yoff），否则弹窗会压住控制行。稿面遮罩仅为示意——实际 PopupWindow 无遮罩，点按外部/返回即收（TimerSliderPopup.kt:23-25 focusable，现状行为不动）。</li>
+    <li><code>数值升格</code> — tv_seek_value 由 14sp secondaryText（popup_seek_bar.xml:10-14）升为 22sp/650 on_surface 居中：这个数字是弹窗唯一内容，也是内容优先。文案仍走 <code>R.string.timer_m</code>「%d 分钟」（values-zh/strings.xml:582），id 不变；稿面「30」大、「分钟」小的主次为纯示意，落地可同字号或后续以 SpannableString 增强。</li>
+    <li><code>标签与端点</code> — 顶部「定时」复用现有字符串 <code>@string/set_timer</code>（values-zh/strings.xml:158，iv_timer 的 contentDescription 同源），零新增资源；滑条两端 0 / 180 对应 <code>seekBar.max = 180</code>（TimerSliderPopup.kt:27）。0=不定时（见 §02），180=3 小时。</li>
+    <li><code>滑条着色</code> — ThemeSeekBar 在 init 中 <code>applyTint(context.accentColor)</code>（ThemeSeekBar.kt:12-18 → TintHelper.kt:237-245 同时染 progress 与 thumb），运行时取色、换肤安全，本稿不动；稿面 #FF6B2C 仅为默认主题兜底演示。轨道底色现状为系统默认灰，补 <code>progressBackgroundTint="@color/outline_variant"</code> 统一令牌（非主色，MASTER §4 允许）。</li>
+    <li><code>播页底稿</code> — 恒定暗色视觉（封面模糊 + 暖黑纱，bg_player_scrim.xml），浅深主题共用；顶部左胶囊即 tv_timer（>0 时显示「30m」，AudioPlayActivity.kt:294-297 AUDIO_DS 事件），与本弹窗数值同源（AudioPlayService.timeMinute 剩余分钟数）。</li>
+  </ul>
+</section>
+
+<!-- ================= 02 快捷预设与关闭态 ================= -->
+<section class="screen" id="s2">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">02</span><h2 class="st-title">快捷预设芯片（新增 · 可移除）与关闭态</h2><span class="st-src">芯片点击 → AudioPlay.setTimer(v) 直调 + 滑条/文字回显 · onProgressChanged 反向刷新芯片选中态 · 「关闭」= 0 取消定时（AudioPlayService.kt:384-421 现状语义）</span></div>
+    <div class="chips"><span class="new">预设 10/30/60/90 · 新增可移除</span><span class="new">「关闭」= 0 · 取消定时</span><span>芯片=bg_player_pill 999dp 胶囊语言</span><span>行 min 48dp 保触控</span><span>选中芯片运行时 accent</span><span>初始态即 0 分钟</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：预设 30 选中 -->
+    <div class="pair"><div class="theme-tag">浅色 · 预设命中</div>
+    <div class="phone light">
+      <div class="player"><div class="pscrim"></div></div>
+      <div class="ptop">
+        <div class="pstatus"><span>14:18 ◇</span><span class="sright"><span>5G</span><span>▮▮▮</span><span>▮</span></span></div>
+        <div class="ptbar">
+          <button class="picon" type="button" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button>
+          <div class="t">凡人修仙传</div>
+          <button class="picon" type="button" aria-label="换源"><svg class="icon"><use href="#i-swap"/></svg></button>
+          <button class="picon" type="button" aria-label="更多"><svg class="icon f"><use href="#i-dots"/></svg></button>
+        </div>
+      </div>
+      <div class="pills">
+        <span class="pill"><svg class="icon"><use href="#i-timer"/></svg>30m</span>
+        <span class="pill">1.2X</span>
+      </div>
+      <div class="covcircle"><svg class="icon"><use href="#i-timer"/></svg></div>
+      <div class="subt">第一千二百二十四章 · 龙神辉光照彻星海，斗气化马处再见故人</div>
+      <div class="progrow"><span>03:24</span><div class="pseek"><i></i><b></b></div><span>45:00</span></div>
+      <div class="ctrls">
+        <button class="cbtn anch" type="button" aria-label="定时"><svg class="icon"><use href="#i-timer"/></svg></button>
+        <button class="cbtn" type="button" aria-label="减速"><svg class="icon f"><use href="#i-rew"/></svg></button>
+        <button class="cbtn" type="button" aria-label="上一个"><svg class="icon f"><use href="#i-prev"/></svg></button>
+        <button class="fab" type="button" aria-label="播放暂停"><svg class="icon f"><use href="#i-next"/></svg></button>
+        <button class="cbtn" type="button" aria-label="下一个"><svg class="icon f"><use href="#i-next"/></svg></button>
+        <button class="cbtn" type="button" aria-label="加速"><svg class="icon f"><use href="#i-ffwd"/></svg></button>
+        <button class="cbtn" type="button" aria-label="目录"><svg class="icon"><use href="#i-toc"/></svg></button>
+      </div>
+      <div class="dim"></div>
+      <div class="pcard">
+        <div class="plabel">定时</div>
+        <div class="pval">30<small>分钟</small></div>
+        <div class="pslide"><span class="endlab">0</span><div class="tseek"><i style="width:16.7%"></i><b style="left:16.7%"></b></div><span class="endlab">180</span></div>
+        <div class="pchips">
+          <button class="chip" type="button">10</button>
+          <button class="chip on" type="button">30</button>
+          <button class="chip" type="button">60</button>
+          <button class="chip" type="button">90</button>
+          <button class="chip off" type="button">关闭</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：初始态 0 分钟 -->
+    <div class="pair"><div class="theme-tag">深色 · 初始态（0 = 未定时）</div>
+    <div class="phone dark">
+      <div class="player"><div class="pscrim"></div></div>
+      <div class="ptop">
+        <div class="pstatus"><span>14:18 ◇</span><span class="sright"><span>5G</span><span>▮▮▮</span><span>▮</span></span></div>
+        <div class="ptbar">
+          <button class="picon" type="button" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button>
+          <div class="t">凡人修仙传</div>
+          <button class="picon" type="button" aria-label="换源"><svg class="icon"><use href="#i-swap"/></svg></button>
+          <button class="picon" type="button" aria-label="更多"><svg class="icon f"><use href="#i-dots"/></svg></button>
+        </div>
+      </div>
+      <div class="pills">
+        <span class="pill">1.2X</span>
+      </div>
+      <div class="covcircle"><svg class="icon"><use href="#i-timer"/></svg></div>
+      <div class="subt">第一千二百二十四章 · 龙神辉光照彻星海，斗气化马处再见故人</div>
+      <div class="progrow"><span>03:24</span><div class="pseek"><i></i><b></b></div><span>45:00</span></div>
+      <div class="ctrls">
+        <button class="cbtn anch" type="button" aria-label="定时"><svg class="icon"><use href="#i-timer"/></svg></button>
+        <button class="cbtn" type="button" aria-label="减速"><svg class="icon f"><use href="#i-rew"/></svg></button>
+        <button class="cbtn" type="button" aria-label="上一个"><svg class="icon f"><use href="#i-prev"/></svg></button>
+        <button class="fab" type="button" aria-label="播放暂停"><svg class="icon f"><use href="#i-next"/></svg></button>
+        <button class="cbtn" type="button" aria-label="下一个"><svg class="icon f"><use href="#i-next"/></svg></button>
+        <button class="cbtn" type="button" aria-label="加速"><svg class="icon f"><use href="#i-ffwd"/></svg></button>
+        <button class="cbtn" type="button" aria-label="目录"><svg class="icon"><use href="#i-toc"/></svg></button>
+      </div>
+      <div class="dim"></div>
+      <div class="pcard">
+        <div class="plabel">定时</div>
+        <div class="pval">0<small>分钟</small></div>
+        <div class="pslide"><span class="endlab">0</span><div class="tseek"><i style="width:0%"></i><b style="left:2%"></b></div><span class="endlab">180</span></div>
+        <div class="pchips">
+          <button class="chip" type="button">10</button>
+          <button class="chip" type="button">30</button>
+          <button class="chip" type="button">60</button>
+          <button class="chip" type="button">90</button>
+          <button class="chip off on" type="button">关闭</button>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>快捷预设（新增·可移除）</code> — 滑条下补一排胶囊芯片 10 / 30 / 60 / 90 / 关闭：点击<b>直接调 <code>AudioPlay.setTimer(值)</code></b>（TimerSliderPopup.kt:34 同款调用 → AudioPlay.kt:271-280），并同步 <code>seekBar.progress = 值</code> 与值文字回显。<b>不能只走 <code>seekBar.progress = 值</code></b>：程序化 setProgress 触发的 onProgressChanged <code>fromUser=false</code>，会被 TimerSliderPopup.kt:33 的 <code>if (fromUser)</code> 拦截——芯片只会改「N 分钟」文字而从不设定时。零新服务代码；预设值与通知栏 addTimer 的 +10 步进（AudioPlayService.kt:389-396）同量级。选中芯片 = 运行时 accentColor 实底白字（DECISIONS §8 疗法，GradientDrawable 着色，同 FontAdapter 先例）；未选中 = field 底 + 次要文字。可整体移除回到「仅标签+数值+滑条」（§01）。</li>
+    <li><code>芯片选中态同步（新增规则）</code> — 点击与拖动共用同一刷新函数：onProgressChanged（含拖动 fromUser=true 与芯片回显 fromUser=false）内按 <code>seekBar.progress</code> 反刷芯片——命中 10/30/60/90 高亮对应芯片、<code>progress==0</code> 高亮「关闭」；<b>拖到非预设值（如 45）时全部中性、无任何高亮</b>，不近似取整到最近预设（避免「看着选中 30、实际是 45」的误导），此时滑条与值文字是唯一精确指示。稿面浅色屏（30 命中）与深色屏（0 → 「关闭」命中）即该规则的两态。</li>
+    <li><code>胶囊语言</code> — 芯片 999dp 圆角直接对齐播放页 <code>bg_player_pill</code>（tv_timer/tv_speed 顶部胶囊，activity_audio_play.xml:32-66）与 bg_player_cbtn 圆键的圆形语汇；弹窗卡体则取 16dp（MASTER §3 弹层级，与 BaseDialogFragment v2 / dict 弹层一致）——卡体管「弹窗」，卡内小件管「播放器胶囊」，两层语言各归其位。</li>
+    <li><code>「关闭」= 0（现状语义）</code> — <code>setTimer(0)</code> 后 timeMinute=0：AUDIO_DS 事件 0 → 顶部 tv_timer 胶囊隐藏（AudioPlayActivity.kt:294-297 <code>visible(it &gt; 0)</code>），递减任务不再触发停止（AudioPlayService.kt:405-421 仅递减至 0 时 stop），即取消定时；值区按 timer_m 显示「0 分钟」。深色屏即初始态：AudioPlayService.timeMinute 默认 0（AudioPlayService.kt:76），show 重载回填 progress（TimerSliderPopup.kt:41-49）后弹窗打开即为 0，顶部无 30m 胶囊。</li>
+    <li><code>触控与密度</code> — 芯片视觉高 32dp、所在行 min-height 48dp 保触控目标（与 dict.html §05「药丸高 32dp、整行 min 48dp」同一处理）；5 枚芯片单行放下无需滚动。滑条本体 min-height 48dp（现状 AppCompatSeekBar 默认拇指热区约 24dp，不足）。</li>
+  </ul>
+</section>
+
+<!-- ================= 03 设计调整与落地映射 ================= -->
+<section class="screen" id="s3">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">03</span><h2 class="st-title">设计调整与落地映射</h2><span class="st-src">逐条落点：布局文件 / drawable / 控件 / kt（行号以 classic-base 现状为准）</span></div>
+  </div>
+  <table class="tok">
+    <tr><th style="width:24%">改动</th><th style="width:36%">落点</th><th>说明</th></tr>
+    <tr><td>卡体重绘（3dp 矩形 → 16dp 圆角卡）</td><td><code>popup_seek_bar.xml:5</code> + 新建 <code>drawable/bg_popup_card.xml</code>（弃 <code>shape_card_view.xml</code> 引用，shape_card_view 本身他处仍用，不删）</td><td>solid <code>@color/surface_container</code>（shape_card_view 的 @color/background_card 即其 legacy alias，色不变仅形变）+ corners 16dp + stroke 1dp <code>@color/outline_variant</code>（PopupWindow 无 elevation，深色卡靠描边与暗底分层；全 App 弹层同语言）；外包一层 FrameLayout（match_parent × wrap_content）给 <code>paddingHorizontal 12dp</code> 水平安全边距——PopupWindow 本体仍 MATCH_PARENT（TimerSliderPopup.kt:15-16 宽高参数不动）。</td></tr>
+    <tr><td>数值升格</td><td><code>popup_seek_bar.xml:10-14</code>（tv_seek_value）</td><td>textColor <code>@color/secondaryText</code> → <code>@color/on_surface</code>、补 <code>textSize 22sp</code> + textStyle bold（650 观感）；id 与 <code>R.string.timer_m</code>（values-zh/strings.xml:582）不变；根 LinearLayout <code>gravity=center_horizontal</code>（:8）保留，值保持居中。稿面「30 大 / 分钟小」为示意，基础落地同字号。</td></tr>
+    <tr><td><span class="new">新增</span> 「定时」标签行</td><td><code>popup_seek_bar.xml</code>（tv_seek_value 之前插 TextView）</td><td>文案复用 <code>@string/set_timer</code>（values-zh/strings.xml:158「定时」），零新增字符串；12.5sp/600、<code>@color/on_surface_variant</code>；<b>必须设 <code>android:layout_gravity="start"</code></b>——根 LinearLayout 的 <code>gravity=center_horizontal</code>（popup_seek_bar.xml:8）会把 wrap_content 子 View 居中，不设则标签落地居中、与稿面左对齐不符。纯展示，可整体移除。</td></tr>
+    <tr><td>滑条触控与轨道令牌</td><td><code>popup_seek_bar.xml:16-19</code>（seek_bar）</td><td>补 <code>android:minHeight="48dp"</code>（现状拇指热区约 24dp &lt; 48dp）与 <code>android:progressBackgroundTint="@color/outline_variant"</code>（轨道底从系统默认灰统一为令牌）；ThemeSeekBar 不换——progress/thumb 已运行时 accentColor（ThemeSeekBar.kt:12-18 → TintHelper.kt:237-245），换肤安全（MASTER §4 达标）。端点 0/180 刻度由两端 TextView 承载（11.5sp on_surface_variant，LinearLayout 横排）。</td></tr>
+    <tr><td>浮层定位修正</td><td><code>AudioPlayActivity.kt:184-186</code>（调用处）+ <code>TimerSliderPopup.kt:41-49</code>（重载保留）</td><td><code>showAsDropDown(it, 0, (-100).dpToPx(), Gravity.TOP)</code> → <code>showAtLocation(it, Gravity.BOTTOM, 0, 68.dpToPx())</code>：卡底缘=控制行上方 8dp 固定，不随卡高探出屏底（现状 yoff=-100dp 写死，卡加高后底部被裁）。TimerSliderPopup.kt:41-49 两个 show 重载的 <code>progress = AudioPlayService.timeMinute</code> 回填逻辑原样保留。<b>Edge-to-edge 迁移预案</b>：68dp 成立的前提是 targetSdk 35 + <code>windowOptOutEdgeToEdgeEnforcement=true</code>（styles.xml:36-37，窗口底不含导航栏）；按 styles.xml:36 注记迁移 enableEdgeToEdge（targetSdk 36 前必做）后窗口底含导航栏，届时 <code>y = 68dp + navigationBarHeight</code>（与 llPlayMenu <code>applyNavigationBarPadding</code> 同口径，AudioPlayActivity.kt:187 → utils/ViewExtensions.kt:278-284），或改回锚点相对定位（showAsDropDown + 动态 yoff），否则弹窗压住控制行。</td></tr>
+    <tr><td><span class="new">新增</span> 快捷预设芯片行</td><td><code>popup_seek_bar.xml</code>（滑条行下插横排 LinearLayout，min-height 48dp）+ <code>TimerSliderPopup.kt:20-39</code>（init 内绑点击与刷新）</td><td>5 枚芯片（10/30/60/90/关闭）：TextView + 胶囊 drawable（999dp 圆角，solid <code>@color/surface_container_high</code> 或 field 等效）。<b>点击直接调 <code>AudioPlay.setTimer(value)</code></b>（TimerSliderPopup.kt:34 同款调用 → AudioPlay.kt:271-280），并同步 <code>binding.seekBar.progress = value</code> 与 <code>setProcessTextValue(value)</code> 回显——<b>不能只走 <code>seekBar.progress = value</code></b>：程序化 setProgress 的 onProgressChanged <code>fromUser=false</code>，会被 :33 <code>if (fromUser)</code> 拦截，芯片只改文字不设定时。「关闭」传 0。onProgressChanged 内按 progress 反刷芯片选中态（与点击共用同一 sync 函数）：命中预设或 0 高亮，非预设值（如 45）全部中性、不近似取整。选中芯片背景以 <code>ThemeStore.accentColor</code> GradientDrawable 运行时着色（DECISIONS §8 疗法，同 FontAdapter.convert 先例），文字自动黑/白。整行可移除。</td></tr>
+    <tr><td>关闭态语义（无改动，稿面澄清）</td><td><code>AudioPlayService.kt:384-421</code> · <code>AudioPlayActivity.kt:294-297</code></td><td>setTimer(0)：AUDIO_DS 0 → tv_timer 隐藏；递减任务不再触发 AudioPlay.stop，即取消定时——现状已如此，本稿仅以「关闭」芯片与「0 分钟」显性化，不改任何逻辑。timeMinute 默认 0（:76）→ 弹窗初始即深色屏所示状态。</td></tr>
+    <tr><td><span class="done">已达标</span> 换肤核对</td><td><code>popup_seek_bar.xml</code> 全文件</td><td>布局零 <code>@color/primary</code>/<code>@color/accent</code> 硬编码：滑条运行时 accentColor（既有）、芯片选中运行时着色（新增）、数值/标签/端点全为中性令牌（on_surface / on_surface_variant / outline_variant / surface_container）。稿面 #FF6B2C 仅为默认主题兜底演示。</td></tr>
+    <tr><td><span class="done">行为不动清单</span></td><td><code>TimerSliderPopup.kt:23-27,31-36,41-53</code> · <code>AudioPlayService.kt:76,384-421</code></td><td>max=180、拖动中每次 onProgressChanged 即设值、显示时回填 timeMinute、点外/返回关闭（focusable PopupWindow）、每分钟递减（仅播放中）与递减至 0 停止播放、通知栏定时同步（upAudioPlayNotification）——全部维持现状，本稿无任何行为删除。</td></tr>
+  </table>
+  <ul class="notes">
+    <li><code>[NEED-DECISION]</code> — ①快捷预设芯片行：默认保留（一键到常用时长，替代反复拖细步进滑条），可整体移除（含点击直调 setTimer 与选中态 sync 函数，约 10 行 kt）；②「定时」标签行：默认保留（脱离锚点后弹窗需要语境，落地须 <code>layout_gravity="start"</code>），可移除；③预设值组（10/30/60/90）与「关闭」命名可调，落芯片需 1 条可选字符串（或纯数字 + contentDescription 拼接 timer_m）；④可选性能项：拖动中改为 onStopTrackingTouch 才提交 setTimer（终态等价，减少 intent 风暴），非必需、默认不动；⑤浮层定位的 68dp 随 edge-to-edge 迁移（styles.xml:36，targetSdk 36 前）须叠加导航栏 inset 或改锚点相对定位——若先落本稿、后迁 edge-to-edge，属迁移时的连带修改点。</li>
+    <li><code>无障碍</code> — 滑条 minHeight 48dp、芯片行 min-height 48dp（芯片视觉 32dp 同 dict 药丸先例）、锚点 iv_timer 48dp（现状已达）；数值 on_surface 亮 14.9:1 / 暗 15.2:1，标签 on_surface_variant 亮 5.5:1 / 暗 7.9:1；无纯黑/纯白大面积、无直角弹窗、无阴影（MASTER §4 反模式逐项核对）。</li>
+    <li><code>稿面示意与实机的差异</code> — 遮罩（rgba .45）仅为稿面聚焦，实际 PopupWindow 无遮罩层；芯片「选中」在实机由运行时 accent 实底呈现，换肤后随之变化；播放页底稿（封面圆、渐变、控制排布）取自 08-system.html s13 定稿，非本稿改动范围。</li>
+  </ul>
+</section>
+
+<div class="foot">legado v2 · 听书定时滑条弹窗设计稿 · 令牌来源 design-system/legado/MASTER.md · 播放页底稿 08-system.html s13 / 11-audio-light · 功能对照 TimerSliderPopup.kt（classic-base）</div>
+</div>
+</body></html>

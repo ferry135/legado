@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- JS 代码查看/编辑弹窗（widget-viewer-dialogs §01/§02）：
+     根背景运行时被 BaseDialogFragment.setSheetBackground 覆盖为 16dp 圆角底（删行无效，保留），
+     圆角透出遮罩靠 CodeDialog.onStart 的 window 透明（§05①）；
+     代码区留白 spacing_lg=16dp + 底字 on_surface 令牌（§05④） -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/background"
     android:orientation="vertical">
 
@@ -10,17 +15,36 @@
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="?attr/actionBarStyle"
+        android:theme="@style/ThemeOverlay.AppCompat.DayNight"
         app:title="code edit"
         app:popupTheme="@style/AppTheme.PopupOverlay"
-        app:titleTextAppearance="@style/ToolbarTitle" />
+        app:titleTextAppearance="@style/ToolbarTitle">
+        app:titleTextColor="@color/on_surface"
+
+        <!-- 「只读」徽标（§05⑧·新增可移除）：pill_field 半透明底 + on_surface_variant 11sp，
+             仅 disableEdit=true 时 visible（CodeDialog），删去即回「仅标题」现状 -->
+        <TextView
+            android:id="@+id/tv_read_only_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:layout_gravity="end|center_vertical"
+            android:background="@drawable/bg_widget_dialog_code_dialog_ro_badge"
+            android:gravity="center"
+            android:paddingLeft="9dp"
+            android:paddingRight="9dp"
+            android:text="@string/read_only"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="11sp"
+            android:visibility="gone"
+            tools:ignore="RtlHardcoded,TouchTargetSizeCheck" />
+
+    </androidx.appcompat.widget.Toolbar>
 
     <io.legado.app.ui.widget.code.CodeView
         android:id="@+id/code_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="12dp" />
+        android:padding="16dp"
+        android:textColor="@color/on_surface" />
 
 </LinearLayout>
-
-

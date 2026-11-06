@@ -1,27 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 分组管理行（group-manage 稿 §04/§05，对照已落地 item_book_group_manage.xml：16/14 通排 + 48dp 动作钮，
+     仅尾槽「显示开关 → 删除」不同）：组名 15sp medium on_surface singleLine 省略；
+     编辑 12sp on_surface_variant、删除 12sp error（破坏性显性，行为不变仍无确认）；
+     背景 background→surface（等值换名），运行时 convert 仍染 backgroundColor 随卡面 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background"
+    android:background="@color/surface"
     android:gravity="center_vertical"
+    android:minHeight="48dp"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:paddingLeft="16dp"
+    android:paddingTop="14dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="14dp">
 
     <TextView
         android:id="@+id/tv_group"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="@color/primaryText" />
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:singleLine="true"
+        android:textColor="@color/on_surface"
+        android:textSize="15sp"
+        tools:text="group" />
 
     <TextView
         android:id="@+id/tv_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
-        android:padding="8dp"
+        android:gravity="center"
+        android:minHeight="48dp"
+        android:paddingLeft="12dp"
+        android:paddingTop="10dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="10dp"
         android:text="@string/edit"
-        android:textColor="@color/primaryText" />
+        android:textColor="@color/on_surface_variant"
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/tv_del"
@@ -29,8 +49,14 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
         android:background="?attr/selectableItemBackground"
-        android:padding="8dp"
+        android:gravity="center"
+        android:minHeight="48dp"
+        android:paddingLeft="12dp"
+        android:paddingTop="10dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="10dp"
         android:text="@string/delete"
-        android:textColor="@color/primaryText" />
+        android:textColor="@color/error"
+        android:textSize="12sp" />
 
 </LinearLayout>

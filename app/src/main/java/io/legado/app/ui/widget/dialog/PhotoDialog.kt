@@ -35,11 +35,16 @@ class PhotoDialog() : BaseDialogFragment(R.layout.dialog_photo_view) {
 
     override fun onStart() {
         super.onStart()
+        // window 透明，透出 BaseDialogFragment 运行时挂到根 View 的 16dp 圆角背景
+        // （widget-viewer-dialogs §05 ②，先例 BaseDialogFragment.kt:42-43）
+        dialog?.window?.setBackgroundDrawableResource(R.color.transparent)
         setLayout(1f, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
     @SuppressLint("CheckResult")
     override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        // 右上关闭钮（§05 ⑥ 新增·可移除），全屏窗口无点外关闭区域，点击即退
+        binding.ivClose.setOnClickListener { dismiss() }
         val arguments = arguments ?: return
         val src = arguments.getString("src") ?: return
         ImageProvider.get(src)?.let {

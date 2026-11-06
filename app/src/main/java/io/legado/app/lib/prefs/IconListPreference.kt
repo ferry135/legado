@@ -2,7 +2,10 @@ package io.legado.app.lib.prefs
 
 import android.content.Context
 import android.content.ContextWrapper
+import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.View
@@ -18,6 +21,9 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.DialogRecyclerViewBinding
 import io.legado.app.databinding.ItemIconPreferenceBinding
+import io.legado.app.lib.theme.ThemeStore
+import io.legado.app.utils.dpToPx
+import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getCompatDrawable
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
@@ -177,7 +183,11 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
                             icon.setImageDrawable(d)
                         }
                     }
-                    label.isChecked = item.toString() == dialogValue
+                    // 通用列表弹窗稿 §02/§06#7：布局去 CheckedTextView 后由 label.isChecked
+                    // 改绑行尾 22dp 圆形单选；选中态圈+点运行时 ThemeStore.primaryColor 着色
+                    // （MASTER §4 禁 XML 固化 primary），isSelected 保留选中语义
+                    radio.isSelected = item.toString() == dialogValue
+                    radio.background = if (radio.isSelected) radioOnBg() else radioOffBg()
                     root.setOnClickListener {
                         onChanged?.invoke(item.toString())
                         this@IconDialog.dismissAllowingStateLoss()
@@ -189,10 +199,36 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
                 holder: ItemViewHolder,
                 binding: ItemIconPreferenceBinding
             ) {
-                holder.itemView.setOnClickListener {
-                    getItem(holder.layoutPosition)?.let {
-                        onChanged?.invoke(it.toString())
-                    }
+                // 通用列表弹窗稿 §06#8：此处原「仅 onChanged 无 dismiss」的行点击与 convert 的
+                // root 点击重复（onBindViewHolder 先调本方法、convert 再设 root 监听即被同视图
+                // 覆盖，属死代码），按稿清理；行点击统一由 convert 内 root 监听承担
+                // （onChanged + dismiss，行为不变）
+            }
+
+            // 单选圈按次新建实例：共享可变 GradientDrawable 的 bounds 会被兄弟视图按各自
+            // 尺寸互相覆盖（TipConfigDialog.kt:125 同注）。未选：outline 2dp 描边圆（§02 稿
+            // 「未选 outline 2dp 描边」，中性令牌）；选中：主色 2dp 圈 + 4dp 内缩主色点
+            // （CSS .rd.on / ::after inset:4px），主色取运行时 ThemeStore.primaryColor
+            private fun radioOffBg(): Drawable = GradientDrawable().apply {
+                shape = GradientDrawable.OVAL
+                setColor(Color.TRANSPARENT)
+                setStroke(2.dpToPx(), context.getCompatColor(R.color.outline))
+            }
+
+            private fun radioOnBg(): Drawable {
+                val primary = ThemeStore.primaryColor(context)
+                val ring = GradientDrawable().apply {
+                    shape = GradientDrawable.OVAL
+                    setColor(Color.TRANSPARENT)
+                    setStroke(2.dpToPx(), primary)
+                }
+                val dot = GradientDrawable().apply {
+                    shape = GradientDrawable.OVAL
+                    setColor(primary)
+                }
+                return LayerDrawable(arrayOf(ring, dot)).apply {
+                    val inset = 4.dpToPx()
+                    setLayerInset(1, inset, inset, inset, inset)
                 }
             }
 

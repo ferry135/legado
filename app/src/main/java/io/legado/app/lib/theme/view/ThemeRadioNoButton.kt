@@ -63,10 +63,6 @@ class ThemeRadioNoButton(context: Context, attrs: AttributeSet) :
                         .setCheckedColor(checkedTextColor)
                         .create()
                 )
-                // 13-read-style#13：选中加粗、未选常规，随勾选态切换（设计稿 650 字重，Typeface.BOLD 为 minSdk 21 下平台最接近实现）
-                setOnCheckedChangeListener { button, isChecked ->
-                    button.setTypeface(button.typeface, if (isChecked) Typeface.BOLD else Typeface.NORMAL)
-                }
             }
             else -> {
                 val accentColor = context.accentColor
@@ -92,6 +88,15 @@ class ThemeRadioNoButton(context: Context, attrs: AttributeSet) :
             }
         }
 
+    }
+
+    // 13-read-style#13：选中加粗、未选常规，随勾选态切换（设计稿 650 字重，Typeface.BOLD 为 minSdk 21 下平台
+    // 最接近实现）。重写 setChecked 而非 init 里挂 OnCheckedChangeListener：RadioGroup 的
+    // PassThroughHierarchyChangeListener 会在子 view 加入组时覆盖其 OnCheckedChangeListener（构造先于
+    // addView），init 内挂的监听对 RadioGroup 直接子项从不触发；setChecked 由勾选状态变化直接驱动，不受影响。
+    override fun setChecked(checked: Boolean) {
+        super.setChecked(checked)
+        setTypeface(typeface, if (checked) Typeface.BOLD else Typeface.NORMAL)
     }
 
 }

@@ -1,95 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 自定义翻页按键弹窗（mockups/page-key-dialog 落地）：
+     根底圆角由 PageKeyDialog.kt 运行时注入（DECISIONS §4，corner_radius_lg）；
+     输入域改「标签上、值下」field 卡（bg_edit_filled 栅格，聚焦描边 kt 注入，BookmarkDialog.kt:63 同法）；
+     底栏重置=次要 / 确定=主色文字钮（dialog_bookmark.xml:200-207 同款 on_primary_soft 令牌），
+     按压反馈走背景 selectableItemBackground（API 21+ 全覆盖，不用 android:foreground），
+     selector_fillet_btn_bg 引用清零。et_prev / et_next / tv_reset / tv_ok id 不变，行为零改动 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_view"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background"
-    android:padding="16dp">
-
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:text="@string/custom_page_key" />
-
-    <io.legado.app.ui.widget.text.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:hint="@string/prev_page_key">
-
-        <io.legado.app.lib.theme.view.ThemeEditText
-            android:id="@+id/et_prev"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:singleLine="true" />
-
-    </io.legado.app.ui.widget.text.TextInputLayout>
-
-    <io.legado.app.ui.widget.text.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:hint="@string/next_page_key">
-
-        <io.legado.app.lib.theme.view.ThemeEditText
-            android:id="@+id/et_next"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:singleLine="true" />
-
-    </io.legado.app.ui.widget.text.TextInputLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:textColor="@color/secondaryText"
-        android:text="@string/page_key_set_help" />
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:paddingRight="20dp">
 
         <TextView
-            android:id="@+id/tv_reset"
-            android:layout_width="0dp"
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/selector_fillet_btn_bg"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:minHeight="48dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="@string/reset"
-            android:textColor="@color/primaryText" />
+            android:layout_marginBottom="14dp"
+            android:text="@string/custom_page_key"
+            android:textColor="@color/primaryText"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-        <Space
-            android:layout_width="10dp"
-            android:layout_height="wrap_content" />
+        <!-- field 卡①：上一页按键（背景默认 bg_edit_filled，聚焦描边由 kt 运行时替换注入） -->
+        <LinearLayout
+            android:id="@+id/vw_field_prev"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:addStatesFromChildren="true"
+            android:background="@drawable/bg_edit_filled"
+            android:orientation="vertical"
+            android:paddingLeft="14dp"
+            android:paddingTop="7dp"
+            android:paddingRight="14dp"
+            android:paddingBottom="9dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/prev_page_key"
+                android:textColor="@color/secondaryText"
+                android:textSize="11.5sp" />
+
+            <EditText
+                android:id="@+id/et_prev"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:background="@null"
+                android:hint="@string/page_key_unset"
+                android:minHeight="24dp"
+                android:singleLine="true"
+                android:textColor="@color/primaryText"
+                android:textColorHint="@color/secondaryText"
+                android:textCursorDrawable="@drawable/shape_text_cursor"
+                android:textSize="14sp"
+                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        </LinearLayout>
+
+        <!-- field 卡②：下一页按键 -->
+        <LinearLayout
+            android:id="@+id/vw_field_next"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:addStatesFromChildren="true"
+            android:background="@drawable/bg_edit_filled"
+            android:orientation="vertical"
+            android:paddingLeft="14dp"
+            android:paddingTop="7dp"
+            android:paddingRight="14dp"
+            android:paddingBottom="9dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/next_page_key"
+                android:textColor="@color/secondaryText"
+                android:textSize="11.5sp" />
+
+            <EditText
+                android:id="@+id/et_next"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:background="@null"
+                android:hint="@string/page_key_unset"
+                android:minHeight="24dp"
+                android:singleLine="true"
+                android:textColor="@color/primaryText"
+                android:textColorHint="@color/secondaryText"
+                android:textCursorDrawable="@drawable/shape_text_cursor"
+                android:textSize="14sp"
+                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/tv_ok"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/selector_fillet_btn_bg"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:minHeight="48dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="@string/ok"
-            android:textColor="@color/primaryText" />
+            android:layout_marginTop="2dp"
+            android:lineSpacingMultiplier="1.7"
+            android:text="@string/page_key_set_help"
+            android:textColor="@color/secondaryText"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <!-- 底栏：上缘 1dp outline_variant 分割线（全宽）+ 重置(次要) / 确定(主色) 文字钮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:orientation="vertical"
+        android:paddingBottom="12dp">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/outline_variant" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="12dp"
+            android:paddingTop="6dp"
+            android:paddingRight="12dp">
+
+            <TextView
+                android:id="@+id/tv_reset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:minHeight="48dp"
+                android:paddingLeft="14dp"
+                android:paddingRight="14dp"
+                android:text="@string/reset"
+                android:textColor="@color/secondaryText"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <!-- 12-missed-2:62/#19 同款：确定亮色取深主色 on_primary_soft 保 AA 对比，暗色回主色 -->
+            <TextView
+                android:id="@+id/tv_ok"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:minHeight="48dp"
+                android:paddingLeft="14dp"
+                android:paddingRight="14dp"
+                android:text="@string/ok"
+                android:textColor="@color/on_primary_soft"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 通用封面规则编辑（config-form-dialogs §02 + §06 表单规格）：
+     ①cb_enable 移入表单区顶部 48dp 勾选行；②两输入域 FILLED 路线（boxBackgroundMode=filled +
+     boxBackgroundColor=surface_container_high + 聚焦 1.5dp 描边，描边色=运行时 accentColor 由
+     CoverRuleConfigDialog 注入，MASTER §4 禁 XML 固化 accent）；URL/JSON 值用等宽字；
+     ③底栏三文字钮 48dp：默认/取消=on_surface_variant 次要色，确认=AccentTextView 运行时主色。
+     控件 id（cb_enable / edit_search_url / edit_cover_url_rule / tv_footer_left / tv_cancel / tv_ok）
+     与行为零改动；弹窗卡面（surface_container + outline_variant 描边）由入口 kt 绘制 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -10,10 +17,11 @@
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="?attr/actionBarStyle"
+        android:theme="@style/ThemeOverlay.AppCompat.DayNight"
         app:title="@string/cover_config"
         app:popupTheme="@style/AppTheme.PopupOverlay"
-        app:titleTextAppearance="@style/ToolbarTitle" />
+        app:titleTextAppearance="@style/ToolbarTitle"
+        app:titleTextColor="@color/on_surface" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -26,36 +34,70 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- 勾选行：行 min-height 48dp，选中主色实底白勾走 ThemeCheckBox 运行时着色 -->
             <io.legado.app.lib.theme.view.ThemeCheckBox
                 android:id="@+id/cb_enable"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/enable" />
-
-            <io.legado.app.ui.widget.text.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="3dp">
+                android:minHeight="48dp"
+                android:gravity="center_vertical"
+                android:text="@string/enable"
+                android:textColor="@color/on_surface"
+                android:textSize="15sp" />
+
+            <!-- filled field：surface_container_high 实底 + 10dp 圆角 + 聚焦 1.5dp 描边（§06 输入域行） -->
+            <io.legado.app.ui.widget.text.TextInputLayout
+                android:id="@+id/til_search_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="@string/r_search_url"
+                app:boxBackgroundMode="filled"
+                app:boxBackgroundColor="@color/surface_container_high"
+                app:boxCornerRadiusTopStart="10dp"
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusBottomStart="10dp"
+                app:boxCornerRadiusBottomEnd="10dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="1.5dp">
 
                 <io.legado.app.lib.theme.view.ThemeEditText
                     android:id="@+id/edit_search_url"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/r_search_url"
+                    android:minHeight="48dp"
+                    android:fontFamily="monospace"
+                    android:textSize="14sp"
+                    android:textColor="@color/on_surface"
+                    android:textColorHint="@color/on_surface_variant"
                     tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
             </io.legado.app.ui.widget.text.TextInputLayout>
 
             <io.legado.app.ui.widget.text.TextInputLayout
+                android:id="@+id/til_cover_rule"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="3dp">
+                android:layout_marginTop="12dp"
+                android:hint="@string/rule_cover_url"
+                app:boxBackgroundMode="filled"
+                app:boxBackgroundColor="@color/surface_container_high"
+                app:boxCornerRadiusTopStart="10dp"
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusBottomStart="10dp"
+                app:boxCornerRadiusBottomEnd="10dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="1.5dp">
 
                 <io.legado.app.lib.theme.view.ThemeEditText
                     android:id="@+id/edit_cover_url_rule"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/rule_cover_url"
+                    android:minHeight="48dp"
+                    android:fontFamily="monospace"
+                    android:textSize="14sp"
+                    android:textColor="@color/on_surface"
+                    android:textColorHint="@color/on_surface_variant"
                     tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
             </io.legado.app.ui.widget.text.TextInputLayout>
@@ -64,20 +106,32 @@
 
     </androidx.core.widget.NestedScrollView>
 
+    <!-- 底栏上分隔线：outline_variant（§06 底栏行 border-top） -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/outline_variant" />
+
     <com.google.android.flexbox.FlexboxLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="12dp"
+        android:paddingTop="4dp"
         android:paddingRight="12dp"
+        android:paddingBottom="4dp"
         app:flexWrap="wrap"
         app:justifyContent="space_between">
 
-        <io.legado.app.ui.widget.text.AccentTextView
+        <!-- 前置动作「默认」= 删除已存规则：次要色（与取消同级），不再吃 accent -->
+        <TextView
             android:id="@+id/tv_footer_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:gravity="center_vertical"
             android:padding="12dp"
             android:text="@string/btn_default_s"
+            android:textColor="@color/on_surface_variant"
             tools:ignore="RtlHardcoded" />
 
         <LinearLayout
@@ -89,15 +143,19 @@
                 android:id="@+id/tv_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:gravity="center_vertical"
                 android:padding="12dp"
                 android:text="@string/cancel"
-                android:textColor="@color/secondaryText"
+                android:textColor="@color/on_surface_variant"
                 tools:ignore="RtlHardcoded" />
 
             <io.legado.app.ui.widget.text.AccentTextView
                 android:id="@+id/tv_ok"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:gravity="center_vertical"
                 android:padding="12dp"
                 android:text="@string/ok"
                 tools:ignore="RtlHardcoded" />

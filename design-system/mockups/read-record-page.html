@@ -1,0 +1,480 @@
+<!-- design-system: legado v2 · mockup -->
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>legado v2 · 阅读记录页 · 新界面</title><style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Noto Sans SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;background:#eae7e0;color:#3a3833}
+.wrap{max-width:1180px;margin:0 auto;padding:52px 24px 110px;display:flex;flex-direction:column;gap:60px;align-items:center}
+/* ---------- 页头（同 dict.html / group-select.html） ---------- */
+.page-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:16px}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.14em;color:#a8623c}
+.h1{font-size:34px;font-weight:750;line-height:1.2;margin:0}
+.h1 small{font-size:15px;font-weight:600;color:#60656d;margin-left:12px}
+.desc{font-size:14px;line-height:1.8;color:#60656d;margin:0;max-width:820px}
+.nav{display:flex;flex-wrap:wrap;gap:10px}
+.nav a{text-decoration:none;font-size:13px;font-weight:600;color:#5a574e;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:999px;padding:9px 16px;transition:.15s}
+.nav a:hover{background:#ff6b2c;color:#fff;border-color:#ff6b2c}
+.nav a b{font-weight:750;color:inherit;opacity:.55;margin-right:6px}
+/* ---------- 屏幕区 ---------- */
+.screen{width:100%;display:flex;flex-direction:column;align-items:center;gap:24px;scroll-margin-top:20px}
+.screen-head{width:100%;max-width:1080px;display:flex;flex-direction:column;gap:10px}
+.st-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.st-num{font-size:13px;font-weight:750;color:#ff6b2c;letter-spacing:.08em}
+.st-title{font-size:24px;font-weight:750;margin:0}
+.st-src{font-size:12px;color:#60656d}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{font-size:12px;color:#6d6a62;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:7px;padding:5px 10px}
+.chips span.new{color:#a8623c;border-color:rgba(255,107,44,.35);background:#fff7f2}
+.pairs{display:flex;gap:30px;flex-wrap:wrap;justify-content:center}
+.pair{display:flex;flex-direction:column;gap:10px;align-items:center}
+.theme-tag{font-size:12px;font-weight:700;color:#60656d;letter-spacing:.1em}
+/* ---------- 手机壳（令牌与 dict.html 完全一致，另加 --primary-text） ---------- */
+.phone{width:412px;height:900px;border-radius:30px;position:relative;overflow:hidden;background:var(--bg);color:var(--text);border:1px solid rgba(0,0,0,.09);flex:none}
+.phone.light{--bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--primary:#ff6b2c;--primary-text:#b34a15;--primary-soft:#fff0e6;--track:#e5e2de;--divider:rgba(0,0,0,.07);--field:rgba(0,0,0,.06);--menu:#fff;--error:#ba1a1a;--ok:#3b7a45;--scrim:rgba(0,0,0,.5)}
+.phone.dark{--bg:#141312;--surface:#1d1b19;--surface2:#242220;--text:#f3f0eb;--secondary:#b4b0aa;--primary:#ff6b2c;--primary-text:#ff6b2c;--primary-soft:#3a241b;--track:#353331;--divider:rgba(255,255,255,.08);--field:rgba(255,255,255,.08);--menu:#2a2824;--error:#ffb4ab;--ok:#7fd891;--scrim:rgba(0,0,0,.55)}
+.status{height:34px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0;font-size:14px;font-weight:600;flex:none}
+.status-right{display:flex;gap:10px;align-items:center}
+.hi{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:104px;height:4px;border-radius:3px;background:var(--text);opacity:.4;z-index:30;pointer-events:none}
+.icon-btn{width:48px;height:48px;border:0;background:transparent;border-radius:24px;display:grid;place-items:center;cursor:pointer;color:var(--text);flex:none;padding:0}
+.icon{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block}
+.icon.f{fill:currentColor;stroke:none}
+/* ---------- 页面骨架（blend 顶栏 + 搜索胶囊 + 汇总卡 + 列表） ---------- */
+.page{position:absolute;top:34px;left:0;right:0;bottom:0;display:flex;flex-direction:column}
+.appbar{flex:none;display:flex;align-items:center;gap:2px;padding:2px 6px 0;min-height:56px}
+.appbar h1{font-size:18px;font-weight:650;margin:0;padding:0 6px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-pill{flex:none;display:flex;align-items:center;gap:10px;height:40px;margin:8px 16px 10px;padding:0 14px;border-radius:20px;background:var(--surface2);color:var(--secondary);font-size:15px}
+.search-pill .icon{width:19px;height:19px;flex:none}
+.search-pill .sv{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-pill .sv.q{color:var(--text)}
+/* 总时长卡（重排自 activity_read_record.xml:17-60 平铺块） */
+.sum{flex:none;display:flex;align-items:center;gap:12px;margin:2px 16px 10px;background:var(--surface);border-radius:12px;padding:10px 8px 10px 16px}
+.sum .sinfo{flex:1;min-width:0}
+.sum .lab{font-size:12px;font-weight:600;color:var(--secondary)}
+.sum .val{font-size:18px;font-weight:700;color:var(--text);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sum .clr{border:0;background:transparent;font-family:inherit;font-size:13px;font-weight:600;color:var(--secondary);padding:12px 14px;border-radius:10px;cursor:pointer;flex:none;min-width:48px;min-height:48px;display:grid;place-items:center}
+/* 列表行（重排自 item_read_record.xml 三段 6dp 文字行） */
+.plist{flex:1;min-height:0;overflow:hidden;position:relative}
+.rrow{display:flex;align-items:center;gap:6px;padding:13px 4px 13px 16px}
+.rrow .txt{flex:1;min-width:0}
+.rname{font-size:15px;font-weight:550;color:var(--text);line-height:1.45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rmeta{font-size:12px;color:var(--secondary);line-height:1.55;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rdel{width:48px;height:48px;border:0;background:transparent;border-radius:24px;display:grid;place-items:center;color:var(--secondary);cursor:pointer;flex:none;padding:0}
+.rdel .icon{width:20px;height:20px}
+.rdiv{height:1px;background:var(--divider);margin-left:16px}
+/* ---------- 溢出菜单（06-rss 同款：surface 卡 + 12dp 圆角，无阴影） ---------- */
+.menu{position:absolute;z-index:9;min-width:196px;background:var(--menu);border:1px solid var(--divider);border-radius:12px;padding:6px}
+.menu button{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;text-align:left;font-size:14px;color:var(--text);padding:11px 12px;border-radius:9px;font-family:inherit;cursor:pointer;min-height:48px}
+.menu .mi-check{width:20px;height:20px;flex:none;color:var(--primary-text);visibility:hidden}
+.menu button.on .mi-check{visibility:visible}
+/* ---------- 确认弹窗（遮罩 + 266dp 圆角 16 卡，同 theme-list .alert-d） ---------- */
+.dim{position:absolute;inset:0;background:var(--scrim);z-index:5}
+.alert{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);width:266px;background:var(--surface);border:1px solid var(--divider);border-radius:16px;padding:20px 18px 6px;z-index:9}
+.alert h5{margin:0;font-size:16.5px;font-weight:650;color:var(--text)}
+.alert p{margin:10px 0 4px;font-size:13.5px;line-height:1.75;color:var(--secondary)}
+.afoot{display:flex;justify-content:flex-end;gap:2px;padding:8px 0}
+.aact{border:0;background:transparent;font-family:inherit;font-size:13.5px;font-weight:600;padding:10px 12px;border-radius:9px;cursor:pointer;min-width:48px;min-height:48px}
+.aact.no{color:var(--secondary)}
+.aact.yes{color:var(--primary-text)}
+/* ---------- 空态 ---------- */
+.emptywrap{position:absolute;inset:0;display:grid;place-items:center}
+.ein{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:0 44px}
+.ein .icon{width:44px;height:44px;color:var(--secondary);opacity:.55}
+.etitle{font-size:15px;font-weight:600;color:var(--text)}
+.esub{font-size:12.5px;line-height:1.7;color:var(--secondary)}
+/* ---------- 行规格对照（group-select .specbox 同构） ---------- */
+.specs{width:100%;max-width:1080px;display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.specbox{background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:14px;padding:16px 18px;width:470px;flex:none;display:flex;flex-direction:column;gap:12px;
+ --bg:#faf9f7;--surface:#fff;--surface2:#eeece9;--text:#20242b;--secondary:#60656d;--primary-text:#b34a15;--track:#e5e2de;--divider:rgba(0,0,0,.07)}
+.specbox .sf{font-size:13px;font-weight:700;color:#3a3833}
+.specbox .sf code{font-size:11.5px;font-weight:500;color:#60656d;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px;margin-left:8px}
+.specdemo{background:var(--bg);border-radius:10px;padding:2px 10px}
+.specmap{display:flex;flex-wrap:wrap;gap:6px}
+.specmap span{font-size:11.5px;color:#6d6a62;background:#faf9f7;border:1px solid rgba(0,0,0,.07);border-radius:6px;padding:4px 8px}
+/* 现状行复刻（6dp padding 文字行） */
+.orow{display:flex;align-items:flex-start;gap:2px;padding:0 4px}
+.orow .onm{flex:1;min-width:0;font-size:14px;color:var(--text);padding:6px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.orow .otag{font-size:14px;color:var(--secondary);padding:6px 0;white-space:nowrap}
+.orow .oclr{font-size:14px;color:var(--text);padding:6px 8px;white-space:nowrap;border-radius:4px;outline:1px dashed rgba(255,107,44,.55);outline-offset:-1px}
+/* ---------- 注释 / 令牌表 ---------- */
+.notes{width:100%;max-width:1080px;font-size:12.5px;line-height:1.9;color:#60656d;border-top:1px dashed rgba(0,0,0,.12);padding-top:12px}
+.notes code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px}
+.notes b{color:#45423a}
+.tok{width:100%;max-width:1080px;border-collapse:collapse;font-size:13px;color:#45423a}
+.tok th{font-size:12px;font-weight:700;color:#60656d;text-align:left;letter-spacing:.04em;padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.12)}
+.tok td{padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.07);vertical-align:top;line-height:1.7}
+.tok code{font-size:12px;background:rgba(0,0,0,.05);border-radius:5px;padding:1px 6px;white-space:nowrap}
+.tok .dim2{color:#60656d}
+.foot{font-size:12px;color:#60656d;text-align:center;line-height:2}
+</style></head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></symbol>
+<symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="12" cy="19" r="1.9"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+<symbol id="i-sort" viewBox="0 0 24 24"><path d="M4 6h16"/><path d="M4 12h11"/><path d="M4 18h7"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7"/><path d="M7 7l1 12.2A1.8 1.8 0 0 0 9.8 21h4.4A1.8 1.8 0 0 0 16 19.2L17 7"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2.2"/></symbol>
+</defs></svg>
+
+<div class="wrap">
+
+<header class="page-head">
+  <div class="kicker">LEGADO V2 · MOCKUP</div>
+  <h1 class="h1">阅读记录页 · 新界面<small>ReadRecordActivity 重排</small></h1>
+  <p class="desc">迭代 <b>activity_read_record.xml + item_read_record.xml</b>（入口：「我的」→「阅读记录」）。颜色令牌已就位——两布局现行引用即 <code>on_surface</code> / <code>on_surface_variant</code>，本稿<b>不动任何色值</b>；重点在<b>行骨架重排</b>：现状所有文字行 6dp padding、触控仅约 31dp，重排为「总时长卡 + 两行元信息行 + 48dp 清除钮」，触控全部 ≥48dp。功能逐项保留：书名搜索实时过滤、三种排序（持久化）、开启记录开关、总阅读时长、逐书删除、清空全部、点行进书。视觉令牌（暖纸白/暖黑、blend 顶栏、40dp 搜索胶囊、16dp 弹窗圆角、无阴影）与 dict / source-picker 稿完全一致。</p>
+  <nav class="nav">
+    <a href="#s1"><b>01</b>主形态 · 浅/深</a>
+    <a href="#s2"><b>02</b>排序与记录开关</a>
+    <a href="#s3"><b>03</b>搜索与清除确认</a>
+    <a href="#s4"><b>04</b>空态 · 行规格对照</a>
+    <a href="#s5"><b>05</b>设计调整与落地映射</a>
+  </nav>
+</header>
+
+<!-- ================= 01 主形态 ================= -->
+<section class="screen" id="s1">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">01</span><h2 class="st-title">主形态 · 总时长卡与记录列表</h2><span class="st-src">activity_read_record.xml · item_read_record.xml · ReadRecordActivity.kt（默认名称排序）</span></div>
+    <div class="chips"><span>blend 顶栏 + 搜索胶囊（现样式不动）</span><span>总时长卡：标签 12sp / 值 18sp/700</span><span>行 = 书名 + 时长 + 最后阅读</span><span>行内清除 → 48dp 图标钮</span><span class="new">1dp 分割线 · 可选</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色 -->
+    <div class="pair"><div class="theme-tag">浅色 · 名称排序</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="page">
+        <div class="appbar">
+          <button class="icon-btn" type="button" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button>
+          <h1>阅读记录</h1>
+          <button class="icon-btn" type="button" aria-label="排序"><svg class="icon"><use href="#i-sort"/></svg></button>
+          <button class="icon-btn" type="button" aria-label="更多"><svg class="icon f"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="search-pill"><svg class="icon"><use href="#i-search"/></svg><span class="sv">搜索</span></div>
+        <div class="sum">
+          <div class="sinfo"><div class="lab">总阅读时间</div><div class="val">26天5小时22分钟</div></div>
+          <button class="clr" type="button">清除</button>
+        </div>
+        <div class="plist">
+          <div class="rrow"><div class="txt"><div class="rname">长夜余火</div><div class="rmeta">阅读时长: 3天2小时18分钟</div><div class="rmeta">最后阅读时间: 2026-11-02</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+          <div class="rdiv"></div>
+          <div class="rrow"><div class="txt"><div class="rname">大奉打更人</div><div class="rmeta">阅读时长: 22小时41分钟</div><div class="rmeta">最后阅读时间: 2026-10-30</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+          <div class="rdiv"></div>
+          <div class="rrow"><div class="txt"><div class="rname">诡秘之主</div><div class="rmeta">阅读时长: 12天7小时36分钟</div><div class="rmeta">最后阅读时间: 2026-11-03</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+          <div class="rdiv"></div>
+          <div class="rrow"><div class="txt"><div class="rname">剑来</div><div class="rmeta">阅读时长: 8天14小时52分钟</div><div class="rmeta">最后阅读时间: 2026-10-28</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+          <div class="rdiv"></div>
+          <div class="rrow"><div class="txt"><div class="rname">夜的命名术</div><div class="rmeta">阅读时长: 1天5小时9分钟</div><div class="rmeta">最后阅读时间: 2026-09-21</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+          <div class="rdiv"></div>
+          <div class="rrow"><div class="txt"><div class="rname">赘婿</div><div class="rmeta">阅读时长: 46分钟</div><div class="rmeta">最后阅读时间: 2026-10-12</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色 -->
+    <div class="pair"><div class="theme-tag">深色 · 同态对照</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="page">
+        <div class="appbar">
+          <button class="icon-btn" type="button" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button>
+          <h1>阅读记录</h1>
+          <button class="icon-btn" type="button" aria-label="排序"><svg class="icon"><use href="#i-sort"/></svg></button>
+          <button class="icon-btn" type="button" aria-label="更多"><svg class="icon f"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="search-pill"><svg class="icon"><use href="#i-search"/></svg><span class="sv">搜索</span></div>
+        <div class="sum">
+          <div class="sinfo"><div class="lab">总阅读时间</div><div class="val">26天5小时22分钟</div></div>
+          <button class="clr" type="button">清除</button>
+        </div>
+        <div class="plist">
+          <div class="rrow"><div class="txt"><div class="rname">长夜余火</div><div class="rmeta">阅读时长: 3天2小时18分钟</div><div class="rmeta">最后阅读时间: 2026-11-02</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+          <div class="rdiv"></div>
+          <div class="rrow"><div class="txt"><div class="rname">大奉打更人</div><div class="rmeta">阅读时长: 22小时41分钟</div><div class="rmeta">最后阅读时间: 2026-10-30</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+          <div class="rdiv"></div>
+          <div class="rrow"><div class="txt"><div class="rname">诡秘之主</div><div class="rmeta">阅读时长: 12天7小时36分钟</div><div class="rmeta">最后阅读时间: 2026-11-03</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+          <div class="rdiv"></div>
+          <div class="rrow"><div class="txt"><div class="rname">剑来</div><div class="rmeta">阅读时长: 8天14小时52分钟</div><div class="rmeta">最后阅读时间: 2026-10-28</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+          <div class="rdiv"></div>
+          <div class="rrow"><div class="txt"><div class="rname">夜的命名术</div><div class="rmeta">阅读时长: 1天5小时9分钟</div><div class="rmeta">最后阅读时间: 2026-09-21</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+          <div class="rdiv"></div>
+          <div class="rrow"><div class="txt"><div class="rname">赘婿</div><div class="rmeta">阅读时长: 46分钟</div><div class="rmeta">最后阅读时间: 2026-10-12</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>入口</code> — 「我的」→「阅读记录」（MyFragment.kt:165 <code>"readRecord" → startActivity&lt;ReadRecordActivity&gt;()</code>）。</li>
+    <li><code>顶栏</code> — activity_read_record.xml:9-15 TitleBar（<code>themeMode=blend</code> + <code>contentLayout=view_search</code>）：返回 + 标题「阅读记录」+ 排序图标钮（menu_sort <code>showAsAction=always</code>，menu/book_read_record.xml:7-38，图标沿用 ic_sort）+ ⋮ 溢出（menu_enable_record <code>never</code>）。搜索胶囊现样式不动（view_search.xml：40dp、bg_tab_capsule=surface_container_high 实底、上下边距 8dp），hint=「搜索」（ReadRecordActivity.kt:117）。</li>
+    <li><code>总时长卡（重排）</code> — 现状 activity_read_record.xml:17-60 三个 6dp padding TextView 平铺 → <b>surface_container 卡</b>（12dp 圆角 = corner_radius_md、内边距 14/16）：<code>tv_book_name</code>（文字仍由代码 <code>setText(R.string.all_read_time)</code>，ReadRecordActivity.kt:100）→ 12sp/600 on_surface_variant 标签；<code>tv_reading_time</code>（initAllTime kt:131-138 → formatDuring kt:219-233）→ 18sp/700 on_surface；<code>tv_remove</code>「清除」→ 右侧 48dp 最小触控文字钮（确认后 <code>readRecordDao.clear()</code>，kt:101-109）。</li>
+    <li><code>行（重排）</code> — item_read_record.xml：书名 15sp/550 on_surface 单行（kt:173）；第二三行保留字符串 <code>reading_time_tag</code>「阅读时长:」/ <code>last_read_time_tag</code>「最后阅读时间:」前缀，12sp on_surface_variant（kt:174-179）；行内边距 14/16、最小行高 64dp；root <code>selectableItemBackground</code> 保留（kt:185-197 点行 → <code>bookDao.findByName</code> → 有书 <code>startActivityForBook</code> / 无书 <code>SearchActivity.start(bookName)</code>）。</li>
+    <li><code>行内清除</code> — <code>tv_remove</code> 文字钮 → 48×48dp 图标钮（复用现有 <code>ic_outline_delete.xml</code>，tint on_surface_variant）；行为不变：sureDelAlert「是否确认删除 %s」→ <code>deleteByName</code>（kt:198-215）。</li>
+    <li><code>分割线（新增·可选）</code> — 现状无分隔；对齐 rss 文章/书源列表族语汇加 1dp outline_variant、左缩进 16dp。可移除，见 §05 表第 7 条。</li>
+    <li><code>手势导航</code> — <code>clipToPadding=false</code>（activity_read_record.xml:66）+ <code>applyNavigationBarPadding</code>（kt:111）不动，末行不被手势条遮挡。</li>
+  </ul>
+</section>
+
+<!-- ================= 02 排序与记录开关 ================= -->
+<section class="screen" id="s2">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">02</span><h2 class="st-title">排序子菜单与「开启记录」溢出项</h2><span class="st-src">menu/book_read_record.xml · ReadRecordActivity.kt:56-96（系统菜单，无页面布局改动）</span></div>
+    <div class="chips"><span>排序 always → 顶栏图标钮</span><span>三项单选 · readRecordSort 持久化</span><span>开启记录 checkable → ⋮ 溢出</span><span>选中态 MDC 自带 colorPrimary</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：排序子菜单 -->
+    <div class="pair"><div class="theme-tag">浅色 · 排序子菜单展开</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="page">
+        <div class="appbar">
+          <button class="icon-btn" type="button" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button>
+          <h1>阅读记录</h1>
+          <button class="icon-btn" type="button" aria-label="排序"><svg class="icon"><use href="#i-sort"/></svg></button>
+          <button class="icon-btn" type="button" aria-label="更多"><svg class="icon f"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="search-pill"><svg class="icon"><use href="#i-search"/></svg><span class="sv">搜索</span></div>
+        <div class="sum">
+          <div class="sinfo"><div class="lab">总阅读时间</div><div class="val">26天5小时22分钟</div></div>
+          <button class="clr" type="button">清除</button>
+        </div>
+        <div class="plist">
+          <div class="rrow"><div class="txt"><div class="rname">长夜余火</div><div class="rmeta">阅读时长: 3天2小时18分钟</div><div class="rmeta">最后阅读时间: 2026-11-02</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+          <div class="rdiv"></div>
+          <div class="rrow"><div class="txt"><div class="rname">大奉打更人</div><div class="rmeta">阅读时长: 22小时41分钟</div><div class="rmeta">最后阅读时间: 2026-10-30</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+          <div class="rdiv"></div>
+          <div class="rrow"><div class="txt"><div class="rname">诡秘之主</div><div class="rmeta">阅读时长: 12天7小时36分钟</div><div class="rmeta">最后阅读时间: 2026-11-03</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+          <div class="rdiv"></div>
+          <div class="rrow"><div class="txt"><div class="rname">剑来</div><div class="rmeta">阅读时长: 8天14小时52分钟</div><div class="rmeta">最后阅读时间: 2026-10-28</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+        </div>
+      </div>
+      <div class="menu" style="right:54px;top:88px">
+        <button type="button" class="on"><svg class="mi-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg>名称排序</button>
+        <button type="button"><svg class="mi-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg>阅读时长排序</button>
+        <button type="button"><svg class="mi-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg>阅读时间排序</button>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：⋮ 溢出 -->
+    <div class="pair"><div class="theme-tag">深色 · ⋮ 溢出菜单</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="page">
+        <div class="appbar">
+          <button class="icon-btn" type="button" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button>
+          <h1>阅读记录</h1>
+          <button class="icon-btn" type="button" aria-label="排序"><svg class="icon"><use href="#i-sort"/></svg></button>
+          <button class="icon-btn" type="button" aria-label="更多"><svg class="icon f"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="search-pill"><svg class="icon"><use href="#i-search"/></svg><span class="sv">搜索</span></div>
+        <div class="sum">
+          <div class="sinfo"><div class="lab">总阅读时间</div><div class="val">26天5小时22分钟</div></div>
+          <button class="clr" type="button">清除</button>
+        </div>
+        <div class="plist">
+          <div class="rrow"><div class="txt"><div class="rname">长夜余火</div><div class="rmeta">阅读时长: 3天2小时18分钟</div><div class="rmeta">最后阅读时间: 2026-11-02</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+          <div class="rdiv"></div>
+          <div class="rrow"><div class="txt"><div class="rname">大奉打更人</div><div class="rmeta">阅读时长: 22小时41分钟</div><div class="rmeta">最后阅读时间: 2026-10-30</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+        </div>
+      </div>
+      <div class="menu" style="right:8px;top:88px">
+        <button type="button" class="on"><svg class="mi-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m8 12.5 2.6 2.5L16 9.5"/></svg>开启记录</button>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>排序</code> — 顶栏排序图标钮子菜单三项单选（menu/book_read_record.xml:15-31 <code>checkableBehavior=single</code>）：名称排序 / 阅读时长排序 / 阅读时间排序。选择写 <code>LocalConfig.readRecordSort</code>（kt:39-43,73-89）并 initData 重排（kt:140-155：0=书名 cnCompare、1=readTime 降序、2=lastRead 降序）；勾选态由 <code>onMenuOpened</code> 回填（kt:61-69）。菜单为系统 ListPopupWindow，选中圆点/对勾随主题 colorPrimary，无页面代码改动。</li>
+    <li><code>开启记录</code> — ⋮ 溢出 checkable 项（menu_enable_record，menu/book_read_record.xml:40-44）：勾选态 = <code>AppConfig.enableReadRecord</code>（kt:61-62,91-93）；关闭后不再累计新时长，既有记录仍显示、可删。稿面深色机为已开启态。</li>
+    <li><code>换肤</code> — 两处均为系统 MenuPopup，样式随主题；本页两布局零 primary/accent 引用（已核查 item_read_record.xml / activity_read_record.xml 全部 textColor），主色只出现在系统菜单选中态（主题映射，非布局硬编码，MASTER §4）。</li>
+  </ul>
+</section>
+
+<!-- ================= 03 搜索与清除确认 ================= -->
+<section class="screen" id="s3">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">03</span><h2 class="st-title">搜索过滤与清除确认</h2><span class="st-src">ReadRecordActivity.kt:114-129 · :101-109 · :198-215 · lib.dialogs.alert</span></div>
+    <div class="chips"><span>onQueryTextChange 实时过滤</span><span>仅过滤列表 · 总时长不变</span><span>清空全部二次确认</span><span>单本删除二次确认（同卡型）</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：搜索命中 -->
+    <div class="pair"><div class="theme-tag">浅色 · 搜索「剑」</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="page">
+        <div class="appbar">
+          <button class="icon-btn" type="button" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button>
+          <h1>阅读记录</h1>
+          <button class="icon-btn" type="button" aria-label="排序"><svg class="icon"><use href="#i-sort"/></svg></button>
+          <button class="icon-btn" type="button" aria-label="更多"><svg class="icon f"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="search-pill"><svg class="icon"><use href="#i-search"/></svg><span class="sv q">剑</span><svg class="icon" style="color:var(--secondary)" aria-label="清除"><use href="#i-close"/></svg></div>
+        <div class="sum">
+          <div class="sinfo"><div class="lab">总阅读时间</div><div class="val">26天5小时22分钟</div></div>
+          <button class="clr" type="button">清除</button>
+        </div>
+        <div class="plist">
+          <div class="rrow"><div class="txt"><div class="rname">剑来</div><div class="rmeta">阅读时长: 8天14小时52分钟</div><div class="rmeta">最后阅读时间: 2026-10-28</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 深色：清空全部确认 -->
+    <div class="pair"><div class="theme-tag">深色 · 清空全部确认</div>
+    <div class="phone dark">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="page">
+        <div class="appbar">
+          <button class="icon-btn" type="button" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button>
+          <h1>阅读记录</h1>
+          <button class="icon-btn" type="button" aria-label="排序"><svg class="icon"><use href="#i-sort"/></svg></button>
+          <button class="icon-btn" type="button" aria-label="更多"><svg class="icon f"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="search-pill"><svg class="icon"><use href="#i-search"/></svg><span class="sv">搜索</span></div>
+        <div class="sum">
+          <div class="sinfo"><div class="lab">总阅读时间</div><div class="val">26天5小时22分钟</div></div>
+          <button class="clr" type="button">清除</button>
+        </div>
+        <div class="plist">
+          <div class="rrow"><div class="txt"><div class="rname">长夜余火</div><div class="rmeta">阅读时长: 3天2小时18分钟</div><div class="rmeta">最后阅读时间: 2026-11-02</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+          <div class="rdiv"></div>
+          <div class="rrow"><div class="txt"><div class="rname">大奉打更人</div><div class="rmeta">阅读时长: 22小时41分钟</div><div class="rmeta">最后阅读时间: 2026-10-30</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+        </div>
+      </div>
+      <div class="dim"></div>
+      <div class="alert">
+        <h5>删除</h5>
+        <p>是否确认删除？<br><span style="opacity:.8">将清空全部书籍的阅读记录</span></p>
+        <div class="afoot"><button class="aact no" type="button">取消</button><button class="aact yes" type="button">确定</button></div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <ul class="notes">
+    <li><code>搜索</code> — TitleBar 内 SearchView（kt:44-46,114-129）：<code>onQueryTextChange</code> 实时 <code>initData(newText)</code> → <code>readRecordDao.search</code>（ReadRecordDao.kt:33，按书名匹配）；提交仅 <code>clearFocus</code>（kt:119-122）。过滤只作用于列表，<b>总时长卡不随之变化</b>（allTime 独立查询 kt:131-138）——稿面浅色机维持 26天5小时22分钟。</li>
+    <li><code>清空全部</code> — 总时长卡「清除」→ <code>alert(删除, 是否确认删除？)</code>（kt:101-109，lib.dialogs.alert = MaterialAlertDialog）：确定 → <code>readRecordDao.clear()</code>（ReadRecordDao.kt:51）+ initData 刷新。稿面第二行补充说明为稿面文案，正文首行沿用现有字符串 <code>sure_del</code>。<b>现状缺口</b>：确定回调仅 <code>initData()</code>（kt:104-105），总时长卡 <code>initAllTime()</code> 仅创建时执行（kt:52）——清空后卡上仍显示旧值，落地需在该回调内补一行 <code>initAllTime()</code>（见 §05 第 9 条），否则空态「0秒」与卡值矛盾。</li>
+    <li><code>单本删除</code> — 行内清除钮 → <code>sureDelAlert</code>：正文「是否确认删除 %s」（<code>sure_del_any</code>，书名裸拼，values-zh/strings.xml:509）→ <code>deleteByName</code>（kt:206-215，ReadRecordDao.kt:54）。弹窗卡型与右机一致，仅文案不同，不重复画。同上：删除回调现状仅 <code>initData()</code>（kt:210-211），总时长卡需同步补 <code>initAllTime()</code>。</li>
+    <li><code>弹窗规格</code> — 266dp 宽、16dp 圆角（全局主题，DECISIONS §4）、遮罩 50%/55%；「取消」次要色、「确定」= 主题 colorPrimary 肯定钮；亮色稿面演示 #B34A15（纸上对比 ≥4.5:1，同 source-picker / theme-list 稿注），运行时随 ThemeStore，不落布局。按钮触控 ≥48dp。</li>
+  </ul>
+</section>
+
+<!-- ================= 04 空态与行规格 ================= -->
+<section class="screen" id="s4">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">04</span><h2 class="st-title">空态引导与行规格对照</h2><span class="st-src">空态 = 新增增强（现状空白列表）· 行规格 = item_read_record.xml 现状 ↔ 本稿</span></div>
+    <div class="chips"><span class="new">空态引导 · 新增（可移除）</span><span class="new">搜索无命中 · 独立文案（searchKey 分支）</span><span>总时长卡刷新缺口 · 落地补 initAllTime()</span><span>现状行触控 ≈31dp → 48dp</span><span>行最小高 64dp</span><span>无按钮 · 不虚构跳转</span></div>
+  </div>
+  <div class="pairs">
+    <!-- 浅色：空态 -->
+    <div class="pair"><div class="theme-tag">浅色 · 无记录空态（新增）</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="page">
+        <div class="appbar">
+          <button class="icon-btn" type="button" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button>
+          <h1>阅读记录</h1>
+          <button class="icon-btn" type="button" aria-label="排序"><svg class="icon"><use href="#i-sort"/></svg></button>
+          <button class="icon-btn" type="button" aria-label="更多"><svg class="icon f"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="search-pill"><svg class="icon"><use href="#i-search"/></svg><span class="sv">搜索</span></div>
+        <div class="sum">
+          <div class="sinfo"><div class="lab">总阅读时间</div><div class="val">0秒</div></div>
+          <button class="clr" type="button">清除</button>
+        </div>
+        <div class="plist">
+          <div class="emptywrap">
+            <div class="ein">
+              <svg class="icon"><use href="#i-clock"/></svg>
+              <div class="etitle">还没有阅读记录</div>
+              <div class="esub">在 ⋮ 菜单开启记录后<br>每本书的阅读时长将在这里累计</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+    <!-- 浅色：搜索无命中 -->
+    <div class="pair"><div class="theme-tag">浅色 · 搜索无命中（独立文案）</div>
+    <div class="phone light">
+      <div class="status"><span>14:18 ◇</span><span class="status-right"><span>3G</span><span>▮▮▮</span><span>▮</span></span></div>
+      <div class="page">
+        <div class="appbar">
+          <button class="icon-btn" type="button" aria-label="返回"><svg class="icon"><use href="#i-back"/></svg></button>
+          <h1>阅读记录</h1>
+          <button class="icon-btn" type="button" aria-label="排序"><svg class="icon"><use href="#i-sort"/></svg></button>
+          <button class="icon-btn" type="button" aria-label="更多"><svg class="icon f"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="search-pill"><svg class="icon"><use href="#i-search"/></svg><span class="sv q">斗破</span><svg class="icon" style="color:var(--secondary)" aria-label="清除"><use href="#i-close"/></svg></div>
+        <div class="sum">
+          <div class="sinfo"><div class="lab">总阅读时间</div><div class="val">26天5小时22分钟</div></div>
+          <button class="clr" type="button">清除</button>
+        </div>
+        <div class="plist">
+          <div class="emptywrap">
+            <div class="ein">
+              <svg class="icon"><use href="#i-search"/></svg>
+              <div class="etitle">未找到匹配的书籍</div>
+              <div class="esub">换个关键字试试<br>清除搜索框可回到全部记录</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hi"></div>
+    </div></div>
+  </div>
+  <div class="specs">
+    <div class="specbox">
+      <div class="sf">现状行<code>item_read_record.xml · 6dp padding 三段文字</code></div>
+      <div class="specdemo">
+        <div class="orow"><span class="onm">诡秘之主</span><span class="oclr">清除</span></div>
+        <div class="orow"><span class="otag">阅读时长: 12天7小时36分钟</span></div>
+        <div class="orow"><span class="otag">最后阅读时间: 2026-11-03</span></div>
+      </div>
+      <div class="specmap"><span>每行 padding 6dp → 文字触控 ≈31dp</span><span>「清除」仅 6dp padding ≈31×40dp</span><span>无分隔线 · 行内 10dp 边距</span><span>标签与值分 4 个 TextView</span></div>
+    </div>
+    <div class="specbox">
+      <div class="sf">新稿行（本稿）<code>item_read_record.xml 重排</code></div>
+      <div class="specdemo">
+        <div class="rrow"><div class="txt"><div class="rname">诡秘之主</div><div class="rmeta">阅读时长: 12天7小时36分钟</div><div class="rmeta">最后阅读时间: 2026-11-03</div></div><button class="rdel" type="button" aria-label="清除"><svg class="icon"><use href="#i-trash"/></svg></button></div>
+      </div>
+      <div class="specmap"><span>书名 15sp/550 on_surface</span><span>元信息 12sp on_surface_variant ×2</span><span>清除 = 48×48dp 图标钮</span><span>行最小高 64dp · 分割线 1dp</span></div>
+    </div>
+  </div>
+  <ul class="notes">
+    <li><code>空态（新增·可移除）</code> — 现状空列表无任何提示（activity_read_record.xml:62-67 仅 RecyclerView，无空视图）。触发<b>必须按 searchKey 分支</b>：<code>initData(searchKey)</code> 同时服务首载与实时过滤（ReadRecordActivity.kt:124-127 <code>onQueryTextChange → initData(newText)</code> 走同一判空），若只判「结果为空」则搜索无命中时误显开启记录引导。<code>searchKey 为空</code>且结果为空 → 时钟图标 + 「还没有阅读记录 / 在 ⋮ 菜单开启记录后累计」（左机）；<code>searchKey 非空</code>且无命中 → 「未找到匹配的书籍 / 换个关键字试试」（右机，语汇同 source-picker tv_msg）。落点：布局新增居中 tv_empty（默认 gone）+ Kotlin:140-155 判空处按 searchKey 切文案（或两个文案视图二选一显示）。<b>不设按钮</b>——现状无「去开启」代码路径，不虚构跳转；引导文案指向 ⋮ 菜单真实入口。</li>
+    <li><code>总时长卡刷新（现状缺口·落地补）</code> — <code>initAllTime()</code> 仅 <code>onActivityCreated</code> 执行（kt:52）；清空全部（kt:104-105）与单本删除（kt:210-211）的确定回调现状只调 <code>initData()</code>，卡上总时长不刷新、显示旧值。左机空态「0秒」按<b>修复后行为</b>呈现；落地需在两处回调内各补一行 <code>initAllTime()</code>（见 §05 第 9 条），否则清空后「0秒 + 还没有阅读记录」与卡上旧值同屏矛盾。</li>
+    <li><code>行规格对照</code> — 现状三段文字行均 padding 6dp（item_read_record.xml:15,28,39,51,62,74），文字行高约 31dp，低于 MASTER §4 的 48dp 触控标准；「清除」文字钮同样 6dp padding。新稿：名称 15sp/550 + 两行 12sp 元信息（标签字符串不动）+ 48×48dp 图标钮，行最小高 64dp、相邻触控间距 ≥8dp（行 padding 13dp 上下）。</li>
+    <li><code>字阶与颜色</code> — 标题 18sp/650、汇总值 18sp/700（Title 级）、书名 15sp/550（与分组行 15sp/500 同档，group-select#s3）、元信息 12sp（辅助级）；颜色仅 on_surface / on_surface_variant / outline_variant 三族 + surface/surface_container 表面，无新增色值。</li>
+  </ul>
+</section>
+
+<!-- ================= 05 设计调整与落地映射 ================= -->
+<section class="screen" id="s5">
+  <div class="screen-head">
+    <div class="st-row"><span class="st-num">05</span><h2 class="st-title">设计调整与落地映射</h2><span class="st-src">每条改动 → 布局文件 · 控件（实现者对照表）</span></div>
+  </div>
+  <table class="tok">
+    <tr><th style="width:22%">改动</th><th style="width:38%">落点 · 文件 / 控件</th><th>规格与行为</th></tr>
+    <tr><td><code>1 颜色令牌</code></td><td>activity_read_record.xml、item_read_record.xml 全部 textColor</td><td><b>零改动</b>：两布局已引用 <code>@color/on_surface</code>（activity:29,55；item:16,76）、<code>@color/on_surface_variant</code>（activity:42；item:31,41,54,64）——即「仅令牌改名」，稿面按令牌取值不新增色值</td></tr>
+    <tr><td><code>2 顶栏 + 搜索胶囊</code></td><td>activity_read_record.xml:9-15 TitleBar；view_search.xml</td><td><b>不动</b>：themeMode=blend、contentLayout=view_search 已是定稿样式；hint=「搜索」（Kotlin:117）；返回键由 TitleBar navigationIcon 承担</td></tr>
+    <tr><td><code>3 顶栏动作触控</code></td><td>menu/book_read_record.xml（不改文件）；TitleBar ActionMenuItemView</td><td>排序=always 图标钮、开启记录=never → ⋮ 溢出；AppCompat 动作位自带 ≥48dp 触控，无需改布局</td></tr>
+    <tr><td><code>4 总时长卡（重排）</code></td><td>activity_read_record.xml:17-60 ConstraintLayout → 卡片容器；tv_book_name(:23)、tv_reading_time(:36)、tv_remove(:48)</td><td>容器加 surface_container 卡面 + 12dp 圆角（新增 drawable，如 <code>bg_read_record_summary.xml</code>）+ 内边距 14/16；tv_book_name=标签 12sp/600 on_surface_variant（文字仍由代码 setText(R.string.all_read_time)，Kotlin:100）；tv_reading_time=值 18sp/700 on_surface；tv_remove「清除」min 48×48dp 文字钮（原 padding 6dp 触控≈31dp）</td></tr>
+    <tr><td><code>5 列表行骨架（重排）</code></td><td>item_read_record.xml：root(:2)、tv_book_name(:11)、tv_reading_time_tag(:24)+tv_reading_time(:35)、tv_last_read_time_tag(:47)+tv_last_read_time(:58)</td><td>root padding 10dp → 行内 14/16；书名 14sp → 15sp/550 单行 ellipsis；两行元信息 12sp on_surface_variant、行距 4dp（标签字符串资源不动）；行最小高 64dp；<b>绑定逻辑零改动</b>（Kotlin:172-179）</td></tr>
+    <tr><td><code>6 行内「清除」钮</code></td><td>item_read_record.xml:70-80 tv_remove</td><td>文字钮 → 48×48dp 图标钮：图标复用现有 <code>ic_outline_delete.xml</code>（无需新增），tint on_surface_variant；确认与删除行为不变（Kotlin:198-215）</td></tr>
+    <tr><td><code>7 分割线</code> <span class="dim2">新增·可选</span></td><td>item_read_record.xml 底部加 1dp View（或 RecyclerView ItemDecoration）</td><td>1dp outline_variant、左缩进 16dp；对齐 rss 文章 / 书源列表族语汇；不加则行间靠 13dp 上下 padding 亦可，非阻塞</td></tr>
+    <tr><td><code>8 空态</code> <span class="dim2">新增·可移除</span></td><td>activity_read_record.xml 新增居中 tv_empty（默认 gone，叠于 RecyclerView 之上）；文案分支落 Kotlin:140-155（initData 判空处，searchKey 同时来自首载与 kt:124-127 搜索实时过滤）</td><td><b>按 searchKey 分支，不可只判「结果为空」</b>：searchKey 为空且结果为空 → 时钟图标 + 「还没有阅读记录 / 在 ⋮ 菜单开启记录后累计」（§04 左机）；searchKey 非空且无命中 → 「未找到匹配的书籍 / 换个关键字试试」（§04 右机，不显示开启记录引导）；无按钮、不新增跳转路径</td></tr>
+    <tr><td><code>9 确认弹窗 + 总时长刷新</code></td><td class="dim2">弹窗无页面文件改动（lib.dialogs.alert → MaterialAlertDialog；全局 16dp 圆角见 DECISIONS §4）；总时长刷新落 <b>ReadRecordActivity.kt:104-105 与 :210-211</b> 两处确定回调</td><td>清空全部：标题「删除」/ 正文 <code>sure_del</code>「是否确认删除？」→ readRecordDao.clear()（Kotlin:101-109）；单本：正文 <code>sure_del_any</code>「是否确认删除 %s」→ deleteByName（Kotlin:206-215）；「确定」= 主题 colorPrimary 肯定钮，布局零 primary/accent 引用（MASTER §4）。<b>现状缺口</b>：initAllTime() 仅 kt:52 创建时执行，两处回调现状只 initData() → 清空/删除后总时长卡显示旧值；落地各补一行 <code>initAllTime()</code>（否则 §04 空态屏「0秒」与卡值矛盾，稿面按修复后行为呈现）</td></tr>
+    <tr><td><code>10 手势 / 列表容器</code></td><td>activity_read_record.xml:62-67 RecyclerView；ReadRecordActivity.kt:110-111</td><td><b>不动</b>：clipToPadding=false + applyNavigationBarPadding，末行不被手势条遮挡</td></tr>
+  </table>
+  <ul class="notes">
+    <li><code>[NEED-DECISION] 总时长卡容器</code> — 稿面默认加 surface_container 卡面（页面唯一焦点，内容优先）；若偏好更轻量，可保持平铺仅调间距/字号（表第 4 条去掉 drawable 一项），其余不变。</li>
+    <li><code>[NEED-DECISION] 行内清除形态</code> — 稿面默认 48dp 图标钮（ic_outline_delete，theme-list 行内删除同款语汇）；若希望保留文字「清除」，改为 min 48dp 高文字钮即可，仅动 tv_remove 样式。</li>
+    <li><code>[NEED-DECISION] 分割线 / 空态</code> — 均为对齐列表族语汇的增强项，可整体移除，不影响功能与令牌（表第 7、8 条）。</li>
+    <li><code>换肤</code> — 本页无任何运行时主色语义：主色只出现在系统菜单选中态与确认弹窗肯定钮（均走主题 colorPrimary 映射）；两布局现行引用已全为新令牌，无 primary/accent 硬编码，换肤不受影响（MASTER §4）。</li>
+  </ul>
+</section>
+
+<div class="foot">legado v2 · 阅读记录页设计稿 · 令牌来源 design-system/legado/MASTER.md · 功能对照 ReadRecordActivity.kt / menu/book_read_record.xml（classic-base）</div>
+</div>
+</body></html>

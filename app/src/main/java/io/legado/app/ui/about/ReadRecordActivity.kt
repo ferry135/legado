@@ -1,12 +1,17 @@
 package io.legado.app.ui.about
 
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.BaseActivity
 import io.legado.app.base.adapter.ItemViewHolder
@@ -23,19 +28,23 @@ import io.legado.app.ui.book.search.SearchActivity
 import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.cnCompare
+import io.legado.app.utils.dpToPx
 import io.legado.app.utils.getInt
 import io.legado.app.utils.putInt
 import io.legado.app.utils.startActivityForBook
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
+import kotlin.math.roundToInt
 
 class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
 
     private val adapter by lazy { RecordAdapter(this) }
+    private var initDataJob: Job? = null
     private var sortMode
         get() = LocalConfig.getInt("readRecordSort")
         set(value) {
@@ -103,12 +112,18 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
                 yesButton {
                     appDb.readRecordDao.clear()
                     initData()
+                    // 总时长刷新（设计稿 §05 第 9 条）：initAllTime 原仅创建时执行（onActivityCreated），
+                    // 清空后补调一次，总时长卡与列表同步回到 0秒
+                    initAllTime()
                 }
                 noButton()
             }
         }
         binding.recyclerView.adapter = adapter
         binding.recyclerView.applyNavigationBarPadding()
+        // 行分割线（设计稿 §05 第 7 条）：1dp hairline 左缩进 16dp，仅画在行与行之间（RowDivider 跳过末行，
+        // 对齐稿面 §01 末行下无线；androidx DividerItemDecoration 无末项检查，末行下也会画线）
+        binding.recyclerView.addItemDecoration(RowDivider(this))
     }
 
     private fun initSearchView() {
@@ -138,7 +153,10 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
     }
 
     private fun initData(searchKey: String? = null) {
-        lifecycleScope.launch {
+        // 竞态防护（评审项 1）：onQueryTextChange 逐字符触发且不取消前一查询，IO 并行下
+        // 旧 searchKey 的结果可能晚于新查询返回并覆盖列表与空态；取消前一查询，只提交最后一次
+        initDataJob?.cancel()
+        initDataJob = lifecycleScope.launch {
             val readRecords = withContext(IO) {
                 appDb.readRecordDao.search(searchKey ?: "").let { records ->
                     when (sortMode) {
@@ -151,6 +169,44 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
                 }
             }
             adapter.setItems(readRecords)
+            upEmptyTip(searchKey, readRecords.isEmpty())
+        }
+    }
+
+    // 空态按 searchKey 分支（设计稿 §05 第 8 条）：initData 同时服务首载与搜索实时过滤
+    // （onQueryTextChange → initData(newText)），不能只判「结果为空」——
+    // 搜索无命中须显示独立文案，不得误显「开启记录」引导
+    private fun upEmptyTip(searchKey: String?, empty: Boolean) {
+        binding.emptyTip.isGone = !empty || !searchKey.isNullOrEmpty()
+        binding.emptyTipSearch.isGone = !empty || searchKey.isNullOrEmpty()
+    }
+
+    // 行分割线：绘制范围/取界与 androidx DividerItemDecoration.drawVertical 一致（javap 1.2.0 核实），
+    // 仅按 adapter 位置跳过末项，使末行下不画线（对齐 read-record-page.html §01）
+    private inner class RowDivider(context: Context) : RecyclerView.ItemDecoration() {
+
+        private val divider = ContextCompat.getDrawable(context, R.drawable.ic_divider)!!
+        private val inset = 16.dpToPx()
+        private val bounds = Rect()
+
+        override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
+            c.save()
+            if (parent.clipToPadding) {
+                c.clipRect(
+                    parent.paddingLeft, parent.paddingTop,
+                    parent.width - parent.paddingRight, parent.height - parent.paddingBottom
+                )
+            }
+            val lastPos = state.itemCount - 1
+            for (i in 0 until parent.childCount) {
+                val child = parent.getChildAt(i)
+                if (parent.getChildAdapterPosition(child) == lastPos) continue
+                parent.getDecoratedBoundsWithMargins(child, bounds)
+                val bottom = bounds.bottom + child.translationY.roundToInt()
+                divider.setBounds(inset, bottom - divider.intrinsicHeight, parent.width, bottom)
+                divider.draw(c)
+            }
+            c.restore()
         }
     }
 
@@ -209,6 +265,8 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
                 yesButton {
                     appDb.readRecordDao.deleteByName(item.bookName)
                     initData()
+                    // 总时长刷新（设计稿 §05 第 9 条）：删除后总时长卡同步刷新，与列表一致
+                    initAllTime()
                 }
                 noButton()
             }

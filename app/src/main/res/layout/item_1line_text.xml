@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 单行文本行（generic-list-dialogs 稿 §03/§06 #9 升级）：行触控 ≥48dp + padding 10/16 +
+     15sp on_surface（primaryText 为 legacy alias，改引用以过 MASTER §3）+ ellipsize=end
+     （长文件名/规则名截断，全文分别在 TextDialog / ReplaceEditActivity 可见）。
+     共用声明：崩溃日志 CrashLogsDialog 与阅读页「起效替换规则」EffectiveReplacesDialog
+     (:85-86 绑定、:107 显示 item.name) 同用本布局，升级对两页同时生效（默认共用，
+     不拆 item_crash_log_line.xml） -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
+    android:minHeight="48dp"
     android:orientation="horizontal"
-    android:padding="6dp"
+    android:paddingLeft="16dp"
+    android:paddingTop="10dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="10dp"
     android:background="?attr/selectableItemBackground"
     tools:ignore="UseCompoundDrawables">
 
@@ -14,7 +24,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:ellipsize="end"
         android:singleLine="true"
-        android:textColor="@color/primaryText" />
+        android:textColor="@color/on_surface"
+        android:textSize="15sp" />
 
 </LinearLayout>

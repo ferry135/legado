@@ -1219,4 +1219,6 @@
     <string name="manga_epaper_value">阈值</string>
     <string name="disable_horizontal_animation">禁用水平滚动动画</string>
     <string name="enable_manga_gray">开启图片灰色</string>灰色
+    <string name="group_style_tag">Pestaña</string>
+    <string name="group_style_folder">Carpeta</string>
 </resources>

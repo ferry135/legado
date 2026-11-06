@@ -3,6 +3,9 @@ package io.legado.app.ui.main.bookshelf
 import android.annotation.SuppressLint
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
@@ -169,21 +172,24 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
             val alertBinding =
                 DialogBookshelfConfigBinding.inflate(layoutInflater)
                     .apply {
-                        spGroupStyle.setSelection(AppConfig.bookGroupStyle)
+                        // 胶囊拆两行 RadioGroup（LinearLayout 无换行能力），先挂互斥同步再回显勾选
+                        linkRadioGroups(rgLayoutRow1, rgLayoutRow2)
+                        linkRadioGroups(rgSortRow1, rgSortRow2)
+                        rgGroupStyle.checkByIndex(AppConfig.bookGroupStyle)
                         swShowUnread.isChecked = AppConfig.showUnread
                         swShowLastUpdateTime.isChecked = AppConfig.showLastUpdateTime
                         swShowWaitUpBooks.isChecked = AppConfig.showWaitUpCount
                         swShowBookshelfFastScroller.isChecked = AppConfig.showBookshelfFastScroller
-                        rgLayout.checkByIndex(bookshelfLayout)
-                        rgSort.checkByIndex(bookshelfSort)
+                        listOf(rgLayoutRow1, rgLayoutRow2).checkIndexAt(bookshelfLayout)
+                        listOf(rgSortRow1, rgSortRow2).checkIndexAt(bookshelfSort)
                     }
             customView { alertBinding.root }
             okButton {
                 alertBinding.apply {
                     var notifyMain = false
                     var recreate = false
-                    if (AppConfig.bookGroupStyle != spGroupStyle.selectedItemPosition) {
-                        AppConfig.bookGroupStyle = spGroupStyle.selectedItemPosition
+                    if (AppConfig.bookGroupStyle != rgGroupStyle.getCheckedIndex()) {
+                        AppConfig.bookGroupStyle = rgGroupStyle.getCheckedIndex()
                         notifyMain = true
                     }
                     if (AppConfig.showUnread != swShowUnread.isChecked) {
@@ -202,12 +208,12 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                         AppConfig.showBookshelfFastScroller = swShowBookshelfFastScroller.isChecked
                         postEvent(EventBus.BOOKSHELF_REFRESH, "")
                     }
-                    if (bookshelfSort != rgSort.getCheckedIndex()) {
-                        AppConfig.bookshelfSort = rgSort.getCheckedIndex()
+                    if (bookshelfSort != listOf(rgSortRow1, rgSortRow2).checkedIndex()) {
+                        AppConfig.bookshelfSort = listOf(rgSortRow1, rgSortRow2).checkedIndex()
                         upSort()
                     }
-                    if (bookshelfLayout != rgLayout.getCheckedIndex()) {
-                        AppConfig.bookshelfLayout = rgLayout.getCheckedIndex()
+                    if (bookshelfLayout != listOf(rgLayoutRow1, rgLayoutRow2).checkedIndex()) {
+                        AppConfig.bookshelfLayout = listOf(rgLayoutRow1, rgLayoutRow2).checkedIndex()
                         if (AppConfig.bookshelfLayout == 0) {
                             activityViewModel.booksGridRecycledViewPool.clear()
                         } else {
@@ -245,6 +251,47 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
                     allowExtensions = arrayOf("txt", "json")
                 }
             }
+        }
+    }
+
+    /**
+     * 书架设置弹窗胶囊单选换行路线①（03 映射「视图/排序单选组」）：RadioGroup 即 LinearLayout
+     * 无换行能力，胶囊拆两行 RadioGroup 后由本互斥同步保持单选语义——勾选任一行时清空另一行。
+     */
+    private fun linkRadioGroups(vararg groups: RadioGroup) {
+        var syncing = false
+        groups.forEach { group ->
+            group.setOnCheckedChangeListener { checkedGroup, checkedId ->
+                if (syncing || checkedId == View.NO_ID) return@setOnCheckedChangeListener
+                syncing = true
+                groups.forEach { if (it !== checkedGroup) it.clearCheck() }
+                syncing = false
+            }
+        }
+    }
+
+    /** ViewExtensions.getCheckedIndex 的跨组版本：勾选索引 = 各行胶囊的平铺序号，失配时回落 0 */
+    private fun List<RadioGroup>.checkedIndex(): Int {
+        var index = 0
+        forEach { group ->
+            repeat(group.childCount) { i ->
+                val child = group.getChildAt(i)
+                if (child is RadioButton && child.id == group.checkedRadioButtonId) return index
+                index++
+            }
+        }
+        return 0
+    }
+
+    /** ViewExtensions.checkByIndex 的跨组版本：按平铺序号勾选（平铺顺序须与布局行序一致） */
+    private fun List<RadioGroup>.checkIndexAt(index: Int) {
+        var offset = 0
+        forEach { group ->
+            if (index < offset + group.childCount) {
+                (group.getChildAt(index - offset) as? RadioButton)?.id?.let(group::check)
+                return
+            }
+            offset += group.childCount
         }
     }
 

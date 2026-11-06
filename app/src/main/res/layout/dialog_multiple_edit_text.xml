@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 键盘辅助键编辑弹窗表单（config-form-dialogs §05 + §06 输入域行 FILLED 路线）：
+     boxBackgroundMode=filled + boxBackgroundColor=surface_container_high（该属性只接受颜色，
+     不能引用 drawable）+ 10dp 圆角 + 聚焦 1.5dp 描边；描边色=运行时 accentColor 由
+     KeyboardAssistsConfig.applyInputTint 注入（MASTER §4 禁 XML 固化 accent）。
+     仅 KeyboardAssistsConfig.editKey 使用（本页私有布局）；控件 id（layout_1 / edit_1 /
+     layout_2 / edit_2）与 kt 行为（hint、layout_2 置 visible、取值保存）零改动 -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,15 +18,27 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- filled field：surface_container_high 实底 + 浮标 label + 聚焦主色描边（§06 规格盒） -->
         <io.legado.app.ui.widget.text.TextInputLayout
             android:id="@+id/layout_1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:boxBackgroundColor="@color/surface_container_high"
+            app:boxBackgroundMode="filled"
+            app:boxCornerRadiusBottomEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusTopStart="10dp"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="1.5dp">
 
             <io.legado.app.ui.widget.text.AutoCompleteTextView
                 android:id="@+id/edit_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:textColor="@color/on_surface"
+                android:textColorHint="@color/on_surface_variant"
                 tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
         </io.legado.app.ui.widget.text.TextInputLayout>
@@ -28,12 +47,24 @@
             android:id="@+id/layout_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone">
+            android:layout_marginTop="10dp"
+            android:visibility="gone"
+            app:boxBackgroundColor="@color/surface_container_high"
+            app:boxBackgroundMode="filled"
+            app:boxCornerRadiusBottomEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusTopStart="10dp"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="1.5dp">
 
             <io.legado.app.ui.widget.text.AutoCompleteTextView
                 android:id="@+id/edit_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:textColor="@color/on_surface"
+                android:textColorHint="@color/on_surface_variant"
                 tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
         </io.legado.app.ui.widget.text.TextInputLayout>

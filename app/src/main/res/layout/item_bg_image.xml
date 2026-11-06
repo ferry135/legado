@@ -1,27 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- read-bg-text-config#05「背景图条规格」：item 66×88dp 保留（≥48dp 触控）；iv_bg
+     fitCenter→centerCrop、tv_name 11sp→10.5sp secondary；新增选中态 = 缩略图上叠覆盖环
+     vw_ring（GradientDrawable 1.5dp stroke + 8dp 圆角，选中可见，色由代码 primaryColor
+     setStroke——勿用 View#setForeground：API 23+ 而本 item 根为 LinearLayout、minSdk 21）
+     + 右上 16dp 对勾角标 vw_badge（圆底色由代码 primaryColor 设）；header「选择图片」格
+     复用本 item：vw_bg_thumb 承接虚线描边（ink 30%、3/3dp，ReadStyleDialog footer 同款） -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tool="http://schemas.android.com/tools"
     android:layout_width="66dp"
     android:layout_height="88dp"
-    xmlns:tool="http://schemas.android.com/tools"
-    android:padding="2dp"
-    android:orientation="vertical">
+    android:layout_marginEnd="8dp"
+    android:orientation="vertical"
+    android:padding="2dp">
 
-    <ImageView
-        android:id="@+id/iv_bg"
+    <FrameLayout
+        android:id="@+id/vw_bg_thumb"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:scaleType="fitCenter"
-        android:contentDescription="@string/bg_image"
-        tool:src="@drawable/ic_image" />
+        android:layout_weight="1">
+
+        <ImageView
+            android:id="@+id/iv_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/bg_image"
+            android:scaleType="centerCrop"
+            tool:src="@drawable/ic_image" />
+
+        <!-- 选中覆盖环：默认不可见，选中时代码设 1.5dp primary stroke + 8dp 圆角 -->
+        <View
+            android:id="@+id/vw_ring"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <!-- 选中对勾角标：16dp 圆底（代码 primaryColor）+ 白勾，右上角；内缩 3dp 使其
+             完整落在容器 8dp 圆角裁剪内（(8-3)·√2 ≈ 7.07 < 8，1dp 时 9.9 会被削角） -->
+        <ImageView
+            android:id="@+id/vw_badge"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="end|top"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="3dp"
+            android:contentDescription="@null"
+            android:padding="3dp"
+            android:src="@drawable/ic_book_read_config_bg_text_config_check"
+            android:visibility="gone" />
+
+    </FrameLayout>
 
     <TextView
         android:id="@+id/tv_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:singleLine="true"
+        android:layout_marginTop="2dp"
+        android:ellipsize="end"
         android:gravity="center"
+        android:singleLine="true"
         android:textColor="@color/secondaryText"
-        android:textSize="11sp" />
+        android:textSize="10.5sp"
+        tool:ignore="SmallSp" />
 
 </LinearLayout>

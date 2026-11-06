@@ -1,185 +1,532 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- read-bg-text-config#05：配色方案编辑弹层改 16dp 顶圆角底部弹层（BgTextConfigDialog.onStart
+     applyBottomSheetWindow + setSheetBackground），对齐 14-reader-brightness#05 dialog_read_padding
+     同语言：grip + 分组 lab 12sp on_surface_variant + 组间 12% ink hairline + ink 8% 行卡 +
+     值胶囊 + 38×22 主色开关 + 底部三等分操作行。方案名行重排（48dp 铅笔钮/恢复钮）、开关行卡片化
+     （整行可点）、颜色行改「label + 值胶囊(12dp 色点 + hex)」、透明度行 dseek 化（值胶囊随进度同步）。
+     既有 id 保留：tv_text_color/tv_bg_color 升格为行容器、iv_import/iv_export/iv_delete 移交操作格
+     容器（监听代码不动）、tv_bg_image 升格为组 lab tv_group_image；行为与事件存储全保留 -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background"
-    android:orientation="vertical"
-    android:padding="10dp">
+    android:layout_height="wrap_content"
+    android:overScrollMode="ifContentScrolls">
 
     <LinearLayout
+        android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:padding="6dp">
+        android:orientation="vertical"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp">
+
+        <!-- 顶部 4dp grip 视形锚点（纯装饰，dialog_read_padding 同款） -->
+        <View
+            android:layout_width="36dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_sheet_grip" />
+
+        <!-- 方案名行：lab 12sp secondary + 方案名 15sp/650 + 48dp 铅笔钮 + 48dp 恢复文字钮 -->
+        <LinearLayout
+            android:id="@+id/ll_name_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:orientation="horizontal"
+            android:paddingLeft="16dp"
+            android:paddingRight="8dp">
+
+            <TextView
+                android:id="@+id/tv_name_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/style_name"
+                android:textColor="@color/secondaryText"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:ellipsize="end"
+                android:maxWidth="150dp"
+                android:singleLine="true"
+                android:textColor="@color/primaryText"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                tools:text="文字" />
+
+            <!-- 铅笔 48dp 图标钮（内 24dp 图标，触控 ≥48dp；id iv_edit 保留，监听 :174-189 不动） -->
+            <FrameLayout
+                android:id="@+id/iv_edit"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:contentDescription="@string/edit"
+                android:focusable="true">
+
+                <ImageView
+                    android:id="@+id/iv_edit_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_edit"
+                    app:tint="@color/secondaryText" />
+            </FrameLayout>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/tv_restore"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackground"
+                android:gravity="center"
+                android:minWidth="48dp"
+                android:paddingLeft="14dp"
+                android:paddingRight="14dp"
+                android:text="@string/restore"
+                android:textColor="@color/primaryText"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- 组间 12% ink hairline（色由代码设随换肤） -->
+        <View
+            android:id="@+id/vw_divider_common"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="12dp" />
 
         <TextView
-            android:id="@+id/tv_name_title"
-            android:layout_width="wrap_content"
+            android:id="@+id/tv_group_common"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/style_name"
-            android:textColor="@color/primaryText"
-            android:textSize="16sp" />
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/group_common"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="12sp" />
+
+        <!-- 开关行：ink 8% 圆角卡（代码设底）、minHeight 48dp、整行可点（label+开关同触控域）；
+             开关 38×22dp 主色轨（ThemeSwitch），文字色属性移到行 label -->
+        <LinearLayout
+            android:id="@+id/ll_dark_status_icon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:orientation="horizontal"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/dark_status_icon"
+                android:textColor="@color/primaryText"
+                android:textSize="14sp" />
+
+            <io.legado.app.lib.theme.view.ThemeSwitch
+                android:id="@+id/sw_dark_status_icon"
+                android:layout_width="38dp"
+                android:layout_height="22dp"
+                android:layout_marginStart="10dp" />
+
+        </LinearLayout>
+
+        <!-- 文字下划线行（漫画书时整行隐藏，BgTextConfigDialog.kt isGone 逻辑保留） -->
+        <LinearLayout
+            android:id="@+id/ll_underline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:orientation="horizontal"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/text_underline"
+                android:textColor="@color/primaryText"
+                android:textSize="14sp" />
+
+            <io.legado.app.lib.theme.view.ThemeSwitch
+                android:id="@+id/sw_underline"
+                android:layout_width="38dp"
+                android:layout_height="22dp"
+                android:layout_marginStart="10dp" />
+
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/tv_name"
-            android:layout_width="wrap_content"
+            android:id="@+id/tv_group_color"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
-            android:textColor="@color/secondaryText"
-            tools:text="文字" />
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/group_color"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="12sp" />
 
-        <ImageView
-            android:id="@+id/iv_edit"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:contentDescription="@string/edit"
-            android:src="@drawable/ic_edit"
-            app:tint="@color/secondaryText" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/tv_restore"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/restore"
-            android:textColor="@color/primaryText" />
-
-    </LinearLayout>
-
-    <io.legado.app.lib.theme.view.ThemeSwitch
-        android:id="@+id/sw_dark_status_icon"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:text="@string/dark_status_icon"
-        tools:ignore="TouchTargetSizeCheck" />
-
-    <io.legado.app.lib.theme.view.ThemeSwitch
-        android:id="@+id/sw_underline"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:text="@string/text_underline"
-        tools:ignore="TouchTargetSizeCheck" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="6dp">
-
-        <io.legado.app.ui.widget.text.StrokeTextView
+        <!-- 颜色行①：文字颜色（label + 值胶囊：12dp 色点 + hex，TipConfigDialog 颜色行同款）；
+             id tv_text_color 保留在行容器上，点击仍开 ColorPickerDialog（TEXT_COLOR=121） -->
+        <LinearLayout
             android:id="@+id/tv_text_color"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp"
-            android:layout_weight="5"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="center"
-            android:padding="6dp"
-            android:singleLine="true"
-            android:text="@string/text_color"
-            android:textSize="14sp"
-            app:isBottomBackground="true"
-            tools:ignore="HardcodedText" />
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:orientation="horizontal"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp">
 
-        <io.legado.app.ui.widget.text.StrokeTextView
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/text_color"
+                android:textColor="@color/primaryText"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:id="@+id/ll_text_color_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="10dp"
+                android:paddingTop="5dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp">
+
+                <View
+                    android:id="@+id/vw_text_dot"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp" />
+
+                <TextView
+                    android:id="@+id/tv_text_color_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:singleLine="true"
+                    android:textColor="@color/primaryText"
+                    android:textSize="13.5sp"
+                    tools:text="#3E3D3B" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- 颜色行②：背景颜色（bgType=0 纯色时值胶囊主色描边指示当前模式；bgType≠0 时
+             胶囊尾注「图片时不生效」由代码显隐）。id tv_bg_color 保留在行容器上，
+             TooltipCompat 迁移至值胶囊 tv_bg_color_chip（行容器无 getText，否则编译错） -->
+        <LinearLayout
             android:id="@+id/tv_bg_color"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp"
-            android:layout_weight="5"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="center"
-            android:padding="6dp"
-            android:singleLine="true"
-            android:text="@string/bg_color"
-            android:textSize="14sp"
-            app:isBottomBackground="true"
-            tools:ignore="HardcodedText" />
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:orientation="horizontal"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp">
 
-        <ImageView
-            android:id="@+id/iv_import"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp"
-            android:background="?attr/selectableItemBackground"
-            android:contentDescription="@string/import_str"
-            android:src="@drawable/ic_import"
-            android:tooltipText="@string/import_str"
-            tools:ignore="UnusedAttribute" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/bg_color"
+                android:textColor="@color/primaryText"
+                android:textSize="14sp" />
 
-        <ImageView
-            android:id="@+id/iv_export"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp"
-            android:background="?attr/selectableItemBackground"
-            android:contentDescription="@string/import_str"
-            android:src="@drawable/ic_export"
-            android:tooltipText="@string/export_str"
-            tools:ignore="UnusedAttribute" />
+            <LinearLayout
+                android:id="@+id/ll_bg_color_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="10dp"
+                android:paddingTop="5dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp">
 
-        <ImageView
-            android:id="@+id/iv_delete"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp"
-            android:background="?attr/selectableItemBackground"
-            android:contentDescription="@string/delete"
-            android:src="@drawable/ic_clear_all"
-            android:tooltipText="@string/delete"
-            tools:ignore="UnusedAttribute" />
+                <View
+                    android:id="@+id/vw_bg_dot"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp" />
+
+                <TextView
+                    android:id="@+id/tv_bg_color_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:singleLine="true"
+                    android:textColor="@color/primaryText"
+                    android:textSize="13.5sp"
+                    tools:text="#F5EFDC" />
+
+                <TextView
+                    android:id="@+id/tv_bg_color_note"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:singleLine="true"
+                    android:text="@string/bg_color_image_note"
+                    android:textColor="@color/secondaryText"
+                    android:textSize="10.5sp"
+                    android:visibility="gone"
+                    tools:ignore="SmallSp"
+                    tools:text="图片时不生效"
+                    tools:visibility="visible" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- 透明度行 dseek：ink 8% 行卡（minHeight 56dp）+ 可视轨 48dp 触控 + 值胶囊随 progress 同步；
+             sb_bg_alpha max=100 与监听全保留 -->
+        <LinearLayout
+            android:id="@+id/ll_bg_alpha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            android:gravity="center_vertical"
+            android:minHeight="56dp"
+            android:orientation="horizontal"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp">
+
+            <TextView
+                android:id="@+id/tv_bg_alpha"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/bg_alpha"
+                android:textColor="@color/primaryText"
+                android:textSize="14sp" />
+
+            <io.legado.app.lib.theme.view.ThemeSeekBar
+                android:id="@+id/sb_bg_alpha"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:max="100"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp" />
+
+            <TextView
+                android:id="@+id/tv_bg_alpha_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:gravity="center"
+                android:minWidth="40dp"
+                android:paddingLeft="10dp"
+                android:paddingTop="5dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp"
+                android:textColor="@color/primaryText"
+                android:textSize="13.5sp"
+                tools:text="100%" />
+
+        </LinearLayout>
+
+        <!-- 背景图片组（tv_bg_image 升格为组 lab tv_group_image，kt 引用同步替换） -->
+        <TextView
+            android:id="@+id/tv_group_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/bg_image"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="12sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:paddingLeft="16dp"
+            android:paddingTop="2dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="4dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_bg_image" />
+
+        <!-- 底部操作行：导入/导出/删除 三等分 icon+文字钮（icon 24dp + label 11sp、minHeight 56dp、
+             相邻间距 ≥8dp）；「删除」图标与文字 error 色。id iv_import/iv_export/iv_delete 移交
+             操作格容器（监听 :231-251 代码不动），顶部 hairline 分隔 -->
+        <View
+            android:id="@+id/vw_divider_actions"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="16dp" />
+
+        <LinearLayout
+            android:id="@+id/ll_actions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginRight="16dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/iv_import"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:minHeight="56dp"
+                android:orientation="vertical"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp">
+
+                <ImageView
+                    android:id="@+id/iv_import_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/import_str"
+                    android:src="@drawable/ic_import"
+                    app:tint="@color/primaryText" />
+
+                <TextView
+                    android:id="@+id/tv_import_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/import_str"
+                    android:textColor="@color/secondaryText"
+                    android:textSize="11sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/iv_export"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:minHeight="56dp"
+                android:orientation="vertical"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp">
+
+                <ImageView
+                    android:id="@+id/iv_export_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/export_str"
+                    android:src="@drawable/ic_export"
+                    app:tint="@color/primaryText" />
+
+                <TextView
+                    android:id="@+id/tv_export_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/export_str"
+                    android:textColor="@color/secondaryText"
+                    android:textSize="11sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/iv_delete"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:minHeight="56dp"
+                android:orientation="vertical"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp">
+
+                <ImageView
+                    android:id="@+id/iv_delete_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/delete"
+                    android:src="@drawable/ic_clear_all"
+                    app:tint="@color/error" />
+
+                <TextView
+                    android:id="@+id/tv_delete_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/delete"
+                    android:textColor="@color/error"
+                    android:textSize="11sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tv_bg_alpha"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="6dp"
-        android:paddingRight="6dp"
-        android:text="@string/bg_alpha" />
-
-    <io.legado.app.lib.theme.view.ThemeSeekBar
-        android:id="@+id/sb_bg_alpha"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:max="100"
-        android:padding="6dp"
-        tools:ignore="UnusedAttribute" />
-
-    <TextView
-        android:id="@+id/tv_bg_image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="6dp"
-        android:paddingRight="6dp"
-        android:text="@string/bg_image" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:orientation="horizontal"
-        android:padding="6dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_bg_image" />
-
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

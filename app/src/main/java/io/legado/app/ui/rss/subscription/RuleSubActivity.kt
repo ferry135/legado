@@ -15,11 +15,16 @@ import io.legado.app.data.entities.RuleSub
 import io.legado.app.databinding.ActivityRuleSubBinding
 import io.legado.app.databinding.DialogRuleSubEditBinding
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.theme.Selector
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.ui.association.ImportBookSourceDialog
 import io.legado.app.ui.association.ImportReplaceRuleDialog
 import io.legado.app.ui.association.ImportRssSourceDialog
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
+import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.applyNavigationBarPadding
+import io.legado.app.utils.dpToPx
+import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.launchCollectWithLifecycle
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
@@ -30,6 +35,7 @@ import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.roundToInt
 
 /**
  * 规则订阅界面
@@ -100,6 +106,31 @@ class RuleSubActivity : BaseActivity<ActivityRuleSubBinding>(),
                 spType.setSelection(ruleSub.type)
                 etName.setText(ruleSub.name)
                 etUrl.setText(ruleSub.url)
+                // 三张 field 卡聚焦/按压态运行时注入（BookmarkDialog.kt:58-66 先例）：纯 XML selector
+                // 的描边色会固化、不随 ThemeStore 换肤；默认/聚焦同 surface_container_high 底，
+                // 仅聚焦叠 1.5dp 运行时 accentColor 描边（rule-sub-edit 稿 §04·6）；按压态向
+                // on_surface 混合 10% 作整卡触控反馈（UpdateDialog.kt:74 同为运行时算色思路，
+                // 亮色变深/暗色变浅随主题自动反转），纯视觉层不影响行为与换肤
+                val fieldBaseColor = getCompatColor(R.color.surface_container_high)
+                val fieldPressedColor = ColorUtils.blendColors(
+                    fieldBaseColor,
+                    getCompatColor(R.color.on_surface),
+                    0.10f
+                )
+                val fieldBackground = Selector.shapeBuild()
+                    .setCornerRadius(10.dpToPx())
+                    .setStrokeWidth(1.5f.dpToPx().roundToInt())
+                    .setDefaultBgColor(fieldBaseColor)
+                    .setPressedBgColor(fieldPressedColor)
+                    .setFocusedBgColor(fieldBaseColor)
+                    .setFocusedStrokeColor(accentColor)
+                    .create()
+                vwFieldType.background = fieldBackground
+                vwFieldName.background = fieldBackground
+                vwFieldUrl.background = fieldBackground
+                // 整卡触控桥接（rule-sub-edit 稿 §04·4）：AppCompat Spinner 仅响应自身 bounds
+                // 点击，点 label/箭头/卡空白不弹下拉，分发卡 root 点击转 spType.performClick()
+                vwFieldType.setOnClickListener { spType.performClick() }
             }
             customView { alertBinding.root }
             okButton {

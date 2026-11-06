@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- TXT目录规则选择弹窗（design-system/mockups/toc-rule-picker.html）：
+     弹层 16dp 圆角卡底由 BaseDialogFragment.setSheetBackground 统一给出，本布局不再声明根/底栏平色
+     背景（避免覆盖圆角，GroupManageDialog 先例）；列表空态叠层 + 底栏上缘 1dp 分隔 + 左「将使用」提示行；
+     空态 ghost「添加规则」描边/文字由 kt 运行时注入 accentColor（MASTER §4 布局不固化 primary） -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -10,42 +14,116 @@
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="?attr/actionBarStyle"
+        android:theme="@style/ThemeOverlay.AppCompat.DayNight"
         app:titleTextAppearance="@style/ToolbarTitle"
+        app:titleTextColor="@color/on_surface"
         app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        <!-- 空态（稿 §04，新增）：i-rule 图标 + 「还没有规则」+ 引导 + 「添加规则」ghost；
+             点击与 toolbar menu_add 同入口（TxtTocRuleEditDialog 新建态），默认 gone -->
+        <LinearLayout
+            android:id="@+id/vw_empty_rule"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingLeft="44dp"
+            android:paddingRight="44dp"
+            android:visibility="gone">
+
+            <io.legado.app.ui.widget.EmptyTipView
+                android:id="@+id/empty_tip_rule"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:empty_icon="@drawable/ic_book_toc_rule_txt_toc_rule_dialog_rule"
+                app:empty_title="@string/empty_toc_rule"
+                app:empty_tip="@string/empty_toc_rule_tip" />
+
+            <!-- ghost 描边骨架（9dp 圆角 + 1dp stroke，XML 零色值），运行时 mutate().setStroke(accentColor) -->
+            <TextView
+                android:id="@+id/btn_rule_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_book_toc_rule_txt_toc_rule_dialog_ghost_add"
+                android:gravity="center"
+                android:minHeight="48dp"
+                android:paddingLeft="18dp"
+                android:paddingTop="9dp"
+                android:paddingRight="18dp"
+                android:paddingBottom="9dp"
+                android:text="@string/add_rule"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                tools:ignore="RtlHardcoded" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <!-- 底栏（稿 .dfoot）：上缘 1px outline_variant 分隔 + 左「将使用：<规则名>」提示行（随选中即时刷新） -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/outline_variant" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="8dp"
+        android:paddingTop="6dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="12dp">
 
-        <Space
+        <!-- 选中为空时确定本就无动作（kt tvOk 找不到即不回调），提示行消除死按钮感 -->
+        <TextView
+            android:id="@+id/tv_ok_hint"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:paddingLeft="8dp"
+            android:singleLine="true"
+            android:text="@string/no_rule_selected"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="12.5sp"
+            tools:ignore="RtlHardcoded"
+            tools:text="将使用：目录(去空白)" />
 
         <TextView
             android:id="@+id/tv_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
-            android:padding="12dp"
+            android:gravity="center"
+            android:minHeight="48dp"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
             android:text="@string/cancel"
-            android:textColor="@color/secondaryText"
+            android:textColor="@color/on_surface_variant"
             tools:ignore="RtlHardcoded" />
 
         <io.legado.app.ui.widget.text.AccentTextView
             android:id="@+id/tv_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
-            android:padding="12dp"
+            android:layout_marginRight="8dp"
+            android:gravity="center"
+            android:minHeight="48dp"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
             android:text="@string/ok"
             tools:ignore="RtlHardcoded" />
 

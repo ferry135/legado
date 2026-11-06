@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 启动欢迎页（design-system/mockups/welcome-splash.html 表B #1-#6/#9）：
+     结构原样保留（竖线+竖排品牌块 / 120dp 图符 / 底部文案）；AccentTextView（init 强制 accent）
+     换 AppCompatTextView + 语义令牌，accent 收敛到竖线+图符两处（均 kt:24-25 运行时取色）；
+     字阶 49→44sp / 16→14sp / 底部文案 12sp；行为零变更（600ms 进入、自定义欢迎图照旧）。
+     根布局必须保持无 background——自定义欢迎图写入 window.decorView（WelcomeActivity.kt:50/60）。 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -26,31 +31,33 @@
             app:layout_constraintBottom_toBottomOf="@+id/tv_title"
             app:layout_constraintLeft_toLeftOf="parent" />
 
-        <io.legado.app.ui.widget.text.AccentTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="6dp"
+            android:layout_marginLeft="8dp"
             android:ems="1"
-            android:text="阅读"
-            android:textSize="49sp"
+            android:text="@string/welcome_brand_title"
+            android:textColor="@color/on_surface"
+            android:textSize="44sp"
             app:layout_constraintRight_toLeftOf="@+id/tv_sub_title"
             app:layout_constraintLeft_toRightOf="@+id/vw_title_line"
             app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="HardcodedText,RtlHardcoded" />
+            tools:ignore="RtlHardcoded" />
 
-        <io.legado.app.ui.widget.text.AccentTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_sub_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
-            android:layout_marginLeft="6dp"
+            android:layout_marginTop="48dp"
+            android:layout_marginLeft="8dp"
             android:ems="1"
-            android:text="享受美好时光"
-            android:textSize="16sp"
+            android:text="@string/welcome_brand_sub"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="14sp"
             app:layout_constraintTop_toTopOf="@+id/tv_title"
             app:layout_constraintLeft_toRightOf="@id/tv_title"
-            tools:ignore="HardcodedText,RtlHardcoded" />
+            tools:ignore="RtlHardcoded" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -67,16 +74,17 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
-    <io.legado.app.ui.widget.text.AccentTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_gzh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="关注公众号[开源阅读]\n看文章点广告支持作者"
+        android:text="@string/welcome_gzh"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="12sp"
         android:layout_marginBottom="32dp"
         android:gravity="center_horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintRight_toRightOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
