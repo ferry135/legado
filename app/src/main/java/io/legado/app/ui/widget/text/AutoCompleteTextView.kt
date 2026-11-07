@@ -13,8 +13,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import io.legado.app.R
-import io.legado.app.lib.theme.accentColor
-import io.legado.app.utils.applyTint
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 
@@ -28,7 +26,9 @@ class AutoCompleteTextView @JvmOverloads constructor(
     var delCallBack: ((value: String) -> Unit)? = null
 
     init {
-        applyTint(context.accentColor)
+        // 旧版在此整体 applyTint(accentColor)：把 bg_edit_filled 染成实心强调色大色块
+        // （如 网络导入 url 域白字压橙底）。M3 field 语言下保留布局自带浅底
+        // （bg_edit_filled / TextInputLayout 盒），不再整体染色
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             isLocalePreferredLineHeightForMinimumUsed = false
         }
