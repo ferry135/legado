@@ -21,11 +21,6 @@ import io.legado.app.data.dao.HttpTTSDao
 import io.legado.app.data.dao.KeyboardAssistsDao
 import io.legado.app.data.dao.ReadRecordDao
 import io.legado.app.data.dao.ReplaceRuleDao
-import io.legado.app.data.dao.RssArticleDao
-import io.legado.app.data.dao.RssReadRecordDao
-import io.legado.app.data.dao.RssSourceDao
-import io.legado.app.data.dao.RssStarDao
-import io.legado.app.data.dao.RuleSubDao
 import io.legado.app.data.dao.SearchBookDao
 import io.legado.app.data.dao.SearchKeywordDao
 import io.legado.app.data.dao.ServerDao
@@ -43,11 +38,6 @@ import io.legado.app.data.entities.HttpTTS
 import io.legado.app.data.entities.KeyboardAssist
 import io.legado.app.data.entities.ReadRecord
 import io.legado.app.data.entities.ReplaceRule
-import io.legado.app.data.entities.RssArticle
-import io.legado.app.data.entities.RssReadRecord
-import io.legado.app.data.entities.RssSource
-import io.legado.app.data.entities.RssStar
-import io.legado.app.data.entities.RuleSub
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.data.entities.Server
@@ -67,13 +57,12 @@ val appDb by lazy {
 }
 
 @Database(
-    version = 75,
+    version = 76,
     exportSchema = true,
     entities = [Book::class, BookGroup::class, BookSource::class, BookChapter::class,
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
-        RssSource::class, Bookmark::class, RssArticle::class, RssReadRecord::class,
-        RssStar::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class, Cache::class,
-        RuleSub::class, DictRule::class, KeyboardAssist::class, Server::class],
+        Bookmark::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class, Cache::class,
+        DictRule::class, KeyboardAssist::class, Server::class],
     views = [BookSourcePart::class],
     autoMigrations = [
         AutoMigration(from = 43, to = 44),
@@ -108,6 +97,7 @@ val appDb by lazy {
         AutoMigration(from = 72, to = 73),
         AutoMigration(from = 73, to = 74),
         AutoMigration(from = 74, to = 75),
+        AutoMigration(from = 75, to = 76, spec = DatabaseMigrations.Migration_75_76::class),
     ]
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -119,17 +109,12 @@ abstract class AppDatabase : RoomDatabase() {
     abstract val replaceRuleDao: ReplaceRuleDao
     abstract val searchBookDao: SearchBookDao
     abstract val searchKeywordDao: SearchKeywordDao
-    abstract val rssSourceDao: RssSourceDao
     abstract val bookmarkDao: BookmarkDao
-    abstract val rssArticleDao: RssArticleDao
-    abstract val rssStarDao: RssStarDao
-    abstract val rssReadRecordDao: RssReadRecordDao
     abstract val cookieDao: CookieDao
     abstract val txtTocRuleDao: TxtTocRuleDao
     abstract val readRecordDao: ReadRecordDao
     abstract val httpTTSDao: HttpTTSDao
     abstract val cacheDao: CacheDao
-    abstract val ruleSubDao: RuleSubDao
     abstract val dictRuleDao: DictRuleDao
     abstract val keyboardAssistsDao: KeyboardAssistsDao
     abstract val serverDao: ServerDao
@@ -140,7 +125,6 @@ abstract class AppDatabase : RoomDatabase() {
 
         const val BOOK_TABLE_NAME = "books"
         const val BOOK_SOURCE_TABLE_NAME = "book_sources"
-        const val RSS_SOURCE_TABLE_NAME = "rssSources"
 
         val dbCallback = object : Callback() {
 
@@ -207,10 +191,6 @@ abstract class AppDatabase : RoomDatabase() {
                 val upBookSourceLoginUiSql =
                     "update book_sources set loginUi = null where loginUi = 'null'"
                 db.execSQL(upBookSourceLoginUiSql)
-                @Language("sql")
-                val upRssSourceLoginUiSql =
-                    "update rssSources set loginUi = null where loginUi = 'null'"
-                db.execSQL(upRssSourceLoginUiSql)
                 @Language("sql")
                 val upHttpTtsLoginUiSql =
                     "update httpTTS set loginUi = null where loginUi = 'null'"

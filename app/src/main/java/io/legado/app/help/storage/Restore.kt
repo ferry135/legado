@@ -18,9 +18,6 @@ import io.legado.app.data.entities.HttpTTS
 import io.legado.app.data.entities.KeyboardAssist
 import io.legado.app.data.entities.ReadRecord
 import io.legado.app.data.entities.ReplaceRule
-import io.legado.app.data.entities.RssSource
-import io.legado.app.data.entities.RssStar
-import io.legado.app.data.entities.RuleSub
 import io.legado.app.data.entities.SearchKeyword
 import io.legado.app.data.entities.Server
 import io.legado.app.data.entities.TxtTocRule
@@ -129,20 +126,11 @@ object Restore {
                 ImportOldData.importOldSource(json)
             }
         }
-        fileToListT<RssSource>(path, "rssSources.json")?.let {
-            appDb.rssSourceDao.insert(*it.toTypedArray())
-        }
-        fileToListT<RssStar>(path, "rssStar.json")?.let {
-            appDb.rssStarDao.insert(*it.toTypedArray())
-        }
         fileToListT<ReplaceRule>(path, "replaceRule.json")?.let {
             appDb.replaceRuleDao.insert(*it.toTypedArray())
         }
         fileToListT<SearchKeyword>(path, "searchHistory.json")?.let {
             appDb.searchKeywordDao.insert(*it.toTypedArray())
-        }
-        fileToListT<RuleSub>(path, "sourceSub.json")?.let {
-            appDb.ruleSubDao.insert(*it.toTypedArray())
         }
         fileToListT<TxtTocRule>(path, "txtTocRule.json")?.let {
             appDb.txtTocRuleDao.insert(*it.toTypedArray())

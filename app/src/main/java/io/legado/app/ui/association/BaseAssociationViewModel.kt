@@ -24,8 +24,6 @@ abstract class BaseAssociationViewModel(application: Application) : BaseViewMode
     private fun importJson(json: String) {
         //暂时根据文件内容判断属于什么
         when {
-            json.contains("sourceUrl") ->
-                successLive.postValue(Pair("rssSource", json))
             json.contains("pattern") ->
                 successLive.postValue(Pair("replaceRule", json))
             json.contains("themeName") ->

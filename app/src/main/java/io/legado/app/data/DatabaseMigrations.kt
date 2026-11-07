@@ -1,6 +1,7 @@
 package io.legado.app.data
 
 import androidx.room.DeleteColumn
+import androidx.room.DeleteTable
 import androidx.room.migration.AutoMigrationSpec
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -370,5 +371,13 @@ object DatabaseMigrations {
         columnName = "enabledReview"
     )
     class Migration_64_65 : AutoMigrationSpec
+
+    @Suppress("ClassName")
+    @DeleteTable(tableName = "rssSources")
+    @DeleteTable(tableName = "rssArticles")
+    @DeleteTable(tableName = "rssStars")
+    @DeleteTable(tableName = "rssReadRecords")
+    @DeleteTable(tableName = "ruleSubs")
+    class Migration_75_76 : AutoMigrationSpec
 
 }

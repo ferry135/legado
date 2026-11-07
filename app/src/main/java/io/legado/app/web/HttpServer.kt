@@ -6,7 +6,6 @@ import io.legado.app.api.ReturnData
 import io.legado.app.api.controller.BookController
 import io.legado.app.api.controller.BookSourceController
 import io.legado.app.api.controller.ReplaceRuleController
-import io.legado.app.api.controller.RssSourceController
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.service.WebService
@@ -191,9 +190,6 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                 "/saveBookProgress" to { _, postData, _ -> BookController.saveBookProgress(postData) },
                 "/addLocalBook" to { session, _, files -> BookController.addLocalBook(session.parameters, files) },
                 "/saveReadConfig" to { _, postData, _ -> BookController.saveWebReadConfig(postData) },
-                "/saveRssSource" to { _, postData, _ -> RssSourceController.saveSource(postData) },
-                "/saveRssSources" to { _, postData, _ -> RssSourceController.saveSources(postData) },
-                "/deleteRssSources" to { _, postData, _ -> RssSourceController.deleteSources(postData) },
                 "/saveReplaceRule" to { _, postData, _ -> ReplaceRuleController.saveRule(postData) },
                 "/deleteReplaceRule" to { _, postData, _ -> ReplaceRuleController.delete(postData) },
                 "/testReplaceRule" to { _, postData, _ -> ReplaceRuleController.testRule(postData) }
@@ -212,8 +208,6 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
             "/cover" to { session -> BookController.getCover(session.parameters) },
             "/image" to { session -> BookController.getImg(session.parameters) },
             "/getReadConfig" to { _ -> BookController.getWebReadConfig() },
-            "/getRssSource" to { session -> RssSourceController.getSource(session.parameters) },
-            "/getRssSources" to { _ -> RssSourceController.sources },
             "/getReplaceRules" to { _ -> ReplaceRuleController.allRules }
         )
     }
