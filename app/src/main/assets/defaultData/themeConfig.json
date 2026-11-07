@@ -2,10 +2,10 @@
   {
     "themeName": "默认",
     "isNightTheme": false,
-    "primaryColor": "#795548",
-    "accentColor": "#E53935",
-    "backgroundColor": "#F5F5F5",
-    "bottomBackground": "#EEEEEE"
+    "primaryColor": "#FF6B2C",
+    "accentColor": "#FF6B2C",
+    "backgroundColor": "#FAF9F7",
+    "bottomBackground": "#FFFEFC"
   },
   {
     "themeName": "典雅蓝",

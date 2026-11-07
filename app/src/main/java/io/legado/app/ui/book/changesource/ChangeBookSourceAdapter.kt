@@ -14,6 +14,7 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ItemChangeSourceBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
@@ -58,6 +59,8 @@ class ChangeBookSourceAdapter(
                 tvCurrentChapterWordCount.text = item.chapterWordCountText
                 tvRespondTime.text = context.getString(R.string.respondTime, item.respondTime)
                 if (callBack.oldBookUrl == item.bookUrl) {
+                    // 勾选图标随 ThemeStore 运行时染主色（原 ?attr/colorPrimary 静态映射）
+                    ivChecked.setColorFilter(context.primaryColor)
                     ivChecked.visible()
                 } else {
                     ivChecked.invisible()

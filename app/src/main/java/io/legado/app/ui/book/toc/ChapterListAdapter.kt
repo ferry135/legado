@@ -16,6 +16,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.help.coroutine.Coroutine
 import io.legado.app.lib.theme.ThemeUtils
 import io.legado.app.lib.theme.accentColor
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.longToastOnUi
@@ -189,6 +190,8 @@ class ChapterListAdapter(context: Context, val callback: Callback) :
 
     private fun upHasCache(binding: ItemChapterListBinding, isDur: Boolean, cached: Boolean) =
         binding.apply {
+            // 勾选/云端图标随 ThemeStore 运行时染主色（原 ?attr/colorPrimary 静态映射，DECISIONS §8 豁免1 收编）
+            ivChecked.setColorFilter(context.primaryColor)
             ivChecked.setImageResource(R.drawable.ic_outline_cloud_24)
             ivChecked.visible(!cached)
             if (isDur) {

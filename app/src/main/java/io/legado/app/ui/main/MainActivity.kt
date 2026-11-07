@@ -2,6 +2,7 @@
 
 package io.legado.app.ui.main
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.MenuItem
@@ -42,6 +43,8 @@ import io.legado.app.ui.main.explore.ExploreFragment
 import io.legado.app.ui.main.my.MyFragment
 import io.legado.app.ui.main.rss.RssFragment
 import io.legado.app.ui.widget.dialog.TextDialog
+import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.isCreated
 import io.legado.app.utils.navigationBarHeight
@@ -201,6 +204,23 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         bottomNavigationView.setOnNavigationItemReselectedListener(this@MainActivity)
         if (AppConfig.isEInkMode) {
             bottomNavigationView.setBackgroundResource(R.drawable.bg_eink_border_top)
+        }
+        // 底部导航随 ThemeStore 运行时染色：选中=primaryColor、指示条=12% primary
+        // （原走 ?attr/colorPrimary→@color/primary 静态映射，主题设置改主色不跟随）；
+        // 墨水屏维持默认（applyTheme 墨水屏分支主色为白，需保持默认深字对比）
+        if (!AppConfig.isEInkMode) {
+            val navStateList = ColorStateList(
+                arrayOf(
+                    intArrayOf(android.R.attr.state_checked),
+                    intArrayOf()
+                ),
+                intArrayOf(primaryColor, getCompatColor(R.color.on_surface_variant))
+            )
+            bottomNavigationView.itemIconTintList = navStateList
+            bottomNavigationView.itemTextColor = navStateList
+            bottomNavigationView.setItemActiveIndicatorColor(
+                ColorStateList.valueOf(ColorUtils.withAlpha(primaryColor, 0.12f))
+            )
         }
         bottomNavigationView.setOnApplyWindowInsetsListenerCompat { view, windowInsets ->
             val height = windowInsets.navigationBarHeight

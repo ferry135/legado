@@ -8,6 +8,7 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.constant.AppConst
 import io.legado.app.databinding.ItemImportBookBinding
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.utils.ConvertUtils
 import io.legado.app.utils.FileDoc
 import io.legado.app.utils.gone
@@ -58,6 +59,8 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
                     cbSelect.isChecked = selected.contains(item)
                 }
                 tvName.text = item.name
+                // 图标随 ThemeStore 运行时染主色（原 app:tint=@color/primary 静态）
+                ivIcon.setColorFilter(context.primaryColor)
             } else {
                 cbSelect.isChecked = selected.contains(item)
             }

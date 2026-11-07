@@ -25,6 +25,7 @@ import io.legado.app.help.book.isAudio
 import io.legado.app.help.book.removeType
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.theme.accentColor
 import io.legado.app.model.AudioPlay
 import io.legado.app.model.BookCover
 import io.legado.app.service.AudioPlayService
@@ -140,6 +141,8 @@ class AudioPlayActivity :
     }
 
     private fun initView() {
+        // 封面描边随 ThemeStore 运行时染色（原 civ_border_color=@color/accent 静态）
+        binding.ivCover.borderColor = accentColor
         binding.fabPlayStop.setOnClickListener {
             playButton()
         }

@@ -30,6 +30,7 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookProgress
 import io.legado.app.data.entities.BookSource
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.databinding.ActivityMangaBinding
 import io.legado.app.databinding.ViewLoadMoreBinding
 import io.legado.app.help.book.isImage
@@ -158,6 +159,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         ReadManga.register(this)
         upSystemUiVisibility(false)
+        // 加载指示器随 ThemeStore 运行时染主色（原 app:indicatorColor=@color/primary 静态，DECISIONS §8 豁免2 收编）
+        binding.pbLoading.setIndicatorColor(primaryColor)
         initRecyclerView()
         binding.tvRetry.setOnClickListener {
             binding.llLoading.isVisible = true
