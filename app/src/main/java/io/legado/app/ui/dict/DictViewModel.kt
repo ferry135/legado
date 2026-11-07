@@ -18,18 +18,20 @@ class DictViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    // 成功/失败分流回调：错误消息由调用方按 error 色呈现，不再与正文混排
     fun dict(
         dictRule: DictRule,
         word: String,
-        onFinally: (String) -> Unit
+        onSuccess: (String) -> Unit,
+        onError: (String) -> Unit
     ) {
         dictJob?.cancel()
         dictJob = execute {
             dictRule.search(word)
         }.onSuccess {
-            onFinally.invoke(it)
+            onSuccess.invoke(it)
         }.onError {
-            onFinally.invoke(it.localizedMessage ?: "ERROR")
+            onError.invoke(it.localizedMessage ?: "ERROR")
         }
     }
 

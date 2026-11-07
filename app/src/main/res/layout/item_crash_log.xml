@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 崩溃日志条目（12-missed-2 #s05）：文件名主行 + 「来源 · 大小」副行 + 右箭头提示；
+     触控行高 ≥48dp 同 item_1line_text 规范；点按行为不变（TextDialog 看全文）。
+     专用于 CrashLogsDialog（原共用 item_1line_text 单行无法承载副行，故拆分） -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:minHeight="48dp"
+    android:orientation="horizontal"
+    android:paddingLeft="16dp"
+    android:paddingTop="10dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="10dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/on_surface"
+            android:textSize="15sp"
+            tools:text="crash_20261028_210433.txt" />
+
+        <TextView
+            android:id="@+id/tv_sub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="12sp"
+            tools:text="外部缓存 /crash · 24 KB" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_arrow"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_arrow_right"
+        app:tint="@color/on_surface_variant" />
+
+</LinearLayout>

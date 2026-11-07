@@ -15,7 +15,7 @@ import io.legado.app.utils.dpToPx
  * - 分组选择（group-select 稿 .lift）：12dp 圆角 + surface_container + 8dp 抬升
  * 条目 order 持久化仍走 ItemTouchCallback.clearView → callback.onClearView
  */
-class LiftItemTouchCallback(
+open class LiftItemTouchCallback(
     callback: Callback,
     private val cornerRadiusDp: Int,
     @ColorRes private val bgColorRes: Int,

@@ -18,6 +18,19 @@
         app:titleTextAppearance="@style/TextAppearance.Legado.BarTitle"
         app:titleTextColor="@color/on_surface" />
 
+    <!-- 提示行（12-missed-2 #s01）：默认勾选提示，拖拽中由 GroupSelectDialog 切为松手保存提示 -->
+    <TextView
+        android:id="@+id/tv_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="18dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="18dp"
+        android:paddingBottom="6dp"
+        android:text="@string/group_picker_hint"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="12sp" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

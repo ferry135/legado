@@ -590,6 +590,8 @@
     <string name="select_image">选择图片</string>
     <string name="group_manage">分组管理</string>
     <string name="group_select">分组选择</string>
+    <string name="group_picker_hint">勾选分组（可多选）· 长按拖动调整顺序</string>
+    <string name="group_picker_dragging">拖拽排序中 · 松手保存顺序</string>
     <string name="group_edit">编辑分组</string>
     <string name="move_to_group">移入分组</string>
     <string name="add_group">添加分组</string>
@@ -1258,6 +1260,8 @@
     <string name="replace_group_empty_tip">在规则编辑里填写分组，\n或「添加分组」把未分组规则归入新组</string>
     <string name="read_only">只读</string>
     <string name="crash_log_empty">暂无崩溃日志</string>
+    <string name="crash_source_external">外部缓存 /crash</string>
+    <string name="crash_source_backup">备份目录 /crash</string>
     <string name="read_record_empty_title">还没有阅读记录</string>
     <string name="read_record_empty_tip">在 ⋮ 菜单开启记录后\n每本书的阅读时长将在这里累计</string>
     <string name="read_record_search_empty_title">未找到匹配的书籍</string>

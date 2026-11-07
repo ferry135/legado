@@ -592,6 +592,8 @@
     <string name="select_image">Select a picture</string>
     <string name="group_manage">Group management</string>
     <string name="group_select">Group selection</string>
+    <string name="group_picker_hint">Select groups · Long-press and drag to reorder</string>
+    <string name="group_picker_dragging">Reordering · Release to save order</string>
     <string name="group_edit">Group editing</string>
     <string name="move_to_group">Move to group</string>
     <string name="add_group">Add to Groups</string>
@@ -1260,6 +1262,8 @@
     <string name="replace_group_empty_tip">Fill in the group field when editing a rule, or add a group to move ungrouped rules in</string>
     <string name="read_only">Read-only</string>
     <string name="crash_log_empty">No crash logs</string>
+    <string name="crash_source_external">External cache /crash</string>
+    <string name="crash_source_backup">Backup dir /crash</string>
     <string name="read_record_empty_title">No reading records yet</string>
     <string name="read_record_empty_tip">After enabling recording from the ⋮ menu,\nreading time of each book accumulates here</string>
     <string name="read_record_search_empty_title">No matching books found</string>

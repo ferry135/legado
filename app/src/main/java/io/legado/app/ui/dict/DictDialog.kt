@@ -168,10 +168,21 @@ class DictDialog() : BaseDialogFragment(R.layout.dialog_dict) {
             }
         }
         binding.rotateLoading.visible()
-        viewModel.dict(dictRule, word!!) {
-            binding.rotateLoading.invisible()
-            binding.tvDict.setHtml(it)
-        }
+        viewModel.dict(
+            dictRule, word!!,
+            onSuccess = {
+                binding.rotateLoading.invisible()
+                // 成功态恢复正文色（上一条错误可能已染 error 色）
+                binding.tvDict.setTextColor(requireContext().getCompatColor(R.color.on_surface))
+                binding.tvDict.setHtml(it)
+            },
+            onError = {
+                binding.rotateLoading.invisible()
+                // 错误消息 error 色（#BA1A1A），与词典正文区分
+                binding.tvDict.setTextColor(requireContext().getCompatColor(R.color.error))
+                binding.tvDict.text = it
+            }
+        )
     }
 
 }

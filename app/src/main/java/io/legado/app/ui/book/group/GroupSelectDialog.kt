@@ -85,9 +85,31 @@ class GroupSelectDialog() : BaseDialogFragment(R.layout.dialog_book_group_picker
             }
         })
         binding.recyclerView.adapter = adapter
-        // 拖拽浮起态（稿 .lift）：12dp 圆角 + surface_container + 8dp 抬升（公共 LiftItemTouchCallback）
+        // 拖拽浮起态（稿 .lift）：12dp 圆角 + surface_container + 8dp 抬升（公共 LiftItemTouchCallback）；
+        // 拖拽中顶部提示行切换为「松手保存顺序」（12-missed-2 #s01 拖拽态小字）
         val itemTouchCallback =
-            LiftItemTouchCallback(adapter, cornerRadiusDp = 12, bgColorRes = R.color.surface_container, liftZDp = 8)
+            object : LiftItemTouchCallback(
+                adapter, cornerRadiusDp = 12,
+                bgColorRes = R.color.surface_container, liftZDp = 8
+            ) {
+                override fun onSelectedChanged(
+                    viewHolder: RecyclerView.ViewHolder?,
+                    actionState: Int
+                ) {
+                    super.onSelectedChanged(viewHolder, actionState)
+                    if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
+                        binding.tvHint.setText(R.string.group_picker_dragging)
+                    }
+                }
+
+                override fun clearView(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder
+                ) {
+                    super.clearView(recyclerView, viewHolder)
+                    binding.tvHint.setText(R.string.group_picker_hint)
+                }
+            }
         itemTouchCallback.isCanDrag = true
         ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.recyclerView)
         // 空态「添加分组」与 menu_add 同一入口（GroupEditDialog 新建态）

@@ -11,6 +11,7 @@ import io.legado.app.base.VMBaseActivity
 import io.legado.app.databinding.ActivitySourceDebugBinding
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.lib.theme.primaryColor
+import io.legado.app.ui.book.source.debug.DebugLogLine
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.gone
@@ -33,7 +34,7 @@ class RssSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, RssSou
         initSearchView()
         viewModel.observe { state, msg ->
             lifecycleScope.launch {
-                adapter.addItem(msg)
+                adapter.addItem(DebugLogLine(System.currentTimeMillis(), msg))
                 if (state == -1 || state == 1000) {
                     binding.rotateLoading.gone()
                 }

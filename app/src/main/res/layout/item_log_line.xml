@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 调试日志行（06-rss 稿 S7 .log .ln）：时间戳列 + 消息列双列；时间次要色等宽（flex:none），
+     消息沿用原 item_log 的可选中/识别链接能力（textIsSelectable + autoLink）。
+     仅书源/RSS 调试页使用；TextListDialog 仍用单列 item_log 不受影响。
+     水平边距由 activity_source_debug 的 RecyclerView padding 提供（同 item_log 约定） -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-monospace"
+        android:paddingEnd="12dp"
+        android:paddingTop="1dp"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="12sp"
+        tools:text="21:04:33" />
+
+    <TextView
+        android:id="@+id/tv_msg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:autoLink="web"
+        android:textColor="@color/on_surface_variant"
+        android:textColorLink="@color/link_color"
+        android:textIsSelectable="true"
+        android:textSize="13sp"
+        android:lineSpacingExtra="3dp"
+        tools:text="访问网址：https://example.com" />
+
+</LinearLayout>

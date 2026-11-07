@@ -52,7 +52,7 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
         }
         viewModel.observe { state, msg ->
             lifecycleScope.launch {
-                adapter.addItem(msg)
+                adapter.addItem(DebugLogLine(System.currentTimeMillis(), msg))
                 if (state == -1 || state == 1000) {
                     binding.rotateLoading.gone()
                 }
@@ -129,7 +129,9 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
             exploreKinds?.firstOrNull()?.let {
                 binding.textFx.text = "${it.title}::${it.url}"
                 if (it.title.startsWith("ERROR:")) {
-                    adapter.addItem("获取发现出错\n${it.url}")
+                    adapter.addItem(
+                        DebugLogLine(System.currentTimeMillis(), "获取发现出错\n${it.url}")
+                    )
                     openOrCloseHelp(false)
                     searchView.clearFocus()
                     return@launch

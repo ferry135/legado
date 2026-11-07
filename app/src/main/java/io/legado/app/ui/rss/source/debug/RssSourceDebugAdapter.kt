@@ -6,39 +6,41 @@ import android.view.ViewGroup
 import io.legado.app.R
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
-import io.legado.app.databinding.ItemLogBinding
+import io.legado.app.databinding.ItemLogLineBinding
+import io.legado.app.ui.book.source.debug.DebugLogLine
 
 class RssSourceDebugAdapter(context: Context) :
-    RecyclerAdapter<String, ItemLogBinding>(context) {
+    RecyclerAdapter<DebugLogLine, ItemLogLineBinding>(context) {
 
-    override fun getViewBinding(parent: ViewGroup): ItemLogBinding {
-        return ItemLogBinding.inflate(inflater, parent, false)
+    override fun getViewBinding(parent: ViewGroup): ItemLogLineBinding {
+        return ItemLogLineBinding.inflate(inflater, parent, false)
     }
 
     override fun convert(
         holder: ItemViewHolder,
-        binding: ItemLogBinding,
-        item: String,
+        binding: ItemLogLineBinding,
+        item: DebugLogLine,
         payloads: MutableList<Any>
     ) {
         binding.apply {
-            if (textView.getTag(R.id.tag1) == null) {
+            if (tvMsg.getTag(R.id.tag1) == null) {
                 val listener = object : View.OnAttachStateChangeListener {
                     override fun onViewAttachedToWindow(v: View) {
-                        textView.isCursorVisible = false
-                        textView.isCursorVisible = true
+                        tvMsg.isCursorVisible = false
+                        tvMsg.isCursorVisible = true
                     }
 
                     override fun onViewDetachedFromWindow(v: View) {}
                 }
-                textView.addOnAttachStateChangeListener(listener)
-                textView.setTag(R.id.tag1, listener)
+                tvMsg.addOnAttachStateChangeListener(listener)
+                tvMsg.setTag(R.id.tag1, listener)
             }
-            textView.text = item
+            tvTime.text = DebugLogLine.format.format(item.time)
+            tvMsg.text = item.msg
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemLogBinding) {
+    override fun registerListener(holder: ItemViewHolder, binding: ItemLogLineBinding) {
         //nothing
     }
 }

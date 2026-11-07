@@ -17,7 +17,7 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.base.adapter.RecyclerAdapter
 import io.legado.app.databinding.DialogRecyclerViewBinding
-import io.legado.app.databinding.Item1lineTextBinding
+import io.legado.app.databinding.ItemCrashLogBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.ui.widget.dialog.TextDialog
 import io.legado.app.utils.FileDoc
@@ -83,13 +83,15 @@ class CrashLogsDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     }
 
-    inner class LogAdapter : RecyclerAdapter<FileDoc, Item1lineTextBinding>(requireContext()) {
+    // 12-missed-2 #s05：条目 = 文件名主行 + 「来源 · 大小」副行 + 右箭头（item_crash_log.xml）；
+    // 来源按 FileDoc.isContentScheme 区分（外部缓存为文件路径，备份目录为 SAF content Uri）
+    inner class LogAdapter : RecyclerAdapter<FileDoc, ItemCrashLogBinding>(requireContext()) {
 
-        override fun getViewBinding(parent: ViewGroup): Item1lineTextBinding {
-            return Item1lineTextBinding.inflate(inflater, parent, false)
+        override fun getViewBinding(parent: ViewGroup): ItemCrashLogBinding {
+            return ItemCrashLogBinding.inflate(inflater, parent, false)
         }
 
-        override fun registerListener(holder: ItemViewHolder, binding: Item1lineTextBinding) {
+        override fun registerListener(holder: ItemViewHolder, binding: ItemCrashLogBinding) {
             binding.root.setOnClickListener {
                 getItemByLayoutPosition(holder.layoutPosition)?.let { item ->
                     showLogFile(item)
@@ -99,11 +101,18 @@ class CrashLogsDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
         override fun convert(
             holder: ItemViewHolder,
-            binding: Item1lineTextBinding,
+            binding: ItemCrashLogBinding,
             item: FileDoc,
             payloads: MutableList<Any>
         ) {
-            binding.textView.text = item.name
+            binding.tvName.text = item.name
+            val kb = (item.size + 1023) / 1024
+            val sourceRes = if (item.isContentScheme) {
+                R.string.crash_source_backup
+            } else {
+                R.string.crash_source_external
+            }
+            binding.tvSub.text = "${context.getString(sourceRes)} · ${kb} KB"
         }
 
     }
