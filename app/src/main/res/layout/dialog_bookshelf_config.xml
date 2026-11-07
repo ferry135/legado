@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- 书架显示设置弹窗（main/bookshelf/BaseBookshelfFragment · design-system/mockups/bookshelf-config-dialog.html §03）：
-     容器仍走 AlertDialog 正/负按钮框架面板（NEED-DECISION「容器落地路线」：values 禁改无法走①全局
-     alertDialogTheme，按③降级现状容器，仅表单内令牌化；稿面 16dp 圆角卡为设计目标形态）。
+     容器仍走 AlertDialog 正/负按钮框架面板（NEED-DECISION「容器落地路线」按③仅表单内令牌化）；
+     容器 16dp 圆角已随 alertCardBackground/applyTint 全局生效（DECISIONS §9 更正），
+     稿面描边/18sp 标题仍为纸面目标。
      customView 根改纵向 LinearLayout + ScrollView 包住表单区（小屏窗口封顶时表单内滚动，正/负按钮不被顶出）。
      分组样式 Spinner → 双胶囊 RadioGroup；四枚 ThemeSwitch 保留带 text 整行热区（不拆 label+开关，仅补 48dp 行高）。
      视图 5 胶囊拆 4+1 两行 / 排序 6 胶囊拆 3+3 两行（RadioGroup 无换行能力，双行互斥同步走 kt 路线①）。

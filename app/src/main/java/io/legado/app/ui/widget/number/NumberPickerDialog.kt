@@ -63,7 +63,7 @@ class NumberPickerDialog(context: Context) {
         }
         builder.setNegativeButton(R.string.cancel, null)
         val dialog = builder.show().applyTint()
-        // 10-reader-prefs#03 注③：16dp 圆角卡片（applyTint 默认 3dp 直角）+ scrim_dialog 遮罩（50% 黑）
+        // 10-reader-prefs#03 注③：16dp 圆角卡片（与 applyTint 同规格，双保险）+ scrim_dialog 遮罩（50% 黑）
         dialog.window?.let { window ->
             window.setBackgroundDrawable(
                 window.context.sheetBackground(window.context.backgroundColor)

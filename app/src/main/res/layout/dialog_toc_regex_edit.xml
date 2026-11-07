@@ -14,13 +14,11 @@
         android:orientation="vertical"
         tools:ignore="UselessParent">
 
-        <!-- .dlg-bar：运行时染 primaryColor，无阴影 -->
+        <!-- 标题栏 blend：去灰底，露 bg_card 卡面顶角（对齐 dialog_webdav_server 同语言） -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/tool_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/background_menu"
-            android:elevation="0dp"
             android:theme="@style/ThemeOverlay.AppCompat.DayNight"
             app:displayHomeAsUp="false"
             app:fitStatusBar="false"

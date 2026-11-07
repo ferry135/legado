@@ -28,9 +28,8 @@ import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.DialogBookChangeSourceBinding
 import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.dialogs.alert
-import io.legado.app.lib.theme.elevation
+import io.legado.app.lib.theme.backgroundColor
 import io.legado.app.lib.theme.getPrimaryTextColor
-import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.book.source.edit.BookSourceEditActivity
 import io.legado.app.ui.book.source.manage.BookSourceActivity
@@ -124,7 +123,6 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
         binding.toolBar.subtitle = viewModel.author
         binding.toolBar.navigationIcon =
             getCompatDrawable(androidx.appcompat.R.drawable.abc_ic_ab_back_material)
-        binding.toolBar.elevation = requireContext().elevation
     }
 
     private fun initMenu() {
@@ -196,7 +194,8 @@ class ChangeBookSourceDialog() : BaseDialogFragment(R.layout.dialog_book_change_
             val mNavButtonViewField = Toolbar::class.java.getDeclaredField("mNavButtonView")
             mNavButtonViewField.isAccessible = true
             val navigationView = mNavButtonViewField.get(binding.toolBar) as ImageButton
-            val isLight = ColorUtils.isColorLight(primaryColor)
+            // 标题栏 blend 后图标明暗随运行时卡面（backgroundColor）取值，不再按 primaryColor 判断
+            val isLight = ColorUtils.isColorLight(backgroundColor)
             val textColor = requireContext().getPrimaryTextColor(isLight)
             navigationView.setColorFilter(textColor)
         }

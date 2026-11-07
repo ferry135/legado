@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.constant.AppLog
 import io.legado.app.exception.NoStackTraceException
+import io.legado.app.utils.applyTint
 import io.legado.app.utils.registerForActivityResult
 import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.launch
@@ -215,6 +216,7 @@ class PermissionActivity : AppCompatActivity() {
                 finish()
             }
             .show()
+            .applyTint()
     }
 
     companion object {

@@ -63,4 +63,27 @@
   alert + okButton/cancelButton 改写为 DialogFragment 自绘底栏，超出「行为不变」最小改动口径。
 - 若后续放开 values 限制：按①新增全局 `alertDialogTheme` 一处生效全库 AlertDialog 即可升级，
   稿面 03 映射表「表单区各行」不受影响。
+- **更正（2026-11-07 核实轮）**：alert 系容器 16dp 圆角实际已随
+  `alertCardBackground`（MaterialValueHelper.kt，corner_radius_lg + 运行时 backgroundColor）
+  经 `AlertDialog.applyTint()` 全局生效，模拟器实拍确认；本弹窗容器圆角不再是缺口，
+  剩余未落地项收窄为「卡面描边 + 18sp 标题」两项纸面细节。
+
+## 10. 清单外弹窗「圆角被遮蔽」清理（2026-11-07，用户反馈弹窗直角）
+- 背景：用户核实设计稿落地情况，反馈「设计稿弹窗全圆角，App 弹窗基本直角」。逐项核实结论：
+  `BaseDialogFragment`（62 类）、`alert{}`/`selector{}`（经 applyTint→alertCardBackground，约 151 调用点）、
+  NumberPickerDialog 均已是 16dp 圆角运行时卡面；观感上的「直角」来自**旧式弹窗自带的灰底
+  Toolbar/底栏把圆角卡面盖住**（多为两批 43 稿清单外的页面化弹窗）。
+- 处理（对齐已落地 dialog_webdav_server 的 blend 标题栏语言，全部为去遮蔽最小改动）：
+  - dialog_book_change_source / dialog_chapter_change_source：Toolbar 去 background_menu+5dp
+    elevation，底栏去 @color/surface 底（分隔线保留）；ChangeBookSourceDialog 另修两处旧主色
+    时代残留——showTitle() 的 elevation 回填删除，返回箭头明暗改按运行时卡面
+    backgroundColor 判断（原按 primaryColor 判断在 blend 卡面上给出白箭头）；
+  - dialog_search_scope：Toolbar 与底栏去底色；
+  - dialog_book_group_edit：Toolbar 与表单区去 background_menu；
+  - dialog_dict_rule_edit / dialog_login / dialog_toc_regex_edit：bg_card 卡内 Toolbar 去灰底
+    （原「.dlg-bar 运行时染 primaryColor」注释为陈旧未实现项，随之移除）；
+  - dialog_open_url_confirm：根卡 shape_card_view（3dp）→ bg_dialog_card（16dp+描边）；
+  - PermissionActivity 理由弹窗（裸 AlertDialog.Builder，唯一未入 applyTint 的常驻弹窗）→
+    show().applyTint()。
+- 未动：阅读菜单（view_read_menu 等按 DECISIONS §5 维持现状）。
 

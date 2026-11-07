@@ -6,11 +6,11 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+    <!-- 标题栏 blend + 表单区同卡面：去 background_menu 灰底，露 16dp 圆角卡面 -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background_menu"
         android:theme="@style/ThemeOverlay.AppCompat.DayNight"
         app:displayHomeAsUp="false"
         app:fitStatusBar="false"
@@ -21,8 +21,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/background_menu">
+        android:layout_height="wrap_content">
 
         <io.legado.app.ui.widget.image.CoverImageView
             android:id="@+id/iv_cover"

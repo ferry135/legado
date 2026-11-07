@@ -6,12 +6,11 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
+    <!-- 标题栏 blend：去灰底/阴影，露 16dp 圆角卡面（对齐 dialog_webdav_server 同语言） -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background_menu"
-        android:elevation="5dp"
         android:theme="@style/ThemeOverlay.AppCompat.DayNight"
         app:displayHomeAsUp="false"
         app:fitStatusBar="false"
@@ -60,11 +59,11 @@
         android:background="@color/divider_subtle"
         app:layout_constraintBottom_toTopOf="@+id/ll_bottom_bar" />
 
+    <!-- 底栏与卡面同色（去 @color/surface 灰底），不遮卡底 16dp 圆角 -->
     <LinearLayout
         android:id="@+id/ll_bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        android:background="@color/surface"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingLeft="8dp"
