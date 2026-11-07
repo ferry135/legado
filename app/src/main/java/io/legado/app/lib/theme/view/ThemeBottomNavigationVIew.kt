@@ -44,19 +44,22 @@ class ThemeBottomNavigationVIew(context: Context, attrs: AttributeSet) :
         val textIsDark = ColorUtils.isColorLight(bgColor)
         val textColor = context.getSecondaryTextColor(textIsDark)
         // 选中态随主色调（M3 语义；上游原为强调色——M3 重构后主色调在全应用几乎无
-        // 可见消费者，改主色无从体现）。墨水屏维持上游强调色（applyTheme 墨水屏
-        // 分支主色为白，选中态需保持深字对比）
-        val selectedColor = if (AppConfig.isEInkMode) {
-            ThemeStore.accentColor(context)
-        } else {
-            context.primaryColor
-        }
+        // 可见消费者，改主色无从体现）。主色与底栏明暗同侧时选中态会隐形（夜间
+        // A屏黑：黑主色落黑底），回退强调色保底；墨水屏（白主色落白底）也由此
+        // 自然落到黑强调色，无需单列
+        val primary = context.primaryColor
+        val selectedColor =
+            if (ColorUtils.isColorLight(primary) == ColorUtils.isColorLight(bgColor)) {
+                ThemeStore.accentColor(context)
+            } else {
+                primary
+            }
         val colorStateList = Selector.colorBuild()
             .setDefaultColor(textColor)
             .setSelectedColor(selectedColor).create()
         itemIconTintList = colorStateList
         itemTextColor = colorStateList
-        // 胶囊指示条 12% 主色
+        // 胶囊指示条 12% 选中色
         if (!AppConfig.isEInkMode) {
             itemActiveIndicatorColor = ColorStateList.valueOf(
                 ColorUtils.withAlpha(selectedColor, 0.12f)

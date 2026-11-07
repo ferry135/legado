@@ -64,6 +64,11 @@ abstract class BaseDialogFragment(
                     }
                 }
             })
+        } else {
+            // 普通弹窗的内容卡已在 onViewCreated 染成 16dp 圆角 sheet；窗口默认
+            // 方形背景会从圆角外露出直角边缘与方形投影（深色下尤其明显），一并
+            // 透明化，只留圆角卡本体
+            dialog?.window?.setBackgroundDrawableResource(R.color.transparent)
         }
     }
 

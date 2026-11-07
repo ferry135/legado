@@ -249,31 +249,45 @@ object ThemeConfig {
             }
 
             AppConfig.isNightTheme -> {
-                val primary = getPrefInt(PreferKey.cNPrimary, -1)
+                // 被排除的历史默认值（上游旧配色，可能被旧版本/恢复备份写入 prefs）
+                // 按未设置处理，并回写为实际生效的兜底色——否则设置页色板仍显示
+                // 历史值而运行时已换成兜底色，两边对不上。
+                // 「未设置」哨兵用 MIN_VALUE 而非 -1：#FFFFFF 的 Int 值恰为 -1，
+                // 用 -1 会把用户设的纯白强调色（如 A屏黑）当成未设置兜底成橙色
+                val unset = Int.MIN_VALUE
+                val primary = getPrefInt(PreferKey.cNPrimary, unset)
                     .takeIf {
-                        it != -1 && it != getCompatColor(R.color.md_blue_grey_600)
+                        it != unset && it != getCompatColor(R.color.md_blue_grey_600)
                                 && it != getCompatColor(R.color.md_red_600)
                     }
-                    ?: getCompatColor(R.color.design_orange)
-                val accent = getPrefInt(PreferKey.cNAccent, -1)
+                    ?: getCompatColor(R.color.design_orange).also {
+                        putPrefInt(PreferKey.cNPrimary, it)
+                    }
+                val accent = getPrefInt(PreferKey.cNAccent, unset)
                     .takeIf {
-                        it != -1 && it != getCompatColor(R.color.md_deep_orange_800)
+                        it != unset && it != getCompatColor(R.color.md_deep_orange_800)
                                 && it != getCompatColor(R.color.md_red_600)
                     }
-                    ?: getCompatColor(R.color.design_orange)
-                var background = getPrefInt(PreferKey.cNBackground, -1)
-                    .takeIf { it != -1 && it != getCompatColor(R.color.md_grey_900) }
-                    ?: getCompatColor(R.color.night_surface)
+                    ?: getCompatColor(R.color.design_orange).also {
+                        putPrefInt(PreferKey.cNAccent, it)
+                    }
+                var background = getPrefInt(PreferKey.cNBackground, unset)
+                    .takeIf { it != unset && it != getCompatColor(R.color.md_grey_900) }
+                    ?: getCompatColor(R.color.night_surface).also {
+                        putPrefInt(PreferKey.cNBackground, it)
+                    }
                 if (ColorUtils.isColorLight(background)) {
                     background = getCompatColor(R.color.night_surface)
                     putPrefInt(PreferKey.cNBackground, background)
                 }
-                val bBackground = getPrefInt(PreferKey.cNBBackground, -1)
+                val bBackground = getPrefInt(PreferKey.cNBBackground, unset)
                     .takeIf {
-                        it != -1 && it != getCompatColor(R.color.md_grey_850)
+                        it != unset && it != getCompatColor(R.color.md_grey_850)
                                 && it != getCompatColor(R.color.legacy_bottom_night)
                     }
-                    ?: getCompatColor(R.color.night_bottom_nav)
+                    ?: getCompatColor(R.color.night_bottom_nav).also {
+                        putPrefInt(PreferKey.cNBBackground, it)
+                    }
                 ThemeStore.editTheme(this)
                     .primaryColor(ColorUtils.withAlpha(primary, 1f))
                     .accentColor(ColorUtils.withAlpha(accent, 1f))
@@ -283,28 +297,39 @@ object ThemeConfig {
             }
 
             else -> {
-                val primary = getPrefInt(PreferKey.cPrimary, -1)
+                // 同夜间分支：历史默认值回写兜底色，色板与运行时一致；
+                // 未设置哨兵用 MIN_VALUE（-1 与纯白 #FFFFFF 冲突）
+                val unset = Int.MIN_VALUE
+                val primary = getPrefInt(PreferKey.cPrimary, unset)
                     .takeIf {
-                        it != -1 && it != getCompatColor(R.color.md_brown_500)
+                        it != unset && it != getCompatColor(R.color.md_brown_500)
                                 && it != getCompatColor(R.color.md_red_600)
                     }
-                    ?: getCompatColor(R.color.design_orange)
-                val accent = getPrefInt(PreferKey.cAccent, -1)
-                    .takeIf { it != -1 && it != getCompatColor(R.color.md_red_600) }
-                    ?: getCompatColor(R.color.design_orange)
-                var background = getPrefInt(PreferKey.cBackground, -1)
-                    .takeIf { it != -1 && it != getCompatColor(R.color.md_grey_100) }
-                    ?: getCompatColor(R.color.day_surface)
+                    ?: getCompatColor(R.color.design_orange).also {
+                        putPrefInt(PreferKey.cPrimary, it)
+                    }
+                val accent = getPrefInt(PreferKey.cAccent, unset)
+                    .takeIf { it != unset && it != getCompatColor(R.color.md_red_600) }
+                    ?: getCompatColor(R.color.design_orange).also {
+                        putPrefInt(PreferKey.cAccent, it)
+                    }
+                var background = getPrefInt(PreferKey.cBackground, unset)
+                    .takeIf { it != unset && it != getCompatColor(R.color.md_grey_100) }
+                    ?: getCompatColor(R.color.day_surface).also {
+                        putPrefInt(PreferKey.cBackground, it)
+                    }
                 if (!ColorUtils.isColorLight(background)) {
                     background = getCompatColor(R.color.day_surface)
                     putPrefInt(PreferKey.cBackground, background)
                 }
-                val bBackground = getPrefInt(PreferKey.cBBackground, -1)
+                val bBackground = getPrefInt(PreferKey.cBBackground, unset)
                     .takeIf {
-                        it != -1 && it != getCompatColor(R.color.md_grey_200)
+                        it != unset && it != getCompatColor(R.color.md_grey_200)
                                 && it != getCompatColor(R.color.legacy_bottom_day)
                     }
-                    ?: getCompatColor(R.color.day_bottom_nav)
+                    ?: getCompatColor(R.color.day_bottom_nav).also {
+                        putPrefInt(PreferKey.cBBackground, it)
+                    }
                 ThemeStore.editTheme(this)
                     .primaryColor(ColorUtils.withAlpha(primary, 1f))
                     .accentColor(ColorUtils.withAlpha(accent, 1f))
