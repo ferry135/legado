@@ -52,12 +52,18 @@
   `setIndicatorColor(primaryColor)`（+1 行）。
 - 听书封面边框（`AudioPlayActivity` ivCover.borderColor，原 civ_border_color=@color/accent）
   同批改为运行时 accentColor。
-- **本节静态通道已全量收编（2026-11-07，用户确认「现在就修」）**：§8 所述机制性限制不再成立，
-  遗留静态点仅余——底部导航（MainActivity initView 非墨水屏分支运行时
-  itemIconTintList/itemTextColor + setItemActiveIndicatorColor(12% primary)，墨水屏维持默认）；
-  `styles.xml` 的 `?attr/colorPrimary|colorAccent → @color/primary|accent` 映射保留作
-  首帧兜底（默认色已是暖橙体系，见 §1）。主题设置改主色/强调色现已全局生效，
-  模拟器验证：改色→底导航选中态即时跟随；应用「默认」预设→全 UI 回橙。
+- **更正（2026-11-07 二次核实，用户手机截图证伪）**：本节及 §11 原认定的
+  「底导航走静态通道」为**误诊**——底导航是上游自染色控件
+  `ThemeBottomNavigationVIew`（activity_main.xml），`upTheme()` 一直以运行时
+  **accentColor** 染选中态，从未静态。此前"绿测只改主色调、导航不动"的实验
+  单变量不完整，导向错误结论。真实静态点仅为当日收编的小部件（勾选图标、
+  漫画指示器、导入徽标、听书封面边）。当日改动调整为：
+  `ThemeBottomNavigationVIew.upTheme()` 选中色 accent→**primaryColor**（M3 语义，
+  墨水屏维持强调色），指示条 12% primary；深浅切换经 onConfigurationChanged
+  重着色单点生效（MainActivity 不再重复染色）。
+  `styles.xml` 的 `?attr/colorPrimary|colorAccent → @color/primary|accent` 映射
+  保留作首帧兜底（默认色已是暖橙体系，见 §1）。模拟器验证：改主色调→底导航
+  即时跟随且胶囊（强调色）不变；应用「默认」预设→全 UI 回橙。
 
 ## 9. 书架设置弹窗容器降级为现状 AlertDialog（NEED-DECISION 路线③）
 - 背景：bookshelf-config-dialog.html 的 [NEED-DECISION]「容器落地路线」给过三案：
@@ -94,11 +100,22 @@
     show().applyTint()。
 - 未动：阅读菜单（view_read_menu 等按 DECISIONS §5 维持现状）。
 
-## 11. 主题双通道诊断与「默认」预设修正（2026-11-07，用户报手机/模拟器主题色不一致）
-- 现象：模拟器上主题设置改色后，显眼 UI（底导航）仍橙色且不跟随；手机却跟随。
-- 根因：见 §8 —— 运行时通道（ThemeStore prefs，主题设置可控）与静态通道
-  （?attr/colorPrimary → @color/primary 兜底）并存，底导航等走静态通道；
-  手机跟随是因其装的是 M3 重构前的旧构建（底导航尚走运行时通道），非两台设备逻辑不同。
+## 11. 主题色诊断与「默认」预设修正（2026-11-07，用户报手机/模拟器主题色不一致）
+- 现象：模拟器改「主色调」后界面无变化（用户感知"调整无效"）；手机（3.26.110600debug）
+  改主题设置却生效、整体呈另一颜色（蓝）。两台设备同为带橙色兜底资源的 M3 构建。
+- **最终根因（二次核实修正）**：
+  1. 底导航从上游起就是自染色控件 `ThemeBottomNavigationVIew`，选中态一直跟运行时
+     **强调色**——并非静态通道（初诊有误，见 §8 更正）。
+  2. "改主色调无效"的真因：M3 重构删除了上游最后的主色大消费者（TitleBar 染色），
+     主色调在重构后的可见消费者≈0，改了无处显示；且 `applyTheme` 白天分支排除
+     md_red_600（取色器默认选中色），直接确认还会被静默换回兜底橙。
+  3. 手机/模拟器差异 = **设备存储差异**（`app_themes.xml` 跨覆盖安装保留）：模拟器存储
+     恰为橙方案（强调色 #FF6B2C 与静态兜底同色，形成"整个 App 被静态锁橙"的伪装），
+     手机存储为历史操作写入的蓝方案。无首启代码写 ThemeStore（App/WelcomeActivity
+     零命中），全新安装才会落到资源兜底。
+- 处置：主色调重新接入显眼消费（底导航选中色 accent→primary，见 §8 更正）；
+  当日收编的静态小部件（勾选图标/漫画指示器/导入徽标/听书封面边）改为
+  运行时 primaryColor/accentColor 染色。
 - 预设修正：`defaultData/themeConfig.json` 的「默认」预设原为棕 #795548/红 #E53935
   ——而 `ThemeConfig.applyTheme` 白天分支明确排除 md_brown_500 与 md_red_600
   （防旧版死灰/大红回潮），红/棕主色会被静默换成 design_orange 兜底，

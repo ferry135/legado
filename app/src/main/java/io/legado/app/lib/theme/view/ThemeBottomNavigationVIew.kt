@@ -2,6 +2,7 @@ package io.legado.app.lib.theme.view
 
 import android.content.Context
 import android.content.res.Configuration
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
@@ -15,6 +16,7 @@ import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getSecondaryTextColor
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.text.BadgeView
 import io.legado.app.utils.ColorUtils
 
@@ -41,11 +43,25 @@ class ThemeBottomNavigationVIew(context: Context, attrs: AttributeSet) :
         elevation = 0f
         val textIsDark = ColorUtils.isColorLight(bgColor)
         val textColor = context.getSecondaryTextColor(textIsDark)
+        // 选中态随主色调（M3 语义；上游原为强调色——M3 重构后主色调在全应用几乎无
+        // 可见消费者，改主色无从体现）。墨水屏维持上游强调色（applyTheme 墨水屏
+        // 分支主色为白，选中态需保持深字对比）
+        val selectedColor = if (AppConfig.isEInkMode) {
+            ThemeStore.accentColor(context)
+        } else {
+            context.primaryColor
+        }
         val colorStateList = Selector.colorBuild()
             .setDefaultColor(textColor)
-            .setSelectedColor(ThemeStore.accentColor(context)).create()
+            .setSelectedColor(selectedColor).create()
         itemIconTintList = colorStateList
         itemTextColor = colorStateList
+        // 胶囊指示条 12% 主色
+        if (!AppConfig.isEInkMode) {
+            itemActiveIndicatorColor = ColorStateList.valueOf(
+                ColorUtils.withAlpha(selectedColor, 0.12f)
+            )
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
