@@ -71,7 +71,7 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     private val idBookshelf1 = 11
     private val idBookshelf2 = 12
     private val idExplore = 1
-    private val idMy = 3
+    private val idMy = 2
     private var exitTime: Long = 0
     private var bookshelfReselected: Long = 0
     private var exploreReselected: Long = 0
