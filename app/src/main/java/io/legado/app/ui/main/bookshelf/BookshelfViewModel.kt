@@ -31,75 +31,83 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
 
-class BookshelfViewModel(application: Application) : BaseViewModel(application) {
+class BookshelfViewModel(
+    application: Application,
+) : BaseViewModel(application) {
     val addBookProgressLiveData = MutableLiveData(-1)
     var addBookJob: Coroutine<*>? = null
 
     fun addBookByUrl(bookUrls: String) {
         var successCount = 0
-        addBookJob = execute {
-            val hasBookUrlPattern: List<BookSourcePart> by lazy {
-                appDb.bookSourceDao.hasBookUrlPattern
-            }
-            val urls = bookUrls.split("\n")
-            for (url in urls) {
-                val bookUrl = url.trim()
-                if (bookUrl.isEmpty()) continue
-                if (appDb.bookDao.getBook(bookUrl) != null) {
-                    successCount++
-                    continue
+        addBookJob =
+            execute {
+                val hasBookUrlPattern: List<BookSourcePart> by lazy {
+                    appDb.bookSourceDao.hasBookUrlPattern
                 }
-                val baseUrl = NetworkUtils.getBaseUrl(bookUrl) ?: continue
-                var source = appDb.bookSourceDao.getBookSourceAddBook(baseUrl)
-                if (source == null) {
-                    for (bookSource in hasBookUrlPattern) {
-                        try {
-                            val bs = bookSource.getBookSource()!!
-                            if (bookUrl.matches(bs.bookUrlPattern!!.toRegex())) {
-                                source = bs
-                                break
+                val urls = bookUrls.split("\n")
+                for (url in urls) {
+                    val bookUrl = url.trim()
+                    if (bookUrl.isEmpty()) continue
+                    if (appDb.bookDao.getBook(bookUrl) != null) {
+                        successCount++
+                        continue
+                    }
+                    val baseUrl = NetworkUtils.getBaseUrl(bookUrl) ?: continue
+                    var source = appDb.bookSourceDao.getBookSourceAddBook(baseUrl)
+                    if (source == null) {
+                        for (bookSource in hasBookUrlPattern) {
+                            try {
+                                val bs = bookSource.getBookSource()!!
+                                if (bookUrl.matches(bs.bookUrlPattern!!.toRegex())) {
+                                    source = bs
+                                    break
+                                }
+                            } catch (_: Exception) {
                             }
-                        } catch (_: Exception) {
                         }
                     }
+                    val bookSource = source ?: continue
+                    val book =
+                        Book(
+                            bookUrl = bookUrl,
+                            origin = bookSource.bookSourceUrl,
+                            originName = bookSource.bookSourceName,
+                        )
+                    kotlin
+                        .runCatching {
+                            WebBook.getBookInfoAwait(bookSource, book)
+                        }.onSuccess {
+                            val dbBook = appDb.bookDao.getBook(it.name, it.author)
+                            if (dbBook != null) {
+                                val toc = WebBook.getChapterListAwait(bookSource, it).getOrThrow()
+                                dbBook.migrateTo(it, toc)
+                                appDb.bookDao.insert(it)
+                                appDb.bookChapterDao.insert(*toc.toTypedArray())
+                            } else {
+                                it.order = appDb.bookDao.minOrder - 1
+                                it.save()
+                            }
+                            successCount++
+                            addBookProgressLiveData.postValue(successCount)
+                        }
                 }
-                val bookSource = source ?: continue
-                val book = Book(
-                    bookUrl = bookUrl,
-                    origin = bookSource.bookSourceUrl,
-                    originName = bookSource.bookSourceName
-                )
-                kotlin.runCatching {
-                    WebBook.getBookInfoAwait(bookSource, book)
-                }.onSuccess {
-                    val dbBook = appDb.bookDao.getBook(it.name, it.author)
-                    if (dbBook != null) {
-                        val toc = WebBook.getChapterListAwait(bookSource, it).getOrThrow()
-                        dbBook.migrateTo(it, toc)
-                        appDb.bookDao.insert(it)
-                        appDb.bookChapterDao.insert(*toc.toTypedArray())
-                    } else {
-                        it.order = appDb.bookDao.minOrder - 1
-                        it.save()
-                    }
-                    successCount++
-                    addBookProgressLiveData.postValue(successCount)
+            }.onSuccess {
+                if (successCount > 0) {
+                    context.toastOnUi(R.string.success)
+                } else {
+                    context.toastOnUi("添加网址失败")
                 }
+            }.onError {
+                AppLog.put("添加网址出错\n${it.localizedMessage}", it, true)
+            }.onFinally {
+                addBookProgressLiveData.postValue(-1)
             }
-        }.onSuccess {
-            if (successCount > 0) {
-                context.toastOnUi(R.string.success)
-            } else {
-                context.toastOnUi("添加网址失败")
-            }
-        }.onError {
-            AppLog.put("添加网址出错\n${it.localizedMessage}", it, true)
-        }.onFinally {
-            addBookProgressLiveData.postValue(-1)
-        }
     }
 
-    fun exportBookshelf(books: List<Book>?, success: (file: File) -> Unit) {
+    fun exportBookshelf(
+        books: List<Book>?,
+        success: (file: File) -> Unit,
+    ) {
         execute {
             books?.let {
                 val path = "${context.filesDir}/books.json"
@@ -128,16 +136,22 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-    fun importBookshelf(str: String, groupId: Long) {
+    fun importBookshelf(
+        str: String,
+        groupId: Long,
+    ) {
         execute {
             val text = str.trim()
             when {
                 text.isAbsUrl() -> {
-                    okHttpClient.newCallResponseBody {
-                        url(text)
-                    }.decompressed().text().let {
-                        importBookshelf(it, groupId)
-                    }
+                    okHttpClient
+                        .newCallResponseBody {
+                            url(text)
+                        }.decompressed()
+                        .text()
+                        .let {
+                            importBookshelf(it, groupId)
+                        }
                 }
 
                 text.isJsonArray() -> {
@@ -153,7 +167,10 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-    private fun importBookshelfByJson(json: String, groupId: Long) {
+    private fun importBookshelfByJson(
+        json: String,
+        groupId: Long,
+    ) {
         execute {
             val bookSourceParts = appDb.bookSourceDao.allEnabledPart
             val semaphore = Semaphore(AppConfig.threadCount)
@@ -164,18 +181,22 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
                     return@forEach
                 }
                 semaphore.withPermit {
-                    WebBook.preciseSearch(
-                        this, bookSourceParts, name, author,
-                        semaphore = semaphore
-                    ).onSuccess {
-                        val book = it.first
-                        if (groupId > 0) {
-                            book.group = groupId
+                    WebBook
+                        .preciseSearch(
+                            this,
+                            bookSourceParts,
+                            name,
+                            author,
+                            semaphore = semaphore,
+                        ).onSuccess {
+                            val book = it.first
+                            if (groupId > 0) {
+                                book.group = groupId
+                            }
+                            book.save()
+                        }.onError { e ->
+                            context.toastOnUi(e.localizedMessage)
                         }
-                        book.save()
-                    }.onError { e ->
-                        context.toastOnUi(e.localizedMessage)
-                    }
                 }
             }
         }.onError {
@@ -184,5 +205,4 @@ class BookshelfViewModel(application: Application) : BaseViewModel(application) 
             context.toastOnUi(R.string.success)
         }
     }
-
 }

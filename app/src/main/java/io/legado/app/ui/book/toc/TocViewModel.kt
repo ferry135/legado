@@ -1,6 +1,5 @@
 package io.legado.app.ui.book.toc
 
-
 import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
@@ -19,7 +18,9 @@ import io.legado.app.utils.openOutputStream
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.writeText
 
-class TocViewModel(application: Application) : BaseViewModel(application) {
+class TocViewModel(
+    application: Application,
+) : BaseViewModel(application) {
     var bookUrl: String = ""
     var bookData = MutableLiveData<Book>()
     var chapterListCallBack: ChapterListCallBack? = null
@@ -35,7 +36,10 @@ class TocViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun upBookTocRule(book: Book, complete: (Throwable?) -> Unit) {
+    fun upBookTocRule(
+        book: Book,
+        complete: (Throwable?) -> Unit,
+    ) {
         execute {
             appDb.bookDao.update(book)
             LocalBook.getChapterList(book).let {
@@ -82,14 +86,15 @@ class TocViewModel(application: Application) : BaseViewModel(application) {
 
     fun saveBookmark(treeUri: Uri) {
         execute {
-            val book = bookData.value
-                ?: throw NoStackTraceException(context.getString(R.string.no_book))
+            val book =
+                bookData.value
+                    ?: throw NoStackTraceException(context.getString(R.string.no_book))
             val fileName = "bookmark-${book.name} ${book.author}.json"
             val doc = FileDoc.fromUri(treeUri, true)
             doc.createFileIfNotExist(fileName).writeText(
                 GSON.toJson(
-                    appDb.bookmarkDao.getByBook(book.name, book.author)
-                )
+                    appDb.bookmarkDao.getByBook(book.name, book.author),
+                ),
             )
         }.onError {
             AppLog.put("导出失败\n${it.localizedMessage}", it, true)
@@ -100,13 +105,16 @@ class TocViewModel(application: Application) : BaseViewModel(application) {
 
     fun saveBookmarkMd(treeUri: Uri) {
         execute {
-            val book = bookData.value
-                ?: throw NoStackTraceException(context.getString(R.string.no_book))
+            val book =
+                bookData.value
+                    ?: throw NoStackTraceException(context.getString(R.string.no_book))
             val fileName = "bookmark-${book.name} ${book.author}.md"
             val treeDoc = FileDoc.fromUri(treeUri, true)
-            val fileDoc = treeDoc.createFileIfNotExist(fileName)
-                .openOutputStream()
-                .getOrThrow()
+            val fileDoc =
+                treeDoc
+                    .createFileIfNotExist(fileName)
+                    .openOutputStream()
+                    .getOrThrow()
             fileDoc.use { outputStream ->
                 outputStream.write("## ${book.name} ${book.author}\n\n".toByteArray())
                 appDb.bookmarkDao.getByBook(book.name, book.author).forEach {

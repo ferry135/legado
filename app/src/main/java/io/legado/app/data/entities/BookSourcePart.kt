@@ -6,13 +6,12 @@ import io.legado.app.constant.AppPattern
 import io.legado.app.data.appDb
 import io.legado.app.utils.splitNotBlank
 
-
 @DatabaseView(
     """select bookSourceUrl, bookSourceName, bookSourceGroup, customOrder, enabled, enabledExplore, 
     (loginUrl is not null and trim(loginUrl) <> '') hasLoginUrl, lastUpdateTime, respondTime, weight, 
     (exploreUrl is not null and trim(exploreUrl) <> '') hasExploreUrl 
     from book_sources""",
-    viewName = "book_sources_part"
+    viewName = "book_sources_part",
 )
 data class BookSourcePart(
     // 地址，包括 http/https
@@ -36,28 +35,19 @@ data class BookSourcePart(
     // 智能排序的权重
     var weight: Int = 0,
     // 是否有发现url
-    var hasExploreUrl: Boolean = false
+    var hasExploreUrl: Boolean = false,
 ) {
+    override fun hashCode(): Int = bookSourceUrl.hashCode()
 
-    override fun hashCode(): Int {
-        return bookSourceUrl.hashCode()
+    override fun equals(other: Any?): Boolean = if (other is BookSourcePart) other.bookSourceUrl == bookSourceUrl else false
+
+    fun getDisPlayNameGroup(): String = if (bookSourceGroup.isNullOrBlank()) {
+        bookSourceName
+    } else {
+        String.format("%s (%s)", bookSourceName, bookSourceGroup)
     }
 
-    override fun equals(other: Any?): Boolean {
-        return if (other is BookSourcePart) other.bookSourceUrl == bookSourceUrl else false
-    }
-
-    fun getDisPlayNameGroup(): String {
-        return if (bookSourceGroup.isNullOrBlank()) {
-            bookSourceName
-        } else {
-            String.format("%s (%s)", bookSourceName, bookSourceGroup)
-        }
-    }
-
-    fun getBookSource(): BookSource? {
-        return appDb.bookSourceDao.getBookSource(bookSourceUrl)
-    }
+    fun getBookSource(): BookSource? = appDb.bookSourceDao.getBookSource(bookSourceUrl)
 
     fun addGroup(groups: String) {
         bookSourceGroup?.splitNotBlank(AppPattern.splitGroupRegex)?.toHashSet()?.let {
@@ -73,9 +63,6 @@ data class BookSourcePart(
             bookSourceGroup = TextUtils.join(",", it)
         }
     }
-
 }
 
-fun List<BookSourcePart>.toBookSource(): List<BookSource> {
-    return mapNotNull { it.getBookSource() }
-}
+fun List<BookSourcePart>.toBookSource(): List<BookSource> = mapNotNull { it.getBookSource() }

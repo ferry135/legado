@@ -35,13 +35,15 @@ import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.visible
 
 @SuppressLint("RestrictedApi")
-class TextActionMenu(private val context: Context, private val callBack: CallBack) :
-    PopupWindow(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT) {
-
+class TextActionMenu(
+    private val context: Context,
+    private val callBack: CallBack,
+) : PopupWindow(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT) {
     private val binding = PopupActionMenuBinding.inflate(LayoutInflater.from(context))
-    private val adapter = Adapter(context).apply {
-        setHasStableIds(true)
-    }
+    private val adapter =
+        Adapter(context).apply {
+            setHasStableIds(true)
+        }
     private val menuItems: List<MenuItemImpl>
     private val visibleMenuItems = arrayListOf<MenuItemImpl>()
     private val moreMenuItems = arrayListOf<MenuItemImpl>()
@@ -107,7 +109,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
         startTopY: Int,
         startBottomY: Int,
         endX: Int,
-        endBottomY: Int
+        endBottomY: Int,
     ) {
         if (expandTextMenu) {
             when {
@@ -116,7 +118,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                         view,
                         Gravity.BOTTOM or Gravity.START,
                         startX,
-                        windowHeight - startTopY
+                        windowHeight - startTopY,
                     )
                 }
 
@@ -140,7 +142,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                         view,
                         Gravity.TOP or Gravity.START,
                         startX,
-                        startTopY - popupHeight
+                        startTopY - popupHeight,
                     )
                 }
 
@@ -149,7 +151,7 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                         view,
                         Gravity.TOP or Gravity.START,
                         startX,
-                        startBottomY
+                        startBottomY,
                     )
                 }
 
@@ -158,36 +160,35 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
                         view,
                         Gravity.TOP or Gravity.START,
                         endX,
-                        endBottomY
+                        endBottomY,
                     )
                 }
             }
         }
     }
 
-    inner class Adapter(context: Context) :
-        RecyclerAdapter<MenuItemImpl, ItemTextBinding>(context) {
+    inner class Adapter(
+        context: Context,
+    ) : RecyclerAdapter<MenuItemImpl, ItemTextBinding>(context) {
+        override fun getItemId(position: Int): Long = position.toLong()
 
-        override fun getItemId(position: Int): Long {
-            return position.toLong()
-        }
-
-        override fun getViewBinding(parent: ViewGroup): ItemTextBinding {
-            return ItemTextBinding.inflate(inflater, parent, false)
-        }
+        override fun getViewBinding(parent: ViewGroup): ItemTextBinding = ItemTextBinding.inflate(inflater, parent, false)
 
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemTextBinding,
             item: MenuItemImpl,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             with(binding) {
                 textView.text = item.title
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder, binding: ItemTextBinding) {
+        override fun registerListener(
+            holder: ItemViewHolder,
+            binding: ItemTextBinding,
+        ) {
             holder.itemView.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     if (!callBack.onMenuItemSelected(it.itemId)) {
@@ -214,51 +215,48 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
             R.id.menu_copy -> context.sendToClip(callBack.selectedText)
             R.id.menu_share_str -> context.share(callBack.selectedText)
             R.id.menu_browser -> {
-                kotlin.runCatching {
-                    val intent = if (callBack.selectedText.isAbsUrl()) {
-                        Intent(Intent.ACTION_VIEW).apply {
-                            data = Uri.parse(callBack.selectedText)
-                        }
-                    } else {
-                        Intent(Intent.ACTION_WEB_SEARCH).apply {
-                            putExtra(SearchManager.QUERY, callBack.selectedText)
-                        }
+                kotlin
+                    .runCatching {
+                        val intent =
+                            if (callBack.selectedText.isAbsUrl()) {
+                                Intent(Intent.ACTION_VIEW).apply {
+                                    data = Uri.parse(callBack.selectedText)
+                                }
+                            } else {
+                                Intent(Intent.ACTION_WEB_SEARCH).apply {
+                                    putExtra(SearchManager.QUERY, callBack.selectedText)
+                                }
+                            }
+                        context.startActivity(intent)
+                    }.onFailure {
+                        it.printOnDebug()
+                        context.toastOnUi(it.localizedMessage ?: "ERROR")
                     }
-                    context.startActivity(intent)
-                }.onFailure {
-                    it.printOnDebug()
-                    context.toastOnUi(it.localizedMessage ?: "ERROR")
-                }
             }
 
-            else -> item.intent?.let {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    it.putExtra(Intent.EXTRA_PROCESS_TEXT, callBack.selectedText)
-                    context.startActivity(it)
+            else ->
+                item.intent?.let {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        it.putExtra(Intent.EXTRA_PROCESS_TEXT, callBack.selectedText)
+                        context.startActivity(it)
+                    }
                 }
-            }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun createProcessTextIntent(): Intent {
-        return Intent()
-            .setAction(Intent.ACTION_PROCESS_TEXT)
-            .setType("text/plain")
-    }
+    private fun createProcessTextIntent(): Intent = Intent()
+        .setAction(Intent.ACTION_PROCESS_TEXT)
+        .setType("text/plain")
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun getSupportedActivities(): List<ResolveInfo> {
-        return context.packageManager
-            .queryIntentActivities(createProcessTextIntent(), 0)
-    }
+    private fun getSupportedActivities(): List<ResolveInfo> = context.packageManager
+        .queryIntentActivities(createProcessTextIntent(), 0)
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun createProcessTextIntentForResolveInfo(info: ResolveInfo): Intent {
-        return createProcessTextIntent()
-            .putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
-            .setClassName(info.activityInfo.packageName, info.activityInfo.name)
-    }
+    private fun createProcessTextIntentForResolveInfo(info: ResolveInfo): Intent = createProcessTextIntent()
+        .putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false)
+        .setClassName(info.activityInfo.packageName, info.activityInfo.name)
 
     /**
      * Start with a menu Item order value that is high enough
@@ -267,17 +265,21 @@ class TextActionMenu(private val context: Context, private val callBack: CallBac
      */
     @RequiresApi(Build.VERSION_CODES.M)
     private fun onInitializeMenu(menu: Menu) {
-        kotlin.runCatching {
-            var menuItemOrder = 100
-            for (resolveInfo in getSupportedActivities()) {
-                menu.add(
-                    Menu.NONE, Menu.NONE,
-                    menuItemOrder++, resolveInfo.loadLabel(context.packageManager)
-                ).intent = createProcessTextIntentForResolveInfo(resolveInfo)
+        kotlin
+            .runCatching {
+                var menuItemOrder = 100
+                for (resolveInfo in getSupportedActivities()) {
+                    menu
+                        .add(
+                            Menu.NONE,
+                            Menu.NONE,
+                            menuItemOrder++,
+                            resolveInfo.loadLabel(context.packageManager),
+                        ).intent = createProcessTextIntentForResolveInfo(resolveInfo)
+                }
+            }.onFailure {
+                context.toastOnUi("获取文字操作菜单出错:${it.localizedMessage}")
             }
-        }.onFailure {
-            context.toastOnUi("获取文字操作菜单出错:${it.localizedMessage}")
-        }
     }
 
     interface CallBack {

@@ -57,33 +57,37 @@ import java.io.FileInputStream
  * 恢复
  */
 object Restore {
-
     private val mutex = Mutex()
 
     private const val TAG = "Restore"
 
-    suspend fun restore(context: Context, uri: Uri) {
+    suspend fun restore(
+        context: Context,
+        uri: Uri,
+    ) {
         LogUtils.d(TAG, "开始恢复备份 uri:$uri")
-        kotlin.runCatching {
-            FileUtils.delete(Backup.backupPath)
-            if (uri.isContentScheme()) {
-                DocumentFile.fromSingleUri(context, uri)!!.openInputStream()!!.use {
-                    ZipUtils.unZipToPath(it, Backup.backupPath)
+        kotlin
+            .runCatching {
+                FileUtils.delete(Backup.backupPath)
+                if (uri.isContentScheme()) {
+                    DocumentFile.fromSingleUri(context, uri)!!.openInputStream()!!.use {
+                        ZipUtils.unZipToPath(it, Backup.backupPath)
+                    }
+                } else {
+                    ZipUtils.unZipToPath(File(uri.path!!), Backup.backupPath)
                 }
-            } else {
-                ZipUtils.unZipToPath(File(uri.path!!), Backup.backupPath)
+            }.onFailure {
+                AppLog.put("复制解压文件出错\n${it.localizedMessage}", it)
+                return
             }
-        }.onFailure {
-            AppLog.put("复制解压文件出错\n${it.localizedMessage}", it)
-            return
-        }
-        kotlin.runCatching {
-            restoreLocked(Backup.backupPath)
-            LocalConfig.lastBackup = System.currentTimeMillis()
-        }.onFailure {
-            appCtx.toastOnUi("恢复备份出错\n${it.localizedMessage}")
-            AppLog.put("恢复备份出错\n${it.localizedMessage}", it)
-        }
+        kotlin
+            .runCatching {
+                restoreLocked(Backup.backupPath)
+                LocalConfig.lastBackup = System.currentTimeMillis()
+            }.onFailure {
+                appCtx.toastOnUi("恢复备份出错\n${it.localizedMessage}")
+                AppLog.put("恢复备份出错\n${it.localizedMessage}", it)
+            }
     }
 
     suspend fun restoreLocked(path: String) {
@@ -98,17 +102,19 @@ object Restore {
             it.forEach { book ->
                 book.upType()
             }
-            it.filter { book -> book.isLocal }
+            it
+                .filter { book -> book.isLocal }
                 .forEach { book ->
                     book.coverUrl = LocalBook.getCoverPath(book)
                 }
-            val books = if (BackupConfig.ignoreLocalBook) {
-                it.filter { book ->
-                    !book.isLocal
+            val books =
+                if (BackupConfig.ignoreLocalBook) {
+                    it.filter { book ->
+                        !book.isLocal
+                    }
+                } else {
+                    it
                 }
-            } else {
-                it
-            }
             appDb.bookDao.insert(*books.toTypedArray())
         }
         fileToListT<Bookmark>(path, "bookmark.json")?.let {
@@ -146,71 +152,77 @@ object Restore {
         }
         fileToListT<ReadRecord>(path, "readRecord.json")?.let {
             it.forEach { readRecord ->
-                //判断是不是本机记录
+                // 判断是不是本机记录
                 if (readRecord.deviceId != androidId) {
                     appDb.readRecordDao.insert(readRecord)
                 } else {
-                    val time = appDb.readRecordDao
-                        .getReadTime(readRecord.deviceId, readRecord.bookName)
+                    val time =
+                        appDb.readRecordDao
+                            .getReadTime(readRecord.deviceId, readRecord.bookName)
                     if (time == null || time < readRecord.readTime) {
                         appDb.readRecordDao.insert(readRecord)
                     }
                 }
             }
         }
-        File(path, "servers.json").takeIf {
-            it.exists()
-        }?.runCatching {
-            var json = readText()
-            if (!json.isJsonArray()) {
-                json = aes.decryptStr(json)
+        File(path, "servers.json")
+            .takeIf {
+                it.exists()
+            }?.runCatching {
+                var json = readText()
+                if (!json.isJsonArray()) {
+                    json = aes.decryptStr(json)
+                }
+                GSON.fromJsonArray<Server>(json).getOrNull()?.let {
+                    appDb.serverDao.insert(*it.toTypedArray())
+                }
+            }?.onFailure {
+                AppLog.put("恢复服务器配置出错\n${it.localizedMessage}", it)
             }
-            GSON.fromJsonArray<Server>(json).getOrNull()?.let {
-                appDb.serverDao.insert(*it.toTypedArray())
+        File(path, DirectLinkUpload.ruleFileName)
+            .takeIf {
+                it.exists()
+            }?.runCatching {
+                val json = readText()
+                ACache.get(cacheDir = false).put(DirectLinkUpload.ruleFileName, json)
+            }?.onFailure {
+                AppLog.put("恢复直链上传出错\n${it.localizedMessage}", it)
             }
-        }?.onFailure {
-            AppLog.put("恢复服务器配置出错\n${it.localizedMessage}", it)
-        }
-        File(path, DirectLinkUpload.ruleFileName).takeIf {
-            it.exists()
-        }?.runCatching {
-            val json = readText()
-            ACache.get(cacheDir = false).put(DirectLinkUpload.ruleFileName, json)
-        }?.onFailure {
-            AppLog.put("恢复直链上传出错\n${it.localizedMessage}", it)
-        }
-        //恢复主题配置
-        File(path, ThemeConfig.configFileName).takeIf {
-            it.exists()
-        }?.runCatching {
-            FileUtils.delete(ThemeConfig.configFilePath)
-            copyTo(File(ThemeConfig.configFilePath))
-            ThemeConfig.upConfig()
-        }?.onFailure {
-            AppLog.put("恢复主题出错\n${it.localizedMessage}", it)
-        }
+        // 恢复主题配置
+        File(path, ThemeConfig.configFileName)
+            .takeIf {
+                it.exists()
+            }?.runCatching {
+                FileUtils.delete(ThemeConfig.configFilePath)
+                copyTo(File(ThemeConfig.configFilePath))
+                ThemeConfig.upConfig()
+            }?.onFailure {
+                AppLog.put("恢复主题出错\n${it.localizedMessage}", it)
+            }
         if (!BackupConfig.ignoreReadConfig) {
-            //恢复阅读界面配置
-            File(path, ReadBookConfig.configFileName).takeIf {
-                it.exists()
-            }?.runCatching {
-                FileUtils.delete(ReadBookConfig.configFilePath)
-                copyTo(File(ReadBookConfig.configFilePath))
-                ReadBookConfig.initConfigs()
-            }?.onFailure {
-                AppLog.put("恢复阅读界面出错\n${it.localizedMessage}", it)
-            }
-            File(path, ReadBookConfig.shareConfigFileName).takeIf {
-                it.exists()
-            }?.runCatching {
-                FileUtils.delete(ReadBookConfig.shareConfigFilePath)
-                copyTo(File(ReadBookConfig.shareConfigFilePath))
-                ReadBookConfig.initShareConfig()
-            }?.onFailure {
-                AppLog.put("恢复阅读界面出错\n${it.localizedMessage}", it)
-            }
+            // 恢复阅读界面配置
+            File(path, ReadBookConfig.configFileName)
+                .takeIf {
+                    it.exists()
+                }?.runCatching {
+                    FileUtils.delete(ReadBookConfig.configFilePath)
+                    copyTo(File(ReadBookConfig.configFilePath))
+                    ReadBookConfig.initConfigs()
+                }?.onFailure {
+                    AppLog.put("恢复阅读界面出错\n${it.localizedMessage}", it)
+                }
+            File(path, ReadBookConfig.shareConfigFileName)
+                .takeIf {
+                    it.exists()
+                }?.runCatching {
+                    FileUtils.delete(ReadBookConfig.shareConfigFilePath)
+                    copyTo(File(ReadBookConfig.shareConfigFilePath))
+                    ReadBookConfig.initShareConfig()
+                }?.onFailure {
+                    AppLog.put("恢复阅读界面出错\n${it.localizedMessage}", it)
+                }
         }
-        //AppWebDav.downBgs()
+        // AppWebDav.downBgs()
         appCtx.getSharedPreferences(path, "config")?.all?.let { map ->
             val edit = appCtx.defaultSharedPreferences.edit()
 
@@ -218,12 +230,15 @@ object Restore {
                 if (BackupConfig.keyIsNotIgnore(key)) {
                     when (key) {
                         PreferKey.webDavPassword -> {
-                            kotlin.runCatching {
-                                aes.decryptStr(value.toString())
-                            }.getOrNull()?.let {
-                                edit.putString(key, it)
-                            } ?: let {
-                                if (appCtx.getPrefString(PreferKey.webDavPassword)
+                            kotlin
+                                .runCatching {
+                                    aes.decryptStr(value.toString())
+                                }.getOrNull()
+                                ?.let {
+                                    edit.putString(key, it)
+                                } ?: let {
+                                if (appCtx
+                                        .getPrefString(PreferKey.webDavPassword)
                                         .isNullOrBlank()
                                 ) {
                                     edit.putString(key, value.toString())
@@ -231,13 +246,14 @@ object Restore {
                             }
                         }
 
-                        else -> when (value) {
-                            is Int -> edit.putInt(key, value)
-                            is Boolean -> edit.putBoolean(key, value)
-                            is Long -> edit.putLong(key, value)
-                            is Float -> edit.putFloat(key, value)
-                            is String -> edit.putString(key, value)
-                        }
+                        else ->
+                            when (value) {
+                                is Int -> edit.putInt(key, value)
+                                is Boolean -> edit.putBoolean(key, value)
+                                is Long -> edit.putLong(key, value)
+                                is Float -> edit.putFloat(key, value)
+                                is String -> edit.putString(key, value)
+                            }
                     }
                 }
             }
@@ -261,7 +277,10 @@ object Restore {
         }
     }
 
-    private inline fun <reified T> fileToListT(path: String, fileName: String): List<T>? {
+    private inline fun <reified T> fileToListT(
+        path: String,
+        fileName: String,
+    ): List<T>? {
         try {
             val file = File(path, fileName)
             if (file.exists()) {
@@ -280,5 +299,4 @@ object Restore {
         }
         return null
     }
-
 }

@@ -8,32 +8,36 @@ import io.legado.app.base.adapter.DiffRecyclerAdapter
 import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.data.entities.Book
 
-abstract class BaseBooksAdapter<VB : ViewBinding>(context: Context) :
-    DiffRecyclerAdapter<Book, VB>(context) {
-
+abstract class BaseBooksAdapter<VB : ViewBinding>(
+    context: Context,
+) : DiffRecyclerAdapter<Book, VB>(context) {
     override val diffItemCallback: DiffUtil.ItemCallback<Book> =
         object : DiffUtil.ItemCallback<Book>() {
+            override fun areItemsTheSame(
+                oldItem: Book,
+                newItem: Book,
+            ): Boolean = oldItem.name == newItem.name &&
+                oldItem.author == newItem.author
 
-            override fun areItemsTheSame(oldItem: Book, newItem: Book): Boolean {
-                return oldItem.name == newItem.name
-                        && oldItem.author == newItem.author
+            override fun areContentsTheSame(
+                oldItem: Book,
+                newItem: Book,
+            ): Boolean = when {
+                oldItem.durChapterTime != newItem.durChapterTime -> false
+                oldItem.name != newItem.name -> false
+                oldItem.author != newItem.author -> false
+                oldItem.durChapterTitle != newItem.durChapterTitle -> false
+                oldItem.latestChapterTitle != newItem.latestChapterTitle -> false
+                oldItem.lastCheckCount != newItem.lastCheckCount -> false
+                oldItem.getDisplayCover() != newItem.getDisplayCover() -> false
+                oldItem.getUnreadChapterNum() != newItem.getUnreadChapterNum() -> false
+                else -> true
             }
 
-            override fun areContentsTheSame(oldItem: Book, newItem: Book): Boolean {
-                return when {
-                    oldItem.durChapterTime != newItem.durChapterTime -> false
-                    oldItem.name != newItem.name -> false
-                    oldItem.author != newItem.author -> false
-                    oldItem.durChapterTitle != newItem.durChapterTitle -> false
-                    oldItem.latestChapterTitle != newItem.latestChapterTitle -> false
-                    oldItem.lastCheckCount != newItem.lastCheckCount -> false
-                    oldItem.getDisplayCover() != newItem.getDisplayCover() -> false
-                    oldItem.getUnreadChapterNum() != newItem.getUnreadChapterNum() -> false
-                    else -> true
-                }
-            }
-
-            override fun getChangePayload(oldItem: Book, newItem: Book): Any? {
+            override fun getChangePayload(
+                oldItem: Book,
+                newItem: Book,
+            ): Any? {
                 val bundle = bundleOf()
                 if (oldItem.name != newItem.name) {
                     bundle.putString("name", newItem.name)
@@ -50,10 +54,10 @@ abstract class BaseBooksAdapter<VB : ViewBinding>(context: Context) :
                 if (oldItem.getDisplayCover() != newItem.getDisplayCover()) {
                     bundle.putString("cover", newItem.getDisplayCover())
                 }
-                if (oldItem.lastCheckCount != newItem.lastCheckCount
-                    || oldItem.durChapterTime != newItem.durChapterTime
-                    || oldItem.getUnreadChapterNum() != newItem.getUnreadChapterNum()
-                    || oldItem.lastCheckCount != newItem.lastCheckCount
+                if (oldItem.lastCheckCount != newItem.lastCheckCount ||
+                    oldItem.durChapterTime != newItem.durChapterTime ||
+                    oldItem.getUnreadChapterNum() != newItem.getUnreadChapterNum() ||
+                    oldItem.lastCheckCount != newItem.lastCheckCount
                 ) {
                     bundle.putBoolean("refresh", true)
                 }
@@ -63,7 +67,6 @@ abstract class BaseBooksAdapter<VB : ViewBinding>(context: Context) :
                 if (bundle.isEmpty) return null
                 return bundle
             }
-
         }
 
     override fun onViewRecycled(holder: ItemViewHolder) {
@@ -87,7 +90,9 @@ abstract class BaseBooksAdapter<VB : ViewBinding>(context: Context) :
 
     interface CallBack {
         fun open(book: Book)
+
         fun openBookInfo(book: Book)
+
         fun isUpdate(bookUrl: String): Boolean
     }
 }

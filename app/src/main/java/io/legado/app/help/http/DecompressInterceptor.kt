@@ -29,13 +29,15 @@ object DecompressInterceptor : Interceptor {
         }
 
         val encoding = response.header("Content-Encoding")?.lowercase()
-        val source = when (encoding) {
-            "gzip" -> GZIPInputStream(body.byteStream()).source().buffer()
-            "deflate" -> InflaterInputStream(body.byteStream(), Inflater(true)).source().buffer()
-            else -> return response
-        }
+        val source =
+            when (encoding) {
+                "gzip" -> GZIPInputStream(body.byteStream()).source().buffer()
+                "deflate" -> InflaterInputStream(body.byteStream(), Inflater(true)).source().buffer()
+                else -> return response
+            }
 
-        return response.newBuilder()
+        return response
+            .newBuilder()
             .removeHeader("Content-Encoding")
             .removeHeader("Content-Length")
             .body(source.asResponseBody(body.contentType(), -1))

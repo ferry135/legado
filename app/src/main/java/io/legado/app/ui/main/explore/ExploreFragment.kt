@@ -47,10 +47,10 @@ import kotlinx.coroutines.launch
 /**
  * 发现界面
  */
-class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_explore),
+class ExploreFragment() :
+    VMBaseFragment<ExploreViewModel>(R.layout.fragment_explore),
     MainFragmentInterface,
     ExploreAdapter.CallBack {
-
     constructor(position: Int) : this() {
         val bundle = Bundle()
         bundle.putInt("position", position)
@@ -71,7 +71,10 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
     private var exploreFlowJob: Job? = null
     private var groupsMenu: SubMenu? = null
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         setSupportToolbar(binding.titleBar.toolbar)
         initSearchView()
         initRecyclerView()
@@ -95,42 +98,46 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
         searchView.applyTint(primaryTextColor)
         searchView.isSubmitButtonEnabled = true
         searchView.queryHint = getString(R.string.screen_find)
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
+        searchView.setOnQueryTextListener(
+            object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean = false
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                upExploreData(newText)
-                return false
-            }
-        })
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    upExploreData(newText)
+                    return false
+                }
+            },
+        )
     }
 
     private fun initRecyclerView() {
         binding.rvFind.setEdgeEffectColor(primaryColor)
         binding.rvFind.layoutManager = linearLayoutManager
         binding.rvFind.adapter = adapter
-        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-
-            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                super.onItemRangeInserted(positionStart, itemCount)
-                if (positionStart == 0) {
-                    binding.rvFind.scrollToPosition(0)
+        adapter.registerAdapterDataObserver(
+            object : RecyclerView.AdapterDataObserver() {
+                override fun onItemRangeInserted(
+                    positionStart: Int,
+                    itemCount: Int,
+                ) {
+                    super.onItemRangeInserted(positionStart, itemCount)
+                    if (positionStart == 0) {
+                        binding.rvFind.scrollToPosition(0)
+                    }
                 }
-            }
-        })
+            },
+        )
     }
 
     private fun initGroupData() {
         viewLifecycleOwner.lifecycleScope.launch {
-            appDb.bookSourceDao.flowExploreGroups()
+            appDb.bookSourceDao
+                .flowExploreGroups()
                 .flowWithLifecycleAndDatabaseChange(
                     viewLifecycleOwner.lifecycle,
                     Lifecycle.State.RESUMED,
-                    AppDatabase.BOOK_SOURCE_TABLE_NAME
-                )
-                .conflate()
+                    AppDatabase.BOOK_SOURCE_TABLE_NAME,
+                ).conflate()
                 .distinctUntilChanged()
                 .collect {
                     groups.clear()
@@ -143,32 +150,35 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
 
     private fun upExploreData(searchKey: String? = null) {
         exploreFlowJob?.cancel()
-        exploreFlowJob = viewLifecycleOwner.lifecycleScope.launch {
-            when {
-                searchKey.isNullOrBlank() -> {
-                    appDb.bookSourceDao.flowExplore()
-                }
+        exploreFlowJob =
+            viewLifecycleOwner.lifecycleScope.launch {
+                when {
+                    searchKey.isNullOrBlank() -> {
+                        appDb.bookSourceDao.flowExplore()
+                    }
 
-                searchKey.startsWith("group:") -> {
-                    val key = searchKey.substringAfter("group:")
-                    appDb.bookSourceDao.flowGroupExplore(key)
-                }
+                    searchKey.startsWith("group:") -> {
+                        val key = searchKey.substringAfter("group:")
+                        appDb.bookSourceDao.flowGroupExplore(key)
+                    }
 
-                else -> {
-                    appDb.bookSourceDao.flowExplore(searchKey)
-                }
-            }.flowWithLifecycleAndDatabaseChange(
-                viewLifecycleOwner.lifecycle,
-                Lifecycle.State.RESUMED,
-                AppDatabase.BOOK_SOURCE_TABLE_NAME
-            ).catch {
-                AppLog.put("发现界面更新数据出错", it)
-            }.conflate().flowOn(IO).collect {
-                binding.tvEmptyMsg.isGone = it.isNotEmpty() || searchView.query.isNotEmpty()
-                adapter.setItems(it, diffItemCallBack)
-                delay(500)
+                    else -> {
+                        appDb.bookSourceDao.flowExplore(searchKey)
+                    }
+                }.flowWithLifecycleAndDatabaseChange(
+                    viewLifecycleOwner.lifecycle,
+                    Lifecycle.State.RESUMED,
+                    AppDatabase.BOOK_SOURCE_TABLE_NAME,
+                ).catch {
+                    AppLog.put("发现界面更新数据出错", it)
+                }.conflate()
+                    .flowOn(IO)
+                    .collect {
+                        binding.tvEmptyMsg.isGone = it.isNotEmpty() || searchView.query.isNotEmpty()
+                        adapter.setItems(it, diffItemCallBack)
+                        delay(500)
+                    }
             }
-        }
     }
 
     private fun upGroupsMenu() = groupsMenu?.transaction { subMenu ->
@@ -192,7 +202,11 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
         (binding.rvFind.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(pos, 0)
     }
 
-    override fun openExplore(sourceUrl: String, title: String, exploreUrl: String?) {
+    override fun openExplore(
+        sourceUrl: String,
+        title: String,
+        exploreUrl: String?,
+    ) {
         if (exploreUrl.isNullOrBlank()) return
         startActivity<ExploreShowActivity> {
             putExtra("exploreName", title)
@@ -236,5 +250,4 @@ class ExploreFragment() : VMBaseFragment<ExploreViewModel>(R.layout.fragment_exp
             }
         }
     }
-
 }

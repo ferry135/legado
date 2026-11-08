@@ -69,5 +69,4 @@ internal object RequestManager : OnPermissionsResultCallback {
     override fun onError(e: Exception) {
         startNextRequest()
     }
-
 }

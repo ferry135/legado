@@ -32,7 +32,10 @@ import java.util.concurrent.Executors
 import kotlin.coroutines.coroutineContext
 import kotlin.math.min
 
-class SearchModel(private val scope: CoroutineScope, private val callBack: CallBack) {
+class SearchModel(
+    private val scope: CoroutineScope,
+    private val callBack: CallBack,
+) {
     val threadCount = AppConfig.threadCount
     private var searchPool: ExecutorCoroutineDispatcher? = null
     private var mSearchId = 0L
@@ -43,14 +46,18 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
     private var searchJob: Job? = null
     private var workingState = MutableStateFlow(true)
 
-
     private fun initSearchPool() {
         searchPool?.close()
-        searchPool = Executors
-            .newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
+        searchPool =
+            Executors
+                .newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD))
+                .asCoroutineDispatcher()
     }
 
-    fun search(searchId: Long, key: String) {
+    fun search(
+        searchId: Long,
+        key: String,
+    ) {
         if (searchId != mSearchId) {
             if (key.isEmpty()) {
                 return
@@ -77,43 +84,51 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
     private fun startSearch() {
         val precision = appCtx.getPrefBoolean(PreferKey.precisionSearch)
         var hasMore = false
-        searchJob = scope.launch(searchPool!!) {
-            flow {
-                for (bs in bookSourceParts) {
-                    bs.getBookSource()?.let {
-                        emit(it)
+        searchJob =
+            scope.launch(searchPool!!) {
+                flow {
+                    for (bs in bookSourceParts) {
+                        bs.getBookSource()?.let {
+                            emit(it)
+                        }
+                        workingState.first { it }
                     }
-                    workingState.first { it }
-                }
-            }.onStart {
-                callBack.onSearchStart()
-            }.mapParallelSafe(threadCount) {
-                withTimeout(30000L) {
-                    WebBook.searchBookAwait(
-                        it, searchKey, searchPage,
-                        filter = { name, author ->
-                            !precision || name.contains(searchKey) ||
+                }.onStart {
+                    callBack.onSearchStart()
+                }.mapParallelSafe(threadCount) {
+                    withTimeout(30000L) {
+                        WebBook.searchBookAwait(
+                            it,
+                            searchKey,
+                            searchPage,
+                            filter = { name, author ->
+                                !precision ||
+                                    name.contains(searchKey) ||
                                     author.contains(searchKey)
-                        })
-                }
-            }.onEach { items ->
-                for (book in items) {
-                    book.releaseHtmlData()
-                }
-                hasMore = hasMore || items.isNotEmpty()
-                appDb.searchBookDao.insert(*items.toTypedArray())
-                mergeItems(items, precision)
-                currentCoroutineContext().ensureActive()
-                callBack.onSearchSuccess(searchBooks)
-            }.onCompletion {
-                if (it == null) callBack.onSearchFinish(searchBooks.isEmpty(), hasMore)
-            }.catch {
-                AppLog.put("书源搜索出错\n${it.localizedMessage}", it)
-            }.collect()
-        }
+                            },
+                        )
+                    }
+                }.onEach { items ->
+                    for (book in items) {
+                        book.releaseHtmlData()
+                    }
+                    hasMore = hasMore || items.isNotEmpty()
+                    appDb.searchBookDao.insert(*items.toTypedArray())
+                    mergeItems(items, precision)
+                    currentCoroutineContext().ensureActive()
+                    callBack.onSearchSuccess(searchBooks)
+                }.onCompletion {
+                    if (it == null) callBack.onSearchFinish(searchBooks.isEmpty(), hasMore)
+                }.catch {
+                    AppLog.put("书源搜索出错\n${it.localizedMessage}", it)
+                }.collect()
+            }
     }
 
-    private suspend fun mergeItems(newDataS: List<SearchBook>, precision: Boolean) {
+    private suspend fun mergeItems(
+        newDataS: List<SearchBook>,
+        precision: Boolean,
+    ) {
         if (newDataS.isNotEmpty()) {
             val copyData = ArrayList(searchBooks)
             val equalData = arrayListOf<SearchBook>()
@@ -202,10 +217,16 @@ class SearchModel(private val scope: CoroutineScope, private val callBack: CallB
 
     interface CallBack {
         fun getSearchScope(): SearchScope
+
         fun onSearchStart()
+
         fun onSearchSuccess(searchBooks: List<SearchBook>)
-        fun onSearchFinish(isEmpty: Boolean, hasMore: Boolean)
+
+        fun onSearchFinish(
+            isEmpty: Boolean,
+            hasMore: Boolean,
+        )
+
         fun onSearchCancel(exception: Throwable? = null)
     }
-
 }

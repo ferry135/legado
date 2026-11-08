@@ -17,21 +17,17 @@ import io.legado.app.utils.dpToPx
  * @author Karim Abou Zeid (kabouzeid)
  */
 @ColorInt
-fun Context.getPrimaryTextColor(isLightBackground: Boolean): Int {
-    return if (isLightBackground) {
-        ContextCompat.getColor(this, R.color.md_light_primary_text)
-    } else {
-        ContextCompat.getColor(this, R.color.md_dark_primary_text)
-    }
+fun Context.getPrimaryTextColor(isLightBackground: Boolean): Int = if (isLightBackground) {
+    ContextCompat.getColor(this, R.color.md_light_primary_text)
+} else {
+    ContextCompat.getColor(this, R.color.md_dark_primary_text)
 }
 
 @ColorInt
-fun Context.getSecondaryTextColor(isLightBackground: Boolean): Int {
-    return if (isLightBackground) {
-        ContextCompat.getColor(this, R.color.md_light_secondary)
-    } else {
-        ContextCompat.getColor(this, R.color.md_dark_primary_text)
-    }
+fun Context.getSecondaryTextColor(isLightBackground: Boolean): Int = if (isLightBackground) {
+    ContextCompat.getColor(this, R.color.md_light_secondary)
+} else {
+    ContextCompat.getColor(this, R.color.md_dark_primary_text)
 }
 
 /**
@@ -42,35 +38,29 @@ fun Context.getSecondaryTextColor(isLightBackground: Boolean): Int {
  * 故文字不做 alpha 派生，直接用本角色色；ink 8%/10% 叠层胶囊上的文字仍用 primaryText。
  */
 @ColorInt
-fun Context.getOnSurfaceVariant(isLightBackground: Boolean): Int {
-    return ContextCompat.getColor(
+fun Context.getOnSurfaceVariant(isLightBackground: Boolean): Int = ContextCompat.getColor(
+    this,
+    if (isLightBackground) R.color.day_on_surface_variant else R.color.night_on_surface_variant,
+)
+
+@ColorInt
+fun Context.getPrimaryDisabledTextColor(isLightBackground: Boolean): Int = if (isLightBackground) {
+    ContextCompat.getColor(this, R.color.md_light_disabled)
+} else {
+    ContextCompat.getColor(this, R.color.md_dark_disabled)
+}
+
+@ColorInt
+fun Context.getSecondaryDisabledTextColor(isLightBackground: Boolean): Int = if (isLightBackground) {
+    ContextCompat.getColor(
         this,
-        if (isLightBackground) R.color.day_on_surface_variant else R.color.night_on_surface_variant
+        androidx.appcompat.R.color.secondary_text_disabled_material_light,
     )
-}
-
-@ColorInt
-fun Context.getPrimaryDisabledTextColor(isLightBackground: Boolean): Int {
-    return if (isLightBackground) {
-        ContextCompat.getColor(this, R.color.md_light_disabled)
-    } else {
-        ContextCompat.getColor(this, R.color.md_dark_disabled)
-    }
-}
-
-@ColorInt
-fun Context.getSecondaryDisabledTextColor(isLightBackground: Boolean): Int {
-    return if (isLightBackground) {
-        ContextCompat.getColor(
-            this,
-            androidx.appcompat.R.color.secondary_text_disabled_material_light
-        )
-    } else {
-        ContextCompat.getColor(
-            this,
-            androidx.appcompat.R.color.secondary_text_disabled_material_dark
-        )
-    }
+} else {
+    ContextCompat.getColor(
+        this,
+        androidx.appcompat.R.color.secondary_text_disabled_material_dark,
+    )
 }
 
 val Context.primaryColor: Int
@@ -128,11 +118,12 @@ val Fragment.secondaryDisabledTextColor: Int
     get() = requireContext().getSecondaryDisabledTextColor(isDarkTheme)
 
 val Context.buttonDisabledColor: Int
-    get() = if (isDarkTheme) {
-        ContextCompat.getColor(this, R.color.md_dark_disabled)
-    } else {
-        ContextCompat.getColor(this, R.color.md_light_disabled)
-    }
+    get() =
+        if (isDarkTheme) {
+            ContextCompat.getColor(this, R.color.md_dark_disabled)
+        } else {
+            ContextCompat.getColor(this, R.color.md_light_disabled)
+        }
 
 val Context.isDarkTheme: Boolean
     get() = !ColorUtils.isColorLight(ThemeStore.backgroundColor(this))
@@ -147,7 +138,7 @@ val Context.elevation: Float
             ThemeUtils.resolveFloat(
                 this,
                 android.R.attr.elevation,
-                resources.getDimension(com.google.android.material.R.dimen.design_appbar_elevation)
+                resources.getDimension(com.google.android.material.R.dimen.design_appbar_elevation),
             )
         } else {
             AppConfig.elevation.toFloat().dpToPx()

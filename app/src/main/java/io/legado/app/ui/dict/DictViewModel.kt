@@ -6,8 +6,9 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.DictRule
 import io.legado.app.help.coroutine.Coroutine
 
-class DictViewModel(application: Application) : BaseViewModel(application) {
-
+class DictViewModel(
+    application: Application,
+) : BaseViewModel(application) {
     private var dictJob: Coroutine<String>? = null
 
     fun initData(onSuccess: (List<DictRule>) -> Unit) {
@@ -23,17 +24,16 @@ class DictViewModel(application: Application) : BaseViewModel(application) {
         dictRule: DictRule,
         word: String,
         onSuccess: (String) -> Unit,
-        onError: (String) -> Unit
+        onError: (String) -> Unit,
     ) {
         dictJob?.cancel()
-        dictJob = execute {
-            dictRule.search(word)
-        }.onSuccess {
-            onSuccess.invoke(it)
-        }.onError {
-            onError.invoke(it.localizedMessage ?: "ERROR")
-        }
+        dictJob =
+            execute {
+                dictRule.search(word)
+            }.onSuccess {
+                onSuccess.invoke(it)
+            }.onError {
+                onError.invoke(it.localizedMessage ?: "ERROR")
+            }
     }
-
-
 }

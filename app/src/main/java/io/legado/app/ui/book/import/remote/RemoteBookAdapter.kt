@@ -14,19 +14,18 @@ import io.legado.app.utils.gone
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
 
-
 /**
  * 适配器
  * @author qianfanguojin
  */
-class RemoteBookAdapter(context: Context, val callBack: CallBack) :
-    RecyclerAdapter<RemoteBook, ItemImportBookBinding>(context) {
+class RemoteBookAdapter(
+    context: Context,
+    val callBack: CallBack,
+) : RecyclerAdapter<RemoteBook, ItemImportBookBinding>(context) {
     var selected = hashSetOf<RemoteBook>()
     var checkableCount = 0
 
-    override fun getViewBinding(parent: ViewGroup): ItemImportBookBinding {
-        return ItemImportBookBinding.inflate(inflater, parent, false)
-    }
+    override fun getViewBinding(parent: ViewGroup): ItemImportBookBinding = ItemImportBookBinding.inflate(inflater, parent, false)
 
     override fun onCurrentListChanged() {
         upCheckableCount()
@@ -39,7 +38,7 @@ class RemoteBookAdapter(context: Context, val callBack: CallBack) :
         holder: ItemViewHolder,
         binding: ItemImportBookBinding,
         item: RemoteBook,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
         binding.run {
             if (payloads.isEmpty()) {
@@ -71,7 +70,10 @@ class RemoteBookAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemImportBookBinding) {
+    override fun registerListener(
+        holder: ItemViewHolder,
+        binding: ItemImportBookBinding,
+    ) {
         holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
                 if (it.isDir) {
@@ -85,7 +87,7 @@ class RemoteBookAdapter(context: Context, val callBack: CallBack) :
                     notifyItemChanged(holder.layoutPosition, true)
                     callBack.upCountView()
                 } else {
-                    /* 点击开始阅读 */
+                    // 点击开始阅读
                     callBack.startRead(it)
                 }
             }
@@ -147,11 +149,13 @@ class RemoteBookAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-
     interface CallBack {
         fun openDir(remoteBook: RemoteBook)
+
         fun upCountView()
+
         fun startRead(remoteBook: RemoteBook)
+
         fun addToBookShelfAgain(remoteBook: RemoteBook)
     }
 }

@@ -27,9 +27,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-abstract class BaseImportBookActivity<VM : ViewModel> :
-    VMBaseActivity<ActivityImportBookBinding, VM>() {
-
+abstract class BaseImportBookActivity<VM : ViewModel> : VMBaseActivity<ActivityImportBookBinding, VM>() {
     final override val binding by viewBinding(ActivityImportBookBinding::inflate)
 
     private var localBookTreeSelectListener: ((Boolean) -> Unit)? = null
@@ -37,12 +35,13 @@ abstract class BaseImportBookActivity<VM : ViewModel> :
         binding.titleBar.findViewById(R.id.search_view)
     }
 
-    val localBookTreeSelect = registerForActivityResult(HandleFileContract()) {
-        it.uri?.let { treeUri ->
-            AppConfig.defaultBookTreeUri = treeUri.toString()
-            localBookTreeSelectListener?.invoke(true)
-        } ?: localBookTreeSelectListener?.invoke(false)
-    }
+    val localBookTreeSelect =
+        registerForActivityResult(HandleFileContract()) {
+            it.uri?.let { treeUri ->
+                AppConfig.defaultBookTreeUri = treeUri.toString()
+                localBookTreeSelectListener?.invoke(true)
+            } ?: localBookTreeSelectListener?.invoke(false)
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,13 +70,13 @@ abstract class BaseImportBookActivity<VM : ViewModel> :
             localBookTreeSelectListener = null
             block.resume(it)
         }
-        //测试书籍保存位置是否设置
+        // 测试书籍保存位置是否设置
         if (!AppConfig.defaultBookTreeUri.isNullOrBlank()) {
             localBookTreeSelectListener = null
             block.resume(true)
             return@suspendCoroutine
         }
-        //测试读写??
+        // 测试读写??
         val storageHelp = String(assets.open("storageHelp.md").readBytes())
         val hint = getString(R.string.select_book_folder)
         alert(hint, storageHelp) {
@@ -104,9 +103,10 @@ abstract class BaseImportBookActivity<VM : ViewModel> :
     }
 
     protected fun onArchiveFileClick(fileDoc: FileDoc) {
-        val fileNames = ArchiveUtils.getArchiveFilesName(fileDoc) {
-            it.matches(AppPattern.bookFileRegex)
-        }
+        val fileNames =
+            ArchiveUtils.getArchiveFilesName(fileDoc) {
+                it.matches(AppPattern.bookFileRegex)
+            }
         if (fileNames.size == 1) {
             val name = fileNames[0]
             appDb.bookDao.getBookByFileName(name)?.let {
@@ -117,14 +117,17 @@ abstract class BaseImportBookActivity<VM : ViewModel> :
         }
     }
 
-    private fun showSelectBookReadAlert(fileDoc: FileDoc, fileNames: List<String>) {
+    private fun showSelectBookReadAlert(
+        fileDoc: FileDoc,
+        fileNames: List<String>,
+    ) {
         if (fileNames.isEmpty()) {
             toastOnUi(R.string.unsupport_archivefile_entry)
             return
         }
         selector(
             R.string.start_read,
-            fileNames
+            fileNames,
         ) { _, name, _ ->
             appDb.bookDao.getBookByFileName(name)?.let {
                 startReadBook(it)
@@ -132,24 +135,29 @@ abstract class BaseImportBookActivity<VM : ViewModel> :
         }
     }
 
-    /* 添加压缩包内指定文件到书架 */
+    // 添加压缩包内指定文件到书架
     private inline fun addArchiveToBookShelf(
         fileDoc: FileDoc,
         fileName: String,
-        onSuccess: (Book) -> Unit
+        onSuccess: (Book) -> Unit,
     ) {
-        LocalBook.importArchiveFile(fileDoc.uri, fileName) {
-            it.contains(fileName)
-        }.firstOrNull()?.run {
-            onSuccess.invoke(this)
-        }
+        LocalBook
+            .importArchiveFile(fileDoc.uri, fileName) {
+                it.contains(fileName)
+            }.firstOrNull()
+            ?.run {
+                onSuccess.invoke(this)
+            }
     }
 
-    /* 提示是否重新导入所点击的压缩文件 */
-    private fun showImportAlert(fileDoc: FileDoc, fileName: String) {
+    // 提示是否重新导入所点击的压缩文件
+    private fun showImportAlert(
+        fileDoc: FileDoc,
+        fileName: String,
+    ) {
         alert(
             R.string.draw,
-            R.string.no_book_found_bookshelf
+            R.string.no_book_found_bookshelf,
         ) {
             okButton {
                 addArchiveToBookShelf(fileDoc, fileName) {
@@ -163,16 +171,15 @@ abstract class BaseImportBookActivity<VM : ViewModel> :
     private fun initSearchView() {
         searchView.applyTint(primaryTextColor)
         searchView.isSubmitButtonEnabled = true
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
+        searchView.setOnQueryTextListener(
+            object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean = false
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                onSearchTextChange(newText)
-                return false
-            }
-        })
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    onSearchTextChange(newText)
+                    return false
+                }
+            },
+        )
     }
-
 }

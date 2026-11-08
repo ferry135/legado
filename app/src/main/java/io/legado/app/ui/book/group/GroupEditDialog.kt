@@ -27,42 +27,47 @@ import splitties.views.onClick
 import java.io.FileOutputStream
 
 class GroupEditDialog() : BaseDialogFragment(R.layout.dialog_book_group_edit) {
-
     constructor(bookGroup: BookGroup? = null) : this() {
-        arguments = Bundle().apply {
-            putParcelable("group", bookGroup?.copy())
-        }
+        arguments =
+            Bundle().apply {
+                putParcelable("group", bookGroup?.copy())
+            }
     }
 
     private val binding by viewBinding(DialogBookGroupEditBinding::bind)
     private val viewModel by viewModels<GroupViewModel>()
     private var bookGroup: BookGroup? = null
-    private val selectImage = registerForActivityResult(SelectImageContract()) {
-        it.uri ?: return@registerForActivityResult
-        readUri(it.uri) { fileDoc, inputStream ->
-            try {
-                var file = requireContext().externalFiles
-                val suffix = fileDoc.name.substringAfterLast(".")
-                val fileName = it.uri.inputStream(requireContext()).getOrThrow().use { tmp ->
-                    MD5Utils.md5Encode(tmp) + ".$suffix"
+    private val selectImage =
+        registerForActivityResult(SelectImageContract()) {
+            it.uri ?: return@registerForActivityResult
+            readUri(it.uri) { fileDoc, inputStream ->
+                try {
+                    var file = requireContext().externalFiles
+                    val suffix = fileDoc.name.substringAfterLast(".")
+                    val fileName =
+                        it.uri.inputStream(requireContext()).getOrThrow().use { tmp ->
+                            MD5Utils.md5Encode(tmp) + ".$suffix"
+                        }
+                    file = FileUtils.createFileIfNotExist(file, "covers", fileName)
+                    FileOutputStream(file).use { outputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
+                    binding.ivCover.load(file.absolutePath)
+                } catch (e: Exception) {
+                    appCtx.toastOnUi(e.localizedMessage)
                 }
-                file = FileUtils.createFileIfNotExist(file, "covers", fileName)
-                FileOutputStream(file).use { outputStream ->
-                    inputStream.copyTo(outputStream)
-                }
-                binding.ivCover.load(file.absolutePath)
-            } catch (e: Exception) {
-                appCtx.toastOnUi(e.localizedMessage)
             }
         }
-    }
 
     override fun onStart() {
         super.onStart()
         setLayout(0.9f, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         // 12-missed-1 #05：工具栏走布局 background_menu（surface2）实底，
         // 不再运行时染 primaryColor（浅主色换肤时标题白字不可读；标题色=on_surface）
         // 12-missed-1 #05：删除为破坏性动作，用 error 色（AccentTextView 强染主色在亮底仅 2.7:1）
@@ -108,13 +113,12 @@ class GroupEditDialog() : BaseDialogFragment(R.layout.dialog_book_group_edit) {
                             groupName,
                             bookSort,
                             enableRefresh,
-                            coverPath
+                            coverPath,
                         ) {
                             dismiss()
                         }
                     }
                 }
-
             }
             btnDelete.onClick {
                 deleteGroup {
@@ -136,5 +140,4 @@ class GroupEditDialog() : BaseDialogFragment(R.layout.dialog_book_group_edit) {
             noButton()
         }
     }
-
 }

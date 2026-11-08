@@ -110,5 +110,4 @@ class ImportThemeViewModel(app: Application) : BaseViewModel(app) {
             successLiveData.postValue(allSources.size)
         }
     }
-
 }

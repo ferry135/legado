@@ -26,13 +26,10 @@ import android.media.MediaPlayer
 import android.util.AttributeSet
 import android.view.View
 import io.legado.app.utils.DebugLog
-
 import java.util.*
 
-
 @Suppress("unused")
-class ExplosionView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
-    View(context, attrs) {
+class ExplosionView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : View(context, attrs) {
 
     private var customDuration = ExplosionAnimator.DEFAULT_DURATION
     private var idPlayAnimationEffect = 0
@@ -65,7 +62,6 @@ class ExplosionView @JvmOverloads constructor(context: Context, attrs: Attribute
         this.mZAnimatorListener = iEvents
     }
 
-
     fun expandExplosionBound(dx: Int, dy: Int) {
         mExpandInset[0] = dx
         mExpandInset[1] = dy
@@ -82,7 +78,7 @@ class ExplosionView @JvmOverloads constructor(context: Context, attrs: Attribute
                     view.scaleX = 1f
                     view.scaleY = 1f
                     view.alpha = 1f
-                    //view.setOnClickListener(mOnClickListener)//set event
+                    // view.setOnClickListener(mOnClickListener)//set event
                 }
             }
         })
@@ -94,7 +90,6 @@ class ExplosionView @JvmOverloads constructor(context: Context, attrs: Attribute
 
     @JvmOverloads
     fun explode(view: View, restartState: Boolean? = false) {
-
         val r = Rect()
         view.getGlobalVisibleRect(r)
         val location = IntArray(2)
@@ -115,8 +110,9 @@ class ExplosionView @JvmOverloads constructor(context: Context, attrs: Attribute
 
         animator.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animator: Animator) {
-                if (idPlayAnimationEffect != 0)
+                if (idPlayAnimationEffect != 0) {
                     MediaPlayer.create(context, idPlayAnimationEffect).start()
+                }
             }
 
             override fun onAnimationEnd(animator: Animator) {
@@ -137,11 +133,11 @@ class ExplosionView @JvmOverloads constructor(context: Context, attrs: Attribute
         animator.start()
         view.animate().setDuration(150).setStartDelay(startDelay.toLong()).scaleX(0f).scaleY(0f)
             .alpha(0f).start()
-        if (restartState!!)
+        if (restartState!!) {
             explode(Utils.createBitmapFromView(view), r, startDelay.toLong(), view)
-        else
+        } else {
             explode(Utils.createBitmapFromView(view), r, startDelay.toLong())
-
+        }
     }
 
     fun clear() {
@@ -152,5 +148,4 @@ class ExplosionView @JvmOverloads constructor(context: Context, attrs: Attribute
     override fun setOnClickListener(mOnClickListener: OnClickListener?) {
         this.mOnClickListener = mOnClickListener
     }
-
 }

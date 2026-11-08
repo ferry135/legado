@@ -19,8 +19,10 @@ import io.legado.app.utils.ColorUtils
  * chip 底透明落在弹层上 4.98:1+，62% ink 在 #EEECE9 上 4.38:1 不达标，勿回退 alpha 派生）。
  * 区间为 [Pair]<start, endExclusive>，与 [Spannable.setSpan] 语义一致，SPAN_INCLUSIVE_EXCLUSIVE。
  */
-class BoldMutedSegments(private val host: TextView, text: CharSequence) {
-
+class BoldMutedSegments(
+    private val host: TextView,
+    text: CharSequence,
+) {
     private val spannableString = SpannableString(text)
     private var enabledSpan: StyleSpan? = null
     private val mutedSpans = mutableListOf<ForegroundColorSpan>()
@@ -29,7 +31,10 @@ class BoldMutedSegments(private val host: TextView, text: CharSequence) {
         host.text = spannableString
     }
 
-    fun apply(boldRange: Pair<Int, Int>?, mutedRanges: List<Pair<Int, Int>>) {
+    fun apply(
+        boldRange: Pair<Int, Int>?,
+        mutedRanges: List<Pair<Int, Int>>,
+    ) {
         enabledSpan?.let { spannableString.removeSpan(it) }
         enabledSpan = null
         mutedSpans.forEach { spannableString.removeSpan(it) }

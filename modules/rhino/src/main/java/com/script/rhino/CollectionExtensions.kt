@@ -1,7 +1,7 @@
 package com.script.rhino
 
 inline fun <T> List<T>.fastBinarySearch(
-    comparison: (T) -> Int
+    comparison: (T) -> Int,
 ): Int {
     var low = 0
     var high = lastIndex
@@ -11,12 +11,13 @@ inline fun <T> List<T>.fastBinarySearch(
         val midVal = get(mid)
         val cmp = comparison(midVal)
 
-        if (cmp < 0)
+        if (cmp < 0) {
             low = mid + 1
-        else if (cmp > 0)
+        } else if (cmp > 0) {
             high = mid - 1
-        else
+        } else {
             return mid // key found
+        }
     }
-    return -(low + 1)  // key not found
+    return -(low + 1) // key not found
 }

@@ -5,7 +5,9 @@ import android.widget.ImageButton
 import androidx.annotation.DrawableRes
 import io.legado.app.R
 
-fun MenuItem.setIconCompat(@DrawableRes iconRes: Int) {
+fun MenuItem.setIconCompat(
+    @DrawableRes iconRes: Int,
+) {
     setIcon(iconRes)
     actionView?.findViewById<ImageButton>(R.id.item)?.setImageDrawable(icon)
 }

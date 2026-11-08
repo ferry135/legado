@@ -19,9 +19,10 @@ import io.legado.app.utils.getCompatColor
 import splitties.views.onLongClick
 import kotlin.math.roundToInt
 
-open class Preference(context: Context, attrs: AttributeSet) :
-    androidx.preference.Preference(context, attrs) {
-
+open class Preference(
+    context: Context,
+    attrs: AttributeSet,
+) : androidx.preference.Preference(context, attrs) {
     private var onLongClick: ((preference: Preference) -> Boolean)? = null
     private val isBottomBackground: Boolean
 
@@ -49,7 +50,6 @@ open class Preference(context: Context, attrs: AttributeSet) :
     fun onLongClick(listener: (preference: Preference) -> Boolean) {
         onLongClick = listener
     }
-
 }
 
 /**
@@ -63,7 +63,7 @@ fun <T : View> androidx.preference.Preference.bindView(
     viewId: Int? = null,
     weightWidth: Int = 0,
     weightHeight: Int = 0,
-    isBottomBackground: Boolean = false
+    isBottomBackground: Boolean = false,
 ): T? {
     if (viewHolder == null) return null
     val tvTitle = viewHolder.findViewById(R.id.preference_title) as? TextView
@@ -80,8 +80,8 @@ fun <T : View> androidx.preference.Preference.bindView(
         val isLight = ColorUtils.isColorLight(context.bottomBackground)
         val pTextColor = context.getPrimaryTextColor(isLight)
         tvTitle?.setTextColor(pTextColor)
-        //摘要=次要字角色（on_surface_variant），与下行图标着色同源；原
-        //getSecondaryTextColor 夜间落 md_dark_primary_text 纯白，越过令牌
+        // 摘要=次要字角色（on_surface_variant），与下行图标着色同源；原
+        // getSecondaryTextColor 夜间落 md_dark_primary_text 纯白，越过令牌
         val sTextColor = context.getOnSurfaceVariant(isLight)
         tvSummary?.setTextColor(sTextColor)
     }
@@ -109,20 +109,24 @@ fun <T : View> androidx.preference.Preference.bindView(
                 lay.addView(childView)
                 lay.isVisible = true
                 v = lay.findViewById(viewId)
-            } else
+            } else {
                 needRequestLayout = true
+            }
 
             if (weightWidth > 0 || weightHeight > 0) {
                 val lp = lay.layoutParams
-                if (weightHeight > 0)
+                if (weightHeight > 0) {
                     lp.height =
                         (context.resources.displayMetrics.density * weightHeight).roundToInt()
-                if (weightWidth > 0)
+                }
+                if (weightWidth > 0) {
                     lp.width =
                         (context.resources.displayMetrics.density * weightWidth).roundToInt()
+                }
                 lay.layoutParams = lp
-            } else if (needRequestLayout)
+            } else if (needRequestLayout) {
                 v.requestLayout()
+            }
 
             return v
         }

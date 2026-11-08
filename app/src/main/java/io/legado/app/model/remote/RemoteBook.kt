@@ -11,21 +11,19 @@ data class RemoteBook(
     val size: Long,
     val lastModify: Long,
     var contentType: String = "folder",
-    var isOnBookShelf: Boolean = false
+    var isOnBookShelf: Boolean = false,
 ) {
-
     val isDir get() = contentType == "folder"
 
     constructor(webDavFile: WebDavFile) : this(
         webDavFile.displayName,
         webDavFile.path,
         webDavFile.size,
-        webDavFile.lastModify
+        webDavFile.lastModify,
     ) {
         if (!webDavFile.isDir) {
             contentType = webDavFile.displayName.substringAfterLast(".")
             isOnBookShelf = LocalBook.isOnBookShelf(webDavFile.displayName)
         }
     }
-
 }

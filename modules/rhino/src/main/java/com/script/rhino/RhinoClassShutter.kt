@@ -153,12 +153,14 @@ object RhinoClassShutter : ClassShutter {
             is okio.FileSystem,
             is okio.FileHandle,
             is okio.Path,
-            is android.content.Context -> return false
+            is android.content.Context,
+            -> return false
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             when (obj) {
                 is FileSystem,
-                is Path -> return false
+                is Path,
+                -> return false
             }
         }
         return visibleToScripts(obj.javaClass.name)
@@ -173,18 +175,13 @@ object RhinoClassShutter : ClassShutter {
         return true
     }
 
-    fun wrapJavaClass(scope: Scriptable, javaClass: Class<*>): Scriptable {
-        return when (javaClass) {
-            System::class.java -> {
-                ProtectedNativeJavaClass(scope, javaClass, systemClassProtectedName)
-            }
-
-            else -> ProtectedNativeJavaClass(scope, javaClass)
+    fun wrapJavaClass(scope: Scriptable, javaClass: Class<*>): Scriptable = when (javaClass) {
+        System::class.java -> {
+            ProtectedNativeJavaClass(scope, javaClass, systemClassProtectedName)
         }
+
+        else -> ProtectedNativeJavaClass(scope, javaClass)
     }
 
-    override fun visibleToScripts(fullClassName: String): Boolean {
-        return !protectedClassNamesMatcher.match(fullClassName)
-    }
-
+    override fun visibleToScripts(fullClassName: String): Boolean = !protectedClassNamesMatcher.match(fullClassName)
 }

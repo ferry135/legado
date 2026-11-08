@@ -26,7 +26,7 @@ import kotlin.math.pow
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class CircleImageView @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet? = null,
 ) : AppCompatImageView(context, attrs) {
 
     private val mDrawableRect = RectF()
@@ -125,7 +125,7 @@ class CircleImageView @JvmOverloads constructor(
         mBorderWidth =
             a.getDimensionPixelSize(
                 R.styleable.CircleImageView_civ_border_width,
-                DEFAULT_BORDER_WIDTH
+                DEFAULT_BORDER_WIDTH,
             )
         mBorderColor =
             a.getColor(R.styleable.CircleImageView_civ_border_color, DEFAULT_BORDER_COLOR)
@@ -134,14 +134,14 @@ class CircleImageView @JvmOverloads constructor(
         mCircleBackgroundColor =
             a.getColor(
                 R.styleable.CircleImageView_civ_circle_background_color,
-                DEFAULT_CIRCLE_BACKGROUND_COLOR
+                DEFAULT_CIRCLE_BACKGROUND_COLOR,
             )
         text = a.getString(R.styleable.CircleImageView_text)
         contentDescription = text
         if (a.hasValue(R.styleable.CircleImageView_textColor)) {
             textColor = a.getColor(
                 R.styleable.CircleImageView_textColor,
-                context.getCompatColor(R.color.primaryText)
+                context.getCompatColor(R.color.primaryText),
             )
         }
         a.recycle()
@@ -174,21 +174,21 @@ class CircleImageView @JvmOverloads constructor(
                 mDrawableRect.centerX(),
                 mDrawableRect.centerY(),
                 mDrawableRadius,
-                mCircleBackgroundPaint
+                mCircleBackgroundPaint,
             )
         }
         canvas.drawCircle(
             mDrawableRect.centerX(),
             mDrawableRect.centerY(),
             mDrawableRadius,
-            mBitmapPaint
+            mBitmapPaint,
         )
         if (mBorderWidth > 0) {
             canvas.drawCircle(
                 mBorderRect.centerX(),
                 mBorderRect.centerY(),
                 mBorderRadius,
-                mBorderPaint
+                mBorderPaint,
             )
         }
         drawText(canvas)
@@ -204,7 +204,7 @@ class CircleImageView @JvmOverloads constructor(
                 it,
                 width * 0.5f,
                 (height * 0.5f + (fm.bottom - fm.top) * 0.5f - fm.bottom),
-                textPaint
+                textPaint,
             )
         }
     }
@@ -274,9 +274,7 @@ class CircleImageView @JvmOverloads constructor(
         invalidate()
     }
 
-    override fun getColorFilter(): ColorFilter? {
-        return mColorFilter
-    }
+    override fun getColorFilter(): ColorFilter? = mColorFilter
 
     private fun applyColorFilter() {
         mBitmapPaint.colorFilter = mColorFilter
@@ -296,13 +294,13 @@ class CircleImageView @JvmOverloads constructor(
                 Bitmap.createBitmap(
                     COLOR_DRAWABLE_DIMENSION,
                     COLOR_DRAWABLE_DIMENSION,
-                    BITMAP_CONFIG
+                    BITMAP_CONFIG,
                 )
             } else {
                 Bitmap.createBitmap(
                     drawable.intrinsicWidth,
                     drawable.intrinsicHeight,
-                    BITMAP_CONFIG
+                    BITMAP_CONFIG,
                 )
             }
 
@@ -314,7 +312,6 @@ class CircleImageView @JvmOverloads constructor(
             e.printOnDebug()
             null
         }
-
     }
 
     private fun initializeBitmap() {
@@ -362,7 +359,7 @@ class CircleImageView @JvmOverloads constructor(
         mBorderRadius =
             min(
                 (mBorderRect.height() - mBorderWidth) / 2.0f,
-                (mBorderRect.width() - mBorderWidth) / 2.0f
+                (mBorderRect.width() - mBorderWidth) / 2.0f,
             )
 
         mDrawableRect.set(mBorderRect)
@@ -406,7 +403,7 @@ class CircleImageView @JvmOverloads constructor(
         mShaderMatrix.setScale(scale, scale)
         mShaderMatrix.postTranslate(
             (dx + 0.5f).toInt() + mDrawableRect.left,
-            (dy + 0.5f).toInt() + mDrawableRect.top
+            (dy + 0.5f).toInt() + mDrawableRect.top,
         )
 
         mBitmapShader!!.setLocalMatrix(mShaderMatrix)
@@ -422,11 +419,9 @@ class CircleImageView @JvmOverloads constructor(
         return super.onTouchEvent(event)
     }
 
-    private fun inTouchableArea(x: Float, y: Float): Boolean {
-        return (x - mBorderRect.centerX()).toDouble()
-            .pow(2.0) + (y - mBorderRect.centerY()).toDouble()
-            .pow(2.0) <= mBorderRadius.toDouble().pow(2.0)
-    }
+    private fun inTouchableArea(x: Float, y: Float): Boolean = (x - mBorderRect.centerX()).toDouble()
+        .pow(2.0) + (y - mBorderRect.centerY()).toDouble()
+        .pow(2.0) <= mBorderRadius.toDouble().pow(2.0)
 
     private inner class OutlineProvider : ViewOutlineProvider() {
 
@@ -435,7 +430,6 @@ class CircleImageView @JvmOverloads constructor(
             mBorderRect.roundOut(bounds)
             outline.setRoundRect(bounds, bounds.width() / 2.0f)
         }
-
     }
 
     companion object {
@@ -446,5 +440,4 @@ class CircleImageView @JvmOverloads constructor(
         private const val DEFAULT_CIRCLE_BACKGROUND_COLOR = Color.TRANSPARENT
         private const val DEFAULT_BORDER_OVERLAY = false
     }
-
 }

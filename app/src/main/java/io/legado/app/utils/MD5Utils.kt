@@ -10,21 +10,17 @@ import kotlin.concurrent.getOrSet
  */
 @Suppress("unused")
 object MD5Utils {
-
     private val threadLocal = ThreadLocal<Digester>()
 
     private val MD5Digester
-        get() = threadLocal.getOrSet {
-            DigestUtil.digester("MD5")
-        }
+        get() =
+            threadLocal.getOrSet {
+                DigestUtil.digester("MD5")
+            }
 
-    fun md5Encode(str: String?): String {
-        return MD5Digester.digestHex(str)
-    }
+    fun md5Encode(str: String?): String = MD5Digester.digestHex(str)
 
-    fun md5Encode(inputStream: InputStream): String {
-        return MD5Digester.digestHex(inputStream)
-    }
+    fun md5Encode(inputStream: InputStream): String = MD5Digester.digestHex(inputStream)
 
     fun md5Encode16(str: String): String {
         var reStr = md5Encode(str)

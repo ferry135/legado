@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
  */
 fun LifecycleOwner.launchCollectWithLifecycle(
     state: Lifecycle.State = Lifecycle.State.STARTED,
-    block: suspend CoroutineScope.() -> Unit
+    block: suspend CoroutineScope.() -> Unit,
 ): Job = lifecycleScope.launch {
     repeatOnLifecycle(state) {
         block()

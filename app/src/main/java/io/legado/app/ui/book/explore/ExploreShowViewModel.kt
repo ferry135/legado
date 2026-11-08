@@ -20,9 +20,10 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.mapLatest
 import java.util.concurrent.ConcurrentHashMap
 
-
 @OptIn(ExperimentalCoroutinesApi::class)
-class ExploreShowViewModel(application: Application) : BaseViewModel(application) {
+class ExploreShowViewModel(
+    application: Application,
+) : BaseViewModel(application) {
     val bookshelf: MutableSet<String> = ConcurrentHashMap.newKeySet()
     val upAdapterLiveData = MutableLiveData<String>()
     val booksData = MutableLiveData<List<SearchBook>>()
@@ -34,21 +35,24 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
 
     init {
         execute {
-            appDb.bookDao.flowAll().mapLatest { books ->
-                val keys = arrayListOf<String>()
-                books.filterNot { it.isNotShelf }
-                    .forEach {
-                        keys.add("${it.name}-${it.author}")
-                        keys.add(it.name)
-                    }
-                keys
-            }.catch {
-                AppLog.put("发现列表界面获取书籍数据失败\n${it.localizedMessage}", it)
-            }.collect {
-                bookshelf.clear()
-                bookshelf.addAll(it)
-                upAdapterLiveData.postValue("isInBookshelf")
-            }
+            appDb.bookDao
+                .flowAll()
+                .mapLatest { books ->
+                    val keys = arrayListOf<String>()
+                    books
+                        .filterNot { it.isNotShelf }
+                        .forEach {
+                            keys.add("${it.name}-${it.author}")
+                            keys.add(it.name)
+                        }
+                    keys
+                }.catch {
+                    AppLog.put("发现列表界面获取书籍数据失败\n${it.localizedMessage}", it)
+                }.collect {
+                    bookshelf.clear()
+                    bookshelf.addAll(it)
+                    upAdapterLiveData.postValue("isInBookshelf")
+                }
         }.onError {
             AppLog.put("加载书架数据失败", it)
         }
@@ -69,7 +73,8 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
         val source = bookSource
         val url = exploreUrl
         if (source == null || url == null) return
-        WebBook.exploreBook(viewModelScope, source, url, page)
+        WebBook
+            .exploreBook(viewModelScope, source, url, page)
             .timeout(if (BuildConfig.DEBUG) 0L else 30000L)
             .onSuccess(IO) { searchBooks ->
                 books.addAll(searchBooks)
@@ -82,12 +87,12 @@ class ExploreShowViewModel(application: Application) : BaseViewModel(application
             }
     }
 
-    fun isInBookShelf(name: String, author: String): Boolean {
-        return if (author.isNotBlank()) {
-            bookshelf.contains("$name-$author")
-        } else {
-            bookshelf.contains(name)
-        }
+    fun isInBookShelf(
+        name: String,
+        author: String,
+    ): Boolean = if (author.isNotBlank()) {
+        bookshelf.contains("$name-$author")
+    } else {
+        bookshelf.contains(name)
     }
-
 }

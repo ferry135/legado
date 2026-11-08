@@ -34,11 +34,11 @@ import java.io.File
 /**
  * 展示远程书籍
  */
-class RemoteBookActivity : BaseImportBookActivity<RemoteBookViewModel>(),
+class RemoteBookActivity :
+    BaseImportBookActivity<RemoteBookViewModel>(),
     RemoteBookAdapter.CallBack,
     SelectActionBar.CallBack,
     ServersDialog.Callback {
-
     override val viewModel by viewModels<RemoteBookViewModel>()
     private val adapter by lazy { RemoteBookAdapter(this, this) }
     private var groupMenu: SubMenu? = null
@@ -105,7 +105,6 @@ class RemoteBookActivity : BaseImportBookActivity<RemoteBookViewModel>(),
         }
     }
 
-
     override fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.book_remote, menu)
         return super.onCompatCreateOptionsMenu(menu)
@@ -170,11 +169,12 @@ class RemoteBookActivity : BaseImportBookActivity<RemoteBookViewModel>(),
 
     private fun upPath() {
         binding.tvGoBack.isEnabled = viewModel.dirList.isNotEmpty()
-        var path = if (viewModel.isDefaultWebdav) {
-            "books" + File.separator
-        } else {
-            File.separator
-        }
+        var path =
+            if (viewModel.isDefaultWebdav) {
+                "books" + File.separator
+            } else {
+                File.separator
+            }
         viewModel.dirList.forEach {
             path = path + it.filename + File.separator
         }
@@ -182,7 +182,7 @@ class RemoteBookActivity : BaseImportBookActivity<RemoteBookViewModel>(),
         viewModel.dataCallback?.clear()
         adapter.selected.clear()
         viewModel.loadRemoteBookList(
-            viewModel.dirList.lastOrNull()?.path
+            viewModel.dirList.lastOrNull()?.path,
         ) {
             binding.refreshProgressBar.isAutoLoading = it
         }
@@ -209,11 +209,11 @@ class RemoteBookActivity : BaseImportBookActivity<RemoteBookViewModel>(),
 
     private fun showRemoteBookDownloadAlert(
         remoteBook: RemoteBook,
-        onDownloadFinish: (() -> Unit)? = null
+        onDownloadFinish: (() -> Unit)? = null,
     ) {
         alert(
             R.string.draw,
-            R.string.archive_not_found
+            R.string.archive_not_found,
         ) {
             okButton {
                 viewModel.addToBookshelf(hashSetOf(remoteBook)) {
@@ -232,8 +232,10 @@ class RemoteBookActivity : BaseImportBookActivity<RemoteBookViewModel>(),
             }
         } else {
             AppConfig.defaultBookTreeUri ?: return
-            val downloadArchiveFileDoc = FileDoc.fromUri(Uri.parse(AppConfig.defaultBookTreeUri), true)
-                .find(downloadFileName)
+            val downloadArchiveFileDoc =
+                FileDoc
+                    .fromUri(Uri.parse(AppConfig.defaultBookTreeUri), true)
+                    .find(downloadFileName)
             if (downloadArchiveFileDoc == null) {
                 showRemoteBookDownloadAlert(remoteBook) {
                     startRead(remoteBook)
@@ -255,5 +257,4 @@ class RemoteBookActivity : BaseImportBookActivity<RemoteBookViewModel>(),
             noButton()
         }
     }
-
 }

@@ -29,40 +29,30 @@ data class HttpTTS(
     override var enabledCookieJar: Boolean? = false,
     var loginCheckJs: String? = null,
     @ColumnInfo(defaultValue = "0")
-    var lastUpdateTime: Long = System.currentTimeMillis()
+    var lastUpdateTime: Long = System.currentTimeMillis(),
 ) : BaseSource {
+    override fun getTag(): String = name
 
-    override fun getTag(): String {
-        return name
-    }
-
-    override fun getKey(): String {
-        return "httpTts:$id"
-    }
+    override fun getKey(): String = "httpTts:$id"
 
     @Suppress("MemberVisibilityCanBePrivate")
     companion object {
-
-        fun fromJsonDoc(doc: DocumentContext): Result<HttpTTS> {
-            return kotlin.runCatching {
-                val loginUi = doc.read<Any>("$.loginUi")
-                HttpTTS(
-                    id = doc.readLong("$.id") ?: System.currentTimeMillis(),
-                    name = doc.readString("$.name")!!,
-                    url = doc.readString("$.url")!!,
-                    contentType = doc.readString("$.contentType"),
-                    concurrentRate = doc.readString("$.concurrentRate"),
-                    loginUrl = doc.readString("$.loginUrl"),
-                    loginUi = if (loginUi is List<*>) GSON.toJson(loginUi) else loginUi?.toString(),
-                    header = doc.readString("$.header"),
-                    loginCheckJs = doc.readString("$.loginCheckJs")
-                )
-            }
+        fun fromJsonDoc(doc: DocumentContext): Result<HttpTTS> = kotlin.runCatching {
+            val loginUi = doc.read<Any>("$.loginUi")
+            HttpTTS(
+                id = doc.readLong("$.id") ?: System.currentTimeMillis(),
+                name = doc.readString("$.name")!!,
+                url = doc.readString("$.url")!!,
+                contentType = doc.readString("$.contentType"),
+                concurrentRate = doc.readString("$.concurrentRate"),
+                loginUrl = doc.readString("$.loginUrl"),
+                loginUi = if (loginUi is List<*>) GSON.toJson(loginUi) else loginUi?.toString(),
+                header = doc.readString("$.header"),
+                loginCheckJs = doc.readString("$.loginCheckJs"),
+            )
         }
 
-        fun fromJson(json: String): Result<HttpTTS> {
-            return fromJsonDoc(jsonPath.parse(json))
-        }
+        fun fromJson(json: String): Result<HttpTTS> = fromJsonDoc(jsonPath.parse(json))
 
         fun fromJsonArray(jsonArray: String): Result<ArrayList<HttpTTS>> {
             return kotlin.runCatching {
@@ -77,7 +67,5 @@ data class HttpTTS(
                 return@runCatching sources
             }
         }
-
     }
-
 }

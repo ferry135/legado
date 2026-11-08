@@ -6,20 +6,18 @@ import io.legado.app.utils.*
 
 object ReplaceAnalyzer {
 
-    fun jsonToReplaceRules(json: String): Result<MutableList<ReplaceRule>> {
-        return kotlin.runCatching {
-            val replaceRules = mutableListOf<ReplaceRule>()
-            val items: List<Map<String, Any>> = jsonPath.parse(json).read("$")
-            for (item in items) {
-                val jsonItem = jsonPath.parse(item)
-                jsonToReplaceRule(jsonItem.jsonString()).getOrThrow().let {
-                    if (it.isValid()) {
-                        replaceRules.add(it)
-                    }
+    fun jsonToReplaceRules(json: String): Result<MutableList<ReplaceRule>> = kotlin.runCatching {
+        val replaceRules = mutableListOf<ReplaceRule>()
+        val items: List<Map<String, Any>> = jsonPath.parse(json).read("$")
+        for (item in items) {
+            val jsonItem = jsonPath.parse(item)
+            jsonToReplaceRule(jsonItem.jsonString()).getOrThrow().let {
+                if (it.isValid()) {
+                    replaceRules.add(it)
                 }
             }
-            replaceRules
         }
+        replaceRules
     }
 
     fun jsonToReplaceRule(json: String): Result<ReplaceRule> {
@@ -43,5 +41,4 @@ object ReplaceAnalyzer {
             return@runCatching replaceRule
         }
     }
-
 }

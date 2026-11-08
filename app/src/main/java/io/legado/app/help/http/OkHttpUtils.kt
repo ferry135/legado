@@ -28,7 +28,7 @@ import kotlin.coroutines.resumeWithException
 
 suspend fun OkHttpClient.newCallResponse(
     retry: Int = 0,
-    builder: Request.Builder.() -> Unit
+    builder: Request.Builder.() -> Unit,
 ): Response {
     val requestBuilder = Request.Builder()
     requestBuilder.apply(builder)
@@ -44,20 +44,16 @@ suspend fun OkHttpClient.newCallResponse(
 
 suspend fun OkHttpClient.newCallResponseBody(
     retry: Int = 0,
-    builder: Request.Builder.() -> Unit
-): ResponseBody {
-    return newCallResponse(retry, builder).let {
-        it.body ?: throw IOException(it.message)
-    }
+    builder: Request.Builder.() -> Unit,
+): ResponseBody = newCallResponse(retry, builder).let {
+    it.body ?: throw IOException(it.message)
 }
 
 suspend fun OkHttpClient.newCallStrResponse(
     retry: Int = 0,
-    builder: Request.Builder.() -> Unit
-): StrResponse {
-    return newCallResponse(retry, builder).let {
-        StrResponse(it, it.body?.text() ?: it.message)
-    }
+    builder: Request.Builder.() -> Unit,
+): StrResponse = newCallResponse(retry, builder).let {
+    StrResponse(it, it.body?.text() ?: it.message)
 }
 
 suspend fun Call.await(): Response = suspendCancellableCoroutine { block ->
@@ -66,16 +62,23 @@ suspend fun Call.await(): Response = suspendCancellableCoroutine { block ->
         cancel()
     }
 
-    enqueue(object : Callback {
-        override fun onFailure(call: Call, e: IOException) {
-            block.resumeWithException(e)
-        }
+    enqueue(
+        object : Callback {
+            override fun onFailure(
+                call: Call,
+                e: IOException,
+            ) {
+                block.resumeWithException(e)
+            }
 
-        override fun onResponse(call: Call, response: Response) {
-            block.resume(response)
-        }
-    })
-
+            override fun onResponse(
+                call: Call,
+                response: Response,
+            ) {
+                block.resume(response)
+            }
+        },
+    )
 }
 
 fun ResponseBody.text(encode: String? = null): String {
@@ -86,12 +89,12 @@ fun ResponseBody.text(encode: String? = null): String {
         return String(responseBytes, Charset.forName(charsetName))
     }
 
-    //根据http头判断
+    // 根据http头判断
     contentType()?.charset()?.let { charset ->
         return String(responseBytes, charset)
     }
 
-    //根据内容判断
+    // 根据内容判断
     charsetName = EncodingDetect.getHtmlEncode(responseBytes)
     return String(responseBytes, Charset.forName(charsetName))
 }
@@ -101,14 +104,17 @@ fun ResponseBody.decompressed(): ResponseBody {
     if (contentType != "application/zip") {
         return this
     }
-    val source = ZipInputStream(byteStream()).apply {
-        try {
-            nextEntry
-        } catch (e: Exception) {
-            close()
-            throw e
-        }
-    }.source().buffer()
+    val source =
+        ZipInputStream(byteStream())
+            .apply {
+                try {
+                    nextEntry
+                } catch (e: Exception) {
+                    close()
+                    throw e
+                }
+            }.source()
+            .buffer()
     return RealResponseBody(null, -1, source)
 }
 
@@ -118,7 +124,11 @@ fun Request.Builder.addHeaders(headers: Map<String, String>) {
     }
 }
 
-fun Request.Builder.get(url: String, queryMap: Map<String, String>, encoded: Boolean = false) {
+fun Request.Builder.get(
+    url: String,
+    queryMap: Map<String, String>,
+    encoded: Boolean = false,
+) {
     val httpBuilder = url.toHttpUrl().newBuilder()
     queryMap.forEach {
         if (encoded) {
@@ -130,7 +140,10 @@ fun Request.Builder.get(url: String, queryMap: Map<String, String>, encoded: Boo
     url(httpBuilder.build())
 }
 
-fun Request.Builder.get(url: String, encodedQuery: String?) {
+fun Request.Builder.get(
+    url: String,
+    encodedQuery: String?,
+) {
     val httpBuilder = url.toHttpUrl().newBuilder()
     httpBuilder.encodedQuery(encodedQuery)
     url(httpBuilder.build())
@@ -142,7 +155,10 @@ fun Request.Builder.postForm(encodedForm: String) {
     post(encodedForm.toRequestBody(formContentType))
 }
 
-fun Request.Builder.postForm(form: Map<String, String>, encoded: Boolean = false) {
+fun Request.Builder.postForm(
+    form: Map<String, String>,
+    encoded: Boolean = false,
+) {
     val formBody = FormBody.Builder()
     form.forEach {
         if (encoded) {
@@ -154,7 +170,10 @@ fun Request.Builder.postForm(form: Map<String, String>, encoded: Boolean = false
     post(formBody.build())
 }
 
-fun Request.Builder.postMultipart(type: String?, form: Map<String, Any>) {
+fun Request.Builder.postMultipart(
+    type: String?,
+    form: Map<String, Any>,
+) {
     val multipartBody = MultipartBody.Builder()
     type?.let {
         multipartBody.setType(type.toMediaType())
@@ -165,23 +184,24 @@ fun Request.Builder.postMultipart(type: String?, form: Map<String, Any>) {
                 val fileName = value["fileName"] as String
                 val file = value["file"]
                 val mediaType = (value["contentType"] as? String)?.toMediaType()
-                val requestBody = when (file) {
-                    is File -> {
-                        file.asRequestBody(mediaType)
-                    }
+                val requestBody =
+                    when (file) {
+                        is File -> {
+                            file.asRequestBody(mediaType)
+                        }
 
-                    is ByteArray -> {
-                        file.toRequestBody(mediaType)
-                    }
+                        is ByteArray -> {
+                            file.toRequestBody(mediaType)
+                        }
 
-                    is String -> {
-                        file.toRequestBody(mediaType)
-                    }
+                        is String -> {
+                            file.toRequestBody(mediaType)
+                        }
 
-                    else -> {
-                        GSON.toJson(file).toRequestBody(mediaType)
+                        else -> {
+                            GSON.toJson(file).toRequestBody(mediaType)
+                        }
                     }
-                }
                 multipartBody.addFormDataPart(it.key, fileName, requestBody)
             }
 

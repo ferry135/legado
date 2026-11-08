@@ -39,12 +39,12 @@ import io.legado.app.utils.visible
  * - 在所有启用的书源中使用详情页正则匹配${origin}/${path}, {origin: bookSourceUrl}
  */
 class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshelf) {
-
     constructor(bookUrl: String, finishOnDismiss: Boolean = false) : this() {
-        arguments = Bundle().apply {
-            putString("bookUrl", bookUrl)
-            putBoolean("finishOnDismiss", finishOnDismiss)
-        }
+        arguments =
+            Bundle().apply {
+                putString("bookUrl", bookUrl)
+                putBoolean("finishOnDismiss", finishOnDismiss)
+            }
     }
 
     val binding by viewBinding(DialogAddToBookshelfBinding::bind)
@@ -63,7 +63,10 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
     }
 
     @SuppressLint("SetTextI18n")
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         val bookUrl = arguments?.getString("bookUrl")
         if (bookUrl.isNullOrBlank()) {
             toastOnUi("url不能为空")
@@ -122,24 +125,32 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
         binding.tvRead.visible()
     }
 
-    class ViewModel(application: Application) : BaseViewModel(application) {
-
+    class ViewModel(
+        application: Application,
+    ) : BaseViewModel(application) {
         val loadStateLiveData = MutableLiveData<Boolean>()
         val loadErrorLiveData = MutableLiveData<String>()
         var book: Book? = null
 
-        fun load(bookUrl: String, success: (book: Book) -> Unit) {
+        fun load(
+            bookUrl: String,
+            success: (book: Book) -> Unit,
+        ) {
             execute {
                 appDb.bookDao.getBook(bookUrl)?.let {
                     throw NoStackTraceException("${it.name} 已在书架")
                 }
-                val baseUrl = NetworkUtils.getBaseUrl(bookUrl)
-                    ?: throw NoStackTraceException("书籍地址格式不对")
+                val baseUrl =
+                    NetworkUtils.getBaseUrl(bookUrl)
+                        ?: throw NoStackTraceException("书籍地址格式不对")
                 val urlMatcher = AnalyzeUrl.paramPattern.matcher(bookUrl)
                 if (urlMatcher.find()) {
-                    val origin = GSON.fromJsonObject<AnalyzeUrl.UrlOption>(
-                        bookUrl.substring(urlMatcher.end())
-                    ).getOrNull()?.getOrigin()
+                    val origin =
+                        GSON
+                            .fromJsonObject<AnalyzeUrl.UrlOption>(
+                                bookUrl.substring(urlMatcher.end()),
+                            ).getOrNull()
+                            ?.getOrigin()
                     origin?.let {
                         val source = appDb.bookSourceDao.getBookSource(it)
                         source?.let {
@@ -179,18 +190,24 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
             }
         }
 
-        private suspend fun getBookInfo(bookUrl: String, source: BookSource): Book? {
-            return kotlin.runCatching {
-                val book = Book(
-                    bookUrl = bookUrl,
-                    origin = source.bookSourceUrl,
-                    originName = source.bookSourceName
-                )
+        private suspend fun getBookInfo(
+            bookUrl: String,
+            source: BookSource,
+        ): Book? = kotlin
+            .runCatching {
+                val book =
+                    Book(
+                        bookUrl = bookUrl,
+                        origin = source.bookSourceUrl,
+                        originName = source.bookSourceName,
+                    )
                 WebBook.getBookInfoAwait(source, book)
             }.getOrNull()
-        }
 
-        fun saveSearchBook(book: Book, success: () -> Unit) {
+        fun saveSearchBook(
+            book: Book,
+            success: () -> Unit,
+        ) {
             execute {
                 val searchBook = book.toSearchBook()
                 appDb.searchBookDao.insert(searchBook)
@@ -202,14 +219,15 @@ class AddToBookshelfDialog() : BaseDialogFragment(R.layout.dialog_add_to_bookshe
 
         // 12-missed-2 #19：「阅读」动作 = 加入书架后直接进阅读
         // （与 BookInfoViewModel.saveBook 共用 Book.saveWithOrderBackfill；新书入架不回填进度）
-        fun addToBookshelf(book: Book, success: () -> Unit) {
+        fun addToBookshelf(
+            book: Book,
+            success: () -> Unit,
+        ) {
             execute {
                 book.saveWithOrderBackfill()
             }.onSuccess {
                 success.invoke()
             }
         }
-
     }
-
 }

@@ -31,7 +31,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
-
     private val binding by viewBinding(DialogSearchScopeBinding::bind)
     private var sourceFlowJob: Job? = null
     val callback: Callback get() = parentFragment as? Callback ?: activity as Callback
@@ -48,7 +47,10 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
         setLayout(0.9f, 0.8f)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         // 12-missed-2 #29-A 同模式扩展：去 primaryColor 涂色工具栏（布局侧去 elevation、
         // titleTextColor=on_surface），夜间白字压主色橙 2.84:1 不达标——MASTER §4 对全部弹窗生效
         binding.recyclerView.adapter = adapter
@@ -64,24 +66,28 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
     }
 
     private fun initSearchView() {
-        val searchView = binding.toolBar.menu.findItem(R.id.menu_screen).actionView as SearchView
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
+        val searchView =
+            binding.toolBar.menu
+                .findItem(R.id.menu_screen)
+                .actionView as SearchView
+        searchView.setOnQueryTextListener(
+            object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean = false
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                screenText = newText
-                upData()
-                return false
-            }
-
-        })
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    screenText = newText
+                    upData()
+                    return false
+                }
+            },
+        )
     }
 
     private fun initOtherView() {
         binding.rgScope.setOnCheckedChangeListener { _, checkedId ->
-            binding.toolBar.menu.findItem(R.id.menu_screen)?.isVisible = checkedId == R.id.rb_source
+            binding.toolBar.menu
+                .findItem(R.id.menu_screen)
+                ?.isVisible = checkedId == R.id.rb_source
             upData()
         }
         binding.tvCancel.setOnClickListener {
@@ -108,9 +114,10 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
 
     private fun initData() {
         lifecycleScope.launch {
-            groups = withContext(IO) {
-                appDb.bookSourceDao.allEnabledGroups()
-            }
+            groups =
+                withContext(IO) {
+                    appDb.bookSourceDao.allEnabledGroups()
+                }
             upData()
         }
     }
@@ -127,54 +134,55 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
     @SuppressLint("NotifyDataSetChanged")
     private fun upBookSource(searchKey: String? = null) {
         sourceFlowJob?.cancel()
-        sourceFlowJob = lifecycleScope.launch {
-            when {
-                searchKey.isNullOrEmpty() -> {
-                    appDb.bookSourceDao.flowAll()
-                }
+        sourceFlowJob =
+            lifecycleScope.launch {
+                when {
+                    searchKey.isNullOrEmpty() -> {
+                        appDb.bookSourceDao.flowAll()
+                    }
 
-                else -> {
-                    appDb.bookSourceDao.flowSearch(searchKey)
-                }
-            }.flowWithLifecycleAndDatabaseChange(
-                lifecycle,
-                table = AppDatabase.BOOK_SOURCE_TABLE_NAME
-            ).catch {
-                AppLog.put("多分组/书源界面更新书源出错", it)
-            }.flowOn(IO).conflate().collect { data ->
-                screenSources.clear()
-                screenSources.addAll(data)
-                adapter.notifyDataSetChanged()
-                delay(500)
+                    else -> {
+                        appDb.bookSourceDao.flowSearch(searchKey)
+                    }
+                }.flowWithLifecycleAndDatabaseChange(
+                    lifecycle,
+                    table = AppDatabase.BOOK_SOURCE_TABLE_NAME,
+                ).catch {
+                    AppLog.put("多分组/书源界面更新书源出错", it)
+                }.flowOn(IO)
+                    .conflate()
+                    .collect { data ->
+                        screenSources.clear()
+                        screenSources.addAll(data)
+                        adapter.notifyDataSetChanged()
+                        delay(500)
+                    }
             }
-        }
     }
 
     inner class RecyclerAdapter : RecyclerView.Adapter<ItemViewHolder>() {
-
         val selectGroups = arrayListOf<String>()
         var selectSource: BookSourcePart? = null
 
-        override fun getItemViewType(position: Int): Int {
-            return if (binding.rbSource.isChecked) {
-                1
-            } else {
-                0
-            }
+        override fun getItemViewType(position: Int): Int = if (binding.rbSource.isChecked) {
+            1
+        } else {
+            0
         }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-            return if (viewType == 1) {
-                ItemViewHolder(ItemRadioButtonBinding.inflate(layoutInflater, parent, false))
-            } else {
-                ItemViewHolder(ItemCheckBoxBinding.inflate(layoutInflater, parent, false))
-            }
+        override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int,
+        ): ItemViewHolder = if (viewType == 1) {
+            ItemViewHolder(ItemRadioButtonBinding.inflate(layoutInflater, parent, false))
+        } else {
+            ItemViewHolder(ItemCheckBoxBinding.inflate(layoutInflater, parent, false))
         }
 
         override fun onBindViewHolder(
             holder: ItemViewHolder,
             position: Int,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             if (payloads.isEmpty()) {
                 super.onBindViewHolder(holder, position, payloads)
@@ -197,7 +205,10 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
             }
         }
 
-        override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+        override fun onBindViewHolder(
+            holder: ItemViewHolder,
+            position: Int,
+        ) {
             when (holder.binding) {
                 is ItemCheckBoxBinding -> {
                     groups.getOrNull(position)?.let {
@@ -237,23 +248,17 @@ class SearchScopeDialog : BaseDialogFragment(R.layout.dialog_search_scope) {
             }
         }
 
-        override fun getItemCount(): Int {
-            return if (binding.rbSource.isChecked) {
-                screenSources.size
-            } else {
-                groups.size
-            }
+        override fun getItemCount(): Int = if (binding.rbSource.isChecked) {
+            screenSources.size
+        } else {
+            groups.size
         }
-
     }
 
     interface Callback {
-
         /**
          * 搜索范围确认
          */
         fun onSearchScopeOk(searchScope: SearchScope)
-
     }
-
 }

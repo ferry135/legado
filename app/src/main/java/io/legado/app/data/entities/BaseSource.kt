@@ -60,15 +60,13 @@ interface BaseSource : JsExtensions {
 
     fun getKey(): String
 
-    override fun getSource(): BaseSource? {
-        return this
-    }
+    override fun getSource(): BaseSource? = this
 
-    fun loginUi(): List<RowUi>? {
-        return GSON.fromJsonArray<RowUi>(loginUi).onFailure {
+    fun loginUi(): List<RowUi>? = GSON
+        .fromJsonArray<RowUi>(loginUi)
+        .onFailure {
             it.printOnDebug()
         }.getOrNull()
-    }
 
     fun getLoginJs(): String? {
         val loginJs = loginUrl
@@ -87,13 +85,15 @@ interface BaseSource : JsExtensions {
         val loginJs = getLoginJs()
         if (!loginJs.isNullOrBlank()) {
             @Language("js")
-            val js = """$loginJs
+            val js =
+                """
+                $loginJs
                 if(typeof login=='function'){
                     login.apply(this);
                 } else {
                     throw('Function login not implements!!!')
                 }
-            """.trimIndent()
+                """.trimIndent()
             evalJS(js)
         }
     }
@@ -104,14 +104,16 @@ interface BaseSource : JsExtensions {
     fun getHeaderMap(hasLoginHeader: Boolean = false) = HashMap<String, String>().apply {
         header?.let {
             try {
-                val json = when {
-                    it.startsWith("@js:", true) -> evalJS(it.substring(4)).toString()
-                    it.startsWith("<js>", true) -> evalJS(
-                        it.substring(4, it.lastIndexOf("<"))
-                    ).toString()
+                val json =
+                    when {
+                        it.startsWith("@js:", true) -> evalJS(it.substring(4)).toString()
+                        it.startsWith("<js>", true) ->
+                            evalJS(
+                                it.substring(4, it.lastIndexOf("<")),
+                            ).toString()
 
-                    else -> it
-                }
+                        else -> it
+                    }
                 GSONStrict.fromJsonObject<Map<String, String>>(json).getOrNull()?.let { map ->
                     putAll(map)
                 } ?: GSON.fromJsonObject<Map<String, String>>(json).getOrNull()?.let { map ->
@@ -135,9 +137,7 @@ interface BaseSource : JsExtensions {
     /**
      * 获取用于登录的头部信息
      */
-    fun getLoginHeader(): String? {
-        return CacheManager.get("loginHeader_${getKey()}")
-    }
+    fun getLoginHeader(): String? = CacheManager.get("loginHeader_${getKey()}")
 
     fun getLoginHeaderMap(): Map<String, String>? {
         val cache = getLoginHeader() ?: return null
@@ -176,23 +176,19 @@ interface BaseSource : JsExtensions {
         }
     }
 
-    fun getLoginInfoMap(): Map<String, String>? {
-        return GSON.fromJsonObject<Map<String, String>>(getLoginInfo()).getOrNull()
-    }
+    fun getLoginInfoMap(): Map<String, String>? = GSON.fromJsonObject<Map<String, String>>(getLoginInfo()).getOrNull()
 
     /**
      * 保存用户信息,aes加密
      */
-    fun putLoginInfo(info: String): Boolean {
-        return try {
-            val key = (AppConst.androidId).encodeToByteArray(0, 16)
-            val encodeStr = SymmetricCryptoAndroid("AES", key).encryptBase64(info)
-            CacheManager.put("userInfo_${getKey()}", encodeStr)
-            true
-        } catch (e: Exception) {
-            AppLog.put("保存登陆信息出错", e)
-            false
-        }
+    fun putLoginInfo(info: String): Boolean = try {
+        val key = (AppConst.androidId).encodeToByteArray(0, 16)
+        val encodeStr = SymmetricCryptoAndroid("AES", key).encryptBase64(info)
+        CacheManager.put("userInfo_${getKey()}", encodeStr)
+        true
+    } catch (e: Exception) {
+        AppLog.put("保存登陆信息出错", e)
+        false
     }
 
     fun removeLoginInfo() {
@@ -214,46 +210,50 @@ interface BaseSource : JsExtensions {
     /**
      * 获取自定义变量
      */
-    fun getVariable(): String {
-        return CacheManager.get("sourceVariable_${getKey()}") ?: ""
-    }
+    fun getVariable(): String = CacheManager.get("sourceVariable_${getKey()}") ?: ""
 
     /**
      * 保存数据
      */
-    fun put(key: String, value: String): String {
-        CacheManager.put("v_${getKey()}_${key}", value)
+    fun put(
+        key: String,
+        value: String,
+    ): String {
+        CacheManager.put("v_${getKey()}_$key", value)
         return value
     }
 
     /**
      * 获取保存的数据
      */
-    fun get(key: String): String {
-        return CacheManager.get("v_${getKey()}_${key}") ?: ""
-    }
+    fun get(key: String): String = CacheManager.get("v_${getKey()}_$key") ?: ""
 
     /**
      * 执行JS
      */
     @Throws(Exception::class)
-    fun evalJS(jsStr: String, bindingsConfig: ScriptBindings.() -> Unit = {}): Any? {
-        val bindings = buildScriptBindings { bindings ->
-            bindings["java"] = this
-            bindings["source"] = this
-            bindings["baseUrl"] = getKey()
-            bindings["cookie"] = CookieStore
-            bindings["cache"] = CacheManager
-            bindings.apply(bindingsConfig)
-        }
-        val sharedScope = getShareScope()
-        val scope = if (sharedScope == null) {
-            RhinoScriptEngine.getRuntimeScope(bindings)
-        } else {
-            bindings.apply {
-                prototype = sharedScope
+    fun evalJS(
+        jsStr: String,
+        bindingsConfig: ScriptBindings.() -> Unit = {},
+    ): Any? {
+        val bindings =
+            buildScriptBindings { bindings ->
+                bindings["java"] = this
+                bindings["source"] = this
+                bindings["baseUrl"] = getKey()
+                bindings["cookie"] = CookieStore
+                bindings["cache"] = CacheManager
+                bindings.apply(bindingsConfig)
             }
-        }
+        val sharedScope = getShareScope()
+        val scope =
+            if (sharedScope == null) {
+                RhinoScriptEngine.getRuntimeScope(bindings)
+            } else {
+                bindings.apply {
+                    prototype = sharedScope
+                }
+            }
         return RhinoScriptEngine.eval(jsStr, scope)
     }
 }

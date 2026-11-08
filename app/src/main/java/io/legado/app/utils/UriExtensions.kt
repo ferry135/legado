@@ -34,7 +34,7 @@ fun Uri.isFileScheme() = this.scheme == "file"
  */
 fun AppCompatActivity.readUri(
     uri: Uri?,
-    success: (fileDoc: FileDoc, inputStream: InputStream) -> Unit
+    success: (fileDoc: FileDoc, inputStream: InputStream) -> Unit,
 ) {
     uri ?: return
     try {
@@ -46,7 +46,8 @@ fun AppCompatActivity.readUri(
                 success.invoke(fileDoc, inputStream)
             }
         } else {
-            PermissionsCompat.Builder()
+            PermissionsCompat
+                .Builder()
                 .addPermissions(*Permissions.Group.STORAGE)
                 .rationale(R.string.get_storage_per)
                 .onGranted {
@@ -57,8 +58,7 @@ fun AppCompatActivity.readUri(
                             success.invoke(fileDoc, inputStream)
                         }
                     }
-                }
-                .request()
+                }.request()
         }
     } catch (e: Exception) {
         e.printOnDebug()
@@ -72,7 +72,10 @@ fun AppCompatActivity.readUri(
 /**
  * 读取URI
  */
-fun Fragment.readUri(uri: Uri?, success: (fileDoc: FileDoc, inputStream: InputStream) -> Unit) {
+fun Fragment.readUri(
+    uri: Uri?,
+    success: (fileDoc: FileDoc, inputStream: InputStream) -> Unit,
+) {
     uri ?: return
     try {
         if (uri.isContentScheme()) {
@@ -83,7 +86,8 @@ fun Fragment.readUri(uri: Uri?, success: (fileDoc: FileDoc, inputStream: InputSt
                 success.invoke(fileDoc, inputStream)
             }
         } else {
-            PermissionsCompat.Builder()
+            PermissionsCompat
+                .Builder()
                 .addPermissions(*Permissions.Group.STORAGE)
                 .rationale(R.string.get_storage_per)
                 .onGranted {
@@ -94,8 +98,7 @@ fun Fragment.readUri(uri: Uri?, success: (fileDoc: FileDoc, inputStream: InputSt
                             success.invoke(fileDoc, inputStream)
                         }
                     }
-                }
-                .request()
+                }.request()
         }
     } catch (e: Exception) {
         e.printOnDebug()
@@ -112,7 +115,7 @@ fun Uri.readBytes(context: Context): ByteArray {
             it.read(buffer)
             it.close()
             return buffer
-        } ?: throw NoStackTraceException("打开文件失败\n${this}")
+        } ?: throw NoStackTraceException("打开文件失败\n$this")
     } else {
         val path = RealPathUtil.getPath(context, this)
         if (path?.isNotEmpty() == true) {
@@ -133,7 +136,7 @@ fun Uri.readText(context: Context): String {
 @Throws(Exception::class)
 fun Uri.writeBytes(
     context: Context,
-    byteArray: ByteArray
+    byteArray: ByteArray,
 ): Boolean {
     if (this.isContentScheme()) {
         context.contentResolver.openOutputStream(this)?.let {
@@ -153,14 +156,16 @@ fun Uri.writeBytes(
 }
 
 @Throws(Exception::class)
-fun Uri.writeText(context: Context, text: String, charset: Charset = Charsets.UTF_8): Boolean {
-    return writeBytes(context, text.toByteArray(charset))
-}
+fun Uri.writeText(
+    context: Context,
+    text: String,
+    charset: Charset = Charsets.UTF_8,
+): Boolean = writeBytes(context, text.toByteArray(charset))
 
 fun Uri.writeBytes(
     context: Context,
     fileName: String,
-    byteArray: ByteArray
+    byteArray: ByteArray,
 ): Boolean {
     if (this.isContentScheme()) {
         DocumentFile.fromTreeUri(context, this)?.let { pDoc ->
@@ -169,7 +174,8 @@ fun Uri.writeBytes(
             }
         }
     } else {
-        FileUtils.createFileWithReplace(path + File.separatorChar + fileName)
+        FileUtils
+            .createFileWithReplace(path + File.separatorChar + fileName)
             .writeBytes(byteArray)
         return true
     }
@@ -185,8 +191,9 @@ fun Uri.inputStream(context: Context): Result<InputStream> {
                     ?: throw NoStackTraceException("未获取到文件")
                 return@runCatching context.contentResolver.openInputStream(uri)!!
             } else {
-                val path = RealPathUtil.getPath(context, uri)
-                    ?: throw NoStackTraceException("未获取到文件")
+                val path =
+                    RealPathUtil.getPath(context, uri)
+                        ?: throw NoStackTraceException("未获取到文件")
                 val file = File(path)
                 if (file.exists()) {
                     return@runCatching FileInputStream(file)
@@ -211,8 +218,9 @@ fun Uri.outputStream(context: Context): Result<OutputStream> {
                     ?: throw NoStackTraceException("未获取到文件")
                 return@runCatching context.contentResolver.openOutputStream(uri)!!
             } else {
-                val path = RealPathUtil.getPath(context, uri)
-                    ?: throw NoStackTraceException("未获取到文件")
+                val path =
+                    RealPathUtil.getPath(context, uri)
+                        ?: throw NoStackTraceException("未获取到文件")
                 val file = File(path)
                 if (file.exists()) {
                     return@runCatching FileOutputStream(file)
@@ -237,20 +245,19 @@ fun Uri.toReadPfd(context: Context): Result<ParcelFileDescriptor> {
                     ?: throw NoStackTraceException("未获取到文件")
                 return@runCatching context.contentResolver.openFileDescriptor(uri, "r")!!
             } else {
-                val path = RealPathUtil.getPath(context, uri)
-                    ?: throw NoStackTraceException("未获取到文件")
+                val path =
+                    RealPathUtil.getPath(context, uri)
+                        ?: throw NoStackTraceException("未获取到文件")
                 val file = File(path)
                 if (file.exists()) {
                     return@runCatching ParcelFileDescriptor.open(
                         file,
-                        ParcelFileDescriptor.MODE_READ_ONLY
+                        ParcelFileDescriptor.MODE_READ_ONLY,
                     )
                 } else {
                     throw NoStackTraceException("文件不存在")
                 }
             }
-
-
         } catch (e: Exception) {
             e.printOnDebug()
             AppLog.put("读取inputStream失败：${e.localizedMessage}", e)
@@ -268,20 +275,19 @@ fun Uri.toWritePfd(context: Context): Result<ParcelFileDescriptor> {
                     ?: throw NoStackTraceException("未获取到文件")
                 return@runCatching context.contentResolver.openFileDescriptor(uri, "w")!!
             } else {
-                val path = RealPathUtil.getPath(context, uri)
-                    ?: throw NoStackTraceException("未获取到文件")
+                val path =
+                    RealPathUtil.getPath(context, uri)
+                        ?: throw NoStackTraceException("未获取到文件")
                 val file = File(path)
                 if (file.exists()) {
                     return@runCatching ParcelFileDescriptor.open(
                         file,
-                        ParcelFileDescriptor.MODE_WRITE_ONLY
+                        ParcelFileDescriptor.MODE_WRITE_ONLY,
                     )
                 } else {
                     throw NoStackTraceException("文件不存在")
                 }
             }
-
-
         } catch (e: Exception) {
             e.printOnDebug()
             AppLog.put("读取inputStream失败：${e.localizedMessage}", e)
@@ -296,7 +302,12 @@ fun Uri.toRequestBody(contentType: MediaType? = null): RequestBody {
         override fun contentType() = contentType
 
         override fun contentLength(): Long {
-            val length = uri.inputStream(appCtx).getOrThrow().available().toLong()
+            val length =
+                uri
+                    .inputStream(appCtx)
+                    .getOrThrow()
+                    .available()
+                    .toLong()
             return if (length > 0) length else -1
         }
 
@@ -308,9 +319,7 @@ fun Uri.toRequestBody(contentType: MediaType? = null): RequestBody {
     }
 }
 
-fun Uri.canRead(): Boolean {
-    return appCtx.checkSelfUriPermission(
-        this,
-        Intent.FLAG_GRANT_READ_URI_PERMISSION
-    ) == PackageManager.PERMISSION_GRANTED
-}
+fun Uri.canRead(): Boolean = appCtx.checkSelfUriPermission(
+    this,
+    Intent.FLAG_GRANT_READ_URI_PERMISSION,
+) == PackageManager.PERMISSION_GRANTED

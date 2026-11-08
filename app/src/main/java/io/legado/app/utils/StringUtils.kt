@@ -16,7 +16,6 @@ import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 import kotlin.math.abs
 
-
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object StringUtils {
     private const val HOUR_OF_DAY = 24
@@ -60,15 +59,15 @@ object StringUtils {
             val date = format.parse(source) ?: return ""
             val curTime = calendar.timeInMillis
             calendar.time = date
-            //将MISC 转换成 sec
+            // 将MISC 转换成 sec
             val difSec = abs((curTime - date.time) / 1000)
             val difMin = difSec / 60
             val difHour = difMin / 60
             val difDate = difHour / 60
             val oldHour = calendar.get(Calendar.HOUR)
-            //如果没有时间
+            // 如果没有时间
             if (oldHour == 0) {
-                //比日期:昨天今天和明天
+                // 比日期:昨天今天和明天
                 return when {
                     difDate == 0L -> "今天"
                     difDate < DAY_OF_YESTERDAY -> "昨天"
@@ -101,9 +100,7 @@ object StringUtils {
      * 首字母大写
      */
     @SuppressLint("DefaultLocale")
-    fun toFirstCapital(str: String): String {
-        return str.substring(0, 1).uppercase(Locale.getDefault()) + str.substring(1)
-    }
+    fun toFirstCapital(str: String): String = str.substring(0, 1).uppercase(Locale.getDefault()) + str.substring(1)
 
     /**
      * 将文本中的半角字符，转换成全角字符
@@ -111,19 +108,19 @@ object StringUtils {
     fun halfToFull(input: String): String {
         val c = input.toCharArray()
         for (i in c.indices) {
-            if (c[i].code == 32)
-            //半角空格
-            {
+            if (c[i].code == 32) {
+                // 半角空格
                 c[i] = 12288.toChar()
                 continue
             }
-            //根据实际情况，过滤不需要转换的符号
-            //if (c[i] == 46) //半角点号，不转换
+            // 根据实际情况，过滤不需要转换的符号
+            // if (c[i] == 46) //半角点号，不转换
             // continue;
 
-            if (c[i].code in 33..126)
-            //其他符号都转换为全角
+            if (c[i].code in 33..126) {
+                // 其他符号都转换为全角
                 c[i] = (c[i].code + 65248).toChar()
+            }
         }
         return String(c)
     }
@@ -135,14 +132,15 @@ object StringUtils {
         val c = input.toCharArray()
         for (i in c.indices) {
             if (c[i].code == 12288)
-            //全角空格
-            {
-                c[i] = 32.toChar()
-                continue
-            }
+                // 全角空格
+                {
+                    c[i] = 32.toChar()
+                    continue
+                }
 
-            if (c[i].code in 65281..65374)
+            if (c[i].code in 65281..65374) {
                 c[i] = (c[i].code - 65248).toChar()
+            }
         }
         return String(c)
     }
@@ -184,17 +182,19 @@ object StringUtils {
                     }
 
                     tmpNum >= 10 -> {
-                        if (tmp == 0)
+                        if (tmp == 0) {
                             tmp = 1
+                        }
                         result += tmpNum * tmp
                         tmp = 0
                     }
 
                     else -> {
-                        tmp = if (i >= 2 && i == cn.size - 1 && ChnMap[cn[i - 1]]!! > 10)
+                        tmp = if (i >= 2 && i == cn.size - 1 && ChnMap[cn[i - 1]]!! > 10) {
                             tmpNum * ChnMap[cn[i - 1]]!! / 10
-                        else
+                        } else {
                             tmp * 10 + tmpNum
+                        }
                     }
                 }
             }
@@ -366,5 +366,4 @@ object StringUtils {
             }
         }
     }
-
 }

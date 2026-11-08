@@ -8,17 +8,16 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.utils.DebugLog
-
 import kotlin.math.roundToInt
-
 
 /**
  * 不画最后一条分隔线
  */
 @Suppress("MemberVisibilityCanBePrivate", "RedundantRequireNotNullCall", "unused")
-class DividerNoLast(context: Context, orientation: Int) :
-    RecyclerView.ItemDecoration() {
-
+class DividerNoLast(
+    context: Context,
+    orientation: Int,
+) : RecyclerView.ItemDecoration() {
     companion object {
         const val HORIZONTAL = LinearLayout.HORIZONTAL
         const val VERTICAL = LinearLayout.VERTICAL
@@ -41,7 +40,7 @@ class DividerNoLast(context: Context, orientation: Int) :
         if (mDivider == null) {
             DebugLog.w(
                 javaClass.name,
-                "@android:attr/listDivider was not set in the theme used for this DividerItemDecoration. Please set that attribute all call setDrawable()"
+                "@android:attr/listDivider was not set in the theme used for this DividerItemDecoration. Please set that attribute all call setDrawable()",
             )
         }
         a.recycle()
@@ -72,11 +71,13 @@ class DividerNoLast(context: Context, orientation: Int) :
     /**
      * @return the [Drawable] for this divider.
      */
-    fun getDrawable(): Drawable? {
-        return mDivider
-    }
+    fun getDrawable(): Drawable? = mDivider
 
-    override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
+    override fun onDraw(
+        c: Canvas,
+        parent: RecyclerView,
+        state: RecyclerView.State,
+    ) {
         if (parent.layoutManager == null || mDivider == null) {
             return
         }
@@ -89,7 +90,7 @@ class DividerNoLast(context: Context, orientation: Int) :
 
     private fun drawVertical(
         canvas: Canvas,
-        parent: RecyclerView
+        parent: RecyclerView,
     ) {
         canvas.save()
         val left: Int
@@ -98,8 +99,10 @@ class DividerNoLast(context: Context, orientation: Int) :
             left = parent.paddingLeft
             right = parent.width - parent.paddingRight
             canvas.clipRect(
-                left, parent.paddingTop, right,
-                parent.height - parent.paddingBottom
+                left,
+                parent.paddingTop,
+                right,
+                parent.height - parent.paddingBottom,
             )
         } else {
             left = 0
@@ -117,7 +120,10 @@ class DividerNoLast(context: Context, orientation: Int) :
         canvas.restore()
     }
 
-    private fun drawHorizontal(canvas: Canvas, parent: RecyclerView) {
+    private fun drawHorizontal(
+        canvas: Canvas,
+        parent: RecyclerView,
+    ) {
         canvas.save()
         val top: Int
         val bottom: Int
@@ -125,8 +131,10 @@ class DividerNoLast(context: Context, orientation: Int) :
             top = parent.paddingTop
             bottom = parent.height - parent.paddingBottom
             canvas.clipRect(
-                parent.paddingLeft, top,
-                parent.width - parent.paddingRight, bottom
+                parent.paddingLeft,
+                top,
+                parent.width - parent.paddingRight,
+                bottom,
             )
         } else {
             top = 0
@@ -145,8 +153,10 @@ class DividerNoLast(context: Context, orientation: Int) :
     }
 
     override fun getItemOffsets(
-        outRect: Rect, view: View, parent: RecyclerView,
-        state: RecyclerView.State
+        outRect: Rect,
+        view: View,
+        parent: RecyclerView,
+        state: RecyclerView.State,
     ) {
         if (mDivider == null) {
             outRect[0, 0, 0] = 0
@@ -158,7 +168,7 @@ class DividerNoLast(context: Context, orientation: Int) :
         } else {
             val childAdapterPosition = parent.getChildAdapterPosition(view)
             val lastCount = parent.adapter!!.itemCount - 1
-            //如果不是最后一条 正常赋值 如果是最后一条 赋值为0
+            // 如果不是最后一条 正常赋值 如果是最后一条 赋值为0
             if (childAdapterPosition != lastCount) {
                 outRect[0, 0, mDivider!!.intrinsicWidth] = 0
             } else {
@@ -166,5 +176,4 @@ class DividerNoLast(context: Context, orientation: Int) :
             }
         }
     }
-
 }

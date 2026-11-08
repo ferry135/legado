@@ -9,7 +9,6 @@ import io.legado.app.utils.replace
 import io.legado.app.utils.stackTraceStr
 
 object ReplaceRuleController {
-
     val allRules: ReturnData
         get() {
             val rules = appDb.replaceRuleDao.all
@@ -17,7 +16,6 @@ object ReplaceRuleController {
             returnData.setData(GSON.toJson(rules))
             return returnData
         }
-
 
     fun saveRule(postData: String?): ReturnData {
         val returnData = ReturnData()
@@ -33,7 +31,6 @@ object ReplaceRuleController {
         }
         return returnData
     }
-
 
     fun delete(postData: String?): ReturnData {
         val returnData = ReturnData()
@@ -61,13 +58,14 @@ object ReplaceRuleController {
         if (map == null) {
             returnData.setErrorMsg("格式不对")
         } else {
-            val rule = map["rule"]?.let {
-                if (it is String) {
-                    GSON.fromJsonObject<ReplaceRule>(it).getOrNull()
-                } else {
-                    GSON.fromJsonObject<ReplaceRule>(GSON.toJson(it)).getOrNull()
+            val rule =
+                map["rule"]?.let {
+                    if (it is String) {
+                        GSON.fromJsonObject<ReplaceRule>(it).getOrNull()
+                    } else {
+                        GSON.fromJsonObject<ReplaceRule>(GSON.toJson(it)).getOrNull()
+                    }
                 }
-            }
             if (rule == null) {
                 returnData.setErrorMsg("格式不对")
                 return returnData
@@ -76,22 +74,22 @@ object ReplaceRuleController {
                 returnData.setErrorMsg("替换规则不能为空")
             }
             val text = map["text"] as String
-            val content = try {
-                if (rule.isRegex) {
-                    text.replace(
-                        rule.pattern.toRegex(),
-                        rule.replacement,
-                        rule.getValidTimeoutMillisecond()
-                    )
-                } else {
-                    text.replace(rule.pattern, rule.replacement)
+            val content =
+                try {
+                    if (rule.isRegex) {
+                        text.replace(
+                            rule.pattern.toRegex(),
+                            rule.replacement,
+                            rule.getValidTimeoutMillisecond(),
+                        )
+                    } else {
+                        text.replace(rule.pattern, rule.replacement)
+                    }
+                } catch (e: Exception) {
+                    e.stackTraceStr
                 }
-            } catch (e: Exception) {
-                e.stackTraceStr
-            }
             returnData.setData(content)
         }
         return returnData
     }
-
 }

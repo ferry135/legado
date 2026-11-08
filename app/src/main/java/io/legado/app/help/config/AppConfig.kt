@@ -38,72 +38,89 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     var clickActionBR = appCtx.getPrefInt(PreferKey.clickActionBR, 1)
     var themeMode = appCtx.getPrefString(PreferKey.themeMode, "0")
     var useDefaultCover = appCtx.getPrefBoolean(PreferKey.useDefaultCover, false)
-    var optimizeRender = CanvasRecorderFactory.isSupport
-            && appCtx.getPrefBoolean(PreferKey.optimizeRender, false)
+    var optimizeRender =
+        CanvasRecorderFactory.isSupport &&
+            appCtx.getPrefBoolean(PreferKey.optimizeRender, false)
     var recordLog = appCtx.getPrefBoolean(PreferKey.recordLog)
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+    override fun onSharedPreferenceChanged(
+        sharedPreferences: SharedPreferences?,
+        key: String?,
+    ) {
         when (key) {
             PreferKey.themeMode -> {
                 themeMode = appCtx.getPrefString(PreferKey.themeMode, "0")
                 isEInkMode = themeMode == "3"
             }
 
-            PreferKey.clickActionTL -> clickActionTL =
-                appCtx.getPrefInt(PreferKey.clickActionTL, 2)
+            PreferKey.clickActionTL ->
+                clickActionTL =
+                    appCtx.getPrefInt(PreferKey.clickActionTL, 2)
 
-            PreferKey.clickActionTC -> clickActionTC =
-                appCtx.getPrefInt(PreferKey.clickActionTC, 2)
+            PreferKey.clickActionTC ->
+                clickActionTC =
+                    appCtx.getPrefInt(PreferKey.clickActionTC, 2)
 
-            PreferKey.clickActionTR -> clickActionTR =
-                appCtx.getPrefInt(PreferKey.clickActionTR, 1)
+            PreferKey.clickActionTR ->
+                clickActionTR =
+                    appCtx.getPrefInt(PreferKey.clickActionTR, 1)
 
-            PreferKey.clickActionML -> clickActionML =
-                appCtx.getPrefInt(PreferKey.clickActionML, 2)
+            PreferKey.clickActionML ->
+                clickActionML =
+                    appCtx.getPrefInt(PreferKey.clickActionML, 2)
 
-            PreferKey.clickActionMC -> clickActionMC =
-                appCtx.getPrefInt(PreferKey.clickActionMC, 0)
+            PreferKey.clickActionMC ->
+                clickActionMC =
+                    appCtx.getPrefInt(PreferKey.clickActionMC, 0)
 
-            PreferKey.clickActionMR -> clickActionMR =
-                appCtx.getPrefInt(PreferKey.clickActionMR, 1)
+            PreferKey.clickActionMR ->
+                clickActionMR =
+                    appCtx.getPrefInt(PreferKey.clickActionMR, 1)
 
-            PreferKey.clickActionBL -> clickActionBL =
-                appCtx.getPrefInt(PreferKey.clickActionBL, 2)
+            PreferKey.clickActionBL ->
+                clickActionBL =
+                    appCtx.getPrefInt(PreferKey.clickActionBL, 2)
 
-            PreferKey.clickActionBC -> clickActionBC =
-                appCtx.getPrefInt(PreferKey.clickActionBC, 1)
+            PreferKey.clickActionBC ->
+                clickActionBC =
+                    appCtx.getPrefInt(PreferKey.clickActionBC, 1)
 
-            PreferKey.clickActionBR -> clickActionBR =
-                appCtx.getPrefInt(PreferKey.clickActionBR, 1)
+            PreferKey.clickActionBR ->
+                clickActionBR =
+                    appCtx.getPrefInt(PreferKey.clickActionBR, 1)
 
-            PreferKey.readBodyToLh -> ReadBookConfig.readBodyToLh =
-                appCtx.getPrefBoolean(PreferKey.readBodyToLh, true)
+            PreferKey.readBodyToLh ->
+                ReadBookConfig.readBodyToLh =
+                    appCtx.getPrefBoolean(PreferKey.readBodyToLh, true)
 
-            PreferKey.useZhLayout -> ReadBookConfig.useZhLayout =
-                appCtx.getPrefBoolean(PreferKey.useZhLayout)
+            PreferKey.useZhLayout ->
+                ReadBookConfig.useZhLayout =
+                    appCtx.getPrefBoolean(PreferKey.useZhLayout)
 
             PreferKey.userAgent -> userAgent = getPrefUserAgent()
 
             PreferKey.antiAlias -> useAntiAlias = appCtx.getPrefBoolean(PreferKey.antiAlias)
 
-            PreferKey.useDefaultCover -> useDefaultCover =
-                appCtx.getPrefBoolean(PreferKey.useDefaultCover, false)
+            PreferKey.useDefaultCover ->
+                useDefaultCover =
+                    appCtx.getPrefBoolean(PreferKey.useDefaultCover, false)
 
-            PreferKey.optimizeRender -> optimizeRender = CanvasRecorderFactory.isSupport
-                    && appCtx.getPrefBoolean(PreferKey.optimizeRender, false)
+            PreferKey.optimizeRender ->
+                optimizeRender = CanvasRecorderFactory.isSupport &&
+                    appCtx.getPrefBoolean(PreferKey.optimizeRender, false)
 
             PreferKey.recordLog -> recordLog = appCtx.getPrefBoolean(PreferKey.recordLog)
-
         }
     }
 
     var isNightTheme: Boolean
-        get() = when (themeMode) {
-            "1" -> false
-            "2" -> true
-            "3" -> false
-            else -> sysConfiguration.isNightMode
-        }
+        get() =
+            when (themeMode) {
+                "1" -> false
+                "2" -> true
+                "3" -> false
+                else -> sysConfiguration.isNightMode
+            }
         set(value) {
             if (isNightTheme != value) {
                 if (value) {
@@ -133,11 +150,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         }
 
     var readBrightness: Int
-        get() = if (isNightTheme) {
-            appCtx.getPrefInt(PreferKey.nightBrightness, 100)
-        } else {
-            appCtx.getPrefInt(PreferKey.brightness, 100)
-        }
+        get() =
+            if (isNightTheme) {
+                appCtx.getPrefInt(PreferKey.nightBrightness, 100)
+            } else {
+                appCtx.getPrefInt(PreferKey.brightness, 100)
+            }
         set(value) {
             if (isNightTheme) {
                 appCtx.putPrefInt(PreferKey.nightBrightness, value)
@@ -289,10 +307,15 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         }
 
     var elevation: Int
-        get() = if (isEInkMode) 0 else appCtx.getPrefInt(
-            PreferKey.barElevation,
-            AppConst.sysElevation
-        )
+        get() =
+            if (isEInkMode) {
+                0
+            } else {
+                appCtx.getPrefInt(
+                    PreferKey.barElevation,
+                    AppConst.sysElevation,
+                )
+            }
         set(value) {
             appCtx.putPrefInt(PreferKey.barElevation, value)
         }
@@ -543,10 +566,8 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefInt(PreferKey.bookshelfSort, value)
         }
 
-    fun getBookSortByGroupId(groupId: Long): Int {
-        return appDb.bookGroupDao.getByID(groupId)?.getRealBookSort()
-            ?: bookshelfSort
-    }
+    fun getBookSortByGroupId(groupId: Long): Int = appDb.bookGroupDao.getByID(groupId)?.getRealBookSort()
+        ?: bookshelfSort
 
     private fun getPrefUserAgent(): String {
         val ua = appCtx.getPrefString(PreferKey.userAgent)
@@ -607,46 +628,46 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         }
     }
 
-    //跳转到漫画界面不使用富文本模式
+    // 跳转到漫画界面不使用富文本模式
     val showMangaUi: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.showMangaUi, true)
 
-    //禁用漫画缩放
+    // 禁用漫画缩放
     var disableMangaScale: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.disableMangaScale, true)
         set(value) {
             appCtx.putPrefBoolean(PreferKey.disableMangaScale, value)
         }
 
-    //漫画预加载数量
+    // 漫画预加载数量
     var mangaPreDownloadNum
         get() = appCtx.getPrefInt(PreferKey.mangaPreDownloadNum, 10)
         set(value) {
             appCtx.putPrefInt(PreferKey.mangaPreDownloadNum, value)
         }
 
-    //点击翻页
+    // 点击翻页
     var disableClickScroll
         get() = appCtx.getPrefBoolean(PreferKey.disableClickScroll, false)
         set(value) {
             appCtx.putPrefBoolean(PreferKey.disableClickScroll, value)
         }
 
-    //漫画滚动速度
+    // 漫画滚动速度
     var mangaAutoPageSpeed
         get() = appCtx.getPrefInt(PreferKey.mangaAutoPageSpeed, 3)
         set(value) {
             appCtx.putPrefInt(PreferKey.mangaAutoPageSpeed, value)
         }
 
-    //漫画页脚配置
+    // 漫画页脚配置
     var mangaFooterConfig
         get() = appCtx.getPrefString(PreferKey.mangaFooterConfig, "")
         set(value) {
             appCtx.putPrefString(PreferKey.mangaFooterConfig, value)
         }
 
-    //漫画水平滚动
+    // 漫画水平滚动
     var enableMangaHorizontalScroll
         get() = appCtx.getPrefBoolean(PreferKey.enableMangaHorizontalScroll, false)
         set(value) {
@@ -659,14 +680,14 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefString(PreferKey.mangaColorFilter, value)
         }
 
-    //禁用漫画内标题
+    // 禁用漫画内标题
     var hideMangaTitle
         get() = appCtx.getPrefBoolean(PreferKey.hideMangaTitle, false)
         set(value) {
             appCtx.putPrefBoolean(PreferKey.hideMangaTitle, value)
         }
 
-    //开启墨水屏模式
+    // 开启墨水屏模式
     var enableMangaEInk
         get() = appCtx.getPrefBoolean(PreferKey.enableMangaEInk, false)
         set(value) {
@@ -690,6 +711,4 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
         set(value) {
             appCtx.putPrefBoolean(PreferKey.enableMangaGray, value)
         }
-
 }
-

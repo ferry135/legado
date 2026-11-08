@@ -61,7 +61,6 @@ class AudioPlayActivity :
     VMBaseActivity<ActivityAudioPlayBinding, AudioPlayViewModel>(toolBarTheme = Theme.Dark),
     ChangeBookSourceDialog.CallBack,
     AudioPlay.CallBack {
-
     override val binding by viewBinding(ActivityAudioPlayBinding::inflate)
     override val viewModel by viewModels<AudioPlayViewModel>()
     private val timerSliderPopup by lazy { TimerSliderPopup(this) }
@@ -74,15 +73,16 @@ class AudioPlayActivity :
             java.text.SimpleDateFormat("mm:ss", Locale.getDefault())
         }
     }
-    private val tocActivityResult = registerForActivityResult(TocActivityResult()) {
-        it?.let {
-            if (it.first != AudioPlay.book?.durChapterIndex
-                || it.second == 0
-            ) {
-                AudioPlay.skipTo(it.first)
+    private val tocActivityResult =
+        registerForActivityResult(TocActivityResult()) {
+            it?.let {
+                if (it.first != AudioPlay.book?.durChapterIndex ||
+                    it.second == 0
+                ) {
+                    AudioPlay.skipTo(it.first)
+                }
             }
         }
-    }
     private val sourceEditResult =
         registerForActivityResult(StartActivityContract(BookSourceEditActivity::class.java)) {
             if (it.resultCode == RESULT_OK) {
@@ -108,7 +108,10 @@ class AudioPlayActivity :
         return super.onCompatCreateOptionsMenu(menu)
     }
 
-    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+    override fun onMenuOpened(
+        featureId: Int,
+        menu: Menu,
+    ): Boolean {
         menu.findItem(R.id.menu_login)?.isVisible = !AudioPlay.bookSource?.loginUrl.isNullOrBlank()
         menu.findItem(R.id.menu_wake_lock)?.isChecked = AppConfig.audioPlayUseWakeLock
         return super.onMenuOpened(featureId, menu)
@@ -116,24 +119,27 @@ class AudioPlayActivity :
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_change_source -> AudioPlay.book?.let {
-                showDialogFragment(ChangeBookSourceDialog(it.name, it.author))
-            }
-
-            R.id.menu_login -> AudioPlay.bookSource?.let {
-                startActivity<SourceLoginActivity> {
-                    putExtra("type", "bookSource")
-                    putExtra("key", it.bookSourceUrl)
+            R.id.menu_change_source ->
+                AudioPlay.book?.let {
+                    showDialogFragment(ChangeBookSourceDialog(it.name, it.author))
                 }
-            }
+
+            R.id.menu_login ->
+                AudioPlay.bookSource?.let {
+                    startActivity<SourceLoginActivity> {
+                        putExtra("type", "bookSource")
+                        putExtra("key", it.bookSourceUrl)
+                    }
+                }
 
             R.id.menu_wake_lock -> AppConfig.audioPlayUseWakeLock = !AppConfig.audioPlayUseWakeLock
             R.id.menu_copy_audio_url -> sendToClip(AudioPlayService.url)
-            R.id.menu_edit_source -> AudioPlay.bookSource?.let {
-                sourceEditResult.launch {
-                    putExtra("sourceUrl", it.bookSourceUrl)
+            R.id.menu_edit_source ->
+                AudioPlay.bookSource?.let {
+                    sourceEditResult.launch {
+                        putExtra("sourceUrl", it.bookSourceUrl)
+                    }
                 }
-            }
 
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
         }
@@ -155,20 +161,26 @@ class AudioPlayActivity :
         binding.ivSkipPrevious.setOnClickListener {
             AudioPlay.prev()
         }
-        binding.playerProgress.setOnSeekBarChangeListener(object : SeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                binding.tvDurTime.text = progressTimeFormat.format(progress.toLong())
-            }
+        binding.playerProgress.setOnSeekBarChangeListener(
+            object : SeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar,
+                    progress: Int,
+                    fromUser: Boolean,
+                ) {
+                    binding.tvDurTime.text = progressTimeFormat.format(progress.toLong())
+                }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar) {
-                adjustProgress = true
-            }
+                override fun onStartTrackingTouch(seekBar: SeekBar) {
+                    adjustProgress = true
+                }
 
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-                adjustProgress = false
-                AudioPlay.adjustProgress(seekBar.progress)
-            }
-        })
+                override fun onStopTrackingTouch(seekBar: SeekBar) {
+                    adjustProgress = false
+                    AudioPlay.adjustProgress(seekBar.progress)
+                }
+            },
+        )
         binding.ivChapter.setOnClickListener {
             AudioPlay.book?.let {
                 tocActivityResult.launch(it.bookUrl)
@@ -186,7 +198,7 @@ class AudioPlayActivity :
         }
         binding.ivTimer.setOnClickListener {
             // audio-timer-popup §03 浮层定位修正：改底部锚定，卡底缘恒为控制行上方 8dp，不随卡高探出屏底
-            //（68dp 口径前提 = targetSdk 35 + windowOptOutEdgeToEdgeEnforcement=true（styles.xml:36-37）；
+            // （68dp 口径前提 = targetSdk 35 + windowOptOutEdgeToEdgeEnforcement=true（styles.xml:36-37）；
             // 迁移 enableEdgeToEdge 后须 y = 68dp + navigationBarHeight（llPlayMenu applyNavigationBarPadding
             // 同口径，utils/ViewExtensions.kt:278-284）或改回锚点相对定位，否则弹窗压住控制行）
             timerSliderPopup.showAtLocation(it, Gravity.BOTTOM, 0, 68.dpToPx())
@@ -195,10 +207,12 @@ class AudioPlayActivity :
     }
 
     private fun upCover(path: String?) {
-        BookCover.load(this, path, sourceOrigin = AudioPlay.bookSource?.bookSourceUrl) {
-            BookCover.loadBlur(this, path, sourceOrigin = AudioPlay.bookSource?.bookSourceUrl)
-                .into(binding.ivBg)
-        }.into(binding.ivCover)
+        BookCover
+            .load(this, path, sourceOrigin = AudioPlay.bookSource?.bookSourceUrl) {
+                BookCover
+                    .loadBlur(this, path, sourceOrigin = AudioPlay.bookSource?.bookSourceUrl)
+                    .into(binding.ivBg)
+            }.into(binding.ivCover)
     }
 
     private fun playButton() {
@@ -212,7 +226,11 @@ class AudioPlayActivity :
     override val oldBook: Book?
         get() = AudioPlay.book
 
-    override fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
+    override fun changeTo(
+        source: BookSource,
+        book: Book,
+        toc: List<BookChapter>,
+    ) {
         if (book.isAudio) {
             viewModel.changeTo(source, book, toc)
         } else {
@@ -292,7 +310,6 @@ class AudioPlayActivity :
         }
         observeEventSticky<Int>(EventBus.AUDIO_BUFFER_PROGRESS) {
             binding.playerProgress.secondaryProgress = it
-
         }
         observeEventSticky<Float>(EventBus.AUDIO_SPEED) {
             binding.tvSpeed.text = String.format(Locale.ROOT, "%.1fX", it)
@@ -309,5 +326,4 @@ class AudioPlayActivity :
             binding.progressLoading.visible(loading)
         }
     }
-
 }

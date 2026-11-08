@@ -8,8 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -34,14 +32,13 @@ import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 
 /**
  * 服务器配置
  */
-class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
+class ServersDialog :
+    BaseDialogFragment(R.layout.dialog_recycler_view),
     Toolbar.OnMenuItemClickListener {
-
     val binding by viewBinding(DialogRecyclerViewBinding::bind)
     val viewModel by viewModels<ServersViewModel>()
 
@@ -53,7 +50,10 @@ class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         binding.toolBar.setTitle(R.string.server_config)
         initView()
         initData()
@@ -85,12 +85,14 @@ class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     private fun initData() {
         launchCollectWithLifecycle {
-            appDb.serverDao.observeAll().catch {
-                AppLog.put("服务器配置界面获取数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).collect {
-                adapter.setItems(it)
-            }
-
+            appDb.serverDao
+                .observeAll()
+                .catch {
+                    AppLog.put("服务器配置界面获取数据失败\n${it.localizedMessage}", it)
+                }.flowOn(IO)
+                .collect {
+                    adapter.setItems(it)
+                }
         }
     }
 
@@ -106,16 +108,17 @@ class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         callback?.onDialogDismiss("serversDialog")
     }
 
-    inner class ServersAdapter(context: Context) :
-        RecyclerAdapter<Server, ItemServerSelectBinding>(context) {
-
+    inner class ServersAdapter(
+        context: Context,
+    ) : RecyclerAdapter<Server, ItemServerSelectBinding>(context) {
         var selectServerId: Long = AppConfig.remoteServerId
 
-        override fun getViewBinding(parent: ViewGroup): ItemServerSelectBinding {
-            return ItemServerSelectBinding.inflate(inflater, parent, false)
-        }
+        override fun getViewBinding(parent: ViewGroup): ItemServerSelectBinding = ItemServerSelectBinding.inflate(inflater, parent, false)
 
-        override fun registerListener(holder: ItemViewHolder, binding: ItemServerSelectBinding) {
+        override fun registerListener(
+            holder: ItemViewHolder,
+            binding: ItemServerSelectBinding,
+        ) {
             binding.rbServer.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (buttonView.isPressed && isChecked) {
                     selectServerId = getItemByLayoutPosition(holder.layoutPosition)!!.id
@@ -145,7 +148,7 @@ class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
             holder: ItemViewHolder,
             binding: ItemServerSelectBinding,
             item: Server,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             if (payloads.isEmpty()) {
                 binding.root.setBackgroundColor(context.backgroundColor)
@@ -155,13 +158,9 @@ class ServersDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                 binding.rbServer.isChecked = item.id == selectServerId
             }
         }
-
     }
 
     interface Callback {
-
         fun onDialogDismiss(tag: String)
-
     }
-
 }

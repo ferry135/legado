@@ -104,7 +104,10 @@ object ReadBookConfig {
         shareConfig = c ?: configList.getOrNull(5) ?: Config()
     }
 
-    fun upBg(width: Int, height: Int) {
+    fun upBg(
+        width: Int,
+        height: Int,
+    ) {
         val drawable = durConfig.curBgDrawable(width, height)
         if (drawable is BitmapDrawable && drawable.bitmap != null) {
             bgMeanColor = drawable.bitmap.getMeanColor()
@@ -170,7 +173,7 @@ object ReadBookConfig {
         }
     }
 
-    //配置写入读取
+    // 配置写入读取
     var readBodyToLh = appCtx.getPrefBoolean(PreferKey.readBodyToLh, true)
     var autoReadSpeed = appCtx.getPrefInt(PreferKey.autoReadSpeed, 10)
         set(value) {
@@ -231,7 +234,9 @@ object ReadBookConfig {
 
     var pageAnim: Int
         get() = config.curPageAnim()
-        set(@PageAnim.Anim value) {
+        set(
+            @PageAnim.Anim value,
+        ) {
             config.setCurPageAnim(value)
         }
 
@@ -506,33 +511,33 @@ object ReadBookConfig {
     @Keep
     data class Config(
         var name: String = "",
-        var bgStr: String = "#FAF9F7",//白天背景（13-read-style#24：对齐 surface 亮 token）
-        var bgStrNight: String = "#141312",//夜间背景（对齐 surface 暗 token，消除纯黑）
-        var bgStrEInk: String = "#FFFFFF",//EInk背景
-        var bgAlpha: Int = 100,//背景透明度
-        var bgType: Int = 0,//白天背景类型 0:颜色, 1:assets图片, 2其它图片
-        var bgTypeNight: Int = 0,//夜间背景类型
-        var bgTypeEInk: Int = 0,//EInk背景类型
-        private var darkStatusIcon: Boolean = true,//白天是否暗色状态栏
-        private var darkStatusIconNight: Boolean = false,//晚上是否暗色状态栏
+        var bgStr: String = "#FAF9F7", // 白天背景（13-read-style#24：对齐 surface 亮 token）
+        var bgStrNight: String = "#141312", // 夜间背景（对齐 surface 暗 token，消除纯黑）
+        var bgStrEInk: String = "#FFFFFF", // EInk背景
+        var bgAlpha: Int = 100, // 背景透明度
+        var bgType: Int = 0, // 白天背景类型 0:颜色, 1:assets图片, 2其它图片
+        var bgTypeNight: Int = 0, // 夜间背景类型
+        var bgTypeEInk: Int = 0, // EInk背景类型
+        private var darkStatusIcon: Boolean = true, // 白天是否暗色状态栏
+        private var darkStatusIconNight: Boolean = false, // 晚上是否暗色状态栏
         private var darkStatusIconEInk: Boolean = true,
-        private var textColor: String = "#3E3D3B",//白天文字颜色
-        private var textColorNight: String = "#ADADAD",//夜间文字颜色
+        private var textColor: String = "#3E3D3B", // 白天文字颜色
+        private var textColorNight: String = "#ADADAD", // 夜间文字颜色
         private var textColorEInk: String = "#000000",
-        private var pageAnim: Int = 0,//翻页动画
+        private var pageAnim: Int = 0, // 翻页动画
         private var pageAnimEInk: Int = 4,
-        var textFont: String = "",//字体
-        var textBold: Int = 0,//是否粗体字 0:正常, 1:粗体, 2:细体
-        var textSize: Int = 20,//文字大小
-        var letterSpacing: Float = 0.1f,//字间距
-        var lineSpacingExtra: Int = 12,//行间距
-        var paragraphSpacing: Int = 2,//段距
-        var titleMode: Int = 0,//标题位置 0:居左 1:居中 2:隐藏
+        var textFont: String = "", // 字体
+        var textBold: Int = 0, // 是否粗体字 0:正常, 1:粗体, 2:细体
+        var textSize: Int = 20, // 文字大小
+        var letterSpacing: Float = 0.1f, // 字间距
+        var lineSpacingExtra: Int = 12, // 行间距
+        var paragraphSpacing: Int = 2, // 段距
+        var titleMode: Int = 0, // 标题位置 0:居左 1:居中 2:隐藏
         var titleSize: Int = 0,
         var titleTopSpacing: Int = 0,
         var titleBottomSpacing: Int = 0,
-        var paragraphIndent: String = "　　",//段落缩进
-        var underline: Boolean = false, //下划线
+        var paragraphIndent: String = "　　", // 段落缩进
+        var underline: Boolean = false, // 下划线
         var paddingBottom: Int = 6,
         var paddingLeft: Int = 16,
         var paddingRight: Int = 16,
@@ -556,9 +561,8 @@ object ReadBookConfig {
         var tipColor: Int = 0,
         var tipDividerColor: Int = -1,
         var headerMode: Int = 0,
-        var footerMode: Int = 0
+        var footerMode: Int = 0,
     ) {
-
         @Transient
         private var textColorIntEInk = -1
 
@@ -616,29 +620,30 @@ object ReadBookConfig {
             }
         }
 
-        fun curStatusIconDark(): Boolean {
-            return when {
-                AppConfig.isEInkMode -> darkStatusIconEInk
-                AppConfig.isNightTheme -> darkStatusIconNight
-                else -> darkStatusIcon
-            }
+        fun curStatusIconDark(): Boolean = when {
+            AppConfig.isEInkMode -> darkStatusIconEInk
+            AppConfig.isNightTheme -> darkStatusIconNight
+            else -> darkStatusIcon
         }
 
-        fun setCurPageAnim(@PageAnim.Anim anim: Int) {
+        fun setCurPageAnim(
+            @PageAnim.Anim anim: Int,
+        ) {
             when {
                 AppConfig.isEInkMode -> pageAnimEInk = anim
                 else -> pageAnim = anim
             }
         }
 
-        fun curPageAnim(): Int {
-            return when {
-                AppConfig.isEInkMode -> pageAnimEInk
-                else -> pageAnim
-            }
+        fun curPageAnim(): Int = when {
+            AppConfig.isEInkMode -> pageAnimEInk
+            else -> pageAnim
         }
 
-        fun setCurBg(bgType: Int, bg: String) {
+        fun setCurBg(
+            bgType: Int,
+            bg: String,
+        ) {
             when {
                 AppConfig.isEInkMode -> {
                     bgTypeEInk = bgType
@@ -657,46 +662,50 @@ object ReadBookConfig {
             }
         }
 
-        fun curBgStr(): String {
-            return when {
-                AppConfig.isEInkMode -> bgStrEInk
-                AppConfig.isNightTheme -> bgStrNight
-                else -> bgStr
-            }
+        fun curBgStr(): String = when {
+            AppConfig.isEInkMode -> bgStrEInk
+            AppConfig.isNightTheme -> bgStrNight
+            else -> bgStr
         }
 
-        fun curBgType(): Int {
-            return when {
-                AppConfig.isEInkMode -> bgTypeEInk
-                AppConfig.isNightTheme -> bgTypeNight
-                else -> bgType
-            }
+        fun curBgType(): Int = when {
+            AppConfig.isEInkMode -> bgTypeEInk
+            AppConfig.isNightTheme -> bgTypeNight
+            else -> bgType
         }
 
-        fun curBgDrawable(width: Int, height: Int): Drawable {
+        fun curBgDrawable(
+            width: Int,
+            height: Int,
+        ): Drawable {
             if (width == 0 || height == 0) {
                 return ColorDrawable(appCtx.getCompatColor(R.color.background))
             }
             var bgDrawable: Drawable? = null
             val resources = appCtx.resources
             try {
-                bgDrawable = when (curBgType()) {
-                    0 -> ColorDrawable(Color.parseColor(curBgStr()))
-                    1 -> {
-                        val path = "bg" + File.separator + curBgStr()
-                        val bitmap = BitmapUtils.decodeAssetsBitmap(appCtx, path, width, height)
-                        BitmapDrawable(resources, bitmap?.resizeAndRecycle(width, height))
-                    }
-
-                    else -> {
-                        val path = curBgStr().let {
-                            if (it.contains(File.separator)) it
-                            else FileUtils.getPath(appCtx.externalFiles, "bg", curBgStr())
+                bgDrawable =
+                    when (curBgType()) {
+                        0 -> ColorDrawable(Color.parseColor(curBgStr()))
+                        1 -> {
+                            val path = "bg" + File.separator + curBgStr()
+                            val bitmap = BitmapUtils.decodeAssetsBitmap(appCtx, path, width, height)
+                            BitmapDrawable(resources, bitmap?.resizeAndRecycle(width, height))
                         }
-                        val bitmap = BitmapUtils.decodeBitmap(path, width, height)
-                        BitmapDrawable(resources, bitmap?.resizeAndRecycle(width, height))
+
+                        else -> {
+                            val path =
+                                curBgStr().let {
+                                    if (it.contains(File.separator)) {
+                                        it
+                                    } else {
+                                        FileUtils.getPath(appCtx.externalFiles, "bg", curBgStr())
+                                    }
+                                }
+                            val bitmap = BitmapUtils.decodeBitmap(path, width, height)
+                            BitmapDrawable(resources, bitmap?.resizeAndRecycle(width, height))
+                        }
                     }
-                }
             } catch (e: OutOfMemoryError) {
                 e.printOnDebug()
             } catch (e: Exception) {

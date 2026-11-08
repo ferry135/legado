@@ -19,8 +19,9 @@ import kotlin.math.sqrt
 
 class SmoothCheckBox @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null
-) : View(context, attrs), Checkable {
+    attrs: AttributeSet? = null,
+) : View(context, attrs),
+    Checkable {
     private var mPaint: Paint
     private var mTickPaint: Paint
     private var mFloorPaint: Paint
@@ -82,9 +83,7 @@ class SmoothCheckBox @JvmOverloads constructor(
         }
     }
 
-    override fun isChecked(): Boolean {
-        return mChecked
-    }
+    override fun isChecked(): Boolean = mChecked
 
     override fun setChecked(checked: Boolean) {
         mChecked = checked
@@ -149,7 +148,7 @@ class SmoothCheckBox @JvmOverloads constructor(
         left: Int,
         top: Int,
         right: Int,
-        bottom: Int
+        bottom: Int,
     ) {
         mWidth = measuredWidth
         mStrokeWidth = if (mStrokeWidth == 0) measuredWidth / 10 else mStrokeWidth
@@ -166,11 +165,11 @@ class SmoothCheckBox @JvmOverloads constructor(
         mTickPoints[2].y = (measuredHeight.toFloat() / 30 * 10).roundToInt()
         mLeftLineDistance = sqrt(
             (mTickPoints[1].x - mTickPoints[0].x.toDouble()).pow(2.0) +
-                    (mTickPoints[1].y - mTickPoints[0].y.toDouble()).pow(2.0)
+                (mTickPoints[1].y - mTickPoints[0].y.toDouble()).pow(2.0),
         ).toFloat()
         mRightLineDistance = sqrt(
             (mTickPoints[2].x - mTickPoints[1].x.toDouble()).pow(2.0) +
-                    (mTickPoints[2].y - mTickPoints[1].y.toDouble()).pow(2.0)
+                (mTickPoints[2].y - mTickPoints[1].y.toDouble()).pow(2.0),
         ).toFloat()
         mTickPaint.strokeWidth = mStrokeWidth.toFloat()
     }
@@ -194,7 +193,7 @@ class SmoothCheckBox @JvmOverloads constructor(
             mCenterPoint.x.toFloat(),
             mCenterPoint.y.toFloat(),
             radius * mFloorScale,
-            mFloorPaint
+            mFloorPaint,
         )
     }
 
@@ -258,7 +257,7 @@ class SmoothCheckBox @JvmOverloads constructor(
             mFloorColor = getGradientColor(
                 mUnCheckedColor,
                 mCheckedColor,
-                1 - mScaleVal
+                1 - mScaleVal,
             )
             postInvalidate()
         }
@@ -283,7 +282,7 @@ class SmoothCheckBox @JvmOverloads constructor(
             mFloorColor = getGradientColor(
                 mCheckedColor,
                 mFloorUnCheckedColor,
-                mScaleVal
+                mScaleVal,
             )
             postInvalidate()
         }

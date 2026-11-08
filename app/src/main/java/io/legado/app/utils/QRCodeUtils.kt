@@ -27,10 +27,8 @@ import com.king.zxing.DecodeFormatManager
 import java.util.EnumMap
 import kotlin.math.max
 
-
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 object QRCodeUtils {
-
     const val DEFAULT_REQ_WIDTH = 480
     const val DEFAULT_REQ_HEIGHT = 640
 
@@ -47,15 +45,15 @@ object QRCodeUtils {
         heightPix: Int = DEFAULT_REQ_HEIGHT,
         logo: Bitmap? = null,
         @FloatRange(from = 0.0, to = 1.0) ratio: Float = 0.2f,
-        errorCorrectionLevel: ErrorCorrectionLevel = ErrorCorrectionLevel.H
+        errorCorrectionLevel: ErrorCorrectionLevel = ErrorCorrectionLevel.H,
     ): Bitmap? {
-        //配置参数
+        // 配置参数
         val hints: MutableMap<EncodeHintType, Any> = EnumMap(EncodeHintType::class.java)
         hints[EncodeHintType.CHARACTER_SET] = "utf-8"
-        //容错级别
+        // 容错级别
         hints[EncodeHintType.ERROR_CORRECTION] = errorCorrectionLevel
-        //设置空白边距的宽度
-        hints[EncodeHintType.MARGIN] = 1 //default is 4
+        // 设置空白边距的宽度
+        hints[EncodeHintType.MARGIN] = 1 // default is 4
         return createQRCode(content, heightPix, logo, ratio, hints)
     }
 
@@ -75,7 +73,7 @@ object QRCodeUtils {
         logo: Bitmap?,
         @FloatRange(from = 0.0, to = 1.0) ratio: Float = 0.2f,
         hints: Map<EncodeHintType, *>,
-        codeColor: Int = Color.BLACK
+        codeColor: Int = Color.BLACK,
     ): Bitmap? {
         try {
             // 图像数据转换，使用了矩阵转换
@@ -117,7 +115,7 @@ object QRCodeUtils {
     private fun addLogo(
         src: Bitmap?,
         logo: Bitmap?,
-        @FloatRange(from = 0.0, to = 1.0) ratio: Float
+        @FloatRange(from = 0.0, to = 1.0) ratio: Float,
     ): Bitmap? {
         if (src == null) {
             return null
@@ -126,7 +124,7 @@ object QRCodeUtils {
             return src
         }
 
-        //获取图片的宽高
+        // 获取图片的宽高
         val srcWidth = src.width
         val srcHeight = src.height
         val logoWidth = logo.width
@@ -138,7 +136,7 @@ object QRCodeUtils {
             return src
         }
 
-        //logo大小为二维码整体大小
+        // logo大小为二维码整体大小
         val scaleFactor = srcWidth * ratio / logoWidth
         var bitmap: Bitmap? = Bitmap.createBitmap(srcWidth, srcHeight, Bitmap.Config.ARGB_8888)
         try {
@@ -148,13 +146,13 @@ object QRCodeUtils {
                 scaleFactor,
                 scaleFactor,
                 (srcWidth / 2).toFloat(),
-                (srcHeight / 2).toFloat()
+                (srcHeight / 2).toFloat(),
             )
             canvas.drawBitmap(
                 logo,
                 ((srcWidth - logoWidth) / 2).toFloat(),
                 ((srcHeight - logoHeight) / 2).toFloat(),
-                null
+                null,
             )
             canvas.save()
             canvas.restore()
@@ -175,7 +173,7 @@ object QRCodeUtils {
         bitmap: Bitmap,
         reqWidth: Int = DEFAULT_REQ_WIDTH,
         reqHeight: Int = DEFAULT_REQ_HEIGHT,
-        hints: Map<DecodeHintType?, Any?> = DecodeFormatManager.ALL_HINTS
+        hints: Map<DecodeHintType?, Any?> = DecodeFormatManager.ALL_HINTS,
     ): String? {
         val result = parseCodeResult(bitmap, reqWidth, reqHeight, hints)
         return result?.text
@@ -191,7 +189,7 @@ object QRCodeUtils {
         bitmap: Bitmap,
         reqWidth: Int = DEFAULT_REQ_WIDTH,
         reqHeight: Int = DEFAULT_REQ_HEIGHT,
-        hints: Map<DecodeHintType?, Any?> = DecodeFormatManager.ALL_HINTS
+        hints: Map<DecodeHintType?, Any?> = DecodeFormatManager.ALL_HINTS,
     ): Result? {
         if (bitmap.width > reqWidth || bitmap.height > reqHeight) {
             val bm = bitmap.resizeAndRecycle(reqWidth, reqHeight)
@@ -206,7 +204,10 @@ object QRCodeUtils {
      * @param hints
      * @return
      */
-    fun parseCodeResult(source: LuminanceSource?, hints: Map<DecodeHintType?, Any?>?): Result? {
+    fun parseCodeResult(
+        source: LuminanceSource?,
+        hints: Map<DecodeHintType?, Any?>?,
+    ): Result? {
         var result: Result? = null
         val reader = MultiFormatReader()
         try {
@@ -248,10 +249,8 @@ object QRCodeUtils {
     fun parseQRCodeResult(
         bitmapPath: String?,
         reqWidth: Int = DEFAULT_REQ_WIDTH,
-        reqHeight: Int = DEFAULT_REQ_HEIGHT
-    ): Result? {
-        return parseCodeResult(bitmapPath, reqWidth, reqHeight, DecodeFormatManager.QR_CODE_HINTS)
-    }
+        reqHeight: Int = DEFAULT_REQ_HEIGHT,
+    ): Result? = parseCodeResult(bitmapPath, reqWidth, reqHeight, DecodeFormatManager.QR_CODE_HINTS)
 
     /**
      * 解析一维码/二维码图片
@@ -262,10 +261,8 @@ object QRCodeUtils {
         bitmapPath: String?,
         reqWidth: Int = DEFAULT_REQ_WIDTH,
         reqHeight: Int = DEFAULT_REQ_HEIGHT,
-        hints: Map<DecodeHintType?, Any?> = DecodeFormatManager.ALL_HINTS
-    ): String? {
-        return parseCodeResult(bitmapPath, reqWidth, reqHeight, hints)?.text
-    }
+        hints: Map<DecodeHintType?, Any?> = DecodeFormatManager.ALL_HINTS,
+    ): String? = parseCodeResult(bitmapPath, reqWidth, reqHeight, hints)?.text
 
     /**
      * 解析一维码/二维码图片
@@ -279,7 +276,7 @@ object QRCodeUtils {
         bitmapPath: String?,
         reqWidth: Int = DEFAULT_REQ_WIDTH,
         reqHeight: Int = DEFAULT_REQ_HEIGHT,
-        hints: Map<DecodeHintType?, Any?> = DecodeFormatManager.ALL_HINTS
+        hints: Map<DecodeHintType?, Any?> = DecodeFormatManager.ALL_HINTS,
     ): Result? {
         var result: Result? = null
         val reader = MultiFormatReader()
@@ -301,16 +298,19 @@ object QRCodeUtils {
         return result
     }
 
-    private fun decodeInternal(reader: MultiFormatReader, source: LuminanceSource): Result? {
+    private fun decodeInternal(
+        reader: MultiFormatReader,
+        source: LuminanceSource,
+    ): Result? {
         var result: Result? = null
         try {
             try {
-                //采用HybridBinarizer解析
+                // 采用HybridBinarizer解析
                 result = reader.decodeWithState(BinaryBitmap(HybridBinarizer(source)))
             } catch (_: Exception) {
             }
             if (result == null) {
-                //如果没有解析成功，再采用GlobalHistogramBinarizer解析一次
+                // 如果没有解析成功，再采用GlobalHistogramBinarizer解析一次
                 result = reader.decodeWithState(BinaryBitmap(GlobalHistogramBinarizer(source)))
             }
         } catch (_: Exception) {
@@ -318,17 +318,20 @@ object QRCodeUtils {
         return result
     }
 
-
     /**
      * 压缩图片
      * @param path
      * @return
      */
-    private fun compressBitmap(path: String?, reqWidth: Int, reqHeight: Int): Bitmap {
-        if (reqWidth > 0 && reqHeight > 0) { //都大于进行判断是否压缩
+    private fun compressBitmap(
+        path: String?,
+        reqWidth: Int,
+        reqHeight: Int,
+    ): Bitmap {
+        if (reqWidth > 0 && reqHeight > 0) { // 都大于进行判断是否压缩
             val newOpts = BitmapFactory.Options()
             // 开始读入图片，此时把options.inJustDecodeBounds 设回true了
-            newOpts.inJustDecodeBounds = true //获取原始图片大小
+            newOpts.inJustDecodeBounds = true // 获取原始图片大小
             BitmapFactory.decodeFile(path, newOpts) // 此时返回bm为空
             val width = newOpts.outWidth.toFloat()
             val height = newOpts.outHeight.toFloat()
@@ -350,7 +353,6 @@ object QRCodeUtils {
         }
         return BitmapFactory.decodeFile(path)
     }
-
 
     /**
      * 获取RGBLuminanceSource
@@ -385,17 +387,21 @@ object QRCodeUtils {
         hints: Map<EncodeHintType?, *>? = null,
         isShowText: Boolean = true,
         textSize: Int = 40,
-        @ColorInt codeColor: Int = Color.BLACK
+        @ColorInt codeColor: Int = Color.BLACK,
     ): Bitmap? {
         if (TextUtils.isEmpty(content)) {
             return null
         }
         val writer = MultiFormatWriter()
         try {
-            val result = writer.encode(
-                content, format, desiredWidth,
-                desiredHeight, hints
-            )
+            val result =
+                writer.encode(
+                    content,
+                    format,
+                    desiredWidth,
+                    desiredHeight,
+                    hints,
+                )
             val width = result.width
             val height = result.height
             val pixels = IntArray(width * height)
@@ -406,14 +412,18 @@ object QRCodeUtils {
                     pixels[offset + x] = if (result[x, y]) codeColor else Color.WHITE
                 }
             }
-            val bitmap = Bitmap.createBitmap(
-                width, height,
-                Bitmap.Config.ARGB_8888
-            )
+            val bitmap =
+                Bitmap.createBitmap(
+                    width,
+                    height,
+                    Bitmap.Config.ARGB_8888,
+                )
             bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
             return if (isShowText) {
                 addCode(bitmap, content, textSize, codeColor, textSize / 2)
-            } else bitmap
+            } else {
+                bitmap
+            }
         } catch (e: WriterException) {
             e.printOnDebug()
         }
@@ -433,7 +443,7 @@ object QRCodeUtils {
         code: String?,
         textSize: Int,
         @ColorInt textColor: Int,
-        offset: Int
+        offset: Int,
     ): Bitmap? {
         if (src == null) {
             return null
@@ -442,17 +452,18 @@ object QRCodeUtils {
             return src
         }
 
-        //获取图片的宽高
+        // 获取图片的宽高
         val srcWidth = src.width
         val srcHeight = src.height
         if (srcWidth <= 0 || srcHeight <= 0) {
             return null
         }
-        var bitmap: Bitmap? = Bitmap.createBitmap(
-            srcWidth,
-            srcHeight + textSize + offset * 2,
-            Bitmap.Config.ARGB_8888
-        )
+        var bitmap: Bitmap? =
+            Bitmap.createBitmap(
+                srcWidth,
+                srcHeight + textSize + offset * 2,
+                Bitmap.Config.ARGB_8888,
+            )
         try {
             val canvas = Canvas(bitmap!!)
             canvas.drawBitmap(src, 0f, 0f, null)
@@ -464,7 +475,7 @@ object QRCodeUtils {
                 code!!,
                 (srcWidth / 2).toFloat(),
                 (srcHeight + textSize / 2 + offset).toFloat(),
-                paint
+                paint,
             )
             canvas.save()
             canvas.restore()
@@ -474,6 +485,4 @@ object QRCodeUtils {
         }
         return bitmap
     }
-
-
 }

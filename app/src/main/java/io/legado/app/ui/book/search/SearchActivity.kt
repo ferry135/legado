@@ -62,12 +62,12 @@ import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import kotlin.math.abs
 
-class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel>(),
+class SearchActivity :
+    VMBaseActivity<ActivityBookSearchBinding, SearchViewModel>(),
     BookAdapter.CallBack,
     HistoryKeyAdapter.CallBack,
     SearchScopeDialog.Callback,
     SearchAdapter.CallBack {
-
     override val binding by viewBinding(ActivityBookSearchBinding::inflate)
     override val viewModel by viewModels<SearchViewModel>()
 
@@ -117,7 +117,10 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         return super.onCompatCreateOptionsMenu(menu)
     }
 
-    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+    override fun onMenuOpened(
+        featureId: Int,
+        menu: Menu,
+    ): Boolean {
         menu.transaction {
             menu.removeGroup(R.id.menu_group_1)
             menu.removeGroup(R.id.menu_group_2)
@@ -130,7 +133,8 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
                 }
             }
             val allSourceMenu =
-                menu.add(R.id.menu_group_2, R.id.menu_1, Menu.NONE, getString(R.string.all_source))
+                menu
+                    .add(R.id.menu_group_2, R.id.menu_1, Menu.NONE, getString(R.string.all_source))
                     .apply {
                         if (searchScopeNames.isEmpty()) {
                             isChecked = true
@@ -162,7 +166,7 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             R.id.menu_precision_search -> {
                 putPrefBoolean(
                     PreferKey.precisionSearch,
-                    !getPrefBoolean(PreferKey.precisionSearch)
+                    !getPrefBoolean(PreferKey.precisionSearch),
                 )
                 precisionSearchMenuItem?.isChecked = getPrefBoolean(PreferKey.precisionSearch)
                 searchView.query?.toString()?.trim()?.let {
@@ -189,30 +193,32 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         searchView.applyTint(primaryTextColor)
         searchView.isSubmitButtonEnabled = true
         searchView.queryHint = getString(R.string.search_book_key)
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                searchView.clearFocus()
-                query.trim().let { searchKey ->
-                    isManualStopSearch = false
-                    viewModel.saveSearchKey(searchKey)
-                    viewModel.searchKey = ""
-                    viewModel.search(searchKey)
+        searchView.setOnQueryTextListener(
+            object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    searchView.clearFocus()
+                    query.trim().let { searchKey ->
+                        isManualStopSearch = false
+                        viewModel.saveSearchKey(searchKey)
+                        viewModel.searchKey = ""
+                        viewModel.search(searchKey)
+                    }
+                    visibleInputHelp(false)
+                    return true
                 }
-                visibleInputHelp(false)
-                return true
-            }
 
-            override fun onQueryTextChange(newText: String): Boolean {
-                if (newText.trim() == viewModel.searchKey) {
-                    // 旋转屏幕后 SearchView 恢复文本会触发此回调，不应中断正在进行的搜索
+                override fun onQueryTextChange(newText: String): Boolean {
+                    if (newText.trim() == viewModel.searchKey) {
+                        // 旋转屏幕后 SearchView 恢复文本会触发此回调，不应中断正在进行的搜索
+                        return false
+                    }
+                    viewModel.stop()
+                    binding.fbStartStop.invisible()
+                    upHistory(newText.trim())
                     return false
                 }
-                viewModel.stop()
-                binding.fbStartStop.invisible()
-                upHistory(newText.trim())
-                return false
-            }
-        })
+            },
+        )
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             if (binding.refreshProgressBar.isAutoLoading || (!hasFocus && adapter.isNotEmpty() && searchView.query.isNotBlank())) {
                 visibleInputHelp(false)
@@ -237,47 +243,63 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         binding.recyclerView.adapter = adapter
         binding.recyclerView.itemAnimator = null
         binding.recyclerView.applyNavigationBarPadding()
-        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                super.onItemRangeInserted(positionStart, itemCount)
-                if (positionStart == 0) {
-                    binding.recyclerView.scrollToPosition(0)
+        adapter.registerAdapterDataObserver(
+            object : RecyclerView.AdapterDataObserver() {
+                override fun onItemRangeInserted(
+                    positionStart: Int,
+                    itemCount: Int,
+                ) {
+                    super.onItemRangeInserted(positionStart, itemCount)
+                    if (positionStart == 0) {
+                        binding.recyclerView.scrollToPosition(0)
+                    }
                 }
-            }
 
-            override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
-                super.onItemRangeMoved(fromPosition, toPosition, itemCount)
-                if (toPosition == 0) {
-                    binding.recyclerView.scrollToPosition(0)
-                }
-            }
-        })
-        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if (!recyclerView.canScrollVertically(1)) {
-                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                    val lastPosition = layoutManager.findLastCompletelyVisibleItemPosition()
-                    if (lastPosition == RecyclerView.NO_POSITION) {
-                        return
-                    }
-                    val lastView = layoutManager.findViewByPosition(lastPosition)
-                    if (lastView == null) {
-                        scrollToBottom()
-                        return
-                    }
-                    val bottom = abs(lastView.bottom - recyclerView.height)
-                    if (bottom <= 1) {
-                        scrollToBottom()
+                override fun onItemRangeMoved(
+                    fromPosition: Int,
+                    toPosition: Int,
+                    itemCount: Int,
+                ) {
+                    super.onItemRangeMoved(fromPosition, toPosition, itemCount)
+                    if (toPosition == 0) {
+                        binding.recyclerView.scrollToPosition(0)
                     }
                 }
-            }
-        })
+            },
+        )
+        binding.recyclerView.addOnScrollListener(
+            object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(
+                    recyclerView: RecyclerView,
+                    dx: Int,
+                    dy: Int,
+                ) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    if (!recyclerView.canScrollVertically(1)) {
+                        val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                        val lastPosition = layoutManager.findLastCompletelyVisibleItemPosition()
+                        if (lastPosition == RecyclerView.NO_POSITION) {
+                            return
+                        }
+                        val lastView = layoutManager.findViewByPosition(lastPosition)
+                        if (lastView == null) {
+                            scrollToBottom()
+                            return
+                        }
+                        val bottom = abs(lastView.bottom - recyclerView.height)
+                        if (bottom <= 1) {
+                            scrollToBottom()
+                        }
+                    }
+                }
+            },
+        )
     }
 
     private fun initOtherView() {
         binding.fbStartStop.backgroundTintList =
-            Selector.colorBuild()
+            Selector
+                .colorBuild()
                 .setDefaultColor(accentColor)
                 .setPressedColor(ColorUtils.darkenColor(accentColor))
                 .create()
@@ -315,7 +337,6 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
             appDb.bookSourceDao.flowEnabledGroups().collect {
                 groups = it
             }
-
         }
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -339,7 +360,8 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         }
         val key = intent?.getStringExtra("key")
         if (key.isNullOrBlank()) {
-            searchView.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
+            searchView
+                .findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
                 .requestFocus()
         } else {
             searchView.setQuery(key, true)
@@ -353,9 +375,9 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
         if (isManualStopSearch) {
             return
         }
-        if (viewModel.isSearchLiveData.value == false
-            && viewModel.searchKey.isNotEmpty()
-            && viewModel.hasMore
+        if (viewModel.isSearchLiveData.value == false &&
+            viewModel.searchKey.isNotEmpty() &&
+            viewModel.hasMore
         ) {
             viewModel.search("")
         }
@@ -378,44 +400,48 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
      */
     private fun upHistory(key: String? = null) {
         booksFlowJob?.cancel()
-        booksFlowJob = lifecycleScope.launch {
-            if (key.isNullOrBlank()) {
-                binding.tvBookShow.gone()
-                binding.rvBookshelfSearch.gone()
-            } else {
-                appDb.bookDao.flowSearch(key)
+        booksFlowJob =
+            lifecycleScope.launch {
+                if (key.isNullOrBlank()) {
+                    binding.tvBookShow.gone()
+                    binding.rvBookshelfSearch.gone()
+                } else {
+                    appDb.bookDao
+                        .flowSearch(key)
+                        .conflate()
+                        .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                        .collect {
+                            if (it.isEmpty()) {
+                                binding.tvBookShow.gone()
+                                binding.rvBookshelfSearch.gone()
+                            } else {
+                                binding.tvBookShow.visible()
+                                binding.rvBookshelfSearch.visible()
+                            }
+                            bookAdapter.setItems(it)
+                        }
+                }
+            }
+        historyFlowJob?.cancel()
+        historyFlowJob =
+            lifecycleScope.launch {
+                when {
+                    key.isNullOrBlank() -> appDb.searchKeywordDao.flowByTime()
+                    else -> appDb.searchKeywordDao.flowSearch(key)
+                }.catch {
+                    AppLog.put("搜索界面获取搜索历史数据失败\n${it.localizedMessage}", it)
+                }.flowOn(IO)
                     .conflate()
                     .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                     .collect {
+                        historyKeyAdapter.setItems(it)
                         if (it.isEmpty()) {
-                            binding.tvBookShow.gone()
-                            binding.rvBookshelfSearch.gone()
+                            binding.tvClearHistory.invisible()
                         } else {
-                            binding.tvBookShow.visible()
-                            binding.rvBookshelfSearch.visible()
+                            binding.tvClearHistory.visible()
                         }
-                        bookAdapter.setItems(it)
                     }
             }
-        }
-        historyFlowJob?.cancel()
-        historyFlowJob = lifecycleScope.launch {
-            when {
-                key.isNullOrBlank() -> appDb.searchKeywordDao.flowByTime()
-                else -> appDb.searchKeywordDao.flowSearch(key)
-            }.catch {
-                AppLog.put("搜索界面获取搜索历史数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).conflate()
-                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-                .collect {
-                historyKeyAdapter.setItems(it)
-                if (it.isEmpty()) {
-                    binding.tvClearHistory.invisible()
-                } else {
-                    binding.tvClearHistory.visible()
-                }
-            }
-        }
     }
 
     /**
@@ -474,7 +500,11 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     /**
      * 显示书籍详情
      */
-    override fun showBookInfo(name: String, author: String, bookUrl: String) {
+    override fun showBookInfo(
+        name: String,
+        author: String,
+        bookUrl: String,
+    ) {
         startActivity<BookInfoActivity> {
             putExtra("name", name)
             putExtra("author", author)
@@ -485,9 +515,10 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     /**
      * 是否已经加入书架
      */
-    override fun isInBookshelf(name: String, author: String): Boolean {
-        return viewModel.isInBookShelf(name, author)
-    }
+    override fun isInBookshelf(
+        name: String,
+        author: String,
+    ): Boolean = viewModel.isInBookShelf(name, author)
 
     /**
      * 显示书籍详情
@@ -551,12 +582,13 @@ class SearchActivity : VMBaseActivity<ActivityBookSearchBinding, SearchViewModel
     }
 
     companion object {
-
-        fun start(context: Context, key: String?) {
+        fun start(
+            context: Context,
+            key: String?,
+        ) {
             context.startActivity<SearchActivity> {
                 putExtra("key", key)
             }
         }
-
     }
 }

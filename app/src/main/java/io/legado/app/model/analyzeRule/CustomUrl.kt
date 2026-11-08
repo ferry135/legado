@@ -4,25 +4,30 @@ import io.legado.app.utils.GSON
 import io.legado.app.utils.fromJsonObject
 
 @Suppress("unused")
-class CustomUrl(url: String) {
-
+class CustomUrl(
+    url: String,
+) {
     private val mUrl: String
     private val attribute = hashMapOf<String, Any>()
 
     init {
         val urlMatcher = AnalyzeUrl.paramPattern.matcher(url)
-        mUrl = if (urlMatcher.find()) {
-            val attr = url.substring(urlMatcher.end())
-            GSON.fromJsonObject<Map<String, Any>>(attr).getOrNull()?.let {
-                attribute.putAll(it)
+        mUrl =
+            if (urlMatcher.find()) {
+                val attr = url.substring(urlMatcher.end())
+                GSON.fromJsonObject<Map<String, Any>>(attr).getOrNull()?.let {
+                    attribute.putAll(it)
+                }
+                url.substring(0, urlMatcher.start())
+            } else {
+                url
             }
-            url.substring(0, urlMatcher.start())
-        } else {
-            url
-        }
     }
 
-    fun putAttribute(key: String, value: Any?): CustomUrl {
+    fun putAttribute(
+        key: String,
+        value: Any?,
+    ): CustomUrl {
         if (value == null) {
             attribute.remove(key)
         } else {
@@ -31,13 +36,9 @@ class CustomUrl(url: String) {
         return this
     }
 
-    fun getUrl(): String {
-        return mUrl
-    }
+    fun getUrl(): String = mUrl
 
-    fun getAttr(): Map<String, Any> {
-        return attribute
-    }
+    fun getAttr(): Map<String, Any> = attribute
 
     override fun toString(): String {
         if (attribute.isEmpty()) {
@@ -45,5 +46,4 @@ class CustomUrl(url: String) {
         }
         return mUrl + "," + GSON.toJson(attribute)
     }
-
 }

@@ -15,13 +15,13 @@ import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.utils.findCenterViewPosition
 import kotlin.math.abs
 
-
-class WebtoonRecyclerView @JvmOverloads constructor(
+class WebtoonRecyclerView
+@JvmOverloads
+constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0,
 ) : RecyclerView(context, attrs, defStyle) {
-
     private var isZooming = false
     private var atLastPosition = false
     private var atFirstPosition = false
@@ -44,7 +44,10 @@ class WebtoonRecyclerView @JvmOverloads constructor(
     var longTapListener: ((MotionEvent) -> Boolean)? = null
     var disableMangaScale = false
 
-    override fun onMeasure(widthSpec: Int, heightSpec: Int) {
+    override fun onMeasure(
+        widthSpec: Int,
+        heightSpec: Int,
+    ) {
         halfWidth = MeasureSpec.getSize(widthSpec) / 2
         halfHeight = MeasureSpec.getSize(heightSpec) / 2
         if (!heightSet) {
@@ -55,11 +58,12 @@ class WebtoonRecyclerView @JvmOverloads constructor(
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    override fun onTouchEvent(e: MotionEvent): Boolean {
-        return detector.onTouchEvent(e) || super.onTouchEvent(e)
-    }
+    override fun onTouchEvent(e: MotionEvent): Boolean = detector.onTouchEvent(e) || super.onTouchEvent(e)
 
-    override fun onScrolled(dx: Int, dy: Int) {
+    override fun onScrolled(
+        dx: Int,
+        dy: Int,
+    ) {
         super.onScrolled(dx, dy)
         val layoutManager = layoutManager
         lastVisibleItemPosition =
@@ -81,7 +85,7 @@ class WebtoonRecyclerView @JvmOverloads constructor(
         dy: Int,
         consumed: IntArray?,
         offsetInWindow: IntArray?,
-        type: Int
+        type: Int,
     ): Boolean {
         val position = findCenterViewPosition()
         if (position != NO_POSITION && position != mLastCenterViewPosition) {
@@ -139,7 +143,10 @@ class WebtoonRecyclerView @JvmOverloads constructor(
         }
     }
 
-    fun zoomFling(velocityX: Int, velocityY: Int): Boolean {
+    fun zoomFling(
+        velocityX: Int,
+        velocityY: Int,
+    ): Boolean {
         if (currentScale <= 1f) return false
 
         val distanceTimeFactor = 0.4f
@@ -175,7 +182,10 @@ class WebtoonRecyclerView @JvmOverloads constructor(
         zoom(currentScale, DEFAULT_RATE, x, 0f, y, 0f)
     }
 
-    private fun zoomScrollBy(dx: Int, dy: Int) {
+    private fun zoomScrollBy(
+        dx: Int,
+        dy: Int,
+    ) {
         if (dx != 0) {
             x = getPositionX(x + dx)
         }
@@ -191,18 +201,20 @@ class WebtoonRecyclerView @JvmOverloads constructor(
 
     fun onScale(scaleFactor: Float) {
         currentScale *= scaleFactor
-        currentScale = currentScale.coerceIn(
-            MIN_RATE,
-            MAX_SCALE_RATE,
-        )
+        currentScale =
+            currentScale.coerceIn(
+                MIN_RATE,
+                MAX_SCALE_RATE,
+            )
 
         setScaleRate(currentScale)
 
-        layoutParams.height = if (currentScale < 1) {
-            (originalHeight / currentScale).toInt()
-        } else {
-            originalHeight
-        }
+        layoutParams.height =
+            if (currentScale < 1) {
+                (originalHeight / currentScale).toInt()
+            } else {
+                originalHeight
+            }
         halfHeight = layoutParams.height / 2
 
         if (currentScale != DEFAULT_RATE) {
@@ -229,7 +241,6 @@ class WebtoonRecyclerView @JvmOverloads constructor(
     }
 
     inner class GestureListener : GestureDetectorWithLongTap.Listener() {
-
         override fun onSingleTapConfirmed(ev: MotionEvent): Boolean {
             tapListener?.invoke(ev)
             return false
@@ -261,7 +272,6 @@ class WebtoonRecyclerView @JvmOverloads constructor(
     }
 
     inner class Detector : GestureDetectorWithLongTap(context, listener) {
-
         private var scrollPointerId = 0
         private var downX = 0
         private var downY = 0
@@ -269,6 +279,7 @@ class WebtoonRecyclerView @JvmOverloads constructor(
         private var isZoomDragging = false
         var isDoubleTapping = false
         var isQuickScaling = false
+
         override fun onTouchEvent(ev: MotionEvent): Boolean {
             val action = ev.actionMasked
             val actionIndex = ev.actionIndex
@@ -362,7 +373,12 @@ class WebtoonRecyclerView @JvmOverloads constructor(
     }
 
     fun interface IComicPreScroll {
-        fun onPreScrollListener(recyclerView: RecyclerView, dx: Int, dy: Int, position: Int)
+        fun onPreScrollListener(
+            recyclerView: RecyclerView,
+            dx: Int,
+            dy: Int,
+            position: Int,
+        )
     }
 }
 

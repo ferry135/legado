@@ -3,12 +3,14 @@ package io.legado.app.model.analyzeRule
 import io.legado.app.utils.GSON
 
 class RuleData : RuleDataInterface {
-
     override val variableMap by lazy {
         hashMapOf<String, String>()
     }
 
-    override fun putBigVariable(key: String, value: String?) {
+    override fun putBigVariable(
+        key: String,
+        value: String?,
+    ) {
         if (value == null) {
             variableMap.remove(key)
         } else {
@@ -16,9 +18,7 @@ class RuleData : RuleDataInterface {
         }
     }
 
-    override fun getBigVariable(key: String): String? {
-        return null
-    }
+    override fun getBigVariable(key: String): String? = null
 
     fun getVariable(): String? {
         if (variableMap.isEmpty()) {
@@ -26,5 +26,4 @@ class RuleData : RuleDataInterface {
         }
         return GSON.toJson(variableMap)
     }
-
 }

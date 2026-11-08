@@ -21,11 +21,12 @@ import io.legado.app.utils.getCompatColor
  * 显隐由使用方按数据为空控制（isGone），文案/图标经 emptyTitle/emptyTip/emptyIcon 注入。
  * 宿主布局统一 id：empty_tip（中性命名，不误导实际类型 LinearLayout）。
  */
-class EmptyTipView @JvmOverloads constructor(
+class EmptyTipView
+@JvmOverloads
+constructor(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet? = null,
 ) : LinearLayout(context, attrs) {
-
     init {
         orientation = VERTICAL
         gravity = Gravity.CENTER_HORIZONTAL
@@ -51,10 +52,9 @@ class EmptyTipView @JvmOverloads constructor(
                 titleView.compoundDrawablePadding = 12.dpToPx()
                 TextViewCompat.setCompoundDrawableTintList(
                     titleView,
-                    ColorStateList.valueOf(context.getCompatColor(R.color.outline))
+                    ColorStateList.valueOf(context.getCompatColor(R.color.outline)),
                 )
             }
         }
     }
-
 }

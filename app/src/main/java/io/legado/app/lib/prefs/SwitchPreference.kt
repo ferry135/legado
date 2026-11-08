@@ -9,9 +9,10 @@ import io.legado.app.R
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.applyTint
 
-class SwitchPreference(context: Context, attrs: AttributeSet) :
-    SwitchPreferenceCompat(context, attrs) {
-
+class SwitchPreference(
+    context: Context,
+    attrs: AttributeSet,
+) : SwitchPreferenceCompat(context, attrs) {
     private val isBottomBackground: Boolean
     private var onLongClick: ((preference: SwitchPreference) -> Boolean)? = null
 
@@ -23,11 +24,13 @@ class SwitchPreference(context: Context, attrs: AttributeSet) :
     }
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
-        val v = bindView<SwitchCompat>(
-            holder, widgetLayoutResource,
-            androidx.preference.R.id.switchWidget,
-            isBottomBackground = isBottomBackground
-        )
+        val v =
+            bindView<SwitchCompat>(
+                holder,
+                widgetLayoutResource,
+                androidx.preference.R.id.switchWidget,
+                isBottomBackground = isBottomBackground,
+            )
         if (v is SwitchCompat && !v.isInEditMode) {
             v.applyTint(context.accentColor)
         }
@@ -42,5 +45,4 @@ class SwitchPreference(context: Context, attrs: AttributeSet) :
     fun onLongClick(listener: (preference: SwitchPreference) -> Boolean) {
         onLongClick = listener
     }
-
 }

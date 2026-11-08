@@ -1,6 +1,5 @@
 package io.legado.app.web.socket
 
-
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoWSD
 import io.legado.app.R
@@ -10,7 +9,6 @@ import io.legado.app.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import splitties.init.appCtx
-
 import java.io.IOException
 
 /**
@@ -37,7 +35,7 @@ class BookSourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
     override fun onClose(
         code: NanoWSD.WebSocketFrame.CloseCode,
         reason: String,
-        initiatedByRemote: Boolean
+        initiatedByRemote: Boolean,
     ) {
         cancel()
         Debug.cancelDebug(true)
@@ -75,7 +73,6 @@ class BookSourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
     }
 
     override fun onPong(pong: NanoWSD.WebSocketFrame) {
-
     }
 
     override fun onException(exception: IOException) {
@@ -98,5 +95,4 @@ class BookSourceDebugWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
             }
         }
     }
-
 }

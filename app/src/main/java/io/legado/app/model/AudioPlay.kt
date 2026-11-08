@@ -51,11 +51,12 @@ object AudioPlay : CoroutineScope by MainScope() {
     fun upData(book: Book) {
         AudioPlay.book = book
         chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
-        simulatedChapterSize = if (book.readSimulating()) {
-            book.simulatedTotalChapterNum()
-        } else {
-            chapterSize
-        }
+        simulatedChapterSize =
+            if (book.readSimulating()) {
+                book.simulatedTotalChapterNum()
+            } else {
+                chapterSize
+            }
         if (durChapterIndex != book.durChapterIndex) {
             durChapterIndex = book.durChapterIndex
             durChapterPos = book.durChapterPos
@@ -69,11 +70,12 @@ object AudioPlay : CoroutineScope by MainScope() {
         stop()
         AudioPlay.book = book
         chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
-        simulatedChapterSize = if (book.readSimulating()) {
-            book.simulatedTotalChapterNum()
-        } else {
-            chapterSize
-        }
+        simulatedChapterSize =
+            if (book.readSimulating()) {
+                book.simulatedTotalChapterNum()
+            } else {
+                chapterSize
+            }
         bookSource = book.getBookSource()
         durChapterIndex = book.durChapterIndex
         durChapterPos = book.durChapterPos
@@ -121,7 +123,8 @@ object AudioPlay : CoroutineScope by MainScope() {
                     return
                 }
                 upLoading(true)
-                WebBook.getContent(this, bookSource, book, chapter)
+                WebBook
+                    .getContent(this, bookSource, book, chapter)
                     .onSuccess { content ->
                         if (content.isEmpty()) {
                             appCtx.toastOnUi("未获取到资源链接")
@@ -144,7 +147,10 @@ object AudioPlay : CoroutineScope by MainScope() {
     /**
      * 加载完成
      */
-    private fun contentLoadFinish(chapter: BookChapter, content: String) {
+    private fun contentLoadFinish(
+        chapter: BookChapter,
+        content: String,
+    ) {
         if (chapter.index == book?.durChapterIndex) {
             durPlayUrl = content
             upPlayUrl()
@@ -304,10 +310,11 @@ object AudioPlay : CoroutineScope by MainScope() {
             book.durChapterPos = durChapterPos
             if (chapterChanged) {
                 appDb.bookChapterDao.getChapter(book.bookUrl, book.durChapterIndex)?.let {
-                    book.durChapterTitle = it.getDisplayTitle(
-                        ContentProcessor.get(book.name, book.origin).getTitleReplaceRules(),
-                        book.getUseReplaceRule()
-                    )
+                    book.durChapterTitle =
+                        it.getDisplayTitle(
+                            ContentProcessor.get(book.name, book.origin).getTitleReplaceRules(),
+                            book.getUseReplaceRule(),
+                        )
                 }
             }
             book.update()
@@ -335,10 +342,8 @@ object AudioPlay : CoroutineScope by MainScope() {
         callback?.upLoading(loading)
     }
 
-    private fun isPlayToEnd(): Boolean {
-        return durChapterIndex + 1 == simulatedChapterSize
-                && durChapterPos == durAudioSize
-    }
+    private fun isPlayToEnd(): Boolean = durChapterIndex + 1 == simulatedChapterSize &&
+        durChapterPos == durAudioSize
 
     fun register(context: Context) {
         activityContext = context
@@ -362,9 +367,6 @@ object AudioPlay : CoroutineScope by MainScope() {
     }
 
     interface CallBack {
-
         fun upLoading(loading: Boolean)
-
     }
-
 }

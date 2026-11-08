@@ -11,7 +11,6 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.viewModels
@@ -37,11 +36,11 @@ import io.legado.app.utils.visible
  * 词典
  */
 class DictDialog() : BaseDialogFragment(R.layout.dialog_dict) {
-
     constructor(word: String) : this() {
-        arguments = Bundle().apply {
-            putString("word", word)
-        }
+        arguments =
+            Bundle().apply {
+                putString("word", word)
+            }
     }
 
     private val viewModel by viewModels<DictViewModel>()
@@ -56,7 +55,10 @@ class DictDialog() : BaseDialogFragment(R.layout.dialog_dict) {
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         binding.tvDict.movementMethod = LinkMovementMethod()
         binding.tvDict.setLinkTextColor(accentColor)
         word = arguments?.getString("word")
@@ -74,12 +76,13 @@ class DictDialog() : BaseDialogFragment(R.layout.dialog_dict) {
             startActivity<DictRuleActivity>()
         }
         // 空态 ghost 钮：1px accent 描边 + 9dp 圆角，主色运行时取 accentColor（不固化，MASTER §4）
-        binding.tvEmptyManage.background = GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            cornerRadius = 9.dpToPx().toFloat()
-            setStroke(1.dpToPx(), accentColor)
-            setColor(Color.TRANSPARENT)
-        }
+        binding.tvEmptyManage.background =
+            GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                cornerRadius = 9.dpToPx().toFloat()
+                setStroke(1.dpToPx(), accentColor)
+                setColor(Color.TRANSPARENT)
+            }
         binding.tvEmptyManage.setTextColor(accentColor)
         viewModel.initData { dictRules ->
             if (dictRules.isEmpty()) {
@@ -97,43 +100,47 @@ class DictDialog() : BaseDialogFragment(R.layout.dialog_dict) {
         }
     }
 
-    private fun newPill(name: String, index: Int): TextView {
-        return TextView(requireContext()).apply {
-            text = name
-            textSize = 13f
-            gravity = Gravity.CENTER
-            maxLines = 1
-            ellipsize = TextUtils.TruncateAt.END
-            minHeight = 32.dpToPx()
-            setPadding(14.dpToPx(), 0, 14.dpToPx(), 0)
-            setBackgroundResource(R.drawable.bg_pill_tab)
-            setOnClickListener { selectTab(index) }
-        }
+    private fun newPill(
+        name: String,
+        index: Int,
+    ): TextView = TextView(requireContext()).apply {
+        text = name
+        textSize = 13f
+        gravity = Gravity.CENTER
+        maxLines = 1
+        ellipsize = TextUtils.TruncateAt.END
+        minHeight = 32.dpToPx()
+        setPadding(14.dpToPx(), 0, 14.dpToPx(), 0)
+        setBackgroundResource(R.drawable.bg_pill_tab)
+        setOnClickListener { selectTab(index) }
     }
 
-    //根据已启用词典数动态选取布局（dict.html #01/#02：≤4 等宽铺满 / >4 单行滚动+右缘 30dp 渐隐，
-    //对应原 MODE_FIXED+GRAVITY_FILL / MODE_SCROLLABLE+GRAVITY_CENTER）
+    // 根据已启用词典数动态选取布局（dict.html #01/#02：≤4 等宽铺满 / >4 单行滚动+右缘 30dp 渐隐，
+    // 对应原 MODE_FIXED+GRAVITY_FILL / MODE_SCROLLABLE+GRAVITY_CENTER）
     private fun setupTabMode(dictCount: Int) {
         val fixed = dictCount <= 4
         if (fixed) {
             binding.dfade.gone()
             binding.svTabs.post {
-                binding.llTabs.layoutParams = FrameLayout.LayoutParams(
-                    binding.svTabs.width,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
+                binding.llTabs.layoutParams =
+                    FrameLayout.LayoutParams(
+                        binding.svTabs.width,
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                    )
             }
         } else {
             // 右缘渐隐至弹层底色，提示可滑；不足整行时容器内居中
-            binding.dfade.background = GradientDrawable(
-                GradientDrawable.Orientation.LEFT_RIGHT,
-                intArrayOf(Color.TRANSPARENT, backgroundColor)
-            )
-            binding.llTabs.layoutParams = FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                Gravity.CENTER_HORIZONTAL
-            )
+            binding.dfade.background =
+                GradientDrawable(
+                    GradientDrawable.Orientation.LEFT_RIGHT,
+                    intArrayOf(Color.TRANSPARENT, backgroundColor),
+                )
+            binding.llTabs.layoutParams =
+                FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    Gravity.CENTER_HORIZONTAL,
+                )
         }
         for (i in 0 until binding.llTabs.childCount) {
             val child = binding.llTabs.getChildAt(i)
@@ -169,7 +176,8 @@ class DictDialog() : BaseDialogFragment(R.layout.dialog_dict) {
         }
         binding.rotateLoading.visible()
         viewModel.dict(
-            dictRule, word!!,
+            dictRule,
+            word!!,
             onSuccess = {
                 binding.rotateLoading.invisible()
                 // 成功态恢复正文色（上一条错误可能已染 error 色）
@@ -181,8 +189,7 @@ class DictDialog() : BaseDialogFragment(R.layout.dialog_dict) {
                 // 错误消息 error 色（#BA1A1A），与词典正文区分
                 binding.tvDict.setTextColor(requireContext().getCompatColor(R.color.error))
                 binding.tvDict.text = it
-            }
+            },
         )
     }
-
 }

@@ -15,21 +15,24 @@ import io.legado.app.utils.launch
 import io.legado.app.utils.readBytes
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-class QrCodeActivity : BaseActivity<ActivityQrcodeCaptureBinding>(), ScanResultCallback {
-
+class QrCodeActivity :
+    BaseActivity<ActivityQrcodeCaptureBinding>(),
+    ScanResultCallback {
     override val binding by viewBinding(ActivityQrcodeCaptureBinding::inflate)
 
-    private val selectQrImage = registerForActivityResult(SelectImageContract()) {
-        it.uri?.readBytes(this)?.let { bytes ->
-            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-            onScanResultCallback(QRCodeUtils.parseCodeResult(bitmap))
+    private val selectQrImage =
+        registerForActivityResult(SelectImageContract()) {
+            it.uri?.readBytes(this)?.let { bytes ->
+                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                onScanResultCallback(QRCodeUtils.parseCodeResult(bitmap))
+            }
         }
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         val fTag = "qrCodeFragment"
         val qrCodeFragment = QrCodeFragment()
-        supportFragmentManager.beginTransaction()
+        supportFragmentManager
+            .beginTransaction()
             .replace(R.id.fl_content, qrCodeFragment, fTag)
             .commit()
     }
@@ -52,5 +55,4 @@ class QrCodeActivity : BaseActivity<ActivityQrcodeCaptureBinding>(), ScanResultC
         setResult(RESULT_OK, intent)
         finish()
     }
-
 }

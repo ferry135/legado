@@ -30,14 +30,13 @@ import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
-
 @Keep
 abstract class AbsCallBack(
     var originalRequest: Request,
     val mCall: Call,
     var readTimeoutMillis: Int,
     private val eventListener: EventListener? = null,
-    private val responseCallback: Callback? = null
+    private val responseCallback: Callback? = null,
 ) : UrlRequest.Callback() {
 
     var mResponse: Response
@@ -63,7 +62,6 @@ abstract class AbsCallBack(
         }
     }
 
-
     @Throws(IOException::class)
     abstract fun waitForDone(urlRequest: UrlRequest): Response
 
@@ -79,11 +77,10 @@ abstract class AbsCallBack(
      */
     abstract fun onSuccess(response: Response)
 
-
     override fun onRedirectReceived(
         request: UrlRequest,
         info: UrlResponseInfo,
-        newLocationUrl: String
+        newLocationUrl: String,
     ) {
         if (followCount > MAX_FOLLOW_COUNT) {
             request.cancel()
@@ -118,7 +115,6 @@ abstract class AbsCallBack(
         request.cancel()
     }
 
-
     override fun onResponseStarted(request: UrlRequest, info: UrlResponseInfo) {
         this.request = request
 
@@ -139,7 +135,7 @@ abstract class AbsCallBack(
         mResponse = response
         onSuccess(response)
 
-        //打印协议，用于调试
+        // 打印协议，用于调试
         val msg = "onResponseStarted[${info.negotiatedProtocol}][${info.httpStatusCode}]${info.url}"
         DebugLog.i(javaClass.simpleName, msg)
         if (eventListener != null) {
@@ -153,28 +149,25 @@ abstract class AbsCallBack(
         }
     }
 
-
     @Throws(IOException::class)
     override fun onReadCompleted(
         request: UrlRequest,
         info: UrlResponseInfo,
-        byteBuffer: ByteBuffer
+        byteBuffer: ByteBuffer,
     ) {
         callbackResults.add(CallbackResult(CallbackStep.ON_READ_COMPLETED, byteBuffer))
     }
-
 
     override fun onSucceeded(request: UrlRequest, info: UrlResponseInfo) {
         callbackResults.add(CallbackResult(CallbackStep.ON_SUCCESS))
         cancelJob?.cancel()
         eventListener?.responseBodyEnd(mCall, info.receivedByteCount)
-        //DebugLog.i(javaClass.simpleName, "end[${info.negotiatedProtocol}]${info.url}")
+        // DebugLog.i(javaClass.simpleName, "end[${info.negotiatedProtocol}]${info.url}")
 
         eventListener?.callEnd(mCall)
     }
 
-
-    //UrlResponseInfo可能为null
+    // UrlResponseInfo可能为null
     override fun onFailed(request: UrlRequest, info: UrlResponseInfo?, error: CronetException) {
         callbackResults.add(CallbackResult(CallbackStep.ON_FAILED, null, error))
         cancelJob?.cancel()
@@ -198,7 +191,7 @@ abstract class AbsCallBack(
         canceled.set(true)
         callbackResults.add(CallbackResult(CallbackStep.ON_CANCELED))
         cancelJob?.cancel()
-        //DebugLog.i(javaClass.simpleName, "cancel[${info?.negotiatedProtocol}]${info?.url}")
+        // DebugLog.i(javaClass.simpleName, "cancel[${info?.negotiatedProtocol}]${info?.url}")
         eventListener?.callEnd(mCall)
         onError(IOException("Cronet Request Canceled"))
     }
@@ -258,17 +251,17 @@ abstract class AbsCallBack(
 
         private fun headersFromResponse(
             responseInfo: UrlResponseInfo,
-            keepEncodingAffectedHeaders: Boolean
+            keepEncodingAffectedHeaders: Boolean,
         ): Headers {
-
             val headers = responseInfo.allHeadersAsList
             return Headers.Builder().apply {
                 for ((key, value) in headers) {
                     try {
-
-                        if (!keepEncodingAffectedHeaders
-                            && (key.equals("content-encoding", ignoreCase = true)
-                                    || key.equals("Content-Length", ignoreCase = true))
+                        if (!keepEncodingAffectedHeaders &&
+                            (
+                                key.equals("content-encoding", ignoreCase = true) ||
+                                    key.equals("Content-Length", ignoreCase = true)
+                                )
                         ) {
                             // Strip all content encoding headers as decoding is done handled by cronet
                             continue
@@ -279,16 +272,14 @@ abstract class AbsCallBack(
                         // Ignore that header
                     }
                 }
-
             }.build()
-
         }
 
         @Throws(IOException::class)
         private fun createResponse(
             request: Request,
             responseInfo: UrlResponseInfo,
-            bodySource: Source? = null
+            bodySource: Source? = null,
         ): Response.Builder {
             val protocol = protocolFromNegotiatedProtocol(responseInfo)
 
@@ -297,13 +288,15 @@ abstract class AbsCallBack(
             val contentEncodingItems = contentEncodingHeaders.flatMap {
                 it.splitNotBlank(",").toList()
             }
-            val keepEncodingAffectedHeaders = contentEncodingItems.isEmpty()
-                    || !encodingsHandledByCronet.containsAll(contentEncodingItems)
+            val keepEncodingAffectedHeaders = contentEncodingItems.isEmpty() ||
+                !encodingsHandledByCronet.containsAll(contentEncodingItems)
 
             val headers = headersFromResponse(responseInfo, keepEncodingAffectedHeaders)
             val contentLength = if (keepEncodingAffectedHeaders) {
                 responseInfo.allHeaders["Content-Length"]?.lastOrNull()
-            } else null
+            } else {
+                null
+            }
             val contentType = responseInfo.allHeaders["content-type"]?.lastOrNull()
                 ?: "text/plain; charset=\"utf-8\""
 
@@ -313,7 +306,7 @@ abstract class AbsCallBack(
                     responseInfo.httpStatusCode,
                     contentType,
                     contentLength,
-                    bodySource
+                    bodySource,
                 )
             }
 
@@ -340,7 +333,6 @@ abstract class AbsCallBack(
                         .priorResponse(priorResponse)
                         .build()
                 }
-
             }
             return priorResponse
         }
@@ -351,9 +343,8 @@ abstract class AbsCallBack(
             httpStatusCode: Int,
             contentType: String?,
             contentLengthString: String?,
-            bodySource: Source
+            bodySource: Source,
         ): ResponseBody {
-
             // Ignore content-length header for HEAD requests (consistency with OkHttp)
             val contentLength: Long = if (request.method == "HEAD") {
                 0
@@ -364,7 +355,7 @@ abstract class AbsCallBack(
             // Check for absence of body in No Content / Reset Content responses (OkHttp consistency)
             if ((httpStatusCode == 204 || httpStatusCode == 205) && contentLength > 0) {
                 throw ProtocolException(
-                    "HTTP $httpStatusCode had non-zero Content-Length: $contentLengthString"
+                    "HTTP $httpStatusCode had non-zero Content-Length: $contentLengthString",
                 )
             }
             return bodySource.buffer()
@@ -374,15 +365,15 @@ abstract class AbsCallBack(
         private fun buildRedirectRequest(
             userResponse: Response,
             method: String,
-            newLocationUrl: String
+            newLocationUrl: String,
         ): Request {
             // Most redirects don't include a request body.
             val requestBuilder = userResponse.request.newBuilder()
             if (HttpMethod.permitsRequestBody(method)) {
                 val responseCode = userResponse.code
                 val maintainBody = HttpMethod.redirectsWithBody(method) ||
-                        responseCode == StatusLine.HTTP_PERM_REDIRECT ||
-                        responseCode == StatusLine.HTTP_TEMP_REDIRECT
+                    responseCode == StatusLine.HTTP_PERM_REDIRECT ||
+                    responseCode == StatusLine.HTTP_TEMP_REDIRECT
                 if (HttpMethod.redirectsToGet(method) && responseCode != StatusLine.HTTP_PERM_REDIRECT && responseCode != StatusLine.HTTP_TEMP_REDIRECT) {
                     requestBuilder.method("GET", null)
                 } else {
@@ -403,7 +394,7 @@ abstract class AbsCallBack(
             request: Request,
             responseInfo: UrlResponseInfo,
             redirectResponseInfos: List<UrlResponseInfo>,
-            bodySource: Source? = null
+            bodySource: Source? = null,
         ): Response {
             val responseBuilder = createResponse(request, responseInfo, bodySource)
             val newRequest = request.newBuilder().url(responseInfo.url).build()
@@ -483,9 +474,6 @@ abstract class AbsCallBack(
             }
         }
 
-        override fun timeout(): Timeout {
-            return mCall.timeout()
-        }
-
+        override fun timeout(): Timeout = mCall.timeout()
     }
 }

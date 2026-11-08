@@ -6,9 +6,10 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookSource
 import io.legado.app.model.Debug
 
-class BookSourceDebugModel(application: Application) : BaseViewModel(application),
+class BookSourceDebugModel(
+    application: Application,
+) : BaseViewModel(application),
     Debug.Callback {
-
     var bookSource: BookSource? = null
     private var callback: ((Int, String) -> Unit)? = null
     var searchSrc: String? = null
@@ -16,9 +17,12 @@ class BookSourceDebugModel(application: Application) : BaseViewModel(application
     var tocSrc: String? = null
     var contentSrc: String? = null
 
-    fun init(sourceUrl: String?, finally: () -> Unit) {
+    fun init(
+        sourceUrl: String?,
+        finally: () -> Unit,
+    ) {
         sourceUrl?.let {
-            //优先使用这个，不会抛出异常
+            // 优先使用这个，不会抛出异常
             execute {
                 bookSource = appDb.bookSourceDao.getBookSource(sourceUrl)
             }.onFinally {
@@ -31,7 +35,11 @@ class BookSourceDebugModel(application: Application) : BaseViewModel(application
         this.callback = callback
     }
 
-    fun startDebug(key: String, start: (() -> Unit)? = null, error: (() -> Unit)? = null) {
+    fun startDebug(
+        key: String,
+        start: (() -> Unit)? = null,
+        error: (() -> Unit)? = null,
+    ) {
         execute {
             Debug.callback = this@BookSourceDebugModel
             Debug.startDebug(this, bookSource!!, key)
@@ -42,7 +50,10 @@ class BookSourceDebugModel(application: Application) : BaseViewModel(application
         }
     }
 
-    override fun printLog(state: Int, msg: String) {
+    override fun printLog(
+        state: Int,
+        msg: String,
+    ) {
         when (state) {
             10 -> searchSrc = msg
             20 -> bookSrc = msg
@@ -56,5 +67,4 @@ class BookSourceDebugModel(application: Application) : BaseViewModel(application
         super.onCleared()
         Debug.cancelDebug(true)
     }
-
 }

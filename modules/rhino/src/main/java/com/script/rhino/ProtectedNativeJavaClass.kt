@@ -6,12 +6,12 @@ import org.mozilla.javascript.Scriptable
 class ProtectedNativeJavaClass(
     scope: Scriptable,
     javaClass: Class<*>,
-    private val protectedName: Set<String> = emptySet()
+    private val protectedName: Set<String> = emptySet(),
 ) : NativeJavaClass(scope, javaClass) {
 
     override fun has(
         name: String,
-        start: Scriptable?
+        start: Scriptable?,
     ): Boolean {
         if (protectedName.contains(name)) {
             return false
@@ -29,7 +29,7 @@ class ProtectedNativeJavaClass(
     override fun put(
         name: String,
         start: Scriptable?,
-        value: Any?
+        value: Any?,
     ) {
         if (protectedName.contains(name)) {
             return
@@ -37,8 +37,5 @@ class ProtectedNativeJavaClass(
         super.put(name, start, value)
     }
 
-    override fun unwrap(): Any? {
-        return javaObject.toString()
-    }
-
+    override fun unwrap(): Any? = javaObject.toString()
 }

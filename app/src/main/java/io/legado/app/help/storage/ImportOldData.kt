@@ -23,6 +23,7 @@ object ImportOldData {
 
     @Suppress("RegExpRedundantEscape")
     private val headerPattern = Pattern.compile("@Header:\\{.+?\\}", Pattern.CASE_INSENSITIVE)
+
     @Suppress("RegExpRedundantEscape")
     private val jsPattern = Pattern.compile("\\{\\{.+?\\}\\}", Pattern.CASE_INSENSITIVE)
 
@@ -34,7 +35,7 @@ object ImportOldData {
                         kotlin.runCatching {
                             doc.uri.readText(context).let { json ->
                                 val importCount = importOldBookshelf(json)
-                                context.toastOnUi("成功导入书架${importCount}")
+                                context.toastOnUi("成功导入书架$importCount")
                             }
                         }.onFailure {
                             context.toastOnUi("导入书架失败\n${it.localizedMessage}")
@@ -43,7 +44,7 @@ object ImportOldData {
                         kotlin.runCatching {
                             doc.uri.readText(context).let { json ->
                                 val importCount = importOldSource(json)
-                                context.toastOnUi("成功导入书源${importCount}")
+                                context.toastOnUi("成功导入书源$importCount")
                             }
                         }.onFailure {
                             context.toastOnUi("导入源失败\n${it.localizedMessage}")
@@ -52,7 +53,7 @@ object ImportOldData {
                         kotlin.runCatching {
                             doc.uri.readText(context).let { json ->
                                 val importCount = importOldReplaceRule(json)
-                                context.toastOnUi("成功导入替换规则${importCount}")
+                                context.toastOnUi("成功导入替换规则$importCount")
                             }
                         }.onFailure {
                             context.toastOnUi("导入替换规则失败\n${it.localizedMessage}")
@@ -62,32 +63,35 @@ object ImportOldData {
         } else {
             uri.path?.let { path ->
                 val file = File(path)
-                kotlin.runCatching {// 导入书架
+                kotlin.runCatching {
+                    // 导入书架
                     val shelfFile =
                         FileUtils.createFileIfNotExist(file, "myBookShelf.json")
                     val json = shelfFile.readText()
                     val importCount = importOldBookshelf(json)
-                    context.toastOnUi("成功导入书架${importCount}")
+                    context.toastOnUi("成功导入书架$importCount")
                 }.onFailure {
                     context.toastOnUi("导入书架失败\n${it.localizedMessage}")
                 }
 
-                kotlin.runCatching {// Book source
+                kotlin.runCatching {
+                    // Book source
                     val sourceFile =
                         file.getFile("myBookSource.json")
                     val json = sourceFile.readText()
                     val importCount = importOldSource(json)
-                    context.toastOnUi("成功导入书源${importCount}")
+                    context.toastOnUi("成功导入书源$importCount")
                 }.onFailure {
                     context.toastOnUi("导入源失败\n${it.localizedMessage}")
                 }
 
-                kotlin.runCatching {// Replace rules
+                kotlin.runCatching {
+                    // Replace rules
                     val ruleFile = file.getFile("myBookReplaceRule.json")
                     if (ruleFile.exists()) {
                         val json = ruleFile.readText()
                         val importCount = importOldReplaceRule(json)
-                        context.toastOnUi("成功导入替换规则${importCount}")
+                        context.toastOnUi("成功导入替换规则$importCount")
                     } else {
                         context.toastOnUi("未找到替换规则")
                     }
@@ -202,7 +206,7 @@ object ImportOldData {
                 kind = toNewRule(jsonItem.readString("ruleSearchKind")),
                 bookUrl = toNewRule(jsonItem.readString("ruleSearchNoteUrl")),
                 coverUrl = toNewRule(jsonItem.readString("ruleSearchCoverUrl")),
-                lastChapter = toNewRule(jsonItem.readString("ruleSearchLastChapter"))
+                lastChapter = toNewRule(jsonItem.readString("ruleSearchLastChapter")),
             )
             ruleExplore = ExploreRule(
                 bookList = toNewRule(jsonItem.readString("ruleFindList")),
@@ -212,7 +216,7 @@ object ImportOldData {
                 kind = toNewRule(jsonItem.readString("ruleFindKind")),
                 bookUrl = toNewRule(jsonItem.readString("ruleFindNoteUrl")),
                 coverUrl = toNewRule(jsonItem.readString("ruleFindCoverUrl")),
-                lastChapter = toNewRule(jsonItem.readString("ruleFindLastChapter"))
+                lastChapter = toNewRule(jsonItem.readString("ruleFindLastChapter")),
             )
             ruleBookInfo = BookInfoRule(
                 init = toNewRule(jsonItem.readString("ruleBookInfoInit")),
@@ -222,13 +226,13 @@ object ImportOldData {
                 kind = toNewRule(jsonItem.readString("ruleBookKind")),
                 coverUrl = toNewRule(jsonItem.readString("ruleCoverUrl")),
                 lastChapter = toNewRule(jsonItem.readString("ruleBookLastChapter")),
-                tocUrl = toNewRule(jsonItem.readString("ruleChapterUrl"))
+                tocUrl = toNewRule(jsonItem.readString("ruleChapterUrl")),
             )
             ruleToc = TocRule(
                 chapterList = toNewRule(jsonItem.readString("ruleChapterList")),
                 chapterName = toNewRule(jsonItem.readString("ruleChapterName")),
                 chapterUrl = toNewRule(jsonItem.readString("ruleContentUrl")),
-                nextTocUrl = toNewRule(jsonItem.readString("ruleChapterUrlNext"))
+                nextTocUrl = toNewRule(jsonItem.readString("ruleChapterUrlNext")),
             )
             var content = toNewRule(jsonItem.readString("ruleBookContent")) ?: ""
             if (content.startsWith("$") && !content.startsWith("$.")) {
@@ -237,11 +241,10 @@ object ImportOldData {
             ruleContent = ContentRule(
                 content = content,
                 replaceRegex = toNewRule(jsonItem.readString("ruleBookContentReplace")),
-                nextContentUrl = toNewRule(jsonItem.readString("ruleContentUrlNext"))
+                nextContentUrl = toNewRule(jsonItem.readString("ruleContentUrlNext")),
             )
         }
     }
-
 
     // default规则适配
     // #正则#替换内容 替换成 ##正则##替换内容
@@ -284,10 +287,10 @@ object ImportOldData {
                     newRule = newRule.replace("|", "||")
                 }
             }
-            if (newRule.contains("&")
-                && !newRule.contains("&&")
-                && !newRule.contains("http")
-                && !newRule.startsWith("/")
+            if (newRule.contains("&") &&
+                !newRule.contains("&&") &&
+                !newRule.contains("http") &&
+                !newRule.startsWith("/")
             ) {
                 newRule = newRule.replace("&", "&&")
             }
@@ -349,7 +352,7 @@ object ImportOldData {
         for ((index, item) in jsList.withIndex()) {
             url = url.replace(
                 "$$index",
-                item.replace("searchKey", "key").replace("searchPage", "page")
+                item.replace("searchKey", "key").replace("searchPage", "page"),
             )
         }
         urlList = url.split("@")
@@ -369,5 +372,4 @@ object ImportOldData {
         val map = mapOf(Pair(AppConst.UA_NAME, ua))
         return GSON.toJson(map)
     }
-
 }

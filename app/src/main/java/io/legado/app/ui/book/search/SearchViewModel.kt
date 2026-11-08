@@ -21,7 +21,9 @@ import kotlinx.coroutines.flow.mapLatest
 import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class SearchViewModel(application: Application) : BaseViewModel(application) {
+class SearchViewModel(
+    application: Application,
+) : BaseViewModel(application) {
     val handler = Handler(Looper.getMainLooper())
     val bookshelf: MutableSet<String> = ConcurrentHashMap.newKeySet()
     val upAdapterLiveData = MutableLiveData<String>()
@@ -32,63 +34,70 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
     var searchKey: String = ""
     var hasMore = true
     private var searchID = 0L
-    private val searchModel = SearchModel(viewModelScope, object : SearchModel.CallBack {
+    private val searchModel =
+        SearchModel(
+            viewModelScope,
+            object : SearchModel.CallBack {
+                override fun getSearchScope(): SearchScope = searchScope
 
-        override fun getSearchScope(): SearchScope {
-            return searchScope
-        }
+                override fun onSearchStart() {
+                    isSearchLiveData.postValue(true)
+                }
 
-        override fun onSearchStart() {
-            isSearchLiveData.postValue(true)
-        }
+                override fun onSearchSuccess(searchBooks: List<SearchBook>) {
+                    searchBookLiveData.postValue(searchBooks)
+                }
 
-        override fun onSearchSuccess(searchBooks: List<SearchBook>) {
-            searchBookLiveData.postValue(searchBooks)
-        }
+                override fun onSearchFinish(
+                    isEmpty: Boolean,
+                    hasMore: Boolean,
+                ) {
+                    this@SearchViewModel.hasMore = hasMore
+                    isSearchLiveData.postValue(false)
+                    searchFinishLiveData.postValue(isEmpty)
+                }
 
-        override fun onSearchFinish(isEmpty: Boolean, hasMore: Boolean) {
-            this@SearchViewModel.hasMore = hasMore
-            isSearchLiveData.postValue(false)
-            searchFinishLiveData.postValue(isEmpty)
-        }
-
-        override fun onSearchCancel(exception: Throwable?) {
-            isSearchLiveData.postValue(false)
-            exception?.let {
-                context.toastOnUi(it.localizedMessage)
-            }
-        }
-
-    })
+                override fun onSearchCancel(exception: Throwable?) {
+                    isSearchLiveData.postValue(false)
+                    exception?.let {
+                        context.toastOnUi(it.localizedMessage)
+                    }
+                }
+            },
+        )
 
     init {
         execute {
-            appDb.bookDao.flowAll().mapLatest { books ->
-                val keys = arrayListOf<String>()
-                books.filterNot { it.isNotShelf }
-                    .forEach {
-                        keys.add("${it.name}-${it.author}")
-                        keys.add(it.name)
-                    }
-                keys
-            }.catch {
-                AppLog.put("搜索界面获取书籍列表失败\n${it.localizedMessage}", it)
-            }.collect {
-                bookshelf.clear()
-                bookshelf.addAll(it)
-                upAdapterLiveData.postValue("isInBookshelf")
-            }
+            appDb.bookDao
+                .flowAll()
+                .mapLatest { books ->
+                    val keys = arrayListOf<String>()
+                    books
+                        .filterNot { it.isNotShelf }
+                        .forEach {
+                            keys.add("${it.name}-${it.author}")
+                            keys.add(it.name)
+                        }
+                    keys
+                }.catch {
+                    AppLog.put("搜索界面获取书籍列表失败\n${it.localizedMessage}", it)
+                }.collect {
+                    bookshelf.clear()
+                    bookshelf.addAll(it)
+                    upAdapterLiveData.postValue("isInBookshelf")
+                }
         }.onError {
             AppLog.put("加载书架数据失败", it)
         }
     }
 
-    fun isInBookShelf(name: String, author: String): Boolean {
-        return if (author.isNotBlank()) {
-            bookshelf.contains("$name-$author")
-        } else {
-            bookshelf.contains(name)
-        }
+    fun isInBookShelf(
+        name: String,
+        author: String,
+    ): Boolean = if (author.isNotBlank()) {
+        bookshelf.contains("$name-$author")
+    } else {
+        bookshelf.contains(name)
     }
 
     /**
@@ -157,5 +166,4 @@ class SearchViewModel(application: Application) : BaseViewModel(application) {
         super.onCleared()
         searchModel.close()
     }
-
 }

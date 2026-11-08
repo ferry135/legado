@@ -40,15 +40,13 @@ import io.legado.app.utils.setStatusBarColorAuto
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.windowSize
 
-
 abstract class BaseActivity<VB : ViewBinding>(
     val fullScreen: Boolean = true,
     private val theme: Theme = Theme.Auto,
     private val toolBarTheme: Theme = Theme.Auto,
     private val transparent: Boolean = false,
-    private val imageBg: Boolean = true
+    private val imageBg: Boolean = true,
 ) : AppCompatActivity() {
-
     protected abstract val binding: VB
 
     private var lastNightMode = -1
@@ -71,7 +69,7 @@ abstract class BaseActivity<VB : ViewBinding>(
         parent: View?,
         name: String,
         context: Context,
-        attrs: AttributeSet
+        attrs: AttributeSet,
     ): View? {
         if (AppConst.menuViewNames.contains(name) && parent?.parent is FrameLayout) {
             (parent.parent as View).setBackgroundColor(backgroundColor)
@@ -99,7 +97,10 @@ abstract class BaseActivity<VB : ViewBinding>(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration) {
+    override fun onMultiWindowModeChanged(
+        isInMultiWindowMode: Boolean,
+        newConfig: Configuration,
+    ) {
         super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
         findViewById<TitleBar>(R.id.title_bar)
             ?.onMultiWindowModeChanged(isInMultiWindowMode, fullScreen)
@@ -112,7 +113,7 @@ abstract class BaseActivity<VB : ViewBinding>(
         lastNightMode = nightMode
         super.onConfigurationChanged(newConfig)
         if (nightModeChanged) {
-            //声明了 uiMode configChanges 的 Activity 不会重建，深浅模式切换时手动同步主题存储
+            // 声明了 uiMode configChanges 的 Activity 不会重建，深浅模式切换时手动同步主题存储
             ThemeConfig.applyTheme(this)
             findViewById<TitleBar>(R.id.title_bar)?.upTheme()
             findViewById<ThemeBottomNavigationVIew>(R.id.bottom_navigation_view)?.upTheme()
@@ -130,7 +131,10 @@ abstract class BaseActivity<VB : ViewBinding>(
         return bool
     }
 
-    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+    override fun onMenuOpened(
+        featureId: Int,
+        menu: Menu,
+    ): Boolean {
         menu.applyOpenTint(this)
         return super.onMenuOpened(featureId, menu)
     }
@@ -212,13 +216,11 @@ abstract class BaseActivity<VB : ViewBinding>(
     open fun observeLiveBus() {
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        return try {
-            super.dispatchTouchEvent(ev)
-        } catch (e: IllegalArgumentException) {
-            e.printStackTrace()
-            false
-        }
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean = try {
+        super.dispatchTouchEvent(ev)
+    } catch (e: IllegalArgumentException) {
+        e.printStackTrace()
+        false
     }
 
     override fun finish() {

@@ -10,9 +10,10 @@ import java.io.IOException
 import java.io.InputStream
 import kotlin.math.min
 
-
 @SuppressLint("UnsafeOptInUsageError")
-class InputStreamDataSource(private val supplier: () -> InputStream) : BaseDataSource(false) {
+class InputStreamDataSource(
+    private val supplier: () -> InputStream,
+) : BaseDataSource(false) {
     private var dataSpec: DataSpec? = null
     private var bytesRemaining: Long = 0
     private var opened = false
@@ -37,7 +38,11 @@ class InputStreamDataSource(private val supplier: () -> InputStream) : BaseDataS
     override fun getUri(): Uri? = dataSpec?.uri
 
     @Throws(IOException::class)
-    override fun read(buffer: ByteArray, offset: Int, readLength: Int): Int {
+    override fun read(
+        buffer: ByteArray,
+        offset: Int,
+        readLength: Int,
+    ): Int {
         if (readLength == 0) {
             return 0
         } else if (bytesRemaining == 0L) {
@@ -45,8 +50,11 @@ class InputStreamDataSource(private val supplier: () -> InputStream) : BaseDataS
         }
 
         val bytesToRead =
-            if (bytesRemaining == C.LENGTH_UNSET.toLong()) readLength
-            else min(bytesRemaining, readLength.toLong()).toInt()
+            if (bytesRemaining == C.LENGTH_UNSET.toLong()) {
+                readLength
+            } else {
+                min(bytesRemaining, readLength.toLong()).toInt()
+            }
 
         val bytesRead = inputStream.read(buffer, offset, bytesToRead)
 

@@ -11,18 +11,19 @@ import io.legado.app.data.entities.BookGroup
 
 abstract class BaseBooksAdapter<VH : RecyclerView.ViewHolder>(
     val context: Context,
-    val callBack: CallBack
+    val callBack: CallBack,
 ) : RecyclerView.Adapter<VH>() {
-
     protected val inflater: LayoutInflater = LayoutInflater.from(context)
 
-    private val diffItemCallback = object : DiffUtil.ItemCallback<Any>() {
-
-        override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
-            return when {
+    private val diffItemCallback =
+        object : DiffUtil.ItemCallback<Any>() {
+            override fun areItemsTheSame(
+                oldItem: Any,
+                newItem: Any,
+            ): Boolean = when {
                 oldItem is Book && newItem is Book -> {
-                    oldItem.name == newItem.name
-                            && oldItem.author == newItem.author
+                    oldItem.name == newItem.name &&
+                        oldItem.author == newItem.author
                 }
 
                 oldItem is BookGroup && newItem is BookGroup -> {
@@ -31,71 +32,74 @@ abstract class BaseBooksAdapter<VH : RecyclerView.ViewHolder>(
 
                 else -> false
             }
-        }
 
-        override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
-            return when {
+            override fun areContentsTheSame(
+                oldItem: Any,
+                newItem: Any,
+            ): Boolean = when {
                 oldItem is Book && newItem is Book -> {
                     oldItem.durChapterTime == newItem.durChapterTime &&
-                            oldItem.name == newItem.name &&
-                            oldItem.author == newItem.author &&
-                            oldItem.durChapterTitle == newItem.durChapterTitle &&
-                            oldItem.latestChapterTitle == newItem.latestChapterTitle &&
-                            oldItem.lastCheckCount == newItem.lastCheckCount &&
-                            oldItem.getDisplayCover() == newItem.getDisplayCover() &&
-                            oldItem.getUnreadChapterNum() == newItem.getUnreadChapterNum()
+                        oldItem.name == newItem.name &&
+                        oldItem.author == newItem.author &&
+                        oldItem.durChapterTitle == newItem.durChapterTitle &&
+                        oldItem.latestChapterTitle == newItem.latestChapterTitle &&
+                        oldItem.lastCheckCount == newItem.lastCheckCount &&
+                        oldItem.getDisplayCover() == newItem.getDisplayCover() &&
+                        oldItem.getUnreadChapterNum() == newItem.getUnreadChapterNum()
                 }
 
                 oldItem is BookGroup && newItem is BookGroup -> {
                     oldItem.groupName == newItem.groupName &&
-                            oldItem.cover == newItem.cover
+                        oldItem.cover == newItem.cover
                 }
 
                 else -> false
             }
-        }
 
-        override fun getChangePayload(oldItem: Any, newItem: Any): Any? {
-            val bundle = bundleOf()
-            when {
-                oldItem is Book && newItem is Book -> {
-                    if (oldItem.name != newItem.name) {
-                        bundle.putString("name", newItem.name)
+            override fun getChangePayload(
+                oldItem: Any,
+                newItem: Any,
+            ): Any? {
+                val bundle = bundleOf()
+                when {
+                    oldItem is Book && newItem is Book -> {
+                        if (oldItem.name != newItem.name) {
+                            bundle.putString("name", newItem.name)
+                        }
+                        if (oldItem.author != newItem.author) {
+                            bundle.putString("author", newItem.author)
+                        }
+                        if (oldItem.durChapterTitle != newItem.durChapterTitle) {
+                            bundle.putString("dur", newItem.durChapterTitle)
+                        }
+                        if (oldItem.latestChapterTitle != newItem.latestChapterTitle) {
+                            bundle.putString("last", newItem.latestChapterTitle)
+                        }
+                        if (oldItem.getDisplayCover() != newItem.getDisplayCover()) {
+                            bundle.putString("cover", newItem.getDisplayCover())
+                        }
+                        if (oldItem.lastCheckCount != newItem.lastCheckCount ||
+                            oldItem.durChapterTime != newItem.durChapterTime ||
+                            oldItem.getUnreadChapterNum() != newItem.getUnreadChapterNum() ||
+                            oldItem.lastCheckCount != newItem.lastCheckCount
+                        ) {
+                            bundle.putBoolean("refresh", true)
+                        }
                     }
-                    if (oldItem.author != newItem.author) {
-                        bundle.putString("author", newItem.author)
-                    }
-                    if (oldItem.durChapterTitle != newItem.durChapterTitle) {
-                        bundle.putString("dur", newItem.durChapterTitle)
-                    }
-                    if (oldItem.latestChapterTitle != newItem.latestChapterTitle) {
-                        bundle.putString("last", newItem.latestChapterTitle)
-                    }
-                    if (oldItem.getDisplayCover() != newItem.getDisplayCover()) {
-                        bundle.putString("cover", newItem.getDisplayCover())
-                    }
-                    if (oldItem.lastCheckCount != newItem.lastCheckCount
-                        || oldItem.durChapterTime != newItem.durChapterTime
-                        || oldItem.getUnreadChapterNum() != newItem.getUnreadChapterNum()
-                        || oldItem.lastCheckCount != newItem.lastCheckCount
-                    ) {
-                        bundle.putBoolean("refresh", true)
+
+                    oldItem is BookGroup && newItem is BookGroup -> {
+                        if (oldItem.groupName != newItem.groupName) {
+                            bundle.putString("groupName", newItem.groupName)
+                        }
+                        if (oldItem.cover != newItem.cover) {
+                            bundle.putString("cover", newItem.cover)
+                        }
                     }
                 }
-
-                oldItem is BookGroup && newItem is BookGroup -> {
-                    if (oldItem.groupName != newItem.groupName) {
-                        bundle.putString("groupName", newItem.groupName)
-                    }
-                    if (oldItem.cover != newItem.cover) {
-                        bundle.putString("cover", newItem.cover)
-                    }
-                }
+                if (bundle.isEmpty) return null
+                return bundle
             }
-            if (bundle.isEmpty) return null
-            return bundle
         }
-    }
 
     private val asyncListDiffer by lazy {
         AsyncListDiffer(this, diffItemCallback)
@@ -120,9 +124,7 @@ abstract class BaseBooksAdapter<VH : RecyclerView.ViewHolder>(
 
     fun getItem(position: Int) = getItems().getOrNull(position)
 
-    override fun getItemCount(): Int {
-        return getItems().size
-    }
+    override fun getItemCount(): Int = getItems().size
 
     override fun getItemViewType(position: Int): Int {
         if (getItem(position) is BookGroup) {
@@ -131,13 +133,18 @@ abstract class BaseBooksAdapter<VH : RecyclerView.ViewHolder>(
         return 0
     }
 
-    final override fun onBindViewHolder(holder: VH, position: Int) {}
-
+    final override fun onBindViewHolder(
+        holder: VH,
+        position: Int,
+    ) {}
 
     interface CallBack {
         fun onItemClick(item: Any)
+
         fun onItemLongClick(item: Any)
+
         fun isUpdate(bookUrl: String): Boolean
+
         fun getItems(): List<Any>
     }
 }

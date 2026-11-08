@@ -21,14 +21,15 @@ class ExampleInstrumentedTest {
         val appContext = ApplicationProvider.getApplicationContext<Context>()
         Log.d(
             "test",
-            appContext.contentResolver.query(
-                Uri.parse("content://io.legado.app.api.ReaderProvider/sources/query"),
-                null,
-                null,
-                null,
-                null
-            )
-            !!.getString(0)
+            appContext.contentResolver
+                .query(
+                    Uri.parse("content://io.legado.app.api.ReaderProvider/sources/query"),
+                    null,
+                    null,
+                    null,
+                    null,
+                )!!
+                .getString(0),
         )
     }
 }

@@ -5,7 +5,6 @@ import okhttp3.Response
 import java.io.IOException
 
 object OkHttpExceptionInterceptor : Interceptor {
-
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         try {
@@ -16,5 +15,4 @@ object OkHttpExceptionInterceptor : Interceptor {
             throw IOException(e)
         }
     }
-
 }

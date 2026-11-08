@@ -13,20 +13,19 @@ import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 
-class ChangeChapterTocAdapter(context: Context, val callback: Callback) :
-    RecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
-
+class ChangeChapterTocAdapter(
+    context: Context,
+    val callback: Callback,
+) : RecyclerAdapter<BookChapter, ItemChapterListBinding>(context) {
     var durChapterIndex = 0
 
-    override fun getViewBinding(parent: ViewGroup): ItemChapterListBinding {
-        return ItemChapterListBinding.inflate(inflater, parent, false)
-    }
+    override fun getViewBinding(parent: ViewGroup): ItemChapterListBinding = ItemChapterListBinding.inflate(inflater, parent, false)
 
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemChapterListBinding,
         item: BookChapter,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
         binding.run {
             val isDur = durChapterIndex == item.index
@@ -37,15 +36,15 @@ class ChangeChapterTocAdapter(context: Context, val callback: Callback) :
             }
             tvChapterName.text = item.title
             if (item.isVolume) {
-                //卷名，如第一卷 突出显示
+                // 卷名，如第一卷 突出显示
                 tvChapterItem.setBackgroundColor(context.getCompatColor(R.color.btn_bg_press))
             } else {
-                //普通章节 保持不变
+                // 普通章节 保持不变
                 tvChapterItem.background =
                     ThemeUtils.resolveDrawable(context, android.R.attr.selectableItemBackground)
             }
             if (!item.tag.isNullOrEmpty() && !item.isVolume) {
-                //卷名不显示tag(更新时间规则)
+                // 卷名不显示tag(更新时间规则)
                 tvTag.text = item.tag
                 tvTag.visible()
             } else {
@@ -56,7 +55,10 @@ class ChangeChapterTocAdapter(context: Context, val callback: Callback) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemChapterListBinding) {
+    override fun registerListener(
+        holder: ItemViewHolder,
+        binding: ItemChapterListBinding,
+    ) {
         holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
                 callback.clickChapter(it, getItem(holder.layoutPosition + 1)?.url)
@@ -65,6 +67,9 @@ class ChangeChapterTocAdapter(context: Context, val callback: Callback) :
     }
 
     interface Callback {
-        fun clickChapter(bookChapter: BookChapter, nextChapterUrl: String?)
+        fun clickChapter(
+            bookChapter: BookChapter,
+            nextChapterUrl: String?,
+        )
     }
 }

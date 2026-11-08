@@ -32,22 +32,26 @@ import java.util.concurrent.TimeUnit
 /**
  * 异常管理类
  */
-class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
-
+class CrashHandler(
+    val context: Context,
+) : Thread.UncaughtExceptionHandler {
     /**
      * 系统默认UncaughtExceptionHandler
      */
     private var mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler()
 
     init {
-        //设置该CrashHandler为系统默认的
+        // 设置该CrashHandler为系统默认的
         Thread.setDefaultUncaughtExceptionHandler(this)
     }
 
     /**
      * uncaughtException 回调函数
      */
-    override fun uncaughtException(thread: Thread, ex: Throwable) {
+    override fun uncaughtException(
+        thread: Thread,
+        ex: Throwable,
+    ) {
         if (shouldAbsorb(ex)) {
             AppLog.put("发生未捕获的异常\n${ex.localizedMessage}", ex)
             Looper.loop()
@@ -58,16 +62,15 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
         }
     }
 
-    private fun shouldAbsorb(e: Throwable): Boolean {
-        return when {
-            e::class.simpleName == "CannotDeliverBroadcastException" -> true
-            e is SecurityException && e.message?.contains(
+    private fun shouldAbsorb(e: Throwable): Boolean = when {
+        e::class.simpleName == "CannotDeliverBroadcastException" -> true
+        e is SecurityException &&
+            e.message?.contains(
                 "nor current process has android.permission.OBSERVE_GRANT_REVOKE_PERMISSIONS",
-                true
+                true,
             ) == true -> true
 
-            else -> false
-        }
+        else -> false
     }
 
     /**
@@ -76,7 +79,7 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
     private fun handleException(ex: Throwable?) {
         if (ex == null) return
         LocalConfig.appCrash = true
-        //保存日志文件
+        // 保存日志文件
         saveCrashInfo2File(ex)
         if ((ex is OutOfMemoryError || ex.cause is OutOfMemoryError) && AppConfig.recordHeapDump) {
             doHeapDump()
@@ -92,20 +95,21 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
         private val paramsMap by lazy {
             val map = LinkedHashMap<String, String>()
             kotlin.runCatching {
-                //获取系统信息
+                // 获取系统信息
                 map["MANUFACTURER"] = Build.MANUFACTURER
                 map["BRAND"] = Build.BRAND
                 map["MODEL"] = Build.MODEL
                 map["SDK_INT"] = Build.VERSION.SDK_INT.toString()
                 map["RELEASE"] = Build.VERSION.RELEASE
-                map["WebViewUserAgent"] = try {
-                    WebSettings.getDefaultUserAgent(appCtx)
-                } catch (e: Throwable) {
-                    e.toString()
-                }
+                map["WebViewUserAgent"] =
+                    try {
+                        WebSettings.getDefaultUserAgent(appCtx)
+                    } catch (e: Throwable) {
+                        e.toString()
+                    }
                 map["packageName"] = appCtx.packageName
                 map["heapSize"] = Runtime.getRuntime().maxMemory().toString()
-                //获取app版本信息
+                // 获取app版本信息
                 AppConst.appInfo.let {
                     map["versionName"] = it.versionName
                     map["versionCode"] = it.versionCode.toString()
@@ -126,7 +130,11 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
         fun saveCrashInfo2File(ex: Throwable) {
             val sb = StringBuilder()
             for ((key, value) in paramsMap) {
-                sb.append(key).append("=").append(value).append("\n")
+                sb
+                    .append(key)
+                    .append("=")
+                    .append(value)
+                    .append("\n")
             }
 
             val writer = StringWriter()
@@ -145,11 +153,13 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
             val time = format.format(Date())
             val fileName = "crash-$time-$timestamp.log"
             try {
-                val backupPath = AppConfig.backupPath
-                    ?: throw NoStackTraceException("备份路径未配置")
+                val backupPath =
+                    AppConfig.backupPath
+                        ?: throw NoStackTraceException("备份路径未配置")
                 val uri = Uri.parse(backupPath)
                 val fileDoc = FileDoc.fromUri(uri, true)
-                fileDoc.createFileIfNotExist(fileName, "crash")
+                fileDoc
+                    .createFileIfNotExist(fileName, "crash")
                     .writeText(crashLog)
             } catch (e: Exception) {
                 // 备份目录写入失败不能静默，否则用户以为已保存 crash log
@@ -163,7 +173,8 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
                             it.delete()
                         }
                     }
-                    FileUtils.createFileIfNotExist(rootFile, "crash", fileName)
+                    FileUtils
+                        .createFileIfNotExist(rootFile, "crash", fileName)
                         .writeText(crashLog)
                 }
             }
@@ -173,20 +184,20 @@ class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
          * 进行堆转储
          */
         fun doHeapDump(manually: Boolean = false) {
-            val heapDir = appCtx
-                .externalCache
-                .getFile("heapDump")
+            val heapDir =
+                appCtx
+                    .externalCache
+                    .getFile("heapDump")
             heapDir.createFolderReplace()
-            val fileName = if (manually) {
-                "heap-dump-manually-${System.currentTimeMillis()}.hprof"
-            } else {
-                "heap-dump-${System.currentTimeMillis()}.hprof"
-            }
+            val fileName =
+                if (manually) {
+                    "heap-dump-manually-${System.currentTimeMillis()}.hprof"
+                } else {
+                    "heap-dump-${System.currentTimeMillis()}.hprof"
+                }
             val heapFile = heapDir.getFile(fileName)
             val heapDumpName = heapFile.absolutePath
             Debug.dumpHprofData(heapDumpName)
         }
-
     }
-
 }

@@ -31,7 +31,6 @@ import java.io.File
 class HandleFileActivity :
     VMBaseActivity<ActivityTranslucenceBinding, HandleFileViewModel>(),
     FilePickerDialog.CallBack {
-
     override val binding by viewBinding(ActivityTranslucenceBinding::inflate)
     override val viewModel by viewModels<HandleFileViewModel>()
     private var mode = 0
@@ -48,16 +47,17 @@ class HandleFileActivity :
             } ?: finish()
         }
 
-    private val selectDoc = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
-        it?.let {
-            if (it.isContentScheme()) {
-                val modeFlags =
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                contentResolver.takePersistableUriPermission(it, modeFlags)
-            }
-            onResult(Intent().setData(it))
-        } ?: finish()
-    }
+    private val selectDoc =
+        registerForActivityResult(ActivityResultContracts.OpenDocument()) {
+            it?.let {
+                if (it.isContentScheme()) {
+                    val modeFlags =
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    contentResolver.takePersistableUriPermission(it, modeFlags)
+                }
+                onResult(Intent().setData(it))
+            } ?: finish()
+        }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         mode = intent.getIntExtra("mode", 0)
@@ -66,96 +66,109 @@ class HandleFileActivity :
             finish()
         }
         val allowExtensions = intent.getStringArrayExtra("allowExtensions")
-        val selectList: ArrayList<SelectItem<Int>> = when (mode) {
-            HandleFileContract.DIR_SYS -> getDirActions(true)
-            HandleFileContract.DIR -> getDirActions()
-            HandleFileContract.FILE -> getFileActions()
-            HandleFileContract.EXPORT -> arrayListOf(
-                SelectItem(getString(R.string.upload_url), 111)
-            ).apply {
-                addAll(getDirActions())
-            }
+        val selectList: ArrayList<SelectItem<Int>> =
+            when (mode) {
+                HandleFileContract.DIR_SYS -> getDirActions(true)
+                HandleFileContract.DIR -> getDirActions()
+                HandleFileContract.FILE -> getFileActions()
+                HandleFileContract.EXPORT ->
+                    arrayListOf(
+                        SelectItem(getString(R.string.upload_url), 111),
+                    ).apply {
+                        addAll(getDirActions())
+                    }
 
-            else -> arrayListOf()
-        }
+                else -> arrayListOf()
+            }
         intent.getJsonArray<SelectItem<Int>>("otherActions")?.let {
             selectList.addAll(it)
         }
-        val title = intent.getStringExtra("title") ?: let {
-            when (mode) {
-                HandleFileContract.EXPORT -> return@let getString(R.string.export)
-                HandleFileContract.DIR -> return@let getString(R.string.select_folder)
-                else -> return@let getString(R.string.select_file)
+        val title =
+            intent.getStringExtra("title") ?: let {
+                when (mode) {
+                    HandleFileContract.EXPORT -> return@let getString(R.string.export)
+                    HandleFileContract.DIR -> return@let getString(R.string.select_folder)
+                    else -> return@let getString(R.string.select_file)
+                }
             }
-        }
         alert(title) {
             items(selectList) { _, item, _ ->
                 when (item.value) {
-                    HandleFileContract.DIR -> kotlin.runCatching {
-                        selectDocTree.launch()
-                    }.onFailure {
-                        AppLog.put(getString(R.string.open_sys_dir_picker_error), it, true)
+                    HandleFileContract.DIR ->
+                        kotlin
+                            .runCatching {
+                                selectDocTree.launch()
+                            }.onFailure {
+                                AppLog.put(getString(R.string.open_sys_dir_picker_error), it, true)
+                                checkPermissions {
+                                    FilePickerDialog.show(
+                                        supportFragmentManager,
+                                        mode = HandleFileContract.DIR,
+                                    )
+                                }
+                            }
+
+                    HandleFileContract.FILE ->
+                        kotlin
+                            .runCatching {
+                                selectDoc.launch(typesOfExtensions(allowExtensions))
+                            }.onFailure {
+                                AppLog.put(getString(R.string.open_sys_dir_picker_error), it, true)
+                                checkPermissions {
+                                    FilePickerDialog.show(
+                                        supportFragmentManager,
+                                        mode = HandleFileContract.FILE,
+                                        allowExtensions = allowExtensions,
+                                    )
+                                }
+                            }
+
+                    10 ->
                         checkPermissions {
-                            FilePickerDialog.show(
-                                supportFragmentManager,
-                                mode = HandleFileContract.DIR
-                            )
+                            @Suppress("DEPRECATION")
+                            lifecycleScope.launchWhenResumed {
+                                FilePickerDialog.show(
+                                    supportFragmentManager,
+                                    mode = HandleFileContract.DIR,
+                                )
+                            }
                         }
-                    }
 
-                    HandleFileContract.FILE -> kotlin.runCatching {
-                        selectDoc.launch(typesOfExtensions(allowExtensions))
-                    }.onFailure {
-                        AppLog.put(getString(R.string.open_sys_dir_picker_error), it, true)
+                    11 ->
                         checkPermissions {
-                            FilePickerDialog.show(
-                                supportFragmentManager,
-                                mode = HandleFileContract.FILE,
-                                allowExtensions = allowExtensions
-                            )
+                            @Suppress("DEPRECATION")
+                            lifecycleScope.launchWhenResumed {
+                                FilePickerDialog.show(
+                                    supportFragmentManager,
+                                    mode = HandleFileContract.FILE,
+                                    allowExtensions = allowExtensions,
+                                )
+                            }
                         }
-                    }
 
-                    10 -> checkPermissions {
-                        @Suppress("DEPRECATION")
-                        lifecycleScope.launchWhenResumed {
-                            FilePickerDialog.show(
-                                supportFragmentManager,
-                                mode = HandleFileContract.DIR
-                            )
+                    111 ->
+                        getFileData()?.let {
+                            viewModel.upload(it.first, it.second, it.third) { url ->
+                                val uri = Uri.parse(url)
+                                setResult(RESULT_OK, Intent().setData(uri))
+                                finish()
+                            }
                         }
-                    }
 
-                    11 -> checkPermissions {
-                        @Suppress("DEPRECATION")
-                        lifecycleScope.launchWhenResumed {
-                            FilePickerDialog.show(
-                                supportFragmentManager,
-                                mode = HandleFileContract.FILE,
-                                allowExtensions = allowExtensions
-                            )
+                    112 ->
+                        checkPermissions {
+                            // 手动输入目录路径
+                            showInputDirectoryDialog()
                         }
-                    }
-
-                    111 -> getFileData()?.let {
-                        viewModel.upload(it.first, it.second, it.third) { url ->
-                            val uri = Uri.parse(url)
-                            setResult(RESULT_OK, Intent().setData(uri))
-                            finish()
-                        }
-                    }
-
-                    112 -> checkPermissions { // 手动输入目录路径
-                        showInputDirectoryDialog()
-                    }
 
                     else -> {
                         val path = item.title
-                        val uri = if (path.isContentScheme()) {
-                            Uri.parse(path)
-                        } else {
-                            Uri.fromFile(File(path))
-                        }
+                        val uri =
+                            if (path.isContentScheme()) {
+                                Uri.parse(path)
+                            } else {
+                                Uri.fromFile(File(path))
+                            }
                         onResult(Intent().setData(uri))
                     }
                 }
@@ -167,9 +180,10 @@ class HandleFileActivity :
     }
 
     private fun showInputDirectoryDialog() {
-        val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-            editView.hint = getString(R.string.enter_directory_path)
-        }
+        val alertBinding =
+            DialogEditTextBinding.inflate(layoutInflater).apply {
+                editView.hint = getString(R.string.enter_directory_path)
+            }
 
         alert(getString(R.string.manual_input)) {
             customView { alertBinding.root }
@@ -218,9 +232,10 @@ class HandleFileActivity :
 
     private fun getFileData(): Triple<String, Any, String>? {
         val fileName = intent.getStringExtra("fileName")
-        val file = intent.getStringExtra("fileKey")?.let {
-            IntentData.get<Any>(it)
-        }
+        val file =
+            intent.getStringExtra("fileKey")?.let {
+                IntentData.get<Any>(it)
+            }
         val contentType = intent.getStringExtra("contentType")
         if (fileName != null && file != null && contentType != null) {
             return Triple(fileName, file, contentType)
@@ -228,42 +243,36 @@ class HandleFileActivity :
         return null
     }
 
-    private fun getDirActions(onlySys: Boolean = false): ArrayList<SelectItem<Int>> {
-        return if (onlySys) {
-            arrayListOf(
-                SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.DIR),
-                SelectItem(getString(R.string.manual_input), 112) // 添加手动输入选项
-            )
-        } else {
-            arrayListOf(
-                SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.DIR),
-                SelectItem(getString(R.string.app_folder_picker), 10),
-                SelectItem(getString(R.string.manual_input), 112) // 添加手动输入选项
-            )
-        }
-    }
-
-    private fun getFileActions(): ArrayList<SelectItem<Int>> {
-        return arrayListOf(
-            SelectItem(getString(R.string.sys_file_picker), HandleFileContract.FILE),
-            SelectItem(getString(R.string.app_file_picker), 11)
+    private fun getDirActions(onlySys: Boolean = false): ArrayList<SelectItem<Int>> = if (onlySys) {
+        arrayListOf(
+            SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.DIR),
+            SelectItem(getString(R.string.manual_input), 112), // 添加手动输入选项
+        )
+    } else {
+        arrayListOf(
+            SelectItem(getString(R.string.sys_folder_picker), HandleFileContract.DIR),
+            SelectItem(getString(R.string.app_folder_picker), 10),
+            SelectItem(getString(R.string.manual_input), 112), // 添加手动输入选项
         )
     }
 
+    private fun getFileActions(): ArrayList<SelectItem<Int>> = arrayListOf(
+        SelectItem(getString(R.string.sys_file_picker), HandleFileContract.FILE),
+        SelectItem(getString(R.string.app_file_picker), 11),
+    )
+
     private fun checkPermissions(success: (() -> Unit)? = null) {
-        PermissionsCompat.Builder()
+        PermissionsCompat
+            .Builder()
             .addPermissions(*Permissions.Group.STORAGE)
             .rationale(R.string.tip_perm_request_storage)
             .onGranted {
                 success?.invoke()
-            }
-            .onDenied {
+            }.onDenied {
                 finish()
-            }
-            .onError {
+            }.onError {
                 finish()
-            }
-            .request()
+            }.request()
     }
 
     private fun typesOfExtensions(allowExtensions: Array<String>?): Array<String> {
@@ -276,9 +285,11 @@ class HandleFileActivity :
                     "*" -> types.add("*/*")
                     "txt", "xml" -> types.add("text/*")
                     else -> {
-                        val mime = MimeTypeMap.getSingleton()
-                            .getMimeTypeFromExtension(it)
-                            ?: "application/octet-stream"
+                        val mime =
+                            MimeTypeMap
+                                .getSingleton()
+                                .getMimeTypeFromExtension(it)
+                                ?: "application/octet-stream"
                         types.add(mime)
                     }
                 }

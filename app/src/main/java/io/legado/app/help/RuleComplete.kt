@@ -1,12 +1,12 @@
 package io.legado.app.help
 
-
 @Suppress("RegExpRedundantEscape")
 object RuleComplete {
     // 需要补全
-    private val needComplete = Regex(
-        """(?<!(@|/|^|[|%&]{2})(attr|text|ownText|textNodes|href|content|html|alt|all|value|src)(\(\))?)(?<seq>\&{2}|%%|\|{2}|$)"""
-    )
+    private val needComplete =
+        Regex(
+            """(?<!(@|/|^|[|%&]{2})(attr|text|ownText|textNodes|href|content|html|alt|all|value|src)(\(\))?)(?<seq>\&{2}|%%|\|{2}|$)""",
+        )
 
     // 不能补全 存在js/json/{{xx}}的复杂情况
     private val notComplete = Regex("""^:|^##|\{\{|@js:|<js>|@Json:|\$\.""")
@@ -32,7 +32,7 @@ object RuleComplete {
     fun autoComplete(
         rules: String?,
         preRule: String? = null,
-        type: Int = 1
+        type: Int = 1,
     ): String? {
         if (rules.isNullOrEmpty() || rules.contains(notComplete) || preRule?.contains(notComplete) == true) {
             return rules
@@ -83,6 +83,4 @@ object RuleComplete {
             else -> rules
         }
     }
-
-
 }

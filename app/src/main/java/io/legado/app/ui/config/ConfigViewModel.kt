@@ -13,8 +13,9 @@ import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.delay
 import splitties.init.appCtx
 
-class ConfigViewModel(application: Application) : BaseViewModel(application) {
-
+class ConfigViewModel(
+    application: Application,
+) : BaseViewModel(application) {
     fun upWebDavConfig() {
         execute {
             AppWebDav.upConfig()
@@ -47,5 +48,4 @@ class ConfigViewModel(application: Application) : BaseViewModel(application) {
             context.toastOnUi(R.string.success)
         }
     }
-
 }

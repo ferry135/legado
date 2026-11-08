@@ -8,11 +8,12 @@ import io.legado.app.ui.widget.text.AccentBgTextView
 import io.legado.app.utils.dpToPx
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
-class LabelsBar @JvmOverloads constructor(
+class LabelsBar
+@JvmOverloads
+constructor(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet? = null,
 ) : LinearLayout(context, attrs) {
-
     private val unUsedViews = arrayListOf<TextView>()
     private val usedViews = arrayListOf<TextView>()
     var textSize = 12f
@@ -38,23 +39,24 @@ class LabelsBar @JvmOverloads constructor(
     }
 
     fun addLabel(label: String) {
-        val tv = if (unUsedViews.isEmpty()) {
-            AccentBgTextView(context, null).apply {
-                setPadding(3.dpToPx(), 0, 3.dpToPx(), 0)
-                setRadius(2)
-                val lp = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-                lp.setMargins(0, 0, 2.dpToPx(), 0)
-                layoutParams = lp
-                text = label
-                maxLines = 1
-                usedViews.add(this)
+        val tv =
+            if (unUsedViews.isEmpty()) {
+                AccentBgTextView(context, null).apply {
+                    setPadding(3.dpToPx(), 0, 3.dpToPx(), 0)
+                    setRadius(2)
+                    val lp = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+                    lp.setMargins(0, 0, 2.dpToPx(), 0)
+                    layoutParams = lp
+                    text = label
+                    maxLines = 1
+                    usedViews.add(this)
+                }
+            } else {
+                unUsedViews.last().apply {
+                    usedViews.add(this)
+                    unUsedViews.removeAt(unUsedViews.lastIndex)
+                }
             }
-        } else {
-            unUsedViews.last().apply {
-                usedViews.add(this)
-                unUsedViews.removeAt(unUsedViews.lastIndex)
-            }
-        }
         tv.textSize = textSize
         tv.text = label
         addView(tv)

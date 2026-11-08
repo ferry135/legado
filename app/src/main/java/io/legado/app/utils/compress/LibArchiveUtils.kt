@@ -20,9 +20,7 @@ import java.nio.channels.SeekableByteChannel
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 
-
 object LibArchiveUtils {
-
     @Throws(ArchiveException::class)
     fun openArchive(
         inputStream: InputStream,
@@ -37,11 +35,12 @@ object LibArchiveUtils {
             val buffer = ByteBuffer.allocate(DEFAULT_BUFFER_SIZE)
             Archive.readSetReadCallback<Any?>(archive) { _, _ ->
                 buffer.clear()
-                val bytesRead = try {
-                    inputStream.read(buffer.array())
-                } catch (e: IOException) {
-                    throw ArchiveException(Archive.ERRNO_FATAL, "InputStream.read", e)
-                }
+                val bytesRead =
+                    try {
+                        inputStream.read(buffer.array())
+                    } catch (e: IOException) {
+                        throw ArchiveException(Archive.ERRNO_FATAL, "InputStream.read", e)
+                    }
                 if (bytesRead != -1) {
                     buffer.limit(bytesRead)
                     buffer
@@ -64,9 +63,7 @@ object LibArchiveUtils {
                 Archive.free(archive)
             }
         }
-
     }
-
 
     @Throws(ArchiveException::class)
     private fun openArchive(
@@ -82,11 +79,12 @@ object LibArchiveUtils {
             val buffer = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE)
             Archive.readSetReadCallback<Any?>(archive) { _, _ ->
                 buffer.clear()
-                val bytesRead = try {
-                    channel.read(buffer)
-                } catch (e: IOException) {
-                    throw ArchiveException(Archive.ERRNO_FATAL, "SeekableByteChannel.read", e)
-                }
+                val bytesRead =
+                    try {
+                        channel.read(buffer)
+                    } catch (e: IOException) {
+                        throw ArchiveException(Archive.ERRNO_FATAL, "SeekableByteChannel.read", e)
+                    }
                 if (bytesRead != -1) {
                     buffer.flip()
                     buffer
@@ -105,15 +103,16 @@ object LibArchiveUtils {
             Archive.readSetSeekCallback<Any?>(archive) { _, _, offset, whence ->
                 val newPosition: Long
                 try {
-                    newPosition = when (whence) {
-                        OsConstants.SEEK_SET -> offset
-                        OsConstants.SEEK_CUR -> channel.position() + offset
-                        OsConstants.SEEK_END -> channel.size() + offset
-                        else -> throw ArchiveException(
-                            Archive.ERRNO_FATAL,
-                            "Unknown whence $whence"
-                        )
-                    }
+                    newPosition =
+                        when (whence) {
+                            OsConstants.SEEK_SET -> offset
+                            OsConstants.SEEK_CUR -> channel.position() + offset
+                            OsConstants.SEEK_END -> channel.size() + offset
+                            else -> throw ArchiveException(
+                                Archive.ERRNO_FATAL,
+                                "Unknown whence $whence",
+                            )
+                        }
                     channel.position(newPosition)
                 } catch (e: IOException) {
                     throw ArchiveException(Archive.ERRNO_FATAL, "SeekableByteChannel.position", e)
@@ -123,21 +122,17 @@ object LibArchiveUtils {
             Archive.readOpen1(archive)
             successful = true
             return archive
-
-
         } finally {
             if (!successful) {
                 Archive.free(archive)
             }
         }
-
     }
-
 
     @Throws(ArchiveException::class)
     private fun openArchive(
         pfd: ParcelFileDescriptor,
-        useCb: Boolean = true
+        useCb: Boolean = true,
     ): Long {
         val archive: Long = Archive.readNew()
         var successful = false
@@ -149,7 +144,7 @@ object LibArchiveUtils {
                 Archive.readSetCallbackData(archive, pfd.fileDescriptor)
                 val buffer = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE)
                 Archive.readSetReadCallback<Any>(
-                    archive
+                    archive,
                 ) { _: Long, fd: Any? ->
                     buffer.clear()
                     try {
@@ -163,11 +158,13 @@ object LibArchiveUtils {
                     buffer
                 }
                 Archive.readSetSkipCallback<Any>(
-                    archive
+                    archive,
                 ) { _: Long, fd: Any?, request: Long ->
                     try {
                         Os.lseek(
-                            fd as FileDescriptor?, request, OsConstants.SEEK_CUR
+                            fd as FileDescriptor?,
+                            request,
+                            OsConstants.SEEK_CUR,
                         )
                     } catch (e: ErrnoException) {
                         throw ArchiveException(Archive.ERRNO_FATAL, "Os.lseek", e)
@@ -175,33 +172,30 @@ object LibArchiveUtils {
                     request
                 }
                 Archive.readSetSeekCallback<Any>(
-                    archive
+                    archive,
                 ) { _: Long, fd: Any?, offset: Long, whence: Int ->
                     try {
                         return@readSetSeekCallback Os.lseek(
-                            fd as FileDescriptor?, offset, whence
+                            fd as FileDescriptor?,
+                            offset,
+                            whence,
                         )
                     } catch (e: ErrnoException) {
                         throw ArchiveException(Archive.ERRNO_FATAL, "Os.lseek", e)
                     }
                 }
                 Archive.readOpen1(archive)
-
             } else {
                 Archive.readOpenFd(archive, pfd.fd, DEFAULT_BUFFER_SIZE.toLong())
             }
 
             successful = true
             return archive
-
-
         } finally {
             if (!successful) {
                 Archive.free(archive)
             }
         }
-
-
     }
 
     /**
@@ -211,10 +205,8 @@ object LibArchiveUtils {
     fun unArchive(
         pfd: ParcelFileDescriptor,
         destDir: File,
-        filter: ((String) -> Boolean)? = null
-    ): List<File> {
-        return unArchive(openArchive(pfd), destDir, filter)
-    }
+        filter: ((String) -> Boolean)? = null,
+    ): List<File> = unArchive(openArchive(pfd), destDir, filter)
 
     /**
      * 解压
@@ -223,11 +215,10 @@ object LibArchiveUtils {
     private fun unArchive(
         archive: Long,
         destDir: File?,
-        filter: ((String) -> Boolean)? = null
+        filter: ((String) -> Boolean)? = null,
     ): List<File> {
         destDir ?: throw NullPointerException("解压路径不能为空")
         val files = arrayListOf<File>()
-
 
         try {
             var entry: Long
@@ -242,15 +233,13 @@ object LibArchiveUtils {
                 }
                 val entryStat = ArchiveEntry.stat(entry)
 
-                //判断是否是文件夹
+                // 判断是否是文件夹
                 if (entryStat.isDir()) {
                     if (!entryFile.exists()) {
                         entryFile.mkdirs()
                     }
                     continue
                 }
-
-
 
                 if (entryFile.parentFile?.exists() != true) {
                     entryFile.parentFile?.mkdirs()
@@ -266,22 +255,23 @@ object LibArchiveUtils {
                     Archive.readDataIntoFd(archive, it.fd)
                     files.add(entryFile)
                 }
-
-
             }
         } finally {
             Archive.free(archive)
         }
 
         return files
-
     }
 
-    fun getFilesName(pfd: ParcelFileDescriptor, filter: ((String) -> Boolean)?): List<String> {
-        return getFilesName(openArchive(pfd), filter)
-    }
+    fun getFilesName(
+        pfd: ParcelFileDescriptor,
+        filter: ((String) -> Boolean)?,
+    ): List<String> = getFilesName(openArchive(pfd), filter)
 
-    fun getByteArrayContent(inputStream: InputStream, path: String): ByteArray? {
+    fun getByteArrayContent(
+        inputStream: InputStream,
+        path: String,
+    ): ByteArray? {
         val archive = openArchive(inputStream)
         try {
             var entry: Long
@@ -292,7 +282,7 @@ object LibArchiveUtils {
 
                 val entryStat = ArchiveEntry.stat(entry)
 
-                //判断是否是文件夹
+                // 判断是否是文件夹
                 if (entryStat.isDir()) {
                     continue
                 }
@@ -310,8 +300,6 @@ object LibArchiveUtils {
                         byteBuffer.clear()
                     }
                 }
-
-
             }
         } finally {
             Archive.free(archive)
@@ -322,12 +310,10 @@ object LibArchiveUtils {
     @Throws(SecurityException::class)
     private fun getFilesName(
         archive: Long,
-        filter: ((String) -> Boolean)? = null
+        filter: ((String) -> Boolean)? = null,
     ): List<String> {
         val fileNames = mutableListOf<String>()
         try {
-
-
             var entry: Long
 
             while (Archive.readNextHeader(archive).also { entry = it } != 0L) {
@@ -335,17 +321,15 @@ object LibArchiveUtils {
                     getEntryString(ArchiveEntry.pathnameUtf8(entry), ArchiveEntry.pathname(entry))
                         ?: continue
 
-
                 val entryStat = ArchiveEntry.stat(entry)
 
                 if (entryStat.isDir()) {
                     continue
                 }
 
-                if (filter != null && filter.invoke(fileName))
+                if (filter != null && filter.invoke(fileName)) {
                     fileNames.add(fileName)
-
-
+                }
             }
         } finally {
             Archive.free(archive)
@@ -356,9 +340,10 @@ object LibArchiveUtils {
 
     private fun ArchiveEntry.StructStat.isDir() = S_ISDIR(this.stMode)
 
-    private fun getEntryString(utf8: String?, bytes: ByteArray?): String? {
-        return utf8 ?: newStringFromBytes(bytes)
-    }
+    private fun getEntryString(
+        utf8: String?,
+        bytes: ByteArray?,
+    ): String? = utf8 ?: newStringFromBytes(bytes)
 
     private fun newStringFromBytes(bytes: ByteArray?): String? {
         bytes ?: return null
@@ -366,7 +351,5 @@ object LibArchiveUtils {
         cd.setText(bytes)
         val c = cd.detectAll().first().name
         return String(bytes, Charset.forName(c))
-
     }
-
 }

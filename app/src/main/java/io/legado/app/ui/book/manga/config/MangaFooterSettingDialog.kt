@@ -17,8 +17,9 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class MangaFooterSettingDialog : BaseDialogFragment(R.layout.dialog_manga_footer_setting) {
-    val config = GSON.fromJsonObject<MangaFooterConfig>(AppConfig.mangaFooterConfig).getOrNull()
-        ?: MangaFooterConfig()
+    val config =
+        GSON.fromJsonObject<MangaFooterConfig>(AppConfig.mangaFooterConfig).getOrNull()
+            ?: MangaFooterConfig()
     private val binding by viewBinding(DialogMangaFooterSettingBinding::bind)
 
     override fun onStart() {
@@ -26,7 +27,10 @@ class MangaFooterSettingDialog : BaseDialogFragment(R.layout.dialog_manga_footer
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         binding.cbChapterLabel.run {
             isChecked = config.hideChapterLabel
             setOnCheckedChangeListener { _, isChecked ->

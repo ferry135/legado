@@ -19,15 +19,15 @@ import kotlinx.coroutines.launch
 import splitties.init.appCtx
 import java.io.IOException
 
-class BookSearchWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
-    NanoWSD.WebSocket(handshakeRequest),
+class BookSearchWebSocket(
+    handshakeRequest: NanoHTTPD.IHTTPSession,
+) : NanoWSD.WebSocket(handshakeRequest),
     CoroutineScope by MainScope(),
     SearchModel.CallBack {
-
     private val normalClosure = NanoWSD.WebSocketFrame.CloseCode.NormalClosure
     private val searchModel = SearchModel(this, this)
 
-    private val SEARCH_FINISH = "Search finish"
+    private val searchFinish = "Search finish"
 
     override fun onOpen() {
         launch(IO) {
@@ -43,7 +43,7 @@ class BookSearchWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
     override fun onClose(
         code: NanoWSD.WebSocketFrame.CloseCode,
         reason: String,
-        initiatedByRemote: Boolean
+        initiatedByRemote: Boolean,
     ) {
         cancel()
         searchModel.close()
@@ -54,7 +54,7 @@ class BookSearchWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
             kotlin.runCatching {
                 if (!message.textPayload.isJson()) {
                     send("数据必须为Json格式")
-                    close(normalClosure, SEARCH_FINISH, false)
+                    close(normalClosure, searchFinish, false)
                     return@launch
                 }
                 val searchMap =
@@ -63,7 +63,7 @@ class BookSearchWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
                     val key = searchMap["key"]
                     if (key.isNullOrBlank()) {
                         send(appCtx.getString(R.string.cannot_empty))
-                        close(normalClosure, SEARCH_FINISH, false)
+                        close(normalClosure, searchFinish, false)
                         return@launch
                     }
                     searchModel.search(System.currentTimeMillis(), key)
@@ -73,25 +73,24 @@ class BookSearchWebSocket(handshakeRequest: NanoHTTPD.IHTTPSession) :
     }
 
     override fun onPong(pong: NanoWSD.WebSocketFrame) {
-
     }
 
     override fun onException(exception: IOException) {
-
     }
 
     override fun getSearchScope(): SearchScope = SearchScope(AppConfig.searchScope)
 
     override fun onSearchStart() {
-
     }
 
     override fun onSearchSuccess(searchBooks: List<SearchBook>) {
         send(GSON.toJson(searchBooks))
     }
 
-    override fun onSearchFinish(isEmpty: Boolean, hasMore: Boolean) = close(normalClosure, SEARCH_FINISH, false)
+    override fun onSearchFinish(
+        isEmpty: Boolean,
+        hasMore: Boolean,
+    ) = close(normalClosure, searchFinish, false)
 
-    override fun onSearchCancel(exception: Throwable?) = close(normalClosure, exception?.toString() ?: SEARCH_FINISH, false)
-
+    override fun onSearchCancel(exception: Throwable?) = close(normalClosure, exception?.toString() ?: searchFinish, false)
 }

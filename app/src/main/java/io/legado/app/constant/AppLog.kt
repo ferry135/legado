@@ -8,13 +8,16 @@ import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
 
 object AppLog {
-
     private val mLogs = arrayListOf<Triple<Long, String, Throwable?>>()
 
     val logs get() = mLogs.toList()
 
     @Synchronized
-    fun put(message: String?, throwable: Throwable? = null, toast: Boolean = false) {
+    fun put(
+        message: String?,
+        throwable: Throwable? = null,
+        toast: Boolean = false,
+    ) {
         message ?: return
         if (toast) {
             appCtx.toastOnUi(message)
@@ -35,7 +38,11 @@ object AppLog {
     }
 
     @Synchronized
-    fun putNotSave(message: String?, throwable: Throwable? = null, toast: Boolean = false) {
+    fun putNotSave(
+        message: String?,
+        throwable: Throwable? = null,
+        toast: Boolean = false,
+    ) {
         message ?: return
         if (toast) {
             appCtx.toastOnUi(message)
@@ -55,10 +62,12 @@ object AppLog {
         mLogs.clear()
     }
 
-    fun putDebug(message: String?, throwable: Throwable? = null) {
+    fun putDebug(
+        message: String?,
+        throwable: Throwable? = null,
+    ) {
         if (AppConfig.recordLog) {
             put(message, throwable)
         }
     }
-
 }

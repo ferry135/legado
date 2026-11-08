@@ -73,7 +73,6 @@ import java.io.File
 import java.io.FileOutputStream
 
 class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
-
     companion object {
         const val TEXT_COLOR = 121
         const val BG_COLOR = 122
@@ -87,25 +86,28 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
     private lateinit var sheetInk: SheetInk
     private val adapter by lazy { BgAdapter(requireContext(), sheetInk.secondary) }
     private val importFormNet = "网络导入"
-    private val selectBgImage = registerForActivityResult(SelectImageContract()) {
-        it.uri?.let { uri ->
-            setBgFromUri(uri)
-        }
-    }
-    private val selectExportDir = registerForActivityResult(HandleFileContract()) {
-        it.uri?.let { uri ->
-            exportConfig(uri)
-        }
-    }
-    private val selectImportDoc = registerForActivityResult(HandleFileContract()) {
-        it.uri?.let { uri ->
-            if (uri.toString() == importFormNet) {
-                importNetConfigAlert()
-            } else {
-                importConfig(uri)
+    private val selectBgImage =
+        registerForActivityResult(SelectImageContract()) {
+            it.uri?.let { uri ->
+                setBgFromUri(uri)
             }
         }
-    }
+    private val selectExportDir =
+        registerForActivityResult(HandleFileContract()) {
+            it.uri?.let { uri ->
+                exportConfig(uri)
+            }
+        }
+    private val selectImportDoc =
+        registerForActivityResult(HandleFileContract()) {
+            it.uri?.let { uri ->
+                if (uri.toString() == importFormNet) {
+                    importNetConfigAlert()
+                } else {
+                    importConfig(uri)
+                }
+            }
+        }
 
     override fun onStart() {
         super.onStart()
@@ -113,11 +115,14 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         // dimAmount=0 + @color/background）→ 16dp 顶圆角底部弹层（透明窗底 + scrim_dialog 50% +
         // 底部重力，PaddingConfigDialog 同款）；高 80% 屏防溢出（内部 NestedScrollView 滚动）
         dialog?.window?.applyBottomSheetWindow(
-            (resources.displayMetrics.heightPixels * 0.8f).toInt()
+            (resources.displayMetrics.heightPixels * 0.8f).toInt(),
         )
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         (activity as ReadBookActivity).bottomDialog++
         initView()
         initData()
@@ -180,21 +185,23 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
                 tvName.text = getString(R.string.select_image)
                 ivBg.setImageResource(R.drawable.ic_image)
                 ivBg.setColorFilter(sheetInk.secondary, PorterDuff.Mode.SRC_IN)
-                ivBg.layoutParams = FrameLayout.LayoutParams(
-                    24.dpToPx(),
-                    24.dpToPx(),
-                    Gravity.CENTER
-                )
-                vwBgThumb.background = GradientDrawable().apply {
-                    cornerRadius = 8.dpToPx().toFloat()
-                    setColor(Color.TRANSPARENT)
-                    setStroke(
-                        1.dpToPx(),
-                        ColorUtils.adjustAlpha(sheetInk.ink, InkGradient.STROKE_GHOST),
-                        3.dpToPx().toFloat(),
-                        3.dpToPx().toFloat()
+                ivBg.layoutParams =
+                    FrameLayout.LayoutParams(
+                        24.dpToPx(),
+                        24.dpToPx(),
+                        Gravity.CENTER,
                     )
-                }
+                vwBgThumb.background =
+                    GradientDrawable().apply {
+                        cornerRadius = 8.dpToPx().toFloat()
+                        setColor(Color.TRANSPARENT)
+                        setStroke(
+                            1.dpToPx(),
+                            ColorUtils.adjustAlpha(sheetInk.ink, InkGradient.STROKE_GHOST),
+                            3.dpToPx().toFloat(),
+                            3.dpToPx().toFloat(),
+                        )
+                    }
                 vwBgThumb.outlineProvider = BgAdapter.thumbOutline
                 vwBgThumb.clipToOutline = true
                 root.setOnClickListener {
@@ -223,10 +230,11 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         binding.llUnderline.setOnClickListener { binding.swUnderline.toggle() }
         binding.ivEdit.setOnClickListener {
             alert(R.string.style_name) {
-                val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                    editView.hint = "name"
-                    editView.setText(ReadBookConfig.durConfig.name)
-                }
+                val alertBinding =
+                    DialogEditTextBinding.inflate(layoutInflater).apply {
+                        editView.hint = "name"
+                        editView.setText(ReadBookConfig.durConfig.name)
+                    }
                 customView { alertBinding.root }
                 okButton {
                     alertBinding.editView.text?.toString()?.let {
@@ -257,7 +265,8 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
             postEvent(EventBus.UP_CONFIG, arrayListOf(6, 9, 11))
         }
         binding.tvTextColor.setOnClickListener {
-            ColorPickerDialog.newBuilder()
+            ColorPickerDialog
+                .newBuilder()
                 .setColor(curTextColor())
                 .setShowAlphaSlider(false)
                 .setDialogType(ColorPickerDialog.TYPE_CUSTOM)
@@ -266,9 +275,13 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
         }
         binding.tvBgColor.setOnClickListener {
             val bgColor =
-                if (curBgType() == 0) Color.parseColor(curBgStr())
-                else Color.parseColor("#015A86")
-            ColorPickerDialog.newBuilder()
+                if (curBgType() == 0) {
+                    Color.parseColor(curBgStr())
+                } else {
+                    Color.parseColor("#015A86")
+                }
+            ColorPickerDialog
+                .newBuilder()
                 .setColor(bgColor)
                 .setShowAlphaSlider(false)
                 .setDialogType(ColorPickerDialog.TYPE_CUSTOM)
@@ -298,18 +311,24 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
                 toastOnUi("数量已是最少,不能删除.")
             }
         }
-        binding.sbBgAlpha.setOnSeekBarChangeListener(object : SeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                ReadBookConfig.bgAlpha = progress
-                // read-bg-text-config#05「透明度行」：右侧值胶囊随 progress 同步（纯展示）
-                upBgAlphaValue()
-                postEvent(EventBus.UP_CONFIG, arrayListOf(3))
-            }
+        binding.sbBgAlpha.setOnSeekBarChangeListener(
+            object : SeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar,
+                    progress: Int,
+                    fromUser: Boolean,
+                ) {
+                    ReadBookConfig.bgAlpha = progress
+                    // read-bg-text-config#05「透明度行」：右侧值胶囊随 progress 同步（纯展示）
+                    upBgAlphaValue()
+                    postEvent(EventBus.UP_CONFIG, arrayListOf(3))
+                }
 
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-                postEvent(EventBus.UP_CONFIG, arrayListOf(3))
-            }
-        })
+                override fun onStopTrackingTouch(seekBar: SeekBar) {
+                    postEvent(EventBus.UP_CONFIG, arrayListOf(3))
+                }
+            },
+        )
     }
 
     /**
@@ -326,23 +345,25 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
                 tvTextColorChip.text = textColor.toHexString6()
                 upColorDot(vwTextDot, textColor)
                 val bgType = curBgType()
-                val bgColor = if (bgType == 0) {
-                    Color.parseColor(curBgStr())
-                } else {
-                    Color.parseColor("#015A86")
-                }
+                val bgColor =
+                    if (bgType == 0) {
+                        Color.parseColor(curBgStr())
+                    } else {
+                        Color.parseColor("#015A86")
+                    }
                 tvBgColorChip.text = bgColor.toHexString6()
                 upColorDot(vwBgDot, bgColor)
                 tvBgColorNote.isVisible = bgType != 0
-                llBgColorChip.background = if (bgType == 0) {
-                    // 每视图独立实例：共享可变 GradientDrawable 的 bounds 会被兄弟视图互相覆盖
-                    // （TipConfigDialog 口径）
-                    sheetInk.chip().apply {
-                        setStroke(1.5f.dpToPx().toInt(), requireContext().primaryColor)
+                llBgColorChip.background =
+                    if (bgType == 0) {
+                        // 每视图独立实例：共享可变 GradientDrawable 的 bounds 会被兄弟视图互相覆盖
+                        // （TipConfigDialog 口径）
+                        sheetInk.chip().apply {
+                            setStroke(1.5f.dpToPx().toInt(), requireContext().primaryColor)
+                        }
+                    } else {
+                        sheetInk.chip()
                     }
-                } else {
-                    sheetInk.chip()
-                }
                 // 「既有绑定迁移」：原 TooltipCompat.setTooltipText(tv_bg_color, text)（:228-230）
                 // 迁移至值胶囊 TextView（行容器无 getText）
                 TooltipCompat.setTooltipText(tvBgColorChip, tvBgColorChip.text)
@@ -351,12 +372,16 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
     }
 
     /** 值胶囊内 12dp 色点（TipConfigDialog.upColorDot 同款：色底 + ink 25% 细描边） */
-    private fun upColorDot(dot: View, color: Int) {
-        dot.background = GradientDrawable().apply {
-            shape = GradientDrawable.OVAL
-            setColor(color)
-            setStroke(1.dpToPx(), ColorUtils.adjustAlpha(sheetInk.ink, InkGradient.STROKE_MUTED))
-        }
+    private fun upColorDot(
+        dot: View,
+        color: Int,
+    ) {
+        dot.background =
+            GradientDrawable().apply {
+                shape = GradientDrawable.OVAL
+                setColor(color)
+                setStroke(1.dpToPx(), ColorUtils.adjustAlpha(sheetInk.ink, InkGradient.STROKE_MUTED))
+            }
     }
 
     /** read-bg-text-config#05「透明度行」：值胶囊「n%」随 sb_bg_alpha progress 同步 */
@@ -370,20 +395,29 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
      * 不合并则 bgType=2 时列表无任何选中表达。
      */
     private fun upBgImages() {
-        val assets = requireContext().assets.list("bg")?.toList().orEmpty()
-        val customs = File(requireContext().externalFiles, "bg")
-            .listFiles()?.map { it.name }.orEmpty()
+        val assets =
+            requireContext()
+                .assets
+                .list("bg")
+                ?.toList()
+                .orEmpty()
+        val customs =
+            File(requireContext().externalFiles, "bg")
+                .listFiles()
+                ?.map { it.name }
+                .orEmpty()
         adapter.setItems((assets + customs).distinct())
     }
 
     private fun Int.toHexString6(): String = "#%06X".format(this and 0xFFFFFF)
 
     private fun exportConfig(uri: Uri) {
-        val exportFileName = if (ReadBookConfig.config.name.isBlank()) {
-            configFileName
-        } else {
-            "${ReadBookConfig.config.name}.zip"
-        }
+        val exportFileName =
+            if (ReadBookConfig.config.name.isBlank()) {
+                configFileName
+            } else {
+                "${ReadBookConfig.config.name}.zip"
+            }
         execute {
             val exportFiles = arrayListOf<File>()
             val configDir = requireContext().externalCache.getFile("readConfig")
@@ -479,11 +513,13 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
 
     private fun importNetConfig(url: String) {
         execute {
-            okHttpClient.newCallResponseBody {
-                url(url)
-            }.bytes().let {
-                importConfig(it)
-            }
+            okHttpClient
+                .newCallResponseBody {
+                    url(url)
+                }.bytes()
+                .let {
+                    importConfig(it)
+                }
         }.onError {
             longToast(it.stackTraceStr)
         }
@@ -513,21 +549,23 @@ class BgTextConfigDialog : BaseDialogFragment(R.layout.dialog_read_bg_text) {
 
     private fun setBgFromUri(uri: Uri) {
         readUri(uri) { fileDoc, inputStream ->
-            kotlin.runCatching {
-                var file = requireContext().externalFiles
-                val suffix = fileDoc.name.substringAfterLast(".")
-                val fileName = uri.inputStream(requireContext()).getOrThrow().use {
-                    MD5Utils.md5Encode(it) + ".$suffix"
+            kotlin
+                .runCatching {
+                    var file = requireContext().externalFiles
+                    val suffix = fileDoc.name.substringAfterLast(".")
+                    val fileName =
+                        uri.inputStream(requireContext()).getOrThrow().use {
+                            MD5Utils.md5Encode(it) + ".$suffix"
+                        }
+                    file = FileUtils.createFileIfNotExist(file, "bg", fileName)
+                    FileOutputStream(file).use { outputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
+                    ReadBookConfig.durConfig.setCurBg(2, fileName)
+                    postEvent(EventBus.UP_CONFIG, arrayListOf(1))
+                }.onFailure {
+                    appCtx.toastOnUi(it.localizedMessage)
                 }
-                file = FileUtils.createFileIfNotExist(file, "bg", fileName)
-                FileOutputStream(file).use { outputStream ->
-                    inputStream.copyTo(outputStream)
-                }
-                ReadBookConfig.durConfig.setCurBg(2, fileName)
-                postEvent(EventBus.UP_CONFIG, arrayListOf(1))
-            }.onFailure {
-                appCtx.toastOnUi(it.localizedMessage)
-            }
         }
     }
 }

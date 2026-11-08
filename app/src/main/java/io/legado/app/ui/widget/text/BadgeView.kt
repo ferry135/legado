@@ -20,16 +20,16 @@ import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
 
-
 /**
  * Created by milad heydari on 5/6/2016.
  */
 @Suppress("MemberVisibilityCanBePrivate", "unused")
-class BadgeView @JvmOverloads constructor(
+class BadgeView
+@JvmOverloads
+constructor(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet? = null,
 ) : AppCompatTextView(context, attrs) {
-
     var isHideOnNull = true
         set(hideOnNull) {
             field = hideOnNull
@@ -44,9 +44,10 @@ class BadgeView @JvmOverloads constructor(
                 return null
             }
             val text = text.toString()
-            return kotlin.runCatching {
-                Integer.parseInt(text)
-            }.getOrNull()
+            return kotlin
+                .runCatching {
+                    Integer.parseInt(text)
+                }.getOrNull()
         }
 
     var badgeGravity: Int
@@ -67,7 +68,7 @@ class BadgeView @JvmOverloads constructor(
                 params.leftMargin,
                 params.topMargin,
                 params.rightMargin,
-                params.bottomMargin
+                params.bottomMargin,
             )
         }
 
@@ -84,15 +85,16 @@ class BadgeView @JvmOverloads constructor(
         typedArray.recycle()
 
         if (layoutParams !is LayoutParams) {
-            val layoutParams = LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                Gravity.CENTER
-            )
+            val layoutParams =
+                LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    Gravity.CENTER,
+                )
             setLayoutParams(layoutParams)
         }
 
-        //setTypeface(Typeface.DEFAULT_BOLD);
+        // setTypeface(Typeface.DEFAULT_BOLD);
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
         setPadding(dip2Px(5f), dip2Px(1f), dip2Px(5f), dip2Px(1f))
         radius = radios.toFloat()
@@ -124,7 +126,11 @@ class BadgeView @JvmOverloads constructor(
         setBackground(radius, color)
     }
 
-    fun setBackground(dipRadius: Float, badgeColor: Int, badgeTextColor: Int? = null) {
+    fun setBackground(
+        dipRadius: Float,
+        badgeColor: Int,
+        badgeTextColor: Int? = null,
+    ) {
         val radius = dip2Px(dipRadius).toFloat()
         val radiusArray =
             floatArrayOf(radius, radius, radius, radius, radius, radius, radius, radius)
@@ -141,14 +147,17 @@ class BadgeView @JvmOverloads constructor(
                 Color.BLACK
             } else {
                 Color.WHITE
-            }
+            },
         )
     }
 
     /**
      * @see android.widget.TextView.setText
      */
-    override fun setText(text: CharSequence, type: BufferType) {
+    override fun setText(
+        text: CharSequence,
+        type: BufferType,
+    ) {
         if (isHideOnNull && TextUtils.isEmpty(text)) {
             invisible()
         } else {
@@ -177,7 +186,7 @@ class BadgeView @JvmOverloads constructor(
         leftDipMargin: Int,
         topDipMargin: Int,
         rightDipMargin: Int,
-        bottomDipMargin: Int
+        bottomDipMargin: Int,
     ) {
         val params = layoutParams as LayoutParams
         params.leftMargin = dip2Px(leftDipMargin.toFloat())
@@ -215,7 +224,6 @@ class BadgeView @JvmOverloads constructor(
 
         if (target.parent is FrameLayout) {
             (target.parent as FrameLayout).addView(this)
-
         } else if (target.parent is ViewGroup) {
             // use a new FrameLayout container for adding badge
             val parentContainer = target.parent as ViewGroup
@@ -226,22 +234,21 @@ class BadgeView @JvmOverloads constructor(
             val parentLayoutParams = target.layoutParams
 
             badgeContainer.layoutParams = parentLayoutParams
-            target.layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
-            )
+            target.layoutParams =
+                ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                )
 
             parentContainer.addView(badgeContainer, groupIndex, parentLayoutParams)
             badgeContainer.addView(target)
 
             badgeContainer.addView(this)
         }
-
     }
 
     /**
      * converts dip to px
      */
-    private fun dip2Px(dip: Float): Int {
-        return (dip * context.resources.displayMetrics.density + 0.5f).toInt()
-    }
+    private fun dip2Px(dip: Float): Int = (dip * context.resources.displayMetrics.density + 0.5f).toInt()
 }

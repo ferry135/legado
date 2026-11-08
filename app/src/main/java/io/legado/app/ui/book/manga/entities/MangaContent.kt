@@ -4,5 +4,5 @@ data class MangaContent(
     val pos: Int,
     val items: List<Any>,
     val curFinish: Boolean,
-    val nextFinish: Boolean
+    val nextFinish: Boolean,
 )

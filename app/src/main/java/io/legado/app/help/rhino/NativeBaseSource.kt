@@ -4,10 +4,15 @@ import com.script.rhino.JavaObjectWrapFactory
 import org.mozilla.javascript.NativeJavaObject
 import org.mozilla.javascript.Scriptable
 
-class NativeBaseSource(scope: Scriptable?, javaObject: Any, staticType: Class<*>?) :
-    NativeJavaObject(scope, javaObject, staticType) {
-
-    override fun has(name: String, start: Scriptable): Boolean {
+class NativeBaseSource(
+    scope: Scriptable?,
+    javaObject: Any,
+    staticType: Class<*>?,
+) : NativeJavaObject(scope, javaObject, staticType) {
+    override fun has(
+        name: String,
+        start: Scriptable,
+    ): Boolean {
         if (name != "setVariable" && name.length > 3 && name.startsWith("set")) {
             val name = name.substring(3).replaceFirstChar { it.lowercase() }
             if (super.has(name, start)) {
@@ -17,7 +22,10 @@ class NativeBaseSource(scope: Scriptable?, javaObject: Any, staticType: Class<*>
         return super.has(name, start)
     }
 
-    override fun get(name: String, start: Scriptable): Any? {
+    override fun get(
+        name: String,
+        start: Scriptable,
+    ): Any? {
         if (name != "setVariable" && name.length > 3 && name.startsWith("set")) {
             val name = name.substring(3).replaceFirstChar { it.lowercase() }
             if (super.has(name, start)) {
@@ -30,7 +38,7 @@ class NativeBaseSource(scope: Scriptable?, javaObject: Any, staticType: Class<*>
     override fun put(
         name: String,
         start: Scriptable,
-        value: Any?
+        value: Any?,
     ) {
         if (name == "variable") {
             super.put(name, start, value)
@@ -38,9 +46,9 @@ class NativeBaseSource(scope: Scriptable?, javaObject: Any, staticType: Class<*>
     }
 
     companion object {
-        val factory = JavaObjectWrapFactory { scope, javaObject, staticType ->
-            NativeBaseSource(scope, javaObject, staticType)
-        }
+        val factory =
+            JavaObjectWrapFactory { scope, javaObject, staticType ->
+                NativeBaseSource(scope, javaObject, staticType)
+            }
     }
-
 }

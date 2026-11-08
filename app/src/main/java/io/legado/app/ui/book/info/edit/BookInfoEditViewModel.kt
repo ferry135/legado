@@ -9,7 +9,9 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
 import io.legado.app.model.ReadBook
 
-class BookInfoEditViewModel(application: Application) : BaseViewModel(application) {
+class BookInfoEditViewModel(
+    application: Application,
+) : BaseViewModel(application) {
     var book: Book? = null
     val bookData = MutableLiveData<Book>()
 
@@ -22,7 +24,10 @@ class BookInfoEditViewModel(application: Application) : BaseViewModel(applicatio
         }
     }
 
-    fun saveBook(book: Book, success: (() -> Unit)?) {
+    fun saveBook(
+        book: Book,
+        success: (() -> Unit)?,
+    ) {
         execute {
             if (ReadBook.book?.bookUrl == book.bookUrl) {
                 ReadBook.book = book

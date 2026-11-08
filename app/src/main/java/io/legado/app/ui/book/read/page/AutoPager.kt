@@ -14,7 +14,9 @@ import io.legado.app.utils.canvasrecorder.recordIfNeeded
 /**
  * 自动翻页
  */
-class AutoPager(private val readView: ReadView) {
+class AutoPager(
+    private val readView: ReadView,
+) {
     private var progress = 0
     var isRunning = false
         private set
@@ -24,7 +26,6 @@ class AutoPager(private val readView: ReadView) {
     private var lastTimeMillis = 0L
     private var canvasRecorder = CanvasRecorderFactory.create()
     private val paint by lazy { Paint() }
-
 
     fun start() {
         isRunning = true
@@ -98,11 +99,10 @@ class AutoPager(private val readView: ReadView) {
                 bottom.toFloat() - 1,
                 width.toFloat(),
                 bottom.toFloat(),
-                paint
+                paint,
             )
             if (!isPausing) readView.postInvalidate()
         }
-
     }
 
     fun computeOffset() {
@@ -133,5 +133,4 @@ class AutoPager(private val readView: ReadView) {
             }
         }
     }
-
 }

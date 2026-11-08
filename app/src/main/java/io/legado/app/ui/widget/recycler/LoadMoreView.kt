@@ -14,7 +14,10 @@ import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
 
 @Suppress("unused")
-class LoadMoreView(context: Context, attrs: AttributeSet? = null) : FrameLayout(context, attrs) {
+class LoadMoreView(
+    context: Context,
+    attrs: AttributeSet? = null,
+) : FrameLayout(context, attrs) {
     private val binding = ViewLoadMoreBinding.inflate(LayoutInflater.from(context), this)
     private var errorMsg = ""
 
@@ -72,7 +75,10 @@ class LoadMoreView(context: Context, attrs: AttributeSet? = null) : FrameLayout(
         binding.tvText.visible()
     }
 
-    fun error(msg: String?, text: String = "") {
+    fun error(
+        msg: String?,
+        text: String = "",
+    ) {
         stopLoad()
         hasMore = false
         errorMsg = msg ?: ""
@@ -81,11 +87,15 @@ class LoadMoreView(context: Context, attrs: AttributeSet? = null) : FrameLayout(
         binding.tvText.visible()
     }
 
-    fun setLoadingColor(@ColorRes color: Int) {
+    fun setLoadingColor(
+        @ColorRes color: Int,
+    ) {
         binding.rotateLoading.loadingColor = context.getCompatColor(color)
     }
 
-    fun setLoadingTextColor(@ColorRes color: Int) {
+    fun setLoadingTextColor(
+        @ColorRes color: Int,
+    ) {
         binding.tvText.setTextColor(context.getCompatColor(color))
     }
 
@@ -98,5 +108,4 @@ class LoadMoreView(context: Context, attrs: AttributeSet? = null) : FrameLayout(
         }
         return true
     }
-
 }

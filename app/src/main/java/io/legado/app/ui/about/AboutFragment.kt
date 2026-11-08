@@ -37,18 +37,23 @@ import splitties.init.appCtx
 import java.io.File
 
 class AboutFragment : PreferenceFragmentCompat() {
-
     private val waitDialog by lazy {
         WaitDialog(requireContext())
     }
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+    override fun onCreatePreferences(
+        savedInstanceState: Bundle?,
+        rootKey: String?,
+    ) {
         addPreferencesFromResource(R.xml.about)
         findPreference<Preference>("update_log")?.summary =
             "${getString(R.string.version)} ${appInfo.versionName}"
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         listView.overScrollMode = View.OVER_SCROLL_NEVER
     }
@@ -71,14 +76,19 @@ class AboutFragment : PreferenceFragmentCompat() {
     }
 
     @Suppress("SameParameterValue")
-    private fun openUrl(@StringRes addressID: Int) {
+    private fun openUrl(
+        @StringRes addressID: Int,
+    ) {
         requireContext().openUrl(getString(addressID))
     }
 
     /**
      * 显示md文件
      */
-    private fun showMdFile(title: String, fileName: String) {
+    private fun showMdFile(
+        title: String,
+        fileName: String,
+    ) {
         val mdText = String(requireContext().assets.open(fileName).readBytes())
         showDialogFragment(TextDialog(title, mdText, TextDialog.Mode.MD))
     }
@@ -92,7 +102,7 @@ class AboutFragment : PreferenceFragmentCompat() {
             check(lifecycleScope)
                 .onSuccess {
                     showDialogFragment(
-                        UpdateDialog(it)
+                        UpdateDialog(it),
                     )
                 }.onError {
                     appCtx.toastOnUi("${getString(R.string.check_update)}\n${it.localizedMessage}")
@@ -101,7 +111,6 @@ class AboutFragment : PreferenceFragmentCompat() {
                 }
         }
     }
-
 
     /**
      * 加入qq群
@@ -112,56 +121,61 @@ class AboutFragment : PreferenceFragmentCompat() {
             Uri.parse("mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26k%3D$key")
         // 此Flag可根据具体产品需要自定义，如设置，则在加群界面按返回，返回手Q主界面，不设置，按返回会返回到呼起产品界面
         // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        kotlin.runCatching {
-            startActivity(intent)
-            return true
-        }.onFailure {
-            toastOnUi("添加失败,请手动添加")
-        }
+        kotlin
+            .runCatching {
+                startActivity(intent)
+                return true
+            }.onFailure {
+                toastOnUi("添加失败,请手动添加")
+            }
         return false
     }
 
     private fun saveLog() {
-        Coroutine.async {
-            val backupPath = AppConfig.backupPath ?: let {
-                appCtx.toastOnUi("未设置备份目录")
-                return@async
+        Coroutine
+            .async {
+                val backupPath =
+                    AppConfig.backupPath ?: let {
+                        appCtx.toastOnUi("未设置备份目录")
+                        return@async
+                    }
+                if (!AppConfig.recordLog) {
+                    appCtx.toastOnUi("未开启日志记录，请去其他设置里打开记录日志")
+                    delay(3000)
+                }
+                val doc = FileDoc.fromUri(Uri.parse(backupPath), true)
+                copyLogs(doc)
+                copyHeapDump(doc)
+                appCtx.toastOnUi("已保存至备份目录")
+            }.onError {
+                AppLog.put("保存日志出错\n${it.localizedMessage}", it, true)
             }
-            if (!AppConfig.recordLog) {
-                appCtx.toastOnUi("未开启日志记录，请去其他设置里打开记录日志")
-                delay(3000)
-            }
-            val doc = FileDoc.fromUri(Uri.parse(backupPath), true)
-            copyLogs(doc)
-            copyHeapDump(doc)
-            appCtx.toastOnUi("已保存至备份目录")
-        }.onError {
-            AppLog.put("保存日志出错\n${it.localizedMessage}", it, true)
-        }
     }
 
     private fun createHeapDump() {
-        Coroutine.async {
-            val backupPath = AppConfig.backupPath ?: let {
-                appCtx.toastOnUi("未设置备份目录")
-                return@async
+        Coroutine
+            .async {
+                val backupPath =
+                    AppConfig.backupPath ?: let {
+                        appCtx.toastOnUi("未设置备份目录")
+                        return@async
+                    }
+                if (!AppConfig.recordHeapDump) {
+                    appCtx.toastOnUi("未开启堆转储记录，请去其他设置里打开记录堆转储")
+                    delay(3000)
+                }
+                appCtx.toastOnUi("开始创建堆转储")
+                System.gc()
+                CrashHandler.doHeapDump(true)
+                val doc = FileDoc.fromUri(Uri.parse(backupPath), true)
+                if (!copyHeapDump(doc)) {
+                    appCtx.toastOnUi("未找到堆转储文件")
+                } else {
+                    appCtx.toastOnUi("已保存至备份目录")
+                }
+            }.onError {
+                AppLog.put("保存堆转储失败\n${it.localizedMessage}", it)
             }
-            if (!AppConfig.recordHeapDump) {
-                appCtx.toastOnUi("未开启堆转储记录，请去其他设置里打开记录堆转储")
-                delay(3000)
-            }
-            appCtx.toastOnUi("开始创建堆转储")
-            System.gc()
-            CrashHandler.doHeapDump(true)
-            val doc = FileDoc.fromUri(Uri.parse(backupPath), true)
-            if (!copyHeapDump(doc)) {
-                appCtx.toastOnUi("未找到堆转储文件")
-            } else {
-                appCtx.toastOnUi("已保存至备份目录")
-            }
-        }.onError {
-            AppLog.put("保存堆转储失败\n${it.localizedMessage}", it)
-        }
     }
 
     private fun copyLogs(doc: FileDoc) {
@@ -178,7 +192,10 @@ class AboutFragment : PreferenceFragmentCompat() {
         doc.find("logs.zip")?.delete()
 
         zipFile.inputStream().use { input ->
-            doc.createFileIfNotExist("logs.zip").openOutputStream().getOrNull()
+            doc
+                .createFileIfNotExist("logs.zip")
+                .openOutputStream()
+                .getOrNull()
                 ?.use {
                     input.copyTo(it)
                 }
@@ -187,12 +204,18 @@ class AboutFragment : PreferenceFragmentCompat() {
     }
 
     private fun copyHeapDump(doc: FileDoc): Boolean {
-        val heapFile = FileDoc.fromFile(File(appCtx.externalCache, "heapDump")).list()
-            ?.firstOrNull() ?: return false
+        val heapFile =
+            FileDoc
+                .fromFile(File(appCtx.externalCache, "heapDump"))
+                .list()
+                ?.firstOrNull() ?: return false
         doc.find("heapDump")?.delete()
         val heapDumpDoc = doc.createFolderIfNotExist("heapDump")
         heapFile.openInputStream().getOrNull()?.use { input ->
-            heapDumpDoc.createFileIfNotExist(heapFile.name).openOutputStream().getOrNull()
+            heapDumpDoc
+                .createFileIfNotExist(heapFile.name)
+                .openOutputStream()
+                .getOrNull()
                 ?.use {
                     input.copyTo(it)
                 }
@@ -210,5 +233,4 @@ class AboutFragment : PreferenceFragmentCompat() {
             AppLog.put("保存Logcat失败\n$e", e)
         }
     }
-
 }

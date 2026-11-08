@@ -7,9 +7,10 @@ import io.legado.app.R
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.getCompatColor
 
-class AccentTextView(context: Context, attrs: AttributeSet?) :
-    AppCompatTextView(context, attrs) {
-
+class AccentTextView(
+    context: Context,
+    attrs: AttributeSet?,
+) : AppCompatTextView(context, attrs) {
     init {
         if (!isInEditMode) {
             setTextColor(context.accentColor)
@@ -17,5 +18,4 @@ class AccentTextView(context: Context, attrs: AttributeSet?) :
             setTextColor(context.getCompatColor(R.color.accent))
         }
     }
-
 }

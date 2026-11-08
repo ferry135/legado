@@ -18,11 +18,11 @@ import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.utils.ColorUtils
 
-
-class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
-    RecyclerAdapter<ReplaceRule, ItemReplaceRuleBinding>(context),
+class ReplaceRuleAdapter(
+    context: Context,
+    var callBack: CallBack,
+) : RecyclerAdapter<ReplaceRule, ItemReplaceRuleBinding>(context),
     ItemTouchCallback.Callback {
-
     private val selected = linkedSetOf<ReplaceRule>()
 
     val selection: List<ReplaceRule>
@@ -32,41 +32,48 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
             }
         }
 
-    val diffItemCallBack = object : DiffUtil.ItemCallback<ReplaceRule>() {
+    val diffItemCallBack =
+        object : DiffUtil.ItemCallback<ReplaceRule>() {
+            override fun areItemsTheSame(
+                oldItem: ReplaceRule,
+                newItem: ReplaceRule,
+            ): Boolean = oldItem.id == newItem.id
 
-        override fun areItemsTheSame(oldItem: ReplaceRule, newItem: ReplaceRule): Boolean {
-            return oldItem.id == newItem.id
-        }
+            override fun areContentsTheSame(
+                oldItem: ReplaceRule,
+                newItem: ReplaceRule,
+            ): Boolean {
+                if (oldItem.name != newItem.name) {
+                    return false
+                }
+                if (oldItem.group != newItem.group) {
+                    return false
+                }
+                if (oldItem.isEnabled != newItem.isEnabled) {
+                    return false
+                }
+                return true
+            }
 
-        override fun areContentsTheSame(oldItem: ReplaceRule, newItem: ReplaceRule): Boolean {
-            if (oldItem.name != newItem.name) {
-                return false
+            override fun getChangePayload(
+                oldItem: ReplaceRule,
+                newItem: ReplaceRule,
+            ): Any? {
+                val payload = Bundle()
+                if (oldItem.name != newItem.name ||
+                    oldItem.group != newItem.group
+                ) {
+                    payload.putBoolean("upName", true)
+                }
+                if (oldItem.isEnabled != newItem.isEnabled) {
+                    payload.putBoolean("enabled", newItem.isEnabled)
+                }
+                if (payload.isEmpty) {
+                    return null
+                }
+                return payload
             }
-            if (oldItem.group != newItem.group) {
-                return false
-            }
-            if (oldItem.isEnabled != newItem.isEnabled) {
-                return false
-            }
-            return true
         }
-
-        override fun getChangePayload(oldItem: ReplaceRule, newItem: ReplaceRule): Any? {
-            val payload = Bundle()
-            if (oldItem.name != newItem.name
-                || oldItem.group != newItem.group
-            ) {
-                payload.putBoolean("upName", true)
-            }
-            if (oldItem.isEnabled != newItem.isEnabled) {
-                payload.putBoolean("enabled", newItem.isEnabled)
-            }
-            if (payload.isEmpty) {
-                return null
-            }
-            return payload
-        }
-    }
 
     fun selectAll() {
         getItems().forEach {
@@ -88,9 +95,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         callBack.upCountView()
     }
 
-    override fun getViewBinding(parent: ViewGroup): ItemReplaceRuleBinding {
-        return ItemReplaceRuleBinding.inflate(inflater, parent, false)
-    }
+    override fun getViewBinding(parent: ViewGroup): ItemReplaceRuleBinding = ItemReplaceRuleBinding.inflate(inflater, parent, false)
 
     override fun onCurrentListChanged() {
         callBack.upCountView()
@@ -100,7 +105,7 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         holder: ItemViewHolder,
         binding: ItemReplaceRuleBinding,
         item: ReplaceRule,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
         binding.run {
             if (payloads.isEmpty()) {
@@ -123,7 +128,10 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemReplaceRuleBinding) {
+    override fun registerListener(
+        holder: ItemViewHolder,
+        binding: ItemReplaceRuleBinding,
+    ) {
         binding.apply {
             swtEnabled.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (buttonView.isPressed) {
@@ -154,7 +162,10 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         }
     }
 
-    private fun showMenu(view: View, position: Int) {
+    private fun showMenu(
+        view: View,
+        position: Int,
+    ) {
         val item = getItem(position) ?: return
         val popupMenu = PopupMenu(context, view)
         popupMenu.inflate(R.menu.replace_rule_item)
@@ -172,7 +183,10 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
         popupMenu.show()
     }
 
-    override fun swap(srcPosition: Int, targetPosition: Int): Boolean {
+    override fun swap(
+        srcPosition: Int,
+        targetPosition: Int,
+    ): Boolean {
         val srcItem = getItem(srcPosition)
         val targetItem = getItem(targetPosition)
         if (srcItem != null && targetItem != null) {
@@ -192,7 +206,10 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
 
     private val movedItems = linkedSetOf<ReplaceRule>()
 
-    override fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+    override fun onClearView(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+    ) {
         if (movedItems.isNotEmpty()) {
             callBack.update(*movedItems.toTypedArray())
             movedItems.clear()
@@ -201,15 +218,14 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
 
     val dragSelectCallback: DragSelectTouchHelper.Callback =
         object : DragSelectTouchHelper.AdvanceCallback<ReplaceRule>(Mode.ToggleAndReverse) {
-            override fun currentSelectedId(): MutableSet<ReplaceRule> {
-                return selected
-            }
+            override fun currentSelectedId(): MutableSet<ReplaceRule> = selected
 
-            override fun getItemId(position: Int): ReplaceRule {
-                return getItem(position)!!
-            }
+            override fun getItemId(position: Int): ReplaceRule = getItem(position)!!
 
-            override fun updateSelectState(position: Int, isSelected: Boolean): Boolean {
+            override fun updateSelectState(
+                position: Int,
+                isSelected: Boolean,
+            ): Boolean {
                 getItem(position)?.let {
                     if (isSelected) {
                         selected.add(it)
@@ -226,11 +242,17 @@ class ReplaceRuleAdapter(context: Context, var callBack: CallBack) :
 
     interface CallBack {
         fun update(vararg rule: ReplaceRule)
+
         fun delete(rule: ReplaceRule)
+
         fun edit(rule: ReplaceRule)
+
         fun toTop(rule: ReplaceRule)
+
         fun toBottom(rule: ReplaceRule)
+
         fun upOrder()
+
         fun upCountView()
     }
 }

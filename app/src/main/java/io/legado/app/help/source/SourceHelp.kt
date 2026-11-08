@@ -18,11 +18,11 @@ import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
 
 object SourceHelp {
-
     private val list18Plus by lazy {
         try {
             return@lazy String(appCtx.assets.open("18PlusList.txt").readBytes())
-                .splitNotBlank("\n").map {
+                .splitNotBlank("\n")
+                .map {
                     EncoderUtils.base64Decode(it)
                 }.toHashSet()
         } catch (_: Exception) {
@@ -42,12 +42,18 @@ object SourceHelp {
         return appDb.bookSourceDao.getBookSource(key)
     }
 
-    fun getSource(key: String?, @Suppress("UNUSED_PARAMETER") @SourceType.Type type: Int): BaseSource? {
+    fun getSource(
+        key: String?,
+        @Suppress("UNUSED_PARAMETER") @SourceType.Type type: Int,
+    ): BaseSource? {
         key ?: return null
         return appDb.bookSourceDao.getBookSource(key)
     }
 
-    fun deleteSource(key: String, @Suppress("UNUSED_PARAMETER") @SourceType.Type type: Int) {
+    fun deleteSource(
+        key: String,
+        @Suppress("UNUSED_PARAMETER") @SourceType.Type type: Int,
+    ) {
         when (type) {
             SourceType.book -> deleteBookSource(key)
         }
@@ -82,16 +88,21 @@ object SourceHelp {
         AppCacheManager.clearSourceVariables()
     }
 
-    fun enableSource(key: String, @Suppress("UNUSED_PARAMETER") @SourceType.Type type: Int, enable: Boolean) {
+    fun enableSource(
+        key: String,
+        @Suppress("UNUSED_PARAMETER") @SourceType.Type type: Int,
+        enable: Boolean,
+    ) {
         when (type) {
             SourceType.book -> appDb.bookSourceDao.enable(key, enable)
         }
     }
 
     fun insertBookSource(vararg bookSources: BookSource) {
-        val bookSourcesGroup = bookSources.groupBy {
-            is18Plus(it.bookSourceUrl)
-        }
+        val bookSourcesGroup =
+            bookSources.groupBy {
+                is18Plus(it.bookSourceUrl)
+            }
         bookSourcesGroup[true]?.forEach {
             appCtx.toastOnUi("${it.bookSourceName}是18+网址,禁止导入.")
         }
@@ -110,9 +121,10 @@ object SourceHelp {
         url ?: return false
         val baseUrl = NetworkUtils.getBaseUrl(url) ?: return false
         kotlin.runCatching {
-            val host = baseUrl.split("//", ".").let {
-                if (it.size > 2) "${it[it.lastIndex - 1]}.${it.last()}" else return false
-            }
+            val host =
+                baseUrl.split("//", ".").let {
+                    if (it.size > 2) "${it[it.lastIndex - 1]}.${it.last()}" else return false
+                }
             return list18Plus.contains(host)
         }
         return false
@@ -123,9 +135,9 @@ object SourceHelp {
      */
     fun adjustSortNumber() {
         if (
-            appDb.bookSourceDao.maxOrder > 99999
-            || appDb.bookSourceDao.minOrder < -99999
-            || appDb.bookSourceDao.hasDuplicateOrder
+            appDb.bookSourceDao.maxOrder > 99999 ||
+            appDb.bookSourceDao.minOrder < -99999 ||
+            appDb.bookSourceDao.hasDuplicateOrder
         ) {
             val sources = appDb.bookSourceDao.allPart
             sources.forEachIndexed { index, bookSource ->
@@ -134,5 +146,4 @@ object SourceHelp {
             appDb.bookSourceDao.upOrder(sources)
         }
     }
-
 }

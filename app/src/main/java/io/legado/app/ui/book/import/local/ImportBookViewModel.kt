@@ -30,71 +30,81 @@ import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.withContext
 import java.util.Collections
 
-class ImportBookViewModel(application: Application) : BaseViewModel(application) {
+class ImportBookViewModel(
+    application: Application,
+) : BaseViewModel(application) {
     var rootDoc: FileDoc? = null
     val subDocs = arrayListOf<FileDoc>()
     var sort = context.getPrefInt(PreferKey.localBookImportSort)
     var dataCallback: DataCallback? = null
     var dataFlowStart: (() -> Unit)? = null
     var filterKey: String? = null
-    val dataFlow = callbackFlow<List<ImportBook>> {
+    val dataFlow =
+        callbackFlow<List<ImportBook>> {
 
-        val list = Collections.synchronizedList(ArrayList<ImportBook>())
+            val list = Collections.synchronizedList(ArrayList<ImportBook>())
 
-        dataCallback = object : DataCallback {
+            dataCallback =
+                object : DataCallback {
+                    override fun setItems(fileDocs: List<FileDoc>) {
+                        list.clear()
+                        fileDocs.mapTo(list) {
+                            ImportBook(it)
+                        }
+                        trySend(list)
+                    }
 
-            override fun setItems(fileDocs: List<FileDoc>) {
-                list.clear()
-                fileDocs.mapTo(list) {
-                    ImportBook(it)
+                    override fun addItems(fileDocs: List<FileDoc>) {
+                        fileDocs.mapTo(list) {
+                            ImportBook(it)
+                        }
+                        trySend(list)
+                    }
+
+                    override fun clear() {
+                        list.clear()
+                        trySend(emptyList())
+                    }
+
+                    override fun upAdapter() {
+                        trySend(list)
+                    }
                 }
-                trySend(list)
+
+            withContext(Main) {
+                dataFlowStart?.invoke()
             }
 
-            override fun addItems(fileDocs: List<FileDoc>) {
-                fileDocs.mapTo(list) {
-                    ImportBook(it)
-                }
-                trySend(list)
+            awaitClose {
+                dataCallback = null
             }
+        }.map { docList ->
+            val docList = docList.toList()
+            val filterKey = filterKey
+            val skipFilter = filterKey.isNullOrBlank()
+            val comparator =
+                when (sort) {
+                    2 -> compareBy<ImportBook>({ !it.isDir }, { -it.lastModified })
+                    1 -> compareBy({ !it.isDir }, { -it.size })
+                    else -> compareBy { !it.isDir }
+                } then compareBy(AlphanumComparator) { it.name }
+            docList
+                .asSequence()
+                .filter {
+                    skipFilter || it.name.contains(filterKey)
+                }.sortedWith(comparator)
+                .toList()
+        }.flowOn(IO)
 
-            override fun clear() {
-                list.clear()
-                trySend(emptyList())
-            }
-
-            override fun upAdapter() {
-                trySend(list)
-            }
-        }
-
-        withContext(Main) {
-            dataFlowStart?.invoke()
-        }
-
-        awaitClose {
-            dataCallback = null
-        }
-
-    }.map { docList ->
-        val docList = docList.toList()
-        val filterKey = filterKey
-        val skipFilter = filterKey.isNullOrBlank()
-        val comparator = when (sort) {
-            2 -> compareBy<ImportBook>({ !it.isDir }, { -it.lastModified })
-            1 -> compareBy({ !it.isDir }, { -it.size })
-            else -> compareBy { !it.isDir }
-        } then compareBy(AlphanumComparator) { it.name }
-        docList.asSequence().filter {
-            skipFilter || it.name.contains(filterKey)
-        }.sortedWith(comparator).toList()
-    }.flowOn(IO)
-
-    fun addToBookshelf(bookList: HashSet<ImportBook>, finally: () -> Unit) {
+    fun addToBookshelf(
+        bookList: HashSet<ImportBook>,
+        finally: () -> Unit,
+    ) {
         execute {
-            val fileUris = bookList.map {
-                it.file.uri
-            }
+            val fileUris =
+                bookList.map {
+                    it.file.uri
+                }
             LocalBook.importFiles(fileUris)
         }.onError {
             context.toastOnUi("添加书架失败，请尝试重新选择文件夹")
@@ -106,7 +116,10 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
         }
     }
 
-    fun deleteDoc(bookList: HashSet<ImportBook>, finally: () -> Unit) {
+    fun deleteDoc(
+        bookList: HashSet<ImportBook>,
+        finally: () -> Unit,
+    ) {
         execute {
             bookList.forEach {
                 it.file.delete()
@@ -118,13 +131,14 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
 
     fun loadDoc(fileDoc: FileDoc) {
         execute {
-            val docList = fileDoc.list { item ->
-                when {
-                    item.name.startsWith(".") -> false
-                    item.isDir -> true
-                    else -> item.name.matches(bookFileRegex) || item.name.matches(archiveFileRegex)
+            val docList =
+                fileDoc.list { item ->
+                    when {
+                        item.name.startsWith(".") -> false
+                        item.isDir -> true
+                        else -> item.name.matches(bookFileRegex) || item.name.matches(archiveFileRegex)
+                    }
                 }
-            }
             dataCallback?.setItems(docList!!)
         }.onError {
             context.toastOnUi("获取文件列表出错\n${it.localizedMessage}")
@@ -137,7 +151,8 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
         var n = 1
         channel.trySend(fileDoc)
         val list = arrayListOf<FileDoc>()
-        channel.consumeAsFlow()
+        channel
+            .consumeAsFlow()
             .mapParallel(16) { fileDoc ->
                 fileDoc.list()!!
             }.onEach { fileDocs ->
@@ -147,8 +162,8 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
                     if (it.isDir) {
                         n++
                         channel.trySend(it)
-                    } else if (it.name.matches(bookFileRegex)
-                        || it.name.matches(archiveFileRegex)
+                    } else if (it.name.matches(bookFileRegex) ||
+                        it.name.matches(archiveFileRegex)
                     ) {
                         list.add(it)
                     }
@@ -167,7 +182,6 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
     }
 
     interface DataCallback {
-
         fun setItems(fileDocs: List<FileDoc>)
 
         fun addItems(fileDocs: List<FileDoc>)
@@ -175,7 +189,5 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
         fun clear()
 
         fun upAdapter()
-
     }
-
 }

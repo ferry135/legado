@@ -6,7 +6,6 @@ import splitties.init.appCtx
 
 @Suppress("ConstPropertyName")
 object ReadTipConfig {
-
     const val none = 0
     const val chapterTitle = 1
     const val time = 2
@@ -20,10 +19,21 @@ object ReadTipConfig {
     const val timeBatteryPercentage = 9
     const val totalProgress1 = 11
 
-    val tipValues = arrayOf(
-        none, bookName, chapterTitle, time, battery, batteryPercentage, page,
-        totalProgress, totalProgress1, pageAndTotal, timeBattery, timeBatteryPercentage
-    )
+    val tipValues =
+        arrayOf(
+            none,
+            bookName,
+            chapterTitle,
+            time,
+            battery,
+            batteryPercentage,
+            page,
+            totalProgress,
+            totalProgress1,
+            pageAndTotal,
+            timeBattery,
+            timeBatteryPercentage,
+        )
     val tipNames get() = appCtx.resources.getStringArray(R.array.read_tip).toList()
 
     val tipColorNames get() = appCtx.resources.getStringArray(R.array.tip_color).toList()
@@ -90,18 +100,14 @@ object ReadTipConfig {
             ReadBookConfig.config.tipDividerColor = value
         }
 
-    fun getHeaderModes(context: Context): LinkedHashMap<Int, String> {
-        return linkedMapOf(
-            Pair(0, context.getString(R.string.hide_when_status_bar_show)),
-            Pair(1, context.getString(R.string.show)),
-            Pair(2, context.getString(R.string.hide))
-        )
-    }
+    fun getHeaderModes(context: Context): LinkedHashMap<Int, String> = linkedMapOf(
+        Pair(0, context.getString(R.string.hide_when_status_bar_show)),
+        Pair(1, context.getString(R.string.show)),
+        Pair(2, context.getString(R.string.hide)),
+    )
 
-    fun getFooterModes(context: Context): LinkedHashMap<Int, String> {
-        return linkedMapOf(
-            Pair(0, context.getString(R.string.show)),
-            Pair(1, context.getString(R.string.hide))
-        )
-    }
+    fun getFooterModes(context: Context): LinkedHashMap<Int, String> = linkedMapOf(
+        Pair(0, context.getString(R.string.show)),
+        Pair(1, context.getString(R.string.hide)),
+    )
 }

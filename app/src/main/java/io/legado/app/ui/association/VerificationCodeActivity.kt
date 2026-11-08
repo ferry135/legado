@@ -10,9 +10,7 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 /**
  * 验证码
  */
-class VerificationCodeActivity :
-    BaseActivity<ActivityTranslucenceBinding>() {
-
+class VerificationCodeActivity : BaseActivity<ActivityTranslucenceBinding>() {
     override val binding by viewBinding(ActivityTranslucenceBinding::inflate)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -21,9 +19,8 @@ class VerificationCodeActivity :
             val sourceName = intent.getStringExtra("sourceName")
             val sourceType = intent.getIntExtra("sourceType", SourceType.book)
             showDialogFragment(
-                VerificationCodeDialog(it, sourceOrigin, sourceName, sourceType)
+                VerificationCodeDialog(it, sourceOrigin, sourceName, sourceType),
             )
         } ?: finish()
     }
-
 }

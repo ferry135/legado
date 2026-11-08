@@ -22,12 +22,13 @@ import java.util.Date
 import kotlin.math.min
 import com.google.android.material.R as materialR
 
-class ReaderInfoBarView @JvmOverloads constructor(
+class ReaderInfoBarView
+@JvmOverloads
+constructor(
     context: Context,
     attrs: AttributeSet? = null,
     @AttrRes defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr) {
-
     companion object {
         const val ALIGN_LEFT = 0
         const val ALIGN_CENTER = 1
@@ -42,18 +43,20 @@ class ReaderInfoBarView @JvmOverloads constructor(
     private var insetTop: Int = 0
     private var cutoutInsetLeft = 0
     private var cutoutInsetRight = 0
-    private val colorText = ColorUtils.setAlphaComponent(
-        context.obtainStyledAttributes(intArrayOf(materialR.attr.colorOnSurface)).use {
-            it.getColor(0, Color.BLACK)
-        },
-        200,
-    )
-    private val colorOutline = ColorUtils.setAlphaComponent(
-        context.obtainStyledAttributes(intArrayOf(materialR.attr.colorSurface)).use {
-            it.getColor(0, Color.WHITE)
-        },
-        200,
-    )
+    private val colorText =
+        ColorUtils.setAlphaComponent(
+            context.obtainStyledAttributes(intArrayOf(materialR.attr.colorOnSurface)).use {
+                it.getColor(0, Color.BLACK)
+            },
+            200,
+        )
+    private val colorOutline =
+        ColorUtils.setAlphaComponent(
+            context.obtainStyledAttributes(intArrayOf(materialR.attr.colorSurface)).use {
+                it.getColor(0, Color.WHITE)
+            },
+            200,
+        )
 
     var textInfoAlignment: Int = ALIGN_CENTER
         set(value) {
@@ -92,21 +95,23 @@ class ReaderInfoBarView @JvmOverloads constructor(
         super.onDraw(canvas)
         val ty = innerHeight / 2f + textBounds.height() / 2f - textBounds.bottom
 
-        val textX = when (textInfoAlignment) {
-            ALIGN_CENTER -> {
-                val textWidth = paint.measureText(text)
-                (width / 2f).coerceIn(
-                    paddingLeft + insetLeft + cutoutInsetLeft + textWidth / 2,
-                    width - paddingRight - insetRight - cutoutInsetRight - textWidth / 2
-                )
-            }
+        val textX =
+            when (textInfoAlignment) {
+                ALIGN_CENTER -> {
+                    val textWidth = paint.measureText(text)
+                    (width / 2f).coerceIn(
+                        paddingLeft + insetLeft + cutoutInsetLeft + textWidth / 2,
+                        width - paddingRight - insetRight - cutoutInsetRight - textWidth / 2,
+                    )
+                }
 
-            else -> (paddingLeft + insetLeft + cutoutInsetLeft).toFloat()
-        }
-        paint.textAlign = when (textInfoAlignment) {
-            ALIGN_CENTER -> Paint.Align.CENTER
-            else -> Paint.Align.LEFT
-        }
+                else -> (paddingLeft + insetLeft + cutoutInsetLeft).toFloat()
+            }
+        paint.textAlign =
+            when (textInfoAlignment) {
+                ALIGN_CENTER -> Paint.Align.CENTER
+                else -> Paint.Align.LEFT
+            }
 
         canvas.drawTextOutline(
             text,
@@ -122,7 +127,12 @@ class ReaderInfoBarView @JvmOverloads constructor(
         )
     }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+    override fun onSizeChanged(
+        w: Int,
+        h: Int,
+        oldw: Int,
+        oldh: Int,
+    ) {
         super.onSizeChanged(w, h, oldw, oldh)
         updateTextSize()
     }
@@ -154,28 +164,31 @@ class ReaderInfoBarView @JvmOverloads constructor(
         paint.getTextBounds(text, 0, text.length, textBounds)
 
         val maxTextHeight = innerHeight * 0.8f
-        val scaleFactor = min(
-            maxTextHeight / textBounds.height(),
-            calculateMaxWidthScale()
-        )
+        val scaleFactor =
+            min(
+                maxTextHeight / textBounds.height(),
+                calculateMaxWidthScale(),
+            )
         paint.textSize = testTextSize * scaleFactor
 
         paint.getTextBounds(text, 0, text.length, textBounds)
     }
 
-    private fun calculateMaxWidthScale(): Float {
-        return when (textInfoAlignment) {
-            ALIGN_CENTER -> {
-                val availableWidth = innerWidth - cutoutInsetLeft - cutoutInsetRight
-                val requiredWidth = paint.measureText(text)
-                if (requiredWidth > availableWidth) availableWidth / requiredWidth else 1f
-            }
-
-            else -> 1f
+    private fun calculateMaxWidthScale(): Float = when (textInfoAlignment) {
+        ALIGN_CENTER -> {
+            val availableWidth = innerWidth - cutoutInsetLeft - cutoutInsetRight
+            val requiredWidth = paint.measureText(text)
+            if (requiredWidth > availableWidth) availableWidth / requiredWidth else 1f
         }
+
+        else -> 1f
     }
 
-    private fun Canvas.drawTextOutline(text: String, x: Float, y: Float) {
+    private fun Canvas.drawTextOutline(
+        text: String,
+        x: Float,
+        y: Float,
+    ) {
         paint.color = colorOutline
         paint.style = Paint.Style.STROKE
         drawText(text, x, y, paint)
@@ -185,8 +198,10 @@ class ReaderInfoBarView @JvmOverloads constructor(
     }
 
     private inner class TimeReceiver : BroadcastReceiver() {
-
-        override fun onReceive(context: Context?, intent: Intent?) {
+        override fun onReceive(
+            context: Context?,
+            intent: Intent?,
+        ) {
             timeText = timeFormat.format(Date())
             invalidate()
         }

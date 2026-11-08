@@ -10,7 +10,6 @@ import java.io.File
  * */
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 object EncodingDetect {
-
     private val headTagRegex = "(?i)<head>[\\s\\S]*?</head>".toRegex()
     private val headOpenBytes = "<head>".toByteArray()
     private val headCloseBytes = "</head>".toByteArray()
@@ -37,11 +36,12 @@ object EncodingDetect {
                 if (httpEquiv.equals("content-type", true)) {
                     val content = metaTag.attr("content")
                     val idx = content.indexOf("charset=", ignoreCase = true)
-                    charsetStr = if (idx > -1) {
-                        content.substring(idx + "charset=".length)
-                    } else {
-                        content.substringAfter(";")
-                    }
+                    charsetStr =
+                        if (idx > -1) {
+                            content.substring(idx + "charset=".length)
+                        } else {
+                            content.substringAfter(";")
+                        }
                     if (!TextUtils.isEmpty(charsetStr)) {
                         return charsetStr
                     }
@@ -60,9 +60,7 @@ object EncodingDetect {
     /**
      * 得到文件的编码
      */
-    fun getEncode(filePath: String): String {
-        return getEncode(File(filePath))
-    }
+    fun getEncode(filePath: String): String = getEncode(File(filePath))
 
     /**
      * 得到文件的编码

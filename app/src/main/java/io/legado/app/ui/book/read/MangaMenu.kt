@@ -28,7 +28,9 @@ import io.legado.app.utils.openUrl
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.visible
 
-class MangaMenu @JvmOverloads constructor(
+class MangaMenu
+@JvmOverloads
+constructor(
     context: Context,
     attrs: AttributeSet? = null,
 ) : FrameLayout(context, attrs) {
@@ -50,40 +52,42 @@ class MangaMenu @JvmOverloads constructor(
     private var isMenuOutAnimating = false
     private var bgColor = context.bottomBackground
 
-    private val menuOutListener = object : Animation.AnimationListener {
-        override fun onAnimationStart(animation: Animation) {
-            isMenuOutAnimating = true
-            binding.vwMenuBg.setOnClickListener(null)
-        }
-
-        override fun onAnimationEnd(animation: Animation) {
-            this@MangaMenu.invisible()
-            binding.titleBar.invisible()
-            binding.bottomMenu.invisible()
-            isMenuOutAnimating = false
-            canShowMenu = false
-            callBack.upSystemUiVisibility(false)
-        }
-
-        override fun onAnimationRepeat(animation: Animation) = Unit
-    }
-    private val menuInListener = object : Animation.AnimationListener {
-        override fun onAnimationStart(animation: Animation) {
-            binding.tvSourceAction.text =
-                ReadManga.bookSource?.bookSourceName ?: context.getString(R.string.book_source)
-            callBack.upSystemUiVisibility(true)
-            binding.tvSourceAction.isGone = false
-        }
-
-        @SuppressLint("RtlHardcoded")
-        override fun onAnimationEnd(animation: Animation) {
-            binding.run {
-                vwMenuBg.setOnClickListener { runMenuOut() }
+    private val menuOutListener =
+        object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation) {
+                isMenuOutAnimating = true
+                binding.vwMenuBg.setOnClickListener(null)
             }
-        }
 
-        override fun onAnimationRepeat(animation: Animation) = Unit
-    }
+            override fun onAnimationEnd(animation: Animation) {
+                this@MangaMenu.invisible()
+                binding.titleBar.invisible()
+                binding.bottomMenu.invisible()
+                isMenuOutAnimating = false
+                canShowMenu = false
+                callBack.upSystemUiVisibility(false)
+            }
+
+            override fun onAnimationRepeat(animation: Animation) = Unit
+        }
+    private val menuInListener =
+        object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation) {
+                binding.tvSourceAction.text =
+                    ReadManga.bookSource?.bookSourceName ?: context.getString(R.string.book_source)
+                callBack.upSystemUiVisibility(true)
+                binding.tvSourceAction.isGone = false
+            }
+
+            @SuppressLint("RtlHardcoded")
+            override fun onAnimationEnd(animation: Animation) {
+                binding.run {
+                    vwMenuBg.setOnClickListener { runMenuOut() }
+                }
+            }
+
+            override fun onAnimationRepeat(animation: Animation) = Unit
+        }
 
     init {
         initView()
@@ -142,39 +146,40 @@ class MangaMenu @JvmOverloads constructor(
         }
     }
 
-
     private fun bindEvent() = binding.run {
         vwMenuBg.setOnClickListener { runMenuOut() }
         titleBar.toolbar.setOnClickListener {
             callBack.openBookInfoActivity()
         }
-        val chapterViewClickListener = OnClickListener {
-            if (AppConfig.readUrlInBrowser) {
-                context.openUrl(tvChapterUrl.text.toString().substringBefore(",{"))
-            } else {
-                context.startActivity<WebViewActivity> {
-                    val url = tvChapterUrl.text.toString()
-                    val bookSource = ReadBook.bookSource
-                    putExtra("title", tvChapterName.text)
-                    putExtra("url", url)
-                    putExtra("sourceOrigin", bookSource?.bookSourceUrl)
-                    putExtra("sourceName", bookSource?.bookSourceName)
-                    putExtra("sourceType", bookSource?.getSourceType())
+        val chapterViewClickListener =
+            OnClickListener {
+                if (AppConfig.readUrlInBrowser) {
+                    context.openUrl(tvChapterUrl.text.toString().substringBefore(",{"))
+                } else {
+                    context.startActivity<WebViewActivity> {
+                        val url = tvChapterUrl.text.toString()
+                        val bookSource = ReadBook.bookSource
+                        putExtra("title", tvChapterName.text)
+                        putExtra("url", url)
+                        putExtra("sourceOrigin", bookSource?.bookSourceUrl)
+                        putExtra("sourceName", bookSource?.bookSourceName)
+                        putExtra("sourceType", bookSource?.getSourceType())
+                    }
                 }
             }
-        }
-        val chapterViewLongClickListener = OnLongClickListener {
-            context.alert(R.string.open_fun) {
-                setMessage(R.string.use_browser_open)
-                okButton {
-                    AppConfig.readUrlInBrowser = true
+        val chapterViewLongClickListener =
+            OnLongClickListener {
+                context.alert(R.string.open_fun) {
+                    setMessage(R.string.use_browser_open)
+                    okButton {
+                        AppConfig.readUrlInBrowser = true
+                    }
+                    noButton {
+                        AppConfig.readUrlInBrowser = false
+                    }
                 }
-                noButton {
-                    AppConfig.readUrlInBrowser = false
-                }
+                true
             }
-            true
-        }
         tvChapterName.setOnClickListener(chapterViewClickListener)
         tvChapterName.setOnLongClickListener(chapterViewLongClickListener)
         tvChapterUrl.setOnClickListener(chapterViewClickListener)
@@ -187,24 +192,33 @@ class MangaMenu @JvmOverloads constructor(
             ReadManga.moveToPrevChapter(true)
         }
 
-        seekReadPage.setOnSeekBarChangeListener(object : SeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    callBack.skipToPage(seekBar.progress)
+        seekReadPage.setOnSeekBarChangeListener(
+            object : SeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar,
+                    progress: Int,
+                    fromUser: Boolean,
+                ) {
+                    if (fromUser) {
+                        callBack.skipToPage(seekBar.progress)
+                    }
                 }
-            }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar) {
-                binding.vwMenuBg.setOnClickListener(null)
-            }
+                override fun onStartTrackingTouch(seekBar: SeekBar) {
+                    binding.vwMenuBg.setOnClickListener(null)
+                }
 
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-                binding.vwMenuBg.setOnClickListener { runMenuOut() }
-            }
-        })
+                override fun onStopTrackingTouch(seekBar: SeekBar) {
+                    binding.vwMenuBg.setOnClickListener { runMenuOut() }
+                }
+            },
+        )
     }
 
-    fun upSeekBar(value: Int, count: Int) {
+    fun upSeekBar(
+        value: Int,
+        count: Int,
+    ) {
         binding.seekReadPage.apply {
             max = count.minus(1)
             progress = value
@@ -213,8 +227,9 @@ class MangaMenu @JvmOverloads constructor(
 
     interface CallBack {
         fun openBookInfoActivity()
+
         fun upSystemUiVisibility(menuIsVisible: Boolean)
+
         fun skipToPage(index: Int)
     }
-
 }

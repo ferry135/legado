@@ -8,14 +8,18 @@ import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
 import io.legado.app.utils.screenshot
 
-class CoverPageDelegate(readView: ReadView) : HorizontalPageDelegate(readView) {
+class CoverPageDelegate(
+    readView: ReadView,
+) : HorizontalPageDelegate(readView) {
     private val shadowDrawableR: GradientDrawable
 
     init {
         val shadowColors = intArrayOf(0x66111111, 0x00000000)
-        shadowDrawableR = GradientDrawable(
-            GradientDrawable.Orientation.LEFT_RIGHT, shadowColors
-        )
+        shadowDrawableR =
+            GradientDrawable(
+                GradientDrawable.Orientation.LEFT_RIGHT,
+                shadowColors,
+            )
         shadowDrawableR.gradientType = GradientDrawable.LINEAR_GRADIENT
     }
 
@@ -23,8 +27,8 @@ class CoverPageDelegate(readView: ReadView) : HorizontalPageDelegate(readView) {
         if (!isRunning) return
         val offsetX = touchX - startX
 
-        if ((mDirection == PageDirection.NEXT && offsetX > 0)
-            || (mDirection == PageDirection.PREV && offsetX < 0)
+        if ((mDirection == PageDirection.NEXT && offsetX > 0) ||
+            (mDirection == PageDirection.PREV && offsetX < 0)
         ) {
             return
         }
@@ -67,19 +71,26 @@ class CoverPageDelegate(readView: ReadView) : HorizontalPageDelegate(readView) {
         }
     }
 
-    private fun addShadow(left: Float, canvas: Canvas) {
+    private fun addShadow(
+        left: Float,
+        canvas: Canvas,
+    ) {
         if (left == 0f) return
-        val dx = if (left < 0) {
-            left + viewWidth
-        } else {
-            left
-        }
+        val dx =
+            if (left < 0) {
+                left + viewWidth
+            } else {
+                left
+            }
         canvas.withTranslation(dx) {
             shadowDrawableR.draw(canvas)
         }
     }
 
-    override fun setViewSize(width: Int, height: Int) {
+    override fun setViewSize(
+        width: Int,
+        height: Int,
+    ) {
         super.setViewSize(width, height)
         shadowDrawableR.setBounds(0, 0, 30, viewHeight)
     }
@@ -93,25 +104,26 @@ class CoverPageDelegate(readView: ReadView) : HorizontalPageDelegate(readView) {
     override fun onAnimStart(animationSpeed: Int) {
         val distanceX: Float
         when (mDirection) {
-            PageDirection.NEXT -> distanceX =
-                if (isCancel) {
-                    var dis = viewWidth - startX + touchX
-                    if (dis > viewWidth) {
-                        dis = viewWidth.toFloat()
+            PageDirection.NEXT ->
+                distanceX =
+                    if (isCancel) {
+                        var dis = viewWidth - startX + touchX
+                        if (dis > viewWidth) {
+                            dis = viewWidth.toFloat()
+                        }
+                        viewWidth - dis
+                    } else {
+                        -(touchX + (viewWidth - startX))
                     }
-                    viewWidth - dis
-                } else {
-                    -(touchX + (viewWidth - startX))
-                }
 
-            else -> distanceX =
-                if (isCancel) {
-                    -(touchX - startX)
-                } else {
-                    viewWidth - (touchX - startX)
-                }
+            else ->
+                distanceX =
+                    if (isCancel) {
+                        -(touchX - startX)
+                    } else {
+                        viewWidth - (touchX - startX)
+                    }
         }
         startScroll(touchX.toInt(), 0, distanceX.toInt(), 0, animationSpeed)
     }
-
 }

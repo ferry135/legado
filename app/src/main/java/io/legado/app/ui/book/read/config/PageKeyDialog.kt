@@ -16,14 +16,14 @@ import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.getPrefString
 import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.putPrefString
-import io.legado.app.utils.showSoftInput
 import io.legado.app.utils.setLayout
+import io.legado.app.utils.showSoftInput
 import splitties.views.onClick
 import kotlin.math.roundToInt
 
-
-class PageKeyDialog(context: Context) : Dialog(context) {
-
+class PageKeyDialog(
+    context: Context,
+) : Dialog(context) {
     private val binding = DialogPageKeyBinding.inflate(layoutInflater)
 
     override fun onStart() {
@@ -38,14 +38,17 @@ class PageKeyDialog(context: Context) : Dialog(context) {
         setContentView(binding.root)
         binding.run {
             // 弹窗底运行时圆角化（DECISIONS §4，corner_radius_lg=16dp）：底色仍取 ThemeStore 运行时 backgroundColor
-            contentView.background = GradientDrawable().apply {
-                setColor(context.backgroundColor)
-                cornerRadius = 16.dpToPx().toFloat()
-            }
+            contentView.background =
+                GradientDrawable().apply {
+                    setColor(context.backgroundColor)
+                    cornerRadius = 16.dpToPx().toFloat()
+                }
+
             // field 卡聚焦描边运行时注入（BookmarkDialog.kt:63 同法）：默认/聚焦同 surface_container_high 底，
             // 仅聚焦叠 1.5dp 主色描边；accentColor 随 ThemeStore 换肤（MASTER.md §1.2）。
             // 两卡各自 create 一份：StateListDrawable 选中态挂实例上，共享会串描边
-            fun newFieldBackground() = Selector.shapeBuild()
+            fun newFieldBackground() = Selector
+                .shapeBuild()
                 .setCornerRadius(10.dpToPx())
                 .setStrokeWidth(1.5f.dpToPx().roundToInt())
                 .setDefaultBgColor(context.getCompatColor(R.color.surface_container_high))
@@ -72,7 +75,10 @@ class PageKeyDialog(context: Context) : Dialog(context) {
         }
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+    override fun onKeyDown(
+        keyCode: Int,
+        event: KeyEvent,
+    ): Boolean {
         if (keyCode != KeyEvent.KEYCODE_BACK && keyCode != KeyEvent.KEYCODE_DEL) {
             if (binding.etPrev.hasFocus()) {
                 val editableText = binding.etPrev.editableText
@@ -99,5 +105,4 @@ class PageKeyDialog(context: Context) : Dialog(context) {
         super.dismiss()
         currentFocus?.hideSoftInput()
     }
-
 }

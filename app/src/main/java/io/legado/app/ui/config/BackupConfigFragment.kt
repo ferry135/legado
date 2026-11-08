@@ -55,58 +55,67 @@ import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import kotlin.coroutines.coroutineContext
 
-class BackupConfigFragment : PreferenceFragment(),
+class BackupConfigFragment :
+    PreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener,
     MenuProvider {
-
     private val viewModel by activityViewModels<ConfigViewModel>()
     private val waitDialog by lazy { WaitDialog(requireContext()) }
     private var backupJob: Job? = null
     private var restoreJob: Job? = null
 
-    private val selectBackupPath = registerForActivityResult(HandleFileContract()) {
-        it.uri?.let { uri ->
-            if (uri.isContentScheme()) {
-                AppConfig.backupPath = uri.toString()
-            } else {
-                AppConfig.backupPath = uri.path
-            }
-        }
-    }
-    private val backupDir = registerForActivityResult(HandleFileContract()) { result ->
-        result.uri?.let { uri ->
-            if (uri.isContentScheme()) {
-                AppConfig.backupPath = uri.toString()
-                backup(uri.toString())
-            } else {
-                uri.path?.let { path ->
-                    AppConfig.backupPath = path
-                    backup(path)
+    private val selectBackupPath =
+        registerForActivityResult(HandleFileContract()) {
+            it.uri?.let { uri ->
+                if (uri.isContentScheme()) {
+                    AppConfig.backupPath = uri.toString()
+                } else {
+                    AppConfig.backupPath = uri.path
                 }
             }
         }
-    }
-    private val restoreDoc = registerForActivityResult(HandleFileContract()) {
-        it.uri?.let { uri ->
-            waitDialog.setText("恢复中…")
-            waitDialog.show()
-            val task = Coroutine.async {
-                Restore.restore(appCtx, uri)
-            }.onFinally {
-                waitDialog.dismiss()
-            }
-            waitDialog.setOnCancelListener {
-                task.cancel()
+    private val backupDir =
+        registerForActivityResult(HandleFileContract()) { result ->
+            result.uri?.let { uri ->
+                if (uri.isContentScheme()) {
+                    AppConfig.backupPath = uri.toString()
+                    backup(uri.toString())
+                } else {
+                    uri.path?.let { path ->
+                        AppConfig.backupPath = path
+                        backup(path)
+                    }
+                }
             }
         }
-    }
-    private val restoreOld = registerForActivityResult(HandleFileContract()) {
-        it.uri?.let { uri ->
-            ImportOldData.importUri(appCtx, uri)
+    private val restoreDoc =
+        registerForActivityResult(HandleFileContract()) {
+            it.uri?.let { uri ->
+                waitDialog.setText("恢复中…")
+                waitDialog.show()
+                val task =
+                    Coroutine
+                        .async {
+                            Restore.restore(appCtx, uri)
+                        }.onFinally {
+                            waitDialog.dismiss()
+                        }
+                waitDialog.setOnCancelListener {
+                    task.cancel()
+                }
+            }
         }
-    }
+    private val restoreOld =
+        registerForActivityResult(HandleFileContract()) {
+            it.uri?.let { uri ->
+                ImportOldData.importUri(appCtx, uri)
+            }
+        }
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+    override fun onCreatePreferences(
+        savedInstanceState: Bundle?,
+        rootKey: String?,
+    ) {
         addPreferencesFromResource(R.xml.pref_config_backup)
         findPreference<EditTextPreference>(PreferKey.webDavPassword)?.let {
             it.setOnBindEditTextListener { editText ->
@@ -137,7 +146,10 @@ class BackupConfigFragment : PreferenceFragment(),
             }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         activity?.setTitle(R.string.backup_restore)
         preferenceManager.sharedPreferences?.registerOnSharedPreferenceChangeListener(this)
@@ -148,7 +160,10 @@ class BackupConfigFragment : PreferenceFragment(),
         }
     }
 
-    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+    override fun onCreateMenu(
+        menu: Menu,
+        menuInflater: MenuInflater,
+    ) {
         menuInflater.inflate(R.menu.backup_restore, menu)
         menu.applyTint(requireContext())
     }
@@ -170,22 +185,30 @@ class BackupConfigFragment : PreferenceFragment(),
         preferenceManager.sharedPreferences?.unregisterOnSharedPreferenceChangeListener(this)
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+    override fun onSharedPreferenceChanged(
+        sharedPreferences: SharedPreferences?,
+        key: String?,
+    ) {
         when (key) {
             PreferKey.backupPath -> upPreferenceSummary(key, getPrefString(key))
             PreferKey.webDavUrl,
             PreferKey.webDavAccount,
             PreferKey.webDavPassword,
-            PreferKey.webDavDir -> listView.post {
-                upPreferenceSummary(key, appCtx.getPrefString(key))
-                viewModel.upWebDavConfig()
-            }
+            PreferKey.webDavDir,
+            ->
+                listView.post {
+                    upPreferenceSummary(key, appCtx.getPrefString(key))
+                    viewModel.upWebDavConfig()
+                }
 
             PreferKey.webDavDeviceName -> upPreferenceSummary(key, getPrefString(key))
         }
     }
 
-    private fun upPreferenceSummary(preferenceKey: String, value: String?) {
+    private fun upPreferenceSummary(
+        preferenceKey: String,
+        value: String?,
+    ) {
         val preference = findPreference<Preference>(preferenceKey) ?: return
         when (preferenceKey) {
             PreferKey.webDavUrl ->
@@ -209,10 +232,12 @@ class BackupConfigFragment : PreferenceFragment(),
                     preference.summary = "*".repeat(value.length)
                 }
 
-            PreferKey.webDavDir -> preference.summary = when (value) {
-                null -> "legado"
-                else -> value
-            }
+            PreferKey.webDavDir ->
+                preference.summary =
+                    when (value) {
+                        null -> "legado"
+                        else -> value
+                    }
 
             else -> {
                 if (preference is ListPreference) {
@@ -241,9 +266,10 @@ class BackupConfigFragment : PreferenceFragment(),
      * 备份忽略设置
      */
     private fun backupIgnore() {
-        val checkedItems = BooleanArray(BackupConfig.ignoreKeys.size) {
-            BackupConfig.ignoreConfig[BackupConfig.ignoreKeys[it]] ?: false
-        }
+        val checkedItems =
+            BooleanArray(BackupConfig.ignoreKeys.size) {
+                BackupConfig.ignoreConfig[BackupConfig.ignoreKeys[it]] ?: false
+            }
         alert(R.string.restore_ignore) {
             multiChoiceItems(BackupConfig.ignoreTitle, checkedItems) { _, which, isChecked ->
                 BackupConfig.ignoreConfig[BackupConfig.ignoreKeys[which]] = isChecked
@@ -254,7 +280,6 @@ class BackupConfigFragment : PreferenceFragment(),
         }
     }
 
-
     fun backup() {
         val backupPath = AppConfig.backupPath
         if (backupPath.isNullOrEmpty()) {
@@ -262,9 +287,10 @@ class BackupConfigFragment : PreferenceFragment(),
         } else {
             if (backupPath.isContentScheme()) {
                 lifecycleScope.launch {
-                    val canWrite = withContext(IO) {
-                        FileDoc.fromDir(backupPath).checkWrite()
-                    }
+                    val canWrite =
+                        withContext(IO) {
+                            FileDoc.fromDir(backupPath).checkWrite()
+                        }
                     if (canWrite) {
                         backup(backupPath)
                     } else {
@@ -284,34 +310,35 @@ class BackupConfigFragment : PreferenceFragment(),
         }
         waitDialog.show()
         backupJob?.cancel()
-        backupJob = lifecycleScope.launch {
-            try {
-                Backup.backupLocked(requireContext(), backupPath)
-                appCtx.toastOnUi(R.string.backup_success)
-            } catch (e: Throwable) {
-                ensureActive()
-                AppLog.put("备份出错\n${e.localizedMessage}", e)
-                appCtx.toastOnUi(
-                    appCtx.getString(
-                        R.string.backup_fail,
-                        e.localizedMessage
+        backupJob =
+            lifecycleScope.launch {
+                try {
+                    Backup.backupLocked(requireContext(), backupPath)
+                    appCtx.toastOnUi(R.string.backup_success)
+                } catch (e: Throwable) {
+                    ensureActive()
+                    AppLog.put("备份出错\n${e.localizedMessage}", e)
+                    appCtx.toastOnUi(
+                        appCtx.getString(
+                            R.string.backup_fail,
+                            e.localizedMessage,
+                        ),
                     )
-                )
-            } finally {
-                ensureActive()
-                waitDialog.dismiss()
+                } finally {
+                    ensureActive()
+                    waitDialog.dismiss()
+                }
             }
-        }
     }
 
     private fun backupUsePermission(path: String) {
-        PermissionsCompat.Builder()
+        PermissionsCompat
+            .Builder()
             .addPermissions(*Permissions.Group.STORAGE)
             .rationale(R.string.tip_perm_request_storage)
             .onGranted {
                 backup(path)
-            }
-            .request()
+            }.request()
     }
 
     fun restore() {
@@ -320,25 +347,26 @@ class BackupConfigFragment : PreferenceFragment(),
             restoreJob?.cancel()
         }
         waitDialog.show()
-        Coroutine.async {
-            restoreJob = coroutineContext[Job]
-            showRestoreDialog(requireContext())
-        }.onError {
-            AppLog.put("恢复备份出错WebDavError\n${it.localizedMessage}", it)
-            if (context == null) {
-                return@onError
-            }
-            alert {
-                setTitle(R.string.restore)
-                setMessage("WebDavError\n${it.localizedMessage}\n将从本地备份恢复。")
-                okButton {
-                    restoreFromLocal()
+        Coroutine
+            .async {
+                restoreJob = coroutineContext[Job]
+                showRestoreDialog(requireContext())
+            }.onError {
+                AppLog.put("恢复备份出错WebDavError\n${it.localizedMessage}", it)
+                if (context == null) {
+                    return@onError
                 }
-                cancelButton()
+                alert {
+                    setTitle(R.string.restore)
+                    setMessage("WebDavError\n${it.localizedMessage}\n将从本地备份恢复。")
+                    okButton {
+                        restoreFromLocal()
+                    }
+                    cancelButton()
+                }
+            }.onFinally {
+                waitDialog.dismiss()
             }
-        }.onFinally {
-            waitDialog.dismiss()
-        }
     }
 
     private suspend fun showRestoreDialog(context: Context) {
@@ -351,7 +379,7 @@ class BackupConfigFragment : PreferenceFragment(),
             withContext(Main) {
                 context.selector(
                     title = context.getString(R.string.select_restore_file),
-                    items = names
+                    items = names,
                 ) { _, index ->
                     if (index in 0 until names.size) {
                         listView.post {
@@ -368,14 +396,16 @@ class BackupConfigFragment : PreferenceFragment(),
     private fun restoreWebDav(name: String) {
         waitDialog.setText("恢复中…")
         waitDialog.show()
-        val task = Coroutine.async {
-            AppWebDav.restoreWebDav(name)
-        }.onError {
-            AppLog.put("WebDav恢复出错\n${it.localizedMessage}", it)
-            appCtx.toastOnUi("WebDav恢复出错\n${it.localizedMessage}")
-        }.onFinally {
-            waitDialog.dismiss()
-        }
+        val task =
+            Coroutine
+                .async {
+                    AppWebDav.restoreWebDav(name)
+                }.onError {
+                    AppLog.put("WebDav恢复出错\n${it.localizedMessage}", it)
+                    appCtx.toastOnUi("WebDav恢复出错\n${it.localizedMessage}")
+                }.onFinally {
+                    waitDialog.dismiss()
+                }
         waitDialog.setOnCancelListener {
             task.cancel()
         }
@@ -393,5 +423,4 @@ class BackupConfigFragment : PreferenceFragment(),
         super.onDestroyView()
         waitDialog.dismiss()
     }
-
 }

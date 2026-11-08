@@ -14,9 +14,7 @@ import io.legado.app.lib.theme.alertCardBackground
 import io.legado.app.utils.dpToPx
 
 class EditTextPreferenceDialog : EditTextPreferenceDialogFragmentCompat() {
-
     companion object {
-
         fun newInstance(key: String): EditTextPreferenceDialog {
             val fragment = EditTextPreferenceDialog()
             val b = Bundle(1)
@@ -24,7 +22,6 @@ class EditTextPreferenceDialog : EditTextPreferenceDialogFragmentCompat() {
             fragment.arguments = b
             return fragment
         }
-
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -54,7 +51,7 @@ class EditTextPreferenceDialog : EditTextPreferenceDialogFragmentCompat() {
                     Gravity.TOP -> it.decorView.setBackgroundResource(R.drawable.bg_eink_border_bottom)
                     Gravity.BOTTOM -> it.decorView.setBackgroundResource(R.drawable.bg_eink_border_top)
                     else -> {
-                        val padding = 2.dpToPx();
+                        val padding = 2.dpToPx()
                         it.decorView.setPadding(padding, padding, padding, padding)
                         it.decorView.setBackgroundResource(R.drawable.bg_eink_border_dialog)
                     }
@@ -62,5 +59,4 @@ class EditTextPreferenceDialog : EditTextPreferenceDialogFragmentCompat() {
             }
         }
     }
-
 }

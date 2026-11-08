@@ -31,12 +31,11 @@ import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.InputStream
 
-
 class OkHttpStreamFetcher(
     private val url: GlideUrl,
     private val options: Options,
-) :
-    DataFetcher<InputStream>, okhttp3.Callback {
+) : DataFetcher<InputStream>,
+    okhttp3.Callback {
     private var stream: InputStream? = null
     private var responseBody: ResponseBody? = null
     private var callback: DataFetcher.DataCallback<in InputStream>? = null
@@ -53,7 +52,10 @@ class OkHttpStreamFetcher(
         private val failUrl = hashSetOf<String>()
     }
 
-    override fun loadData(priority: Priority, callback: DataFetcher.DataCallback<in InputStream>) {
+    override fun loadData(
+        priority: Priority,
+        callback: DataFetcher.DataCallback<in InputStream>,
+    ) {
         if (failUrl.contains(url.toStringUrl())) {
             callback.onLoadFailed(NoStackTraceException("跳过加载失败的图片"))
             return
@@ -68,21 +70,23 @@ class OkHttpStreamFetcher(
             source = SourceHelp.getSource(sourceUrl)
         }
 
-        analyzedUrl = AnalyzeUrl(
-            url.toString(),
-            source = source,
-            coroutineContext = coroutineContext
-        ).getGlideUrl()
+        analyzedUrl =
+            AnalyzeUrl(
+                url.toString(),
+                source = source,
+                coroutineContext = coroutineContext,
+            ).getGlideUrl()
 
         val requestBuilder = Request.Builder().url(analyzedUrl.toStringUrl())
         requestBuilder.addHeaders(analyzedUrl.headers)
         val request: Request = requestBuilder.build()
         this.callback = callback
-        call = if (manga) {
-            okHttpClientManga.newCall(request)
-        } else {
-            okHttpClient.newCall(request)
-        }
+        call =
+            if (manga) {
+                okHttpClientManga.newCall(request)
+            } else {
+                okHttpClient.newCall(request)
+            }
         call?.enqueue(this)
     }
 
@@ -100,19 +104,21 @@ class OkHttpStreamFetcher(
         coroutineContext.cancel()
     }
 
-    override fun getDataClass(): Class<InputStream> {
-        return InputStream::class.java
-    }
+    override fun getDataClass(): Class<InputStream> = InputStream::class.java
 
-    override fun getDataSource(): DataSource {
-        return DataSource.REMOTE
-    }
+    override fun getDataSource(): DataSource = DataSource.REMOTE
 
-    override fun onFailure(call: Call, e: IOException) {
+    override fun onFailure(
+        call: Call,
+        e: IOException,
+    ) {
         callback?.onLoadFailed(e)
     }
 
-    override fun onResponse(call: Call, response: Response) {
+    override fun onResponse(
+        call: Call,
+        response: Response,
+    ) {
         responseBody = response.body
         if (!response.isSuccessful) {
             if (!manga) {
@@ -126,22 +132,26 @@ class OkHttpStreamFetcher(
             return
         }
         Coroutine.async(coroutineScope, executeContext = IO) {
-            val decodeResult = runScriptWithContext(coroutineContext) {
-                if (manga) {
-                    ImageUtils.decode(
-                        url.toString(),
-                        responseBody!!.bytes(),
-                        isCover = false,
-                        source,
-                        ReadManga.book
-                    )?.inputStream()
-                } else {
-                    ImageUtils.decode(
-                        analyzedUrl.toStringUrl(), responseBody!!.byteStream(),
-                        isCover = true, source
-                    )
+            val decodeResult =
+                runScriptWithContext(coroutineContext) {
+                    if (manga) {
+                        ImageUtils
+                            .decode(
+                                url.toString(),
+                                responseBody!!.bytes(),
+                                isCover = false,
+                                source,
+                                ReadManga.book,
+                            )?.inputStream()
+                    } else {
+                        ImageUtils.decode(
+                            analyzedUrl.toStringUrl(),
+                            responseBody!!.byteStream(),
+                            isCover = true,
+                            source,
+                        )
+                    }
                 }
-            }
             onStreamReady(decodeResult)
         }
     }
@@ -154,11 +164,13 @@ class OkHttpStreamFetcher(
             callback?.onLoadFailed(NoStackTraceException("封面二次解密失败"))
         } else {
             val contentLength: Long =
-                if (inputStream is ByteArrayInputStream) inputStream.available().toLong()
-                else responseBody!!.contentLength()
+                if (inputStream is ByteArrayInputStream) {
+                    inputStream.available().toLong()
+                } else {
+                    responseBody!!.contentLength()
+                }
             stream = ContentLengthInputStream.obtain(inputStream, contentLength)
             callback?.onDataReady(stream)
         }
     }
-
 }

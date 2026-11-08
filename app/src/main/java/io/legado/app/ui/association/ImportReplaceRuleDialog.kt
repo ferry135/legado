@@ -26,7 +26,8 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.views.onClick
 
-class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_view),
+class ImportReplaceRuleDialog() :
+    BaseDialogFragment(R.layout.dialog_recycler_view),
     Toolbar.OnMenuItemClickListener,
     CodeDialog.Callback {
 
@@ -164,13 +165,13 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
             binding.tvFooterLeft.text = getString(
                 R.string.select_cancel_count,
                 viewModel.selectCount,
-                viewModel.allRules.size
+                viewModel.allRules.size,
             )
         } else {
             binding.tvFooterLeft.text = getString(
                 R.string.select_all_count,
                 viewModel.selectCount,
-                viewModel.allRules.size
+                viewModel.allRules.size,
             )
         }
     }
@@ -184,19 +185,16 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
         }
     }
 
-    inner class SourcesAdapter(context: Context) :
-        RecyclerAdapter<ReplaceRule, ItemSourceImportBinding>(context) {
+    inner class SourcesAdapter(context: Context) : RecyclerAdapter<ReplaceRule, ItemSourceImportBinding>(context) {
 
-        override fun getViewBinding(parent: ViewGroup): ItemSourceImportBinding {
-            return ItemSourceImportBinding.inflate(inflater, parent, false)
-        }
+        override fun getViewBinding(parent: ViewGroup): ItemSourceImportBinding = ItemSourceImportBinding.inflate(inflater, parent, false)
 
         @SuppressLint("SetTextI18n")
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemSourceImportBinding,
             item: ReplaceRule,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             binding.run {
                 cbSourceName.isChecked = viewModel.selectStatus[holder.bindingAdapterPosition]
@@ -212,10 +210,10 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
                 val localRule = viewModel.checkRules[holder.bindingAdapterPosition]
                 tvSourceState.text = when {
                     localRule == null -> "新增"
-                    item.pattern != localRule.pattern
-                            || item.replacement != localRule.replacement
-                            || item.isRegex != localRule.isRegex
-                            || item.scope != localRule.scope -> "更新"
+                    item.pattern != localRule.pattern ||
+                        item.replacement != localRule.replacement ||
+                        item.isRegex != localRule.isRegex ||
+                        item.scope != localRule.scope -> "更新"
                     else -> "已有"
                 }
             }
@@ -246,13 +244,11 @@ class ImportReplaceRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vi
                         CodeDialog(
                             GSON.toJson(source),
                             disableEdit = false,
-                            requestId = position.toString()
-                        )
+                            requestId = position.toString(),
+                        ),
                     )
                 }
             }
         }
-
     }
-
 }

@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BookGroupDao {
-
     @Query("select * from book_groups where groupId = :id")
     fun getByID(id: Long): BookGroup?
 
@@ -51,7 +50,7 @@ interface BookGroupDao {
                 )
             )
         )
-        ORDER BY `order`"""
+        ORDER BY `order`""",
     )
     val show: LiveData<List<BookGroup>>
 

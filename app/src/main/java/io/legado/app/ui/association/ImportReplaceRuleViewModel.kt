@@ -19,7 +19,9 @@ import io.legado.app.utils.isJsonArray
 import io.legado.app.utils.isJsonObject
 import io.legado.app.utils.splitNotBlank
 
-class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
+class ImportReplaceRuleViewModel(
+    app: Application,
+) : BaseViewModel(app) {
     var isAddGroup = false
     var groupName: String? = null
     val errorLiveData = MutableLiveData<String>()
@@ -107,16 +109,19 @@ class ImportReplaceRuleViewModel(app: Application) : BaseViewModel(app) {
     }
 
     private suspend fun importUrl(url: String) {
-        okHttpClient.newCallResponseBody {
-            if (url.endsWith("#requestWithoutUA")) {
-                url(url.substringBeforeLast("#requestWithoutUA"))
-                header(AppConst.UA_NAME, "null")
-            } else {
-                url(url)
+        okHttpClient
+            .newCallResponseBody {
+                if (url.endsWith("#requestWithoutUA")) {
+                    url(url.substringBeforeLast("#requestWithoutUA"))
+                    header(AppConst.UA_NAME, "null")
+                } else {
+                    url(url)
+                }
+            }.decompressed()
+            .text("utf-8")
+            .let {
+                importAwait(it)
             }
-        }.decompressed().text("utf-8").let {
-            importAwait(it)
-        }
     }
 
     private fun comparisonSource() {

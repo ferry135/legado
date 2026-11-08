@@ -10,8 +10,9 @@ import io.legado.app.utils.applyTint
 import io.legado.app.utils.hideSoftInput
 import io.legado.app.utils.sheetBackground
 
-
-class NumberPickerDialog(context: Context) {
+class NumberPickerDialog(
+    context: Context,
+) {
     private val builder = AlertDialog.Builder(context)
     private var numberPicker: NumberPicker? = null
     private var maxValue: Int? = null
@@ -42,7 +43,10 @@ class NumberPickerDialog(context: Context) {
         return this
     }
 
-    fun setCustomButton(textId: Int, listener: (() -> Unit)?): NumberPickerDialog {
+    fun setCustomButton(
+        textId: Int,
+        listener: (() -> Unit)?,
+    ): NumberPickerDialog {
         builder.setNeutralButton(textId) { _, _ ->
             numberPicker?.let {
                 it.clearFocus()
@@ -66,7 +70,7 @@ class NumberPickerDialog(context: Context) {
         // 10-reader-prefs#03 注③：16dp 圆角卡片（与 applyTint 同规格，双保险）+ scrim_dialog 遮罩（50% 黑）
         dialog.window?.let { window ->
             window.setBackgroundDrawable(
-                window.context.sheetBackground(window.context.backgroundColor)
+                window.context.sheetBackground(window.context.backgroundColor),
             )
             window.applyDialogScrim()
         }

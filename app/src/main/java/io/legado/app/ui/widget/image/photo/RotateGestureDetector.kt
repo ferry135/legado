@@ -17,10 +17,10 @@ class RotateGestureDetector(private val mListener: OnRotateListener) {
     private val y2 = 0f
 
     fun onTouchEvent(event: MotionEvent) {
-
         when (event.actionMasked) {
             MotionEvent.ACTION_POINTER_DOWN,
-            MotionEvent.ACTION_POINTER_UP -> {
+            MotionEvent.ACTION_POINTER_UP,
+            -> {
                 if (event.pointerCount == 2) mPrevSlope = calculateSlope(event)
             }
             MotionEvent.ACTION_MOVE -> if (event.pointerCount > 1) {
@@ -37,7 +37,6 @@ class RotateGestureDetector(private val mListener: OnRotateListener) {
                 mPrevSlope = mCurrSlope
             }
         }
-
     }
 
     private fun calculateSlope(event: MotionEvent): Float {

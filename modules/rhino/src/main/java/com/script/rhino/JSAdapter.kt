@@ -69,14 +69,14 @@ import org.mozilla.javascript.Function
  * @since 1.6
  */
 @Suppress("unused", "UNUSED_PARAMETER")
-class JSAdapter private constructor(var adaptee: Scriptable) : Scriptable, Function {
+class JSAdapter private constructor(var adaptee: Scriptable) :
+    Scriptable,
+    Function {
     private var prototype: Scriptable? = null
     private var parent: Scriptable? = null
     private var isPrototype = false
 
-    override fun getClassName(): String {
-        return "JSAdapter"
-    }
+    override fun getClassName(): String = "JSAdapter"
 
     override fun get(name: String, start: Scriptable): Any {
         val func = getAdapteeFunction(GET_PROP)
@@ -160,17 +160,13 @@ class JSAdapter private constructor(var adaptee: Scriptable) : Scriptable, Funct
         }
     }
 
-    override fun getPrototype(): Scriptable? {
-        return prototype
-    }
+    override fun getPrototype(): Scriptable? = prototype
 
     override fun setPrototype(prototype: Scriptable?) {
         this.prototype = prototype
     }
 
-    override fun getParentScope(): Scriptable? {
-        return parent
-    }
+    override fun getParentScope(): Scriptable? = parent
 
     override fun setParentScope(parent: Scriptable?) {
         this.parent = parent
@@ -226,21 +222,17 @@ class JSAdapter private constructor(var adaptee: Scriptable) : Scriptable, Funct
         }
     }
 
-    override fun getDefaultValue(hint: Class<*>?): Any {
-        return adaptee.getDefaultValue(hint)
-    }
+    override fun getDefaultValue(hint: Class<*>?): Any = adaptee.getDefaultValue(hint)
 
     @Throws(RhinoException::class)
-    override fun call(cx: Context, scope: Scriptable, thisObj: Scriptable, args: Array<Any>): Any {
-        return if (isPrototype) {
-            construct(cx, scope, args)
+    override fun call(cx: Context, scope: Scriptable, thisObj: Scriptable, args: Array<Any>): Any = if (isPrototype) {
+        construct(cx, scope, args)
+    } else {
+        val tmp = adaptee
+        if (tmp is Function) {
+            tmp.call(cx, scope, tmp, args)
         } else {
-            val tmp = adaptee
-            if (tmp is Function) {
-                tmp.call(cx, scope, tmp, args)
-            } else {
-                throw Context.reportRuntimeError("TypeError: not a function")
-            }
+            throw Context.reportRuntimeError("TypeError: not a function")
         }
     }
 
@@ -264,9 +256,7 @@ class JSAdapter private constructor(var adaptee: Scriptable) : Scriptable, Funct
         }
     }
 
-    private fun mapToId(tmp: Any?): Any {
-        return if (tmp is Double) tmp.toInt() else Context.toString(tmp)
-    }
+    private fun mapToId(tmp: Any?): Any = if (tmp is Double) tmp.toInt() else Context.toString(tmp)
 
     private fun getAdapteeFunction(name: String): Function? {
         val o = ScriptableObject.getProperty(adaptee, name)
@@ -300,8 +290,6 @@ class JSAdapter private constructor(var adaptee: Scriptable) : Scriptable, Funct
             ScriptableObject.defineProperty(scope, "JSAdapter", obj, 2)
         }
 
-        private fun getFunctionPrototype(scope: Scriptable): Scriptable {
-            return ScriptableObject.getFunctionPrototype(scope)
-        }
+        private fun getFunctionPrototype(scope: Scriptable): Scriptable = ScriptableObject.getFunctionPrototype(scope)
     }
 }

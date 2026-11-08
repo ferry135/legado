@@ -37,9 +37,9 @@ import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.views.onLongClick
 
-class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
+class ReadStyleDialog :
+    BaseDialogFragment(R.layout.dialog_read_book_style),
     FontSelectDialog.CallBack {
-
     private val binding by viewBinding(DialogReadBookStyleBinding::bind)
     private val callBack get() = activity as? ReadBookActivity
     private lateinit var styleAdapter: StyleAdapter
@@ -56,7 +56,10 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
         dialog?.window?.applyBottomSheetWindow(ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         (activity as ReadBookActivity).bottomDialog++
         initView()
         initData()
@@ -90,10 +93,11 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
         styleAdapter = StyleAdapter()
         rvStyle.adapter = styleAdapter
         // 13-read-style：色板右缘 44dp 渐隐提示（透明 → 弹层底色，对齐 .sw-fade 渐变）
-        vwStyleFade.background = GradientDrawable(
-            GradientDrawable.Orientation.LEFT_RIGHT,
-            intArrayOf(Color.TRANSPARENT, sheetInk.bg)
-        )
+        vwStyleFade.background =
+            GradientDrawable(
+                GradientDrawable.Orientation.LEFT_RIGHT,
+                intArrayOf(Color.TRANSPARENT, sheetInk.bg),
+            )
         // 13-read-style#17：配色方案行整行可点（label 与开关同触控域）
         rowShareLayout.setOnClickListener { cbShareLayout.toggle() }
         styleAdapter.addFooterView {
@@ -106,16 +110,17 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
                 ivStyle.setColorFilter(sheetInk.secondary)
                 ivStyle.borderWidth = 0
                 ivStyle.circleBackgroundColor = Color.TRANSPARENT
-                ivStyle.background = GradientDrawable().apply {
-                    shape = GradientDrawable.OVAL
-                    setColor(ColorUtils.adjustAlpha(sheetInk.ink, InkGradient.CONTAINER))
-                    setStroke(
-                        1.dpToPx(),
-                        ColorUtils.adjustAlpha(sheetInk.ink, InkGradient.STROKE_GHOST),
-                        3.dpToPx().toFloat(),
-                        3.dpToPx().toFloat()
-                    )
-                }
+                ivStyle.background =
+                    GradientDrawable().apply {
+                        shape = GradientDrawable.OVAL
+                        setColor(ColorUtils.adjustAlpha(sheetInk.ink, InkGradient.CONTAINER))
+                        setStroke(
+                            1.dpToPx(),
+                            ColorUtils.adjustAlpha(sheetInk.ink, InkGradient.STROKE_GHOST),
+                            3.dpToPx().toFloat(),
+                            3.dpToPx().toFloat(),
+                        )
+                    }
                 ivStyle.setImageResource(R.drawable.ic_add)
                 tvStyleName.setText(R.string.read_style_custom)
                 tvStyleName.setTextColor(sheetInk.secondary)
@@ -147,7 +152,7 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
         tvTextIndent.setOnClickListener {
             context?.selector(
                 title = getString(R.string.text_indent),
-                items = resources.getStringArray(R.array.indent).toList()
+                items = resources.getStringArray(R.array.indent).toList(),
             ) { _, index ->
                 ReadBookConfig.paragraphIndent = "　".repeat(index)
                 postEvent(EventBus.UP_CONFIG, arrayListOf(8, 5))
@@ -236,18 +241,14 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
         }
     }
 
-    inner class StyleAdapter :
-        RecyclerAdapter<ReadBookConfig.Config, ItemReadStyleBinding>(requireContext()) {
-
-        override fun getViewBinding(parent: ViewGroup): ItemReadStyleBinding {
-            return ItemReadStyleBinding.inflate(inflater, parent, false)
-        }
+    inner class StyleAdapter : RecyclerAdapter<ReadBookConfig.Config, ItemReadStyleBinding>(requireContext()) {
+        override fun getViewBinding(parent: ViewGroup): ItemReadStyleBinding = ItemReadStyleBinding.inflate(inflater, parent, false)
 
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemReadStyleBinding,
             item: ReadBookConfig.Config,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             binding.apply {
                 // 13-read-style#19：色板为方案预览——颜色型背景恒显白天配色（夜间也用 bgStr 渲染纯底色圆，
@@ -256,7 +257,7 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
                 if (item.bgType == 0) {
                     ivStyle.setImageDrawable(
                         runCatching { ColorDrawable(Color.parseColor(item.bgStr)) }.getOrNull()
-                            ?: item.curBgDrawable(100, 150)
+                            ?: item.curBgDrawable(100, 150),
                     )
                 } else {
                     ivStyle.setImageDrawable(item.curBgDrawable(100, 150))
@@ -277,7 +278,10 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder, binding: ItemReadStyleBinding) {
+        override fun registerListener(
+            holder: ItemViewHolder,
+            binding: ItemReadStyleBinding,
+        ) {
             binding.apply {
                 // 13-read-style 02 节触控条目：色板单元格（圆+名，48+6+12=66dp）整体可点，监听绑 root
                 // （旧仅绑 48dp 圆形 ivStyle，预设名 tv_style_name 为点击死区）。原 isInView 守卫是
@@ -292,6 +296,5 @@ class ReadStyleDialog : BaseDialogFragment(R.layout.dialog_read_book_style),
                 }
             }
         }
-
     }
 }

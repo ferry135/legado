@@ -5,8 +5,11 @@ import java.util.regex.Pattern
 
 @Keep
 object AnalyzeByRegex {
-
-    fun getElement(res: String, regs: Array<String>, index: Int = 0): List<String>? {
+    fun getElement(
+        res: String,
+        regs: Array<String>,
+        index: Int = 0,
+    ): List<String>? {
         var vIndex = index
         val resM = Pattern.compile(regs[vIndex]).matcher(res)
         if (!resM.find()) {
@@ -29,7 +32,11 @@ object AnalyzeByRegex {
         }
     }
 
-    fun getElements(res: String, regs: Array<String>, index: Int = 0): List<List<String>> {
+    fun getElements(
+        res: String,
+        regs: Array<String>,
+        index: Int = 0,
+    ): List<List<String>> {
         var vIndex = index
         val resM = Pattern.compile(regs[vIndex]).matcher(res)
         if (!resM.find()) {

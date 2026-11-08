@@ -18,12 +18,10 @@ import kotlinx.coroutines.ensureActive
 import splitties.init.appCtx
 import kotlin.coroutines.coroutineContext
 
-
 /**
  * 获取详情
  */
 object BookInfo {
-
     @Throws(Exception::class)
     suspend fun analyzeBookInfo(
         bookSource: BookSource,
@@ -34,9 +32,9 @@ object BookInfo {
         canReName: Boolean,
     ) {
         body ?: throw NoStackTraceException(
-            appCtx.getString(R.string.error_get_web_content, baseUrl)
+            appCtx.getString(R.string.error_get_web_content, baseUrl),
         )
-        Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
+        Debug.log(bookSource.bookSourceUrl, "≡获取成功:$baseUrl")
         Debug.log(bookSource.bookSourceUrl, body, state = 20)
         val analyzeRule = AnalyzeRule(book, bookSource)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
@@ -69,7 +67,7 @@ object BookInfo {
             if (it.isNotEmpty() && (mCanReName || book.name.isEmpty())) {
                 book.name = it
             }
-            Debug.log(bookSource.bookSourceUrl, "└${it}")
+            Debug.log(bookSource.bookSourceUrl, "└$it")
         }
         coroutineContext.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取作者")
@@ -77,16 +75,17 @@ object BookInfo {
             if (it.isNotEmpty() && (mCanReName || book.author.isEmpty())) {
                 book.author = it
             }
-            Debug.log(bookSource.bookSourceUrl, "└${it}")
+            Debug.log(bookSource.bookSourceUrl, "└$it")
         }
         coroutineContext.ensureActive()
         Debug.log(bookSource.bookSourceUrl, "┌获取分类")
         try {
-            analyzeRule.getStringList(infoRule.kind)
+            analyzeRule
+                .getStringList(infoRule.kind)
                 ?.joinToString(",")
                 ?.let {
                     if (it.isNotEmpty()) book.kind = it
-                    Debug.log(bookSource.bookSourceUrl, "└${it}")
+                    Debug.log(bookSource.bookSourceUrl, "└$it")
                 } ?: Debug.log(bookSource.bookSourceUrl, "└")
         } catch (e: Exception) {
             coroutineContext.ensureActive()
@@ -98,7 +97,7 @@ object BookInfo {
         try {
             wordCountFormat(analyzeRule.getString(infoRule.wordCount)).let {
                 if (it.isNotEmpty()) book.wordCount = it
-                Debug.log(bookSource.bookSourceUrl, "└${it}")
+                Debug.log(bookSource.bookSourceUrl, "└$it")
             }
         } catch (e: Exception) {
             coroutineContext.ensureActive()
@@ -110,7 +109,7 @@ object BookInfo {
         try {
             analyzeRule.getString(infoRule.lastChapter).let {
                 if (it.isNotEmpty()) book.latestChapterTitle = it
-                Debug.log(bookSource.bookSourceUrl, "└${it}")
+                Debug.log(bookSource.bookSourceUrl, "└$it")
             }
         } catch (e: Exception) {
             coroutineContext.ensureActive()
@@ -122,7 +121,7 @@ object BookInfo {
         try {
             HtmlFormatter.format(analyzeRule.getString(infoRule.intro)).let {
                 if (it.isNotEmpty()) book.intro = it
-                Debug.log(bookSource.bookSourceUrl, "└${it}")
+                Debug.log(bookSource.bookSourceUrl, "└$it")
             }
         } catch (e: Exception) {
             coroutineContext.ensureActive()
@@ -137,7 +136,7 @@ object BookInfo {
                     book.coverUrl =
                         NetworkUtils.getAbsoluteURL(redirectUrl, it)
                 }
-                Debug.log(bookSource.bookSourceUrl, "└${it}")
+                Debug.log(bookSource.bookSourceUrl, "└$it")
             }
         } catch (e: Exception) {
             coroutineContext.ensureActive()
@@ -162,10 +161,9 @@ object BookInfo {
             } else {
                 Debug.log(
                     bookSource.bookSourceUrl,
-                    "└" + TextUtils.join("，\n", book.downloadUrls!!)
+                    "└" + TextUtils.join("，\n", book.downloadUrls!!),
                 )
             }
         }
     }
-
 }

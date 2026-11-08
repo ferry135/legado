@@ -46,7 +46,6 @@ data class TextLine(
     var exceed: Boolean = false,
     var onlyTextColumn: Boolean = true,
 ) {
-
     val columns: List<BaseColumn> get() = textColumns
     val charSize: Int get() = text.length
     val lineStart: Float get() = textColumns.firstOrNull()?.start ?: 0f
@@ -76,37 +75,41 @@ data class TextLine(
         textColumns.add(column)
     }
 
-    fun getColumn(index: Int): BaseColumn {
-        return textColumns.getOrElse(index) {
-            textColumns.last()
-        }
+    fun getColumn(index: Int): BaseColumn = textColumns.getOrElse(index) {
+        textColumns.last()
     }
 
-    fun getColumnReverseAt(index: Int, offset: Int = 0): BaseColumn {
-        return textColumns[textColumns.lastIndex - offset - index]
-    }
+    fun getColumnReverseAt(
+        index: Int,
+        offset: Int = 0,
+    ): BaseColumn = textColumns[textColumns.lastIndex - offset - index]
 
-    fun getColumnsCount(): Int {
-        return textColumns.size
-    }
+    fun getColumnsCount(): Int = textColumns.size
 
-    fun upTopBottom(durY: Float, textHeight: Float, fontMetrics: FontMetrics) {
+    fun upTopBottom(
+        durY: Float,
+        textHeight: Float,
+        fontMetrics: FontMetrics,
+    ) {
         lineTop = ChapterProvider.paddingTop + durY
         lineBottom = lineTop + textHeight
         lineBase = lineBottom - fontMetrics.descent
     }
 
-    fun isTouch(x: Float, y: Float, relativeOffset: Float): Boolean {
-        return y > lineTop + relativeOffset
-                && y < lineBottom + relativeOffset
-                && x >= lineStart
-                && x <= lineEnd
-    }
+    fun isTouch(
+        x: Float,
+        y: Float,
+        relativeOffset: Float,
+    ): Boolean = y > lineTop + relativeOffset &&
+        y < lineBottom + relativeOffset &&
+        x >= lineStart &&
+        x <= lineEnd
 
-    fun isTouchY(y: Float, relativeOffset: Float): Boolean {
-        return y > lineTop + relativeOffset
-                && y < lineBottom + relativeOffset
-    }
+    fun isTouchY(
+        y: Float,
+        relativeOffset: Float,
+    ): Boolean = y > lineTop + relativeOffset &&
+        y < lineBottom + relativeOffset
 
     fun isVisible(relativeOffset: Float): Boolean {
         val top = lineTop + relativeOffset
@@ -114,35 +117,39 @@ data class TextLine(
         val width = bottom - top
         val visibleTop = ChapterProvider.paddingTop
         val visibleBottom = ChapterProvider.visibleBottom
-        val visible = when {
-            // 完全可视
-            top >= visibleTop && bottom <= visibleBottom -> true
-            top <= visibleTop && bottom >= visibleBottom -> true
-            // 上方第一行部分可视
-            top < visibleTop && bottom > visibleTop && bottom < visibleBottom -> {
-                if (isImage) {
-                    true
-                } else {
-                    val visibleRate = (bottom - visibleTop) / width
-                    visibleRate > 0.6
+        val visible =
+            when {
+                // 完全可视
+                top >= visibleTop && bottom <= visibleBottom -> true
+                top <= visibleTop && bottom >= visibleBottom -> true
+                // 上方第一行部分可视
+                top < visibleTop && bottom > visibleTop && bottom < visibleBottom -> {
+                    if (isImage) {
+                        true
+                    } else {
+                        val visibleRate = (bottom - visibleTop) / width
+                        visibleRate > 0.6
+                    }
                 }
-            }
-            // 下方第一行部分可视
-            top > visibleTop && top < visibleBottom && bottom > visibleBottom -> {
-                if (isImage) {
-                    true
-                } else {
-                    val visibleRate = (visibleBottom - top) / width
-                    visibleRate > 0.6
+                // 下方第一行部分可视
+                top > visibleTop && top < visibleBottom && bottom > visibleBottom -> {
+                    if (isImage) {
+                        true
+                    } else {
+                        val visibleRate = (visibleBottom - top) / width
+                        visibleRate > 0.6
+                    }
                 }
+                // 不可视
+                else -> false
             }
-            // 不可视
-            else -> false
-        }
         return visible
     }
 
-    fun draw(view: ContentTextView, canvas: Canvas) {
+    fun draw(
+        view: ContentTextView,
+        canvas: Canvas,
+    ) {
         if (AppConfig.optimizeRender) {
             canvasRecorder.recordIfNeededThenDraw(canvas, view.width, height.toInt()) {
                 drawTextLine(view, this)
@@ -152,7 +159,10 @@ data class TextLine(
         }
     }
 
-    private fun drawTextLine(view: ContentTextView, canvas: Canvas) {
+    private fun drawTextLine(
+        view: ContentTextView,
+        canvas: Canvas,
+    ) {
         if (checkFastDraw()) {
             fastDrawTextLine(view, canvas)
         } else {
@@ -170,24 +180,29 @@ data class TextLine(
             canvas.drawLine(lineStart + indentWidth, lineY, lineEnd, lineY, underlinePaint)
             PaintPool.recycle(underlinePaint)
         }
-        
+
         if (ReadBookConfig.underline && !isImage && ReadBook.book?.isImage != true) {
             drawUnderline(canvas)
         }
     }
 
     @SuppressLint("NewApi")
-    private fun fastDrawTextLine(view: ContentTextView, canvas: Canvas) {
-        val textPaint = if (isTitle) {
-            ChapterProvider.titlePaint
-        } else {
-            ChapterProvider.contentPaint
-        }
-        val textColor = if (isReadAloud) {
-            ThemeStore.accentColor
-        } else {
-            ReadBookConfig.textColor
-        }
+    private fun fastDrawTextLine(
+        view: ContentTextView,
+        canvas: Canvas,
+    ) {
+        val textPaint =
+            if (isTitle) {
+                ChapterProvider.titlePaint
+            } else {
+                ChapterProvider.contentPaint
+            }
+        val textColor =
+            if (isReadAloud) {
+                ThemeStore.accentColor
+            } else {
+                ReadBookConfig.textColor
+            }
         if (textPaint.color != textColor) {
             textPaint.color = textColor
         }
@@ -222,7 +237,7 @@ data class TextLine(
             lineY,
             lineEnd,
             lineY,
-            ChapterProvider.contentPaint
+            ChapterProvider.contentPaint,
         )
     }
 
@@ -270,5 +285,4 @@ data class TextLine(
             }
         }
     }
-
 }

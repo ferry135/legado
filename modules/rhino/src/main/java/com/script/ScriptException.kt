@@ -30,7 +30,7 @@ class ScriptException : Exception {
     }
 
     constructor(message: String?, fileName2: String?, lineNumber2: Int, columnNumber2: Int) : super(
-        message
+        message,
     ) {
         fileName = fileName2
         lineNumber = lineNumber2
@@ -49,6 +49,8 @@ class ScriptException : Exception {
             }
             return if (columnNumber != -1) {
                 "$ret2 at column number $columnNumber"
-            } else ret2
+            } else {
+                ret2
+            }
         }
 }

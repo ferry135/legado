@@ -21,8 +21,10 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.showSoftInput
 import kotlin.math.roundToInt
 
-class UrlOptionDialog(context: Context, private val success: (String) -> Unit) : Dialog(context) {
-
+class UrlOptionDialog(
+    context: Context,
+    private val success: (String) -> Unit,
+) : Dialog(context) {
     val binding = DialogUrlOptionEditBinding.inflate(layoutInflater)
 
     override fun onStart() {
@@ -41,24 +43,27 @@ class UrlOptionDialog(context: Context, private val success: (String) -> Unit) :
         // field 卡聚焦描边运行时注入（BookmarkDialog 先例）：默认/聚焦同 surface_container_high 底，
         // 聚焦叠 1.5dp 主色描边；主色取 accentColor 随 ThemeStore 换肤，布局不固化 primary。
         // 每卡独立 StateListDrawable 实例——共享实例会随单一视图的焦点态串卡
-        val fieldCards = mapOf(
-            binding.vwFieldMethod to binding.editMethod,
-            binding.vwFieldCharset to binding.editCharset,
-            binding.vwFieldHeaders to binding.editHeaders,
-            binding.vwFieldBody to binding.editBody,
-            binding.vwFieldType to binding.editType,
-            binding.vwFieldRetry to binding.editRetry,
-            binding.vwFieldWebJs to binding.editWebJs,
-            binding.vwFieldJs to binding.editJs
-        )
+        val fieldCards =
+            mapOf(
+                binding.vwFieldMethod to binding.editMethod,
+                binding.vwFieldCharset to binding.editCharset,
+                binding.vwFieldHeaders to binding.editHeaders,
+                binding.vwFieldBody to binding.editBody,
+                binding.vwFieldType to binding.editType,
+                binding.vwFieldRetry to binding.editRetry,
+                binding.vwFieldWebJs to binding.editWebJs,
+                binding.vwFieldJs to binding.editJs,
+            )
         fieldCards.forEach { (card, edit) ->
-            card.background = Selector.shapeBuild()
-                .setCornerRadius(10.dpToPx())
-                .setStrokeWidth(1.5f.dpToPx().roundToInt())
-                .setDefaultBgColor(context.getCompatColor(R.color.surface_container_high))
-                .setFocusedBgColor(context.getCompatColor(R.color.surface_container_high))
-                .setFocusedStrokeColor(context.accentColor)
-                .create()
+            card.background =
+                Selector
+                    .shapeBuild()
+                    .setCornerRadius(10.dpToPx())
+                    .setStrokeWidth(1.5f.dpToPx().roundToInt())
+                    .setDefaultBgColor(context.getCompatColor(R.color.surface_container_high))
+                    .setFocusedBgColor(context.getCompatColor(R.color.surface_container_high))
+                    .setFocusedStrokeColor(context.accentColor)
+                    .create()
             // field 卡点击转焦内部输入框：卡体可点补足 ≥48dp 触控目标，
             // 并阻断点击冒泡到 root dismiss 防误关丢已输内容
             card.setOnClickListener { edit.showSoftInput() }
@@ -66,14 +71,16 @@ class UrlOptionDialog(context: Context, private val success: (String) -> Unit) :
         // useWebView 方框视觉（稿 .cb / item_group_select.xml:45-68 组件语言）：
         // 22dp 方框 6dp 圆角 / 2dp 描边 on_surface_variant，选中实底 primaryColor 运行时注入；
         // ThemeCheckBox 的 applyTint 只能着色系统勾选框 drawable，落不出方框形态，随 button=@null 弃用
-        binding.cbUseWebView.background = Selector.shapeBuild()
-            .setCornerRadius(6.dpToPx())
-            .setStrokeWidth(2.dpToPx())
-            .setDefaultBgColor(Color.TRANSPARENT)
-            .setDefaultStrokeColor(ContextCompat.getColor(context, R.color.on_surface_variant))
-            .setCheckedBgColor(context.primaryColor)
-            .setCheckedStrokeColor(context.primaryColor)
-            .create()
+        binding.cbUseWebView.background =
+            Selector
+                .shapeBuild()
+                .setCornerRadius(6.dpToPx())
+                .setStrokeWidth(2.dpToPx())
+                .setDefaultBgColor(Color.TRANSPARENT)
+                .setDefaultStrokeColor(ContextCompat.getColor(context, R.color.on_surface_variant))
+                .setCheckedBgColor(context.primaryColor)
+                .setCheckedStrokeColor(context.primaryColor)
+                .create()
         syncCheckIcon()
         // 勾选热区扩到整行（GroupSelectDialog.kt:184-196 同模式）：整行可点翻转勾选态
         binding.vwUseWebView.setOnClickListener {
@@ -104,5 +111,4 @@ class UrlOptionDialog(context: Context, private val success: (String) -> Unit) :
         urlOption.setJs(binding.editJs.text.toString())
         return urlOption
     }
-
 }

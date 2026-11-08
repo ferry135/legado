@@ -10,13 +10,12 @@ import android.view.ScaleGestureDetector
 import android.widget.FrameLayout
 
 class WebtoonFrame : FrameLayout {
-
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(
         context,
         attrs,
-        defStyle
+        defStyle,
     )
 
     private val scaleDetector = ScaleGestureDetector(context, ScaleListener())
@@ -39,10 +38,15 @@ class WebtoonFrame : FrameLayout {
     private val brRect = RectF()
 
     private var mTouchMiddle: (() -> Unit)? = null
+
     fun onTouchMiddle(init: () -> Unit) = apply { this.mTouchMiddle = init }
+
     private var mNextPage: (() -> Unit)? = null
+
     fun onNextPage(init: () -> Unit) = apply { this.mNextPage = init }
+
     private var mPrevPage: (() -> Unit)? = null
+
     fun onPrevPage(init: () -> Unit) = apply { this.mPrevPage = init }
 
     var disabledClickScroll = false
@@ -66,7 +70,12 @@ class WebtoonFrame : FrameLayout {
         }
     }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+    override fun onSizeChanged(
+        w: Int,
+        h: Int,
+        oldw: Int,
+        oldh: Int,
+    ) {
         super.onSizeChanged(w, h, oldw, oldh)
         mcRect.set(width * 0.33f, height * 0.33f, width * 0.66f, height * 0.66f)
         blRect.set(0f, height * 0.66f, width * 0.33f, height.toFloat())
@@ -110,17 +119,13 @@ class WebtoonFrame : FrameLayout {
     }
 
     inner class FlingListener : GestureDetector.SimpleOnGestureListener() {
-        override fun onDown(e: MotionEvent): Boolean {
-            return true
-        }
+        override fun onDown(e: MotionEvent): Boolean = true
 
         override fun onFling(
             e1: MotionEvent?,
             e2: MotionEvent,
             velocityX: Float,
             velocityY: Float,
-        ): Boolean {
-            return recycler?.zoomFling(velocityX.toInt(), velocityY.toInt()) ?: false
-        }
+        ): Boolean = recycler?.zoomFling(velocityX.toInt(), velocityY.toInt()) ?: false
     }
 }

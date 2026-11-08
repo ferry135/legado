@@ -12,7 +12,6 @@ data class TextPos(
     var lineIndex: Int,
     var columnIndex: Int,
 ) {
-
     fun upData(
         relativePos: Int,
         lineIndex: Int,
@@ -29,28 +28,28 @@ data class TextPos(
         columnIndex = pos.columnIndex
     }
 
-    fun compare(pos: TextPos): Int {
-        return when {
-            relativePagePos < pos.relativePagePos -> -3
-            relativePagePos > pos.relativePagePos -> 3
-            lineIndex < pos.lineIndex -> -2
-            lineIndex > pos.lineIndex -> 2
-            columnIndex < pos.columnIndex -> -1
-            columnIndex > pos.columnIndex -> 1
-            else -> 0
-        }
+    fun compare(pos: TextPos): Int = when {
+        relativePagePos < pos.relativePagePos -> -3
+        relativePagePos > pos.relativePagePos -> 3
+        lineIndex < pos.lineIndex -> -2
+        lineIndex > pos.lineIndex -> 2
+        columnIndex < pos.columnIndex -> -1
+        columnIndex > pos.columnIndex -> 1
+        else -> 0
     }
 
-    fun compare(relativePos: Int, lineIndex: Int, charIndex: Int): Int {
-        return when {
-            this.relativePagePos < relativePos -> -3
-            this.relativePagePos > relativePos -> 3
-            this.lineIndex < lineIndex -> -2
-            this.lineIndex > lineIndex -> 2
-            this.columnIndex < charIndex -> -1
-            this.columnIndex > charIndex -> 1
-            else -> 0
-        }
+    fun compare(
+        relativePos: Int,
+        lineIndex: Int,
+        charIndex: Int,
+    ): Int = when {
+        this.relativePagePos < relativePos -> -3
+        this.relativePagePos > relativePos -> 3
+        this.lineIndex < lineIndex -> -2
+        this.lineIndex > lineIndex -> 2
+        this.columnIndex < charIndex -> -1
+        this.columnIndex > charIndex -> 1
+        else -> 0
     }
 
     fun reset() {
@@ -59,8 +58,5 @@ data class TextPos(
         columnIndex = -1
     }
 
-    fun isSelected(): Boolean {
-        return lineIndex >= 0 && columnIndex >= 0
-    }
-
+    fun isSelected(): Boolean = lineIndex >= 0 && columnIndex >= 0
 }

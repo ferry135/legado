@@ -9,15 +9,17 @@ import org.chromium.net.UrlRequest
 import java.io.IOException
 
 @Keep
-class OldCallback(originalRequest: Request, mCall: Call, readTimeoutMillis: Int) :
-    AbsCallBack(originalRequest, mCall, readTimeoutMillis) {
-
+class OldCallback(
+    originalRequest: Request,
+    mCall: Call,
+    readTimeoutMillis: Int,
+) : AbsCallBack(originalRequest, mCall, readTimeoutMillis) {
     private val mResponseCondition = ConditionVariable()
     private var mException: IOException? = null
 
     @Throws(IOException::class)
     override fun waitForDone(urlRequest: UrlRequest): Response {
-        //获取okhttp call的完整请求的超时时间
+        // 获取okhttp call的完整请求的超时时间
         val timeOutMs: Long = mCall.timeout().timeoutNanos() / 1000000
         urlRequest.start()
         startCheckCancelJob(urlRequest)
@@ -26,7 +28,7 @@ class OldCallback(originalRequest: Request, mCall: Call, readTimeoutMillis: Int)
         } else {
             mResponseCondition.block()
         }
-        //ConditionVariable 正常open或者超时open后，检查urlRequest是否完成
+        // ConditionVariable 正常open或者超时open后，检查urlRequest是否完成
         if (!urlRequest.isDone) {
             urlRequest.cancel()
             mException = IOException("Cronet timeout after wait " + timeOutMs + "ms")
@@ -54,6 +56,4 @@ class OldCallback(originalRequest: Request, mCall: Call, readTimeoutMillis: Int)
     override fun onSuccess(response: Response) {
         mResponseCondition.open()
     }
-
-
 }

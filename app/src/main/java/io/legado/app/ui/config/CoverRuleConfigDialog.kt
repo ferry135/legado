@@ -27,7 +27,6 @@ import kotlinx.coroutines.withContext
 import splitties.views.onClick
 
 class CoverRuleConfigDialog : BaseDialogFragment(R.layout.dialog_cover_rule_config) {
-
     val binding by viewBinding(DialogCoverRuleConfigBinding::bind)
 
     override fun onStart() {
@@ -35,7 +34,10 @@ class CoverRuleConfigDialog : BaseDialogFragment(R.layout.dialog_cover_rule_conf
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         applyDialogSurface(view)
         applyInputTint()
         initData()
@@ -70,11 +72,13 @@ class CoverRuleConfigDialog : BaseDialogFragment(R.layout.dialog_cover_rule_conf
     private fun applyDialogSurface(view: View) {
         if (AppConfig.isEInkMode) return
         val context = view.context
-        view.background = context.sheetBackground(
-            ContextCompat.getColor(context, R.color.surface_container)
-        ).apply {
-            setStroke(1.dpToPx(), ContextCompat.getColor(context, R.color.outline_variant))
-        }
+        view.background =
+            context
+                .sheetBackground(
+                    ContextCompat.getColor(context, R.color.surface_container),
+                ).apply {
+                    setStroke(1.dpToPx(), ContextCompat.getColor(context, R.color.outline_variant))
+                }
     }
 
     /**
@@ -84,13 +88,16 @@ class CoverRuleConfigDialog : BaseDialogFragment(R.layout.dialog_cover_rule_conf
      */
     private fun applyInputTint() {
         val context = context ?: return
-        val hintColors = ColorStateList.valueOf(
-            ContextCompat.getColor(context, R.color.on_surface_variant)
-        )
-        val strokeColors = Selector.colorBuild()
-            .setDefaultColor(Color.TRANSPARENT)
-            .setFocusedColor(context.accentColor)
-            .create()
+        val hintColors =
+            ColorStateList.valueOf(
+                ContextCompat.getColor(context, R.color.on_surface_variant),
+            )
+        val strokeColors =
+            Selector
+                .colorBuild()
+                .setDefaultColor(Color.TRANSPARENT)
+                .setFocusedColor(context.accentColor)
+                .create()
         for (layout in listOf(binding.tilSearchUrl, binding.tilCoverRule)) {
             layout.defaultHintTextColor = hintColors
             layout.hintTextColor = hintColors
@@ -100,14 +107,14 @@ class CoverRuleConfigDialog : BaseDialogFragment(R.layout.dialog_cover_rule_conf
 
     private fun initData() {
         lifecycleScope.launch {
-            val rule = withContext(IO) {
-                BookCover.getCoverRule()
-            }
+            val rule =
+                withContext(IO) {
+                    BookCover.getCoverRule()
+                }
             Log.e("coverRule", GSON.toJson(rule))
             binding.cbEnable.isChecked = rule.enable
             binding.editSearchUrl.setText(rule.searchUrl)
             binding.editCoverUrlRule.setText(rule.coverRule)
         }
     }
-
 }

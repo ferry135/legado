@@ -9,11 +9,13 @@ import io.legado.app.exception.NoStackTraceException
 import io.legado.app.utils.toastOnUi
 import java.io.File
 
-class FilePickerViewModel(application: Application) : BaseViewModel(application) {
-
+class FilePickerViewModel(
+    application: Application,
+) : BaseViewModel(application) {
     var rootDoc: File? = Environment.getExternalStorageDirectory()
     var subDocs = mutableListOf<File>()
     val filesLiveData = MutableLiveData<List<File>>()
+
     // 加载标志位（稿 §03 防闪烁）：upFiles 开始先 post 空列表（onStart），UI 判空态需
     // 区分「加载中」与「onSuccess 后真空」，见 FilePickerDialog.updateEmptyState
     var isLoading: Boolean = false
@@ -49,15 +51,17 @@ class FilePickerViewModel(application: Application) : BaseViewModel(application)
             parentFile ?: return@execute emptyList()
             if (parentFile == rootDoc) {
                 parentFile.listFiles()?.sortedWith(
-                    compareBy({ it.isFile }, { it.name })
+                    compareBy({ it.isFile }, { it.name }),
                 )
             } else {
                 val list = arrayListOf(parentFile)
-                parentFile.listFiles()?.sortedWith(
-                    compareBy({ it.isFile }, { it.name })
-                )?.let {
-                    list.addAll(it)
-                }
+                parentFile
+                    .listFiles()
+                    ?.sortedWith(
+                        compareBy({ it.isFile }, { it.name }),
+                    )?.let {
+                        list.addAll(it)
+                    }
                 list
             }
         }.onStart {
@@ -89,5 +93,4 @@ class FilePickerViewModel(application: Application) : BaseViewModel(application)
             context.toastOnUi(it.localizedMessage)
         }
     }
-
 }

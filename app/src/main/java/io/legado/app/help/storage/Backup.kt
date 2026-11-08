@@ -62,7 +62,7 @@ object Backup {
             ReadBookConfig.configFileName,
             ReadBookConfig.shareConfigFileName,
             ThemeConfig.configFileName,
-            "config.xml"
+            "config.xml",
         )
     }
 
@@ -71,9 +71,9 @@ object Backup {
             .format(Date(System.currentTimeMillis()))
         val deviceName = AppConfig.webDavDeviceName
         return if (deviceName?.isNotBlank() == true) {
-            "backup${backupDate}-${deviceName}.zip"
+            "backup$backupDate-$deviceName.zip"
         } else {
-            "backup${backupDate}.zip"
+            "backup$backupDate.zip"
         }
     }
 
@@ -157,9 +157,12 @@ object Backup {
                 if (BackupConfig.keyIsNotIgnore(key)) {
                     when (key) {
                         PreferKey.webDavPassword -> {
-                            edit.putString(key, aes.runCatching {
-                                encryptBase64(value.toString())
-                            }.getOrDefault(value.toString()))
+                            edit.putString(
+                                key,
+                                aes.runCatching {
+                                    encryptBase64(value.toString())
+                                }.getOrDefault(value.toString()),
+                            )
                         }
 
                         else -> when (value) {

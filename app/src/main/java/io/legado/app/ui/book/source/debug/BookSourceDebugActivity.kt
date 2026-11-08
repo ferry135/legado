@@ -30,7 +30,6 @@ import splitties.views.onClick
 import splitties.views.onLongClick
 
 class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookSourceDebugModel>() {
-
     override val binding by viewBinding(ActivitySourceDebugBinding::inflate)
     override val viewModel by viewModels<BookSourceDebugModel>()
 
@@ -38,11 +37,12 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
     private val searchView: SearchView by lazy {
         binding.titleBar.findViewById(R.id.search_view)
     }
-    private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
-        it?.let {
-            startSearch(it)
+    private val qrCodeResult =
+        registerForActivityResult(QrCodeResult()) {
+            it?.let {
+                startSearch(it)
+            }
         }
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -71,18 +71,18 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
         searchView.onActionViewExpanded()
         searchView.isSubmitButtonEnabled = true
         searchView.queryHint = getString(R.string.search_book_key)
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                searchView.clearFocus()
-                openOrCloseHelp(false)
-                startSearch(query ?: "我的")
-                return true
-            }
+        searchView.setOnQueryTextListener(
+            object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    searchView.clearFocus()
+                    openOrCloseHelp(false)
+                    startSearch(query ?: "我的")
+                    return true
+                }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return false
-            }
-        })
+                override fun onQueryTextChange(newText: String?): Boolean = false
+            },
+        )
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             openOrCloseHelp(hasFocus)
         }
@@ -123,14 +123,15 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
 
     private fun initExploreKinds() {
         lifecycleScope.launch {
-            val exploreKinds = viewModel.bookSource?.exploreKinds()?.filter {
-                !it.url.isNullOrBlank()
-            }
+            val exploreKinds =
+                viewModel.bookSource?.exploreKinds()?.filter {
+                    !it.url.isNullOrBlank()
+                }
             exploreKinds?.firstOrNull()?.let {
                 binding.textFx.text = "${it.title}::${it.url}"
                 if (it.title.startsWith("ERROR:")) {
                     adapter.addItem(
-                        DebugLogLine(System.currentTimeMillis(), "获取发现出错\n${it.url}")
+                        DebugLogLine(System.currentTimeMillis(), "获取发现出错\n${it.url}"),
                     )
                     openOrCloseHelp(false)
                     searchView.clearFocus()
@@ -195,16 +196,16 @@ class BookSourceDebugActivity : VMBaseActivity<ActivitySourceDebugBinding, BookS
             R.id.menu_book_src -> showDialogFragment(TextDialog("html", viewModel.bookSrc))
             R.id.menu_toc_src -> showDialogFragment(TextDialog("html", viewModel.tocSrc))
             R.id.menu_content_src -> showDialogFragment(TextDialog("html", viewModel.contentSrc))
-            R.id.menu_refresh_explore -> lifecycleScope.launch {
-                viewModel.bookSource?.clearExploreKindsCache()
-                adapter.clearItems()
-                openOrCloseHelp(true)
-                initExploreKinds()
-            }
+            R.id.menu_refresh_explore ->
+                lifecycleScope.launch {
+                    viewModel.bookSource?.clearExploreKindsCache()
+                    adapter.clearItems()
+                    openOrCloseHelp(true)
+                    initExploreKinds()
+                }
 
             R.id.menu_help -> showHelp("debugHelp")
         }
         return super.onCompatOptionsItemSelected(item)
     }
-
 }

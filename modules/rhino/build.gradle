@@ -3,6 +3,20 @@ plugins {
     //id 'org.jetbrains.kotlin.android'
     alias libs.plugins.android.library
     alias libs.plugins.kotlin.android
+    alias libs.plugins.spotless
+}
+
+spotless {
+    kotlin {
+        target 'src/**/*.kt'
+        ktlint(libs.versions.ktlint.get()).editorConfigOverride([
+                // 不可自动修复且属项目既有风格/交由 detekt(带 baseline)把关的规则
+                'ktlint_standard_max-line-length': 'disabled',
+                'ktlint_standard_no-wildcard-imports': 'disabled',
+                'ktlint_standard_property-naming': 'disabled',
+                'ktlint_standard_package-name': 'disabled',
+        ])
+    }
 }
 
 android {

@@ -4,14 +4,13 @@ import androidx.room.*
 import io.legado.app.data.entities.Bookmark
 import kotlinx.coroutines.flow.Flow
 
-
 @Dao
 interface BookmarkDao {
 
     @get:Query(
         """
         select * from bookmarks order by bookName collate localized, bookAuthor collate localized, chapterIndex, chapterPos
-    """
+    """,
     )
     val all: List<Bookmark>
 
@@ -21,7 +20,7 @@ interface BookmarkDao {
     @Query(
         """select * from bookmarks 
         where bookName = :bookName and bookAuthor = :bookAuthor 
-        order by chapterIndex"""
+        order by chapterIndex""",
     )
     fun flowByBook(bookName: String, bookAuthor: String): Flow<List<Bookmark>>
 
@@ -29,14 +28,14 @@ interface BookmarkDao {
         """SELECT * FROM bookmarks 
         where bookName = :bookName and bookAuthor = :bookAuthor 
         and chapterName like '%'||:key||'%' or content like '%'||:key||'%'
-        order by chapterIndex"""
+        order by chapterIndex""",
     )
     fun flowSearch(bookName: String, bookAuthor: String, key: String): Flow<List<Bookmark>>
 
     @Query(
         """select * from bookmarks 
         where bookName = :bookName and bookAuthor = :bookAuthor 
-        order by chapterIndex"""
+        order by chapterIndex""",
     )
     fun getByBook(bookName: String, bookAuthor: String): List<Bookmark>
 
@@ -44,7 +43,7 @@ interface BookmarkDao {
         """SELECT * FROM bookmarks 
         where bookName = :bookName and bookAuthor = :bookAuthor 
         and chapterName like '%'||:key||'%' or content like '%'||:key||'%'
-        order by chapterIndex"""
+        order by chapterIndex""",
     )
     fun search(bookName: String, bookAuthor: String, key: String): List<Bookmark>
 
@@ -56,5 +55,4 @@ interface BookmarkDao {
 
     @Delete
     fun delete(vararg bookmark: Bookmark)
-
 }

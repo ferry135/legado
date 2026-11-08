@@ -24,8 +24,7 @@ import java.util.*
 import kotlin.math.pow
 
 @SuppressLint("Recycle")
-class ExplosionAnimator(private val mContainer: View, bitmap: Bitmap, bound: Rect) :
-    ValueAnimator() {
+class ExplosionAnimator(private val mContainer: View, bitmap: Bitmap, bound: Rect) : ValueAnimator() {
 
     private val mPaint: Paint = Paint()
     private val mParticles: Array<Particle?>
@@ -63,7 +62,13 @@ class ExplosionAnimator(private val mContainer: View, bitmap: Bitmap, bound: Rec
             if (nextFloat < 0.2f) particle.top else particle.top + particle.top * 0.2f * random.nextFloat()
         particle.bottom = mBound.height() * (random.nextFloat() - 0.5f) * 1.8f
         var f =
-            if (nextFloat < 0.2f) particle.bottom else if (nextFloat < 0.8f) particle.bottom * 0.6f else particle.bottom * 0.3f
+            if (nextFloat < 0.2f) {
+                particle.bottom
+            } else if (nextFloat < 0.8f) {
+                particle.bottom * 0.6f
+            } else {
+                particle.bottom * 0.3f
+            }
         particle.bottom = f
         particle.mag = 4.0f * particle.top / particle.bottom
         particle.neg = -particle.mag / particle.bottom
@@ -117,7 +122,6 @@ class ExplosionAnimator(private val mContainer: View, bitmap: Bitmap, bound: Rec
         var neg: Float = 0.toFloat()
         var life: Float = 0.toFloat()
         var overflow: Float = 0.toFloat()
-
 
         fun advance(factor: Float) {
             var f = 0f

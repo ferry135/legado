@@ -9,7 +9,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @Entity(
     tableName = "bookmarks",
-    indices = [(Index(value = ["bookName", "bookAuthor"], unique = false))]
+    indices = [(Index(value = ["bookName", "bookAuthor"], unique = false))],
 )
 data class Bookmark(
     @PrimaryKey
@@ -20,5 +20,5 @@ data class Bookmark(
     var chapterPos: Int = 0,
     var chapterName: String = "",
     var bookText: String = "",
-    var content: String = ""
+    var content: String = "",
 ) : Parcelable

@@ -18,11 +18,12 @@ import io.legado.app.utils.dpToPx
  * Created by Victor on 2015/4/28.
  */
 @Suppress("MemberVisibilityCanBePrivate")
-class RotateLoading @JvmOverloads constructor(
+class RotateLoading
+@JvmOverloads
+constructor(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet? = null,
 ) : View(context, attrs) {
-
     private var mPaint: Paint
 
     private var loadingRectF: RectF? = null
@@ -68,14 +69,16 @@ class RotateLoading @JvmOverloads constructor(
             val typedArray = context.obtainStyledAttributes(attrs, R.styleable.RotateLoading)
             loadingColor =
                 typedArray.getColor(R.styleable.RotateLoading_loading_color, loadingColor)
-            thisWidth = typedArray.getDimensionPixelSize(
-                R.styleable.RotateLoading_loading_width,
-                DEFAULT_WIDTH.dpToPx()
-            )
-            shadowPosition = typedArray.getInt(
-                R.styleable.RotateLoading_shadow_position,
-                DEFAULT_SHADOW_POSITION
-            )
+            thisWidth =
+                typedArray.getDimensionPixelSize(
+                    R.styleable.RotateLoading_loading_width,
+                    DEFAULT_WIDTH.dpToPx(),
+                )
+            shadowPosition =
+                typedArray.getInt(
+                    R.styleable.RotateLoading_shadow_position,
+                    DEFAULT_SHADOW_POSITION,
+                )
             speedOfDegree =
                 typedArray.getInt(R.styleable.RotateLoading_loading_speed, DEFAULT_SPEED_OF_DEGREE)
             typedArray.recycle()
@@ -89,7 +92,12 @@ class RotateLoading @JvmOverloads constructor(
         mPaint.strokeCap = Paint.Cap.ROUND
     }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+    override fun onSizeChanged(
+        w: Int,
+        h: Int,
+        oldw: Int,
+        oldh: Int,
+    ) {
         super.onSizeChanged(w, h, oldw, oldh)
 
         arc = 10f
@@ -99,16 +107,16 @@ class RotateLoading @JvmOverloads constructor(
                 (2 * thisWidth).toFloat(),
                 (2 * thisWidth).toFloat(),
                 (w - 2 * thisWidth).toFloat(),
-                (h - 2 * thisWidth).toFloat()
+                (h - 2 * thisWidth).toFloat(),
             )
-        shadowRectF = RectF(
-            (2 * thisWidth + shadowPosition).toFloat(),
-            (2 * thisWidth + shadowPosition).toFloat(),
-            (w - 2 * thisWidth + shadowPosition).toFloat(),
-            (h - 2 * thisWidth + shadowPosition).toFloat()
-        )
+        shadowRectF =
+            RectF(
+                (2 * thisWidth + shadowPosition).toFloat(),
+                (2 * thisWidth + shadowPosition).toFloat(),
+                (w - 2 * thisWidth + shadowPosition).toFloat(),
+                (h - 2 * thisWidth + shadowPosition).toFloat(),
+            )
     }
-
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -203,14 +211,16 @@ class RotateLoading @JvmOverloads constructor(
 
     private fun startAnimator() {
         animate().cancel()
-        animate().scaleX(1.0f)
+        animate()
+            .scaleX(1.0f)
             .scaleY(1.0f)
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationStart(animation: Animator) {
-                    visibility = VISIBLE
-                }
-            })
-            .start()
+            .setListener(
+                object : AnimatorListenerAdapter() {
+                    override fun onAnimationStart(animation: Animator) {
+                        visibility = VISIBLE
+                    }
+                },
+            ).start()
     }
 
     private fun stopAnimator() {
@@ -224,5 +234,4 @@ class RotateLoading @JvmOverloads constructor(
         private const val DEFAULT_SHADOW_POSITION = 2
         private const val DEFAULT_SPEED_OF_DEGREE = 10
     }
-
 }

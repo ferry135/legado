@@ -31,8 +31,8 @@ class GrayscaleTransformation : BitmapTransformation() {
                 0.299f, 0.587f, 0.114f, 0f, 0f,
                 0.299f, 0.587f, 0.114f, 0f, 0f,
                 0.299f, 0.587f, 0.114f, 0f, 0f,
-                0f, 0f, 0f, 1f, 0f
-            )
+                0f, 0f, 0f, 1f, 0f,
+            ),
         )
         val filter = ColorMatrixColorFilter(matrix)
         paint.colorFilter = filter
@@ -51,7 +51,5 @@ class GrayscaleTransformation : BitmapTransformation() {
         return ID == other.ID
     }
 
-    override fun hashCode(): Int {
-        return ID.hashCode()
-    }
+    override fun hashCode(): Int = ID.hashCode()
 }

@@ -50,60 +50,36 @@ abstract class AbstractScriptEngine(val bindings: Bindings? = null) : ScriptEngi
         getBindings(ENGINE_SCOPE)?.put(key, value)
     }
 
-    override fun get(key: String): Any? {
-        return getBindings(ENGINE_SCOPE)?.get(key)
-    }
+    override fun get(key: String): Any? = getBindings(ENGINE_SCOPE)?.get(key)
 
-    override fun eval(reader: Reader, scope: Scriptable): Any? {
-        return eval(reader, scope, null)
-    }
+    override fun eval(reader: Reader, scope: Scriptable): Any? = eval(reader, scope, null)
 
-    override suspend fun evalSuspend(script: String, scope: Scriptable): Any? {
-        return this.evalSuspend(StringReader(script), scope)
-    }
+    override suspend fun evalSuspend(script: String, scope: Scriptable): Any? = this.evalSuspend(StringReader(script), scope)
 
-    override fun eval(script: String, scope: Scriptable): Any? {
-        return this.eval(StringReader(script), scope)
-    }
+    override fun eval(script: String, scope: Scriptable): Any? = this.eval(StringReader(script), scope)
 
     @Throws(ScriptException::class)
-    override fun eval(reader: Reader, context: ScriptContext): Any? {
-        return this.eval(reader, getRuntimeScope(context))
-    }
+    override fun eval(reader: Reader, context: ScriptContext): Any? = this.eval(reader, getRuntimeScope(context))
 
-    override fun eval(script: String, scope: Scriptable, coroutineContext: CoroutineContext?): Any? {
-        return this.eval(StringReader(script), scope, coroutineContext)
-    }
+    override fun eval(script: String, scope: Scriptable, coroutineContext: CoroutineContext?): Any? = this.eval(StringReader(script), scope, coroutineContext)
 
     @Throws(ScriptException::class)
-    override fun eval(reader: Reader, bindings: Bindings): Any? {
-        return this.eval(reader, getScriptContext(bindings))
-    }
+    override fun eval(reader: Reader, bindings: Bindings): Any? = this.eval(reader, getScriptContext(bindings))
 
     @Throws(ScriptException::class)
-    override fun eval(script: String, bindings: Bindings): Any? {
-        return this.eval(script, getScriptContext(bindings))
-    }
+    override fun eval(script: String, bindings: Bindings): Any? = this.eval(script, getScriptContext(bindings))
 
     @Throws(ScriptException::class)
-    override fun eval(script: String, bindings: ScriptBindings): Any? {
-        return this.eval(script, getRuntimeScope(bindings))
-    }
+    override fun eval(script: String, bindings: ScriptBindings): Any? = this.eval(script, getRuntimeScope(bindings))
 
     @Throws(ScriptException::class)
-    override fun eval(reader: Reader): Any? {
-        return this.eval(reader, context)
-    }
+    override fun eval(reader: Reader): Any? = this.eval(reader, context)
 
     @Throws(ScriptException::class)
-    override fun eval(script: String): Any? {
-        return this.eval(script, context)
-    }
+    override fun eval(script: String): Any? = this.eval(script, context)
 
     @Throws(ScriptException::class)
-    override fun eval(script: String, context: ScriptContext): Any? {
-        return this.eval(StringReader(script), context)
-    }
+    override fun eval(script: String, context: ScriptContext): Any? = this.eval(StringReader(script), context)
 
     override fun getScriptContext(bindings: Bindings): ScriptContext {
         val ctx = SimpleScriptContext(bindings, context.errorWriter, context.reader, context.writer)

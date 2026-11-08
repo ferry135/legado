@@ -40,7 +40,7 @@ class ClickActionConfigDialog : BaseDialogFragment(R.layout.dialog_click_action_
             Pair(10, getString(R.string.chapter_list)),
             Pair(11, getString(R.string.search_content)),
             Pair(12, getString(R.string.sync_book_progress_t)),
-            Pair(13, getString(R.string.read_aloud_pause_resume))
+            Pair(13, getString(R.string.read_aloud_pause_resume)),
         )
     }
 
@@ -57,13 +57,19 @@ class ClickActionConfigDialog : BaseDialogFragment(R.layout.dialog_click_action_
         (activity as ReadBookActivity).bottomDialog--
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         (activity as ReadBookActivity).bottomDialog++
         view.setBackgroundColor(getCompatColor(R.color.translucent))
         // 12-missed-2 #11：中格主色虚线描边运行时着色随 ThemeStore 换肤
         // （MASTER §4 禁布局固化 primary；drawable 内 @color/primary 仅作默认兜底）
         (binding.tvMiddleCenter.background.mutate() as? GradientDrawable)?.setStroke(
-            1.dpToPx(), view.context.primaryColor, 3.dpToPx().toFloat(), 3.dpToPx().toFloat()
+            1.dpToPx(),
+            view.context.primaryColor,
+            3.dpToPx().toFloat(),
+            3.dpToPx().toFloat(),
         )
         initData()
         initViewEvent()
@@ -144,7 +150,7 @@ class ClickActionConfigDialog : BaseDialogFragment(R.layout.dialog_click_action_
     private fun selectAction(success: (action: Int) -> Unit) {
         context?.selector(
             getString(R.string.select_action),
-            actions.values.toList()
+            actions.values.toList(),
         ) { _, index ->
             success.invoke(actions.keys.toList()[index])
         }
@@ -154,5 +160,4 @@ class ClickActionConfigDialog : BaseDialogFragment(R.layout.dialog_click_action_
         super.onDestroy()
         AppConfig.detectClickArea()
     }
-
 }

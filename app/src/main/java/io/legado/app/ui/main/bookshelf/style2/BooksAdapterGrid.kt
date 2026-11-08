@@ -14,47 +14,55 @@ import io.legado.app.utils.invisible
 import splitties.views.onLongClick
 
 @Suppress("UNUSED_PARAMETER")
-class BooksAdapterGrid(context: Context, callBack: CallBack) :
-    BaseBooksAdapter<RecyclerView.ViewHolder>(context, callBack) {
-
+class BooksAdapterGrid(
+    context: Context,
+    callBack: CallBack,
+) : BaseBooksAdapter<RecyclerView.ViewHolder>(context, callBack) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int
-    ): RecyclerView.ViewHolder {
-        return when (viewType) {
-            1 -> GroupViewHolder(ItemBookshelfGridGroupBinding.inflate(inflater, parent, false))
-            else -> BookViewHolder(ItemBookshelfGridBinding.inflate(inflater, parent, false))
-        }
+        viewType: Int,
+    ): RecyclerView.ViewHolder = when (viewType) {
+        1 -> GroupViewHolder(ItemBookshelfGridGroupBinding.inflate(inflater, parent, false))
+        else -> BookViewHolder(ItemBookshelfGridBinding.inflate(inflater, parent, false))
     }
 
     override fun onBindViewHolder(
         holder: RecyclerView.ViewHolder,
         position: Int,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
         when (holder) {
-            is BookViewHolder -> (getItem(position) as? Book)?.let {
-                holder.registerListener(it)
-                holder.onBind(it, position, payloads)
-            }
+            is BookViewHolder ->
+                (getItem(position) as? Book)?.let {
+                    holder.registerListener(it)
+                    holder.onBind(it, position, payloads)
+                }
 
-            is GroupViewHolder -> (getItem(position) as? BookGroup)?.let {
-                holder.registerListener(it)
-                holder.onBind(it, position, payloads)
-            }
+            is GroupViewHolder ->
+                (getItem(position) as? BookGroup)?.let {
+                    holder.registerListener(it)
+                    holder.onBind(it, position, payloads)
+                }
         }
     }
 
-    inner class BookViewHolder(val binding: ItemBookshelfGridBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-
-        fun onBind(item: Book, position: Int) = binding.run {
+    inner class BookViewHolder(
+        val binding: ItemBookshelfGridBinding,
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun onBind(
+            item: Book,
+            position: Int,
+        ) = binding.run {
             tvName.text = item.name
             ivCover.load(item.getDisplayCover(), item.name, item.author, false, item.origin)
             upRefresh(this, item)
         }
 
-        fun onBind(item: Book, position: Int, payloads: MutableList<Any>) = binding.run {
+        fun onBind(
+            item: Book,
+            position: Int,
+            payloads: MutableList<Any>,
+        ) = binding.run {
             if (payloads.isEmpty()) {
                 onBind(item, position)
             } else {
@@ -63,13 +71,14 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
                     bundle.keySet().forEach {
                         when (it) {
                             "name" -> tvName.text = item.name
-                            "cover" -> ivCover.load(
-                                item.getDisplayCover(),
-                                item.name,
-                                item.author,
-                                false,
-                                item.origin
-                            )
+                            "cover" ->
+                                ivCover.load(
+                                    item.getDisplayCover(),
+                                    item.name,
+                                    item.author,
+                                    false,
+                                    item.origin,
+                                )
 
                             "refresh" -> upRefresh(this, item)
                         }
@@ -87,7 +96,10 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
             }
         }
 
-        private fun upRefresh(binding: ItemBookshelfGridBinding, item: Book) {
+        private fun upRefresh(
+            binding: ItemBookshelfGridBinding,
+            item: Book,
+        ) {
             if (!item.isLocal && callBack.isUpdate(item.bookUrl)) {
                 binding.bvUnread.invisible()
                 binding.rlLoading.visible()
@@ -101,18 +113,24 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
                 }
             }
         }
-
     }
 
-    inner class GroupViewHolder(val binding: ItemBookshelfGridGroupBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-
-        fun onBind(item: BookGroup, position: Int) = binding.run {
+    inner class GroupViewHolder(
+        val binding: ItemBookshelfGridGroupBinding,
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun onBind(
+            item: BookGroup,
+            position: Int,
+        ) = binding.run {
             tvName.text = item.groupName
             ivCover.load(item.cover)
         }
 
-        fun onBind(item: BookGroup, position: Int, payloads: MutableList<Any>) = binding.run {
+        fun onBind(
+            item: BookGroup,
+            position: Int,
+            payloads: MutableList<Any>,
+        ) = binding.run {
             if (payloads.isEmpty()) {
                 onBind(item, position)
             } else {
@@ -136,7 +154,5 @@ class BooksAdapterGrid(context: Context, callBack: CallBack) :
                 callBack.onItemLongClick(item)
             }
         }
-
     }
-
 }

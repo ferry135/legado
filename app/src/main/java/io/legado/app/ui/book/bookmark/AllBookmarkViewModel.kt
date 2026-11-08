@@ -15,9 +15,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class AllBookmarkViewModel(application: Application) : BaseViewModel(application) {
-
-
+class AllBookmarkViewModel(
+    application: Application,
+) : BaseViewModel(application) {
     /**
      * 导出书签
      */
@@ -35,7 +35,6 @@ class AllBookmarkViewModel(application: Application) : BaseViewModel(application
             context.toastOnUi("导出成功")
         }
     }
-
 
     fun exportBookmarkMd(treeUri: Uri) {
         execute {
@@ -63,5 +62,4 @@ class AllBookmarkViewModel(application: Application) : BaseViewModel(application
             context.toastOnUi("导出成功")
         }
     }
-
 }

@@ -30,7 +30,6 @@ import kotlin.coroutines.coroutineContext
  * 获取正文
  */
 object BookContent {
-
     @Throws(Exception::class)
     suspend fun analyzeContent(
         bookSource: BookSource,
@@ -40,19 +39,20 @@ object BookContent {
         redirectUrl: String,
         body: String?,
         nextChapterUrl: String?,
-        needSave: Boolean = true
+        needSave: Boolean = true,
     ): String {
         body ?: throw NoStackTraceException(
-            appCtx.getString(R.string.error_get_web_content, baseUrl)
+            appCtx.getString(R.string.error_get_web_content, baseUrl),
         )
-        Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
+        Debug.log(bookSource.bookSourceUrl, "≡获取成功:$baseUrl")
         Debug.log(bookSource.bookSourceUrl, body, state = 40)
-        val mNextChapterUrl = if (nextChapterUrl.isNullOrEmpty()) {
-            appDb.bookChapterDao.getChapter(book.bookUrl, bookChapter.index + 1)?.url
-                ?: appDb.bookChapterDao.getChapter(book.bookUrl, 0)?.url
-        } else {
-            nextChapterUrl
-        }
+        val mNextChapterUrl =
+            if (nextChapterUrl.isNullOrEmpty()) {
+                appDb.bookChapterDao.getChapter(book.bookUrl, bookChapter.index + 1)?.url
+                    ?: appDb.bookChapterDao.getChapter(book.bookUrl, 0)?.url
+            } else {
+                nextChapterUrl
+            }
         val contentList = arrayListOf<String>()
         val nextUrlList = arrayListOf(redirectUrl)
         val contentRule = bookSource.getContentRule()
@@ -65,43 +65,63 @@ object BookContent {
         coroutineContext.ensureActive()
         val titleRule = contentRule.title
         if (!titleRule.isNullOrBlank()) {
-            val title = analyzeRule.runCatching {
-                getString(titleRule)
-            }.onFailure {
-                Debug.log(bookSource.bookSourceUrl, "获取标题出错, ${it.localizedMessage}")
-            }.getOrNull()
+            val title =
+                analyzeRule
+                    .runCatching {
+                        getString(titleRule)
+                    }.onFailure {
+                        Debug.log(bookSource.bookSourceUrl, "获取标题出错, ${it.localizedMessage}")
+                    }.getOrNull()
             if (!title.isNullOrBlank()) {
                 bookChapter.title = title
                 bookChapter.titleMD5 = null
                 appDb.bookChapterDao.update(bookChapter)
             }
         }
-        var contentData = analyzeContent(
-            book, baseUrl, redirectUrl, body, contentRule, bookChapter, bookSource, mNextChapterUrl
-        )
+        var contentData =
+            analyzeContent(
+                book,
+                baseUrl,
+                redirectUrl,
+                body,
+                contentRule,
+                bookChapter,
+                bookSource,
+                mNextChapterUrl,
+            )
         contentList.add(contentData.first)
         if (contentData.second.size == 1) {
             var nextUrl = contentData.second[0]
             while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
-                if (!mNextChapterUrl.isNullOrEmpty()
-                    && NetworkUtils.getAbsoluteURL(redirectUrl, nextUrl)
+                if (!mNextChapterUrl.isNullOrEmpty() &&
+                    NetworkUtils.getAbsoluteURL(redirectUrl, nextUrl)
                     == NetworkUtils.getAbsoluteURL(redirectUrl, mNextChapterUrl)
-                ) break
+                ) {
+                    break
+                }
                 nextUrlList.add(nextUrl)
                 coroutineContext.ensureActive()
-                val analyzeUrl = AnalyzeUrl(
-                    mUrl = nextUrl,
-                    source = bookSource,
-                    ruleData = book,
-                    coroutineContext = coroutineContext
-                )
-                val res = analyzeUrl.getStrResponseAwait() //控制并发访问
-                res.body?.let { nextBody ->
-                    contentData = analyzeContent(
-                        book, nextUrl, res.url, nextBody, contentRule,
-                        bookChapter, bookSource, mNextChapterUrl,
-                        printLog = false
+                val analyzeUrl =
+                    AnalyzeUrl(
+                        mUrl = nextUrl,
+                        source = bookSource,
+                        ruleData = book,
+                        coroutineContext = coroutineContext,
                     )
+                val res = analyzeUrl.getStrResponseAwait() // 控制并发访问
+                res.body?.let { nextBody ->
+                    contentData =
+                        analyzeContent(
+                            book,
+                            nextUrl,
+                            res.url,
+                            nextBody,
+                            contentRule,
+                            bookChapter,
+                            bookSource,
+                            mNextChapterUrl,
+                            printLog = false,
+                        )
                     nextUrl =
                         if (contentData.second.isNotEmpty()) contentData.second[0] else ""
                     contentList.add(contentData.first)
@@ -116,18 +136,25 @@ object BookContent {
                     emit(urlStr)
                 }
             }.mapAsync(AppConfig.threadCount) { urlStr ->
-                val analyzeUrl = AnalyzeUrl(
-                    mUrl = urlStr,
-                    source = bookSource,
-                    ruleData = book,
-                    coroutineContext = coroutineContext
-                )
-                val res = analyzeUrl.getStrResponseAwait() //控制并发访问
+                val analyzeUrl =
+                    AnalyzeUrl(
+                        mUrl = urlStr,
+                        source = bookSource,
+                        ruleData = book,
+                        coroutineContext = coroutineContext,
+                    )
+                val res = analyzeUrl.getStrResponseAwait() // 控制并发访问
                 analyzeContent(
-                    book, urlStr, res.url, res.body!!, contentRule,
-                    bookChapter, bookSource, mNextChapterUrl,
+                    book,
+                    urlStr,
+                    res.url,
+                    res.body!!,
+                    contentRule,
+                    bookChapter,
+                    bookSource,
+                    mNextChapterUrl,
                     getNextPageUrl = false,
-                    printLog = false
+                    printLog = false,
                 ).first
             }.collect {
                 coroutineContext.ensureActive()
@@ -135,7 +162,7 @@ object BookContent {
             }
         }
         var contentStr = contentList.joinToString("\n")
-        //全文替换
+        // 全文替换
         val replaceRegex = contentRule.replaceRegex
         if (!replaceRegex.isNullOrEmpty()) {
             contentStr = contentStr.split(AppPattern.LFRegex).joinToString("\n") { it.trim() }
@@ -166,7 +193,7 @@ object BookContent {
         bookSource: BookSource,
         nextChapterUrl: String?,
         getNextPageUrl: Boolean = true,
-        printLog: Boolean = true
+        printLog: Boolean = true,
     ): Pair<String, List<String>> {
         val analyzeRule = AnalyzeRule(book, bookSource)
         analyzeRule.setContent(body, baseUrl)
@@ -175,13 +202,13 @@ object BookContent {
         analyzeRule.setNextChapterUrl(nextChapterUrl)
         val nextUrlList = arrayListOf<String>()
         analyzeRule.setChapter(chapter)
-        //获取正文
+        // 获取正文
         var content = analyzeRule.getString(contentRule.content, unescape = false)
         content = HtmlFormatter.formatKeepImg(content, rUrl)
         if (content.indexOf('&') > -1) {
             content = StringEscapeUtils.unescapeHtml4(content)
         }
-        //获取下一页链接
+        // 获取下一页链接
         if (getNextPageUrl) {
             val nextUrlRule = contentRule.nextContentUrl
             if (!nextUrlRule.isNullOrEmpty()) {

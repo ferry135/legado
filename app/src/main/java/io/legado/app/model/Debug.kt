@@ -34,12 +34,12 @@ object Debug {
         print: Boolean = true,
         isHtml: Boolean = false,
         showTime: Boolean = true,
-        state: Int = 1
+        state: Int = 1,
     ) {
         if (BuildConfig.DEBUG) {
             Log.d("sourceDebug", msg)
         }
-        //调试信息始终要执行
+        // 调试信息始终要执行
         callback?.let {
             if ((debugSource != sourceUrl || !print)) return
             var printMsg = msg
@@ -91,9 +91,7 @@ object Debug {
         isChecking = false
     }
 
-    fun getRespondTime(sourceUrl: String): Long {
-        return debugTimeMap[sourceUrl] ?: CheckSource.timeout
-    }
+    fun getRespondTime(sourceUrl: String): Long = debugTimeMap[sourceUrl] ?: CheckSource.timeout
 
     fun updateFinalMessage(sourceUrl: String, state: String) {
         if (debugTimeMap[sourceUrl] != null && debugMessageMap[sourceUrl] != null) {
@@ -236,7 +234,7 @@ object Debug {
         bookSource: BookSource,
         book: Book,
         bookChapter: BookChapter,
-        nextChapterUrl: String?
+        nextChapterUrl: String?,
     ) {
         log(debugSource, "︾开始解析正文页")
         val content = WebBook.getContent(
@@ -245,7 +243,7 @@ object Debug {
             book = book,
             bookChapter = bookChapter,
             nextChapterUrl = nextChapterUrl,
-            needSave = false
+            needSave = false,
         ).onSuccess {
             log(debugSource, "︽正文页解析完成", state = 1000)
         }.onError {

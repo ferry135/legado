@@ -28,8 +28,10 @@ import io.legado.app.utils.getCompatDrawable
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-
-class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference(context, attrs) {
+class IconListPreference(
+    context: Context,
+    attrs: AttributeSet,
+) : ListPreference(context, attrs) {
     private var iconNames: Array<CharSequence>
     private val mEntryDrawables = arrayListOf<Drawable?>()
 
@@ -39,15 +41,17 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
 
         val a = context.theme.obtainStyledAttributes(attrs, R.styleable.IconListPreference, 0, 0)
 
-        iconNames = try {
-            a.getTextArray(R.styleable.IconListPreference_icons)
-        } finally {
-            a.recycle()
-        }
+        iconNames =
+            try {
+                a.getTextArray(R.styleable.IconListPreference_icons)
+            } finally {
+                a.recycle()
+            }
 
         for (iconName in iconNames) {
-            val resId = context.resources
-                .getIdentifier(iconName.toString(), "mipmap", context.packageName)
+            val resId =
+                context.resources
+                    .getIdentifier(iconName.toString(), "mipmap", context.packageName)
             var d: Drawable? = null
             kotlin.runCatching {
                 d = context.getCompatDrawable(resId)
@@ -58,13 +62,14 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
-        val v = bindView<ImageView>(
-            holder,
-            widgetLayoutResource,
-            R.id.preview,
-            50,
-            50
-        )
+        val v =
+            bindView<ImageView>(
+                holder,
+                widgetLayoutResource,
+                R.id.preview,
+                50,
+                50,
+            )
         if (v is ImageView) {
             val selectedIndex = findIndexOfValue(value)
             if (selectedIndex >= 0) {
@@ -76,17 +81,18 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
 
     override fun onClick() {
         getActivity()?.let {
-            val dialog = IconDialog().apply {
-                val args = Bundle()
-                args.putString("value", value)
-                args.putCharSequenceArray("entries", entries)
-                args.putCharSequenceArray("entryValues", entryValues)
-                args.putCharSequenceArray("iconNames", iconNames)
-                arguments = args
-                onChanged = { value ->
-                    this@IconListPreference.value = value
+            val dialog =
+                IconDialog().apply {
+                    val args = Bundle()
+                    args.putString("value", value)
+                    args.putCharSequenceArray("entries", entries)
+                    args.putCharSequenceArray("entryValues", entryValues)
+                    args.putCharSequenceArray("iconNames", iconNames)
+                    arguments = args
+                    onChanged = { value ->
+                        this@IconListPreference.value = value
+                    }
                 }
-            }
             it.supportFragmentManager
                 .beginTransaction()
                 .add(dialog, getFragmentTag())
@@ -116,12 +122,9 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
         return null
     }
 
-    private fun getFragmentTag(): String {
-        return "icon_$key"
-    }
+    private fun getFragmentTag(): String = "icon_$key"
 
     class IconDialog : BaseDialogFragment(R.layout.dialog_recycler_view) {
-
         var onChanged: ((value: String) -> Unit)? = null
         var dialogValue: String? = null
         var dialogEntries: Array<CharSequence>? = null
@@ -134,7 +137,10 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
             setLayout(0.8f, ViewGroup.LayoutParams.WRAP_CONTENT)
         }
 
-        override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+        override fun onFragmentCreated(
+            view: View,
+            savedInstanceState: Bundle?,
+        ) {
             // 09稿：与 ThemeListDialog 等一致，去 primaryColor 涂色工具栏——标题走 on_surface，
             // 避免运行时主色偏浅/偏深时标题对比失守（09稿F区同类问题）
             binding.toolBar.setTitle(R.string.change_icon)
@@ -152,19 +158,16 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
             }
         }
 
-
-        inner class Adapter(context: Context) :
-            RecyclerAdapter<CharSequence, ItemIconPreferenceBinding>(context) {
-
-            override fun getViewBinding(parent: ViewGroup): ItemIconPreferenceBinding {
-                return ItemIconPreferenceBinding.inflate(inflater, parent, false)
-            }
+        inner class Adapter(
+            context: Context,
+        ) : RecyclerAdapter<CharSequence, ItemIconPreferenceBinding>(context) {
+            override fun getViewBinding(parent: ViewGroup): ItemIconPreferenceBinding = ItemIconPreferenceBinding.inflate(inflater, parent, false)
 
             override fun convert(
                 holder: ItemViewHolder,
                 binding: ItemIconPreferenceBinding,
                 item: CharSequence,
-                payloads: MutableList<Any>
+                payloads: MutableList<Any>,
             ) {
                 binding.run {
                     val index = findIndexOfValue(item.toString())
@@ -172,13 +175,15 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
                         label.text = it[index]
                     }
                     dialogIconNames?.let {
-                        val resId = context.resources
-                            .getIdentifier(it[index].toString(), "mipmap", context.packageName)
-                        val d = try {
-                            context.getCompatDrawable(resId)
-                        } catch (e: Exception) {
-                            null
-                        }
+                        val resId =
+                            context.resources
+                                .getIdentifier(it[index].toString(), "mipmap", context.packageName)
+                        val d =
+                            try {
+                                context.getCompatDrawable(resId)
+                            } catch (e: Exception) {
+                                null
+                            }
                         d?.let {
                             icon.setImageDrawable(d)
                         }
@@ -197,7 +202,7 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
 
             override fun registerListener(
                 holder: ItemViewHolder,
-                binding: ItemIconPreferenceBinding
+                binding: ItemIconPreferenceBinding,
             ) {
                 // 通用列表弹窗稿 §06#8：此处原「仅 onChanged 无 dismiss」的行点击与 convert 的
                 // root 点击重复（onBindViewHolder 先调本方法、convert 再设 root 监听即被同视图
@@ -217,15 +222,17 @@ class IconListPreference(context: Context, attrs: AttributeSet) : ListPreference
 
             private fun radioOnBg(): Drawable {
                 val primary = ThemeStore.primaryColor(context)
-                val ring = GradientDrawable().apply {
-                    shape = GradientDrawable.OVAL
-                    setColor(Color.TRANSPARENT)
-                    setStroke(2.dpToPx(), primary)
-                }
-                val dot = GradientDrawable().apply {
-                    shape = GradientDrawable.OVAL
-                    setColor(primary)
-                }
+                val ring =
+                    GradientDrawable().apply {
+                        shape = GradientDrawable.OVAL
+                        setColor(Color.TRANSPARENT)
+                        setStroke(2.dpToPx(), primary)
+                    }
+                val dot =
+                    GradientDrawable().apply {
+                        shape = GradientDrawable.OVAL
+                        setColor(primary)
+                    }
                 return LayerDrawable(arrayOf(ring, dot)).apply {
                     val inset = 4.dpToPx()
                     setLayerInset(1, inset, inset, inset, inset)

@@ -21,41 +21,48 @@ import java.lang.ref.WeakReference
 import kotlin.coroutines.CoroutineContext
 
 object SharedJsScope {
-
     private val cacheFolder = File(appCtx.cacheDir, "shareJs")
     private val aCache = ACache.get(cacheFolder)
 
     private val scopeMap = LruCache<String, WeakReference<Scriptable>>(16)
 
-    fun getScope(jsLib: String?, coroutineContext: CoroutineContext?): Scriptable? {
+    fun getScope(
+        jsLib: String?,
+        coroutineContext: CoroutineContext?,
+    ): Scriptable? {
         if (jsLib.isNullOrBlank()) {
             return null
         }
         val key = MD5Utils.md5Encode(jsLib)
         var scope = scopeMap[key]?.get()
         if (scope == null) {
-            scope = RhinoScriptEngine.run {
-                getRuntimeScope(ScriptBindings())
-            }
+            scope =
+                RhinoScriptEngine.run {
+                    getRuntimeScope(ScriptBindings())
+                }
             if (jsLib.isJsonObject()) {
-                val jsMap: Map<String, String> = GSON.fromJson(
-                    jsLib,
-                    TypeToken.getParameterized(
-                        Map::class.java,
-                        String::class.java,
-                        String::class.java
-                    ).type
-                )
+                val jsMap: Map<String, String> =
+                    GSON.fromJson(
+                        jsLib,
+                        TypeToken
+                            .getParameterized(
+                                Map::class.java,
+                                String::class.java,
+                                String::class.java,
+                            ).type,
+                    )
                 jsMap.values.forEach { value ->
                     if (value.isAbsUrl()) {
                         val fileName = MD5Utils.md5Encode(value)
                         var js = aCache.getAsString(fileName)
                         if (js == null) {
-                            js = runBlocking {
-                                okHttpClient.newCallStrResponse {
-                                    url(value)
-                                }.body
-                            }
+                            js =
+                                runBlocking {
+                                    okHttpClient
+                                        .newCallStrResponse {
+                                            url(value)
+                                        }.body
+                                }
                             if (js != null) {
                                 aCache.put(fileName, js)
                             } else {
@@ -83,5 +90,4 @@ object SharedJsScope {
         val key = MD5Utils.md5Encode(jsLib)
         scopeMap.remove(key)
     }
-
 }

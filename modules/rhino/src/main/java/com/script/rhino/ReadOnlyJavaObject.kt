@@ -3,8 +3,7 @@ package com.script.rhino
 import org.mozilla.javascript.NativeJavaObject
 import org.mozilla.javascript.Scriptable
 
-class ReadOnlyJavaObject(scope: Scriptable?, javaObject: Any, staticType: Class<*>?) :
-    NativeJavaObject(scope, javaObject, staticType) {
+class ReadOnlyJavaObject(scope: Scriptable?, javaObject: Any, staticType: Class<*>?) : NativeJavaObject(scope, javaObject, staticType) {
 
     override fun has(name: String, start: Scriptable): Boolean {
         if (name.length > 3 && name.startsWith("set")) {
@@ -29,7 +28,7 @@ class ReadOnlyJavaObject(scope: Scriptable?, javaObject: Any, staticType: Class<
     override fun put(
         name: String?,
         start: Scriptable?,
-        value: Any?
+        value: Any?,
     ) {
         // do nothing
     }
@@ -39,5 +38,4 @@ class ReadOnlyJavaObject(scope: Scriptable?, javaObject: Any, staticType: Class<
             ReadOnlyJavaObject(scope, javaObject, staticType)
         }
     }
-
 }

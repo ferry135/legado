@@ -48,7 +48,6 @@ import java.net.URLDecoder
 import io.legado.app.help.http.CookieManager as AppCookieManager
 
 class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
-
     override val binding by viewBinding(ActivityWebViewBinding::inflate)
     override val viewModel by viewModels<WebViewModel>()
     private val imagePathKey = "imagePath"
@@ -56,12 +55,13 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     private var webPic: String? = null
     private var isCloudflareChallenge = false
     private var isFullScreen = false
-    private val saveImage = registerForActivityResult(HandleFileContract()) {
-        it.uri?.let { uri ->
-            ACache.get().put(imagePathKey, uri.toString())
-            viewModel.saveImage(webPic, uri.toString())
+    private val saveImage =
+        registerForActivityResult(HandleFileContract()) {
+            it.uri?.let { uri ->
+                ACache.get().put(imagePathKey, uri.toString())
+                viewModel.saveImage(webPic, uri.toString())
+            }
         }
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         binding.titleBar.title = intent.getStringExtra("title") ?: getString(R.string.loading)
@@ -81,8 +81,8 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
             if (binding.customWebView.size > 0) {
                 customWebViewCallback?.onCustomViewHidden()
                 return@addCallback
-            } else if (binding.webView.canGoBack()
-                && binding.webView.copyBackForwardList().size > 1
+            } else if (binding.webView.canGoBack() &&
+                binding.webView.copyBackForwardList().size > 1
             ) {
                 binding.webView.goBack()
                 return@addCallback
@@ -144,7 +144,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
         return super.onCompatOptionsItemSelected(item)
     }
 
-    //实现starBrowser调起页面全屏
+    // 实现starBrowser调起页面全屏
     private fun toggleFullScreen() {
         isFullScreen = !isFullScreen
 
@@ -158,7 +158,10 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    private fun initWebView(url: String, headerMap: HashMap<String, String>) {
+    private fun initWebView(
+        url: String,
+        headerMap: HashMap<String, String>,
+    ) {
         binding.progressBar.fontColor = accentColor
         binding.webView.webChromeClient = CustomWebChromeClient()
         binding.webView.webViewClient = CustomWebViewClient()
@@ -230,14 +233,19 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     }
 
     inner class CustomWebChromeClient : WebChromeClient() {
-
-        override fun onProgressChanged(view: WebView?, newProgress: Int) {
+        override fun onProgressChanged(
+            view: WebView?,
+            newProgress: Int,
+        ) {
             super.onProgressChanged(view, newProgress)
             binding.progressBar.setDurProgress(newProgress)
             binding.progressBar.gone(newProgress == 100)
         }
 
-        override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
+        override fun onShowCustomView(
+            view: View?,
+            callback: CustomViewCallback?,
+        ) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
             binding.llView.invisible()
             binding.customWebView.addView(view)
@@ -258,7 +266,7 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
     inner class CustomWebViewClient : WebViewClient() {
         override fun shouldOverrideUrlLoading(
             view: WebView?,
-            request: WebResourceRequest?
+            request: WebResourceRequest?,
         ): Boolean {
             request?.let {
                 return shouldOverrideUrlLoading(it.url)
@@ -267,14 +275,20 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
         }
 
         @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION", "KotlinRedundantDiagnosticSuppress")
-        override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+        override fun shouldOverrideUrlLoading(
+            view: WebView?,
+            url: String?,
+        ): Boolean {
             url?.let {
                 return shouldOverrideUrlLoading(Uri.parse(it))
             }
             return true
         }
 
-        override fun onPageFinished(view: WebView?, url: String?) {
+        override fun onPageFinished(
+            view: WebView?,
+            url: String?,
+        ) {
             super.onPageFinished(view, url)
             val cookieManager = CookieManager.getInstance()
             url?.let {
@@ -324,11 +338,9 @@ class WebViewActivity : VMBaseActivity<ActivityWebViewBinding, WebViewModel>() {
         override fun onReceivedSslError(
             view: WebView?,
             handler: SslErrorHandler?,
-            error: SslError?
+            error: SslError?,
         ) {
             handler?.proceed()
         }
-
     }
-
 }

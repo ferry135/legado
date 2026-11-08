@@ -27,7 +27,6 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
  * 起效的替换规则
  */
 class EffectiveReplacesDialog : BaseDialogFragment(R.layout.dialog_recycler_view) {
-
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
     private val viewModel by activityViewModels<ReadBookViewModel>()
     private val adapter by lazy { ReplaceAdapter(requireContext()) }
@@ -47,7 +46,10 @@ class EffectiveReplacesDialog : BaseDialogFragment(R.layout.dialog_recycler_view
         setLayout(0.9f, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         binding.run {
             toolBar.setTitle(R.string.effective_replaces)
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -67,7 +69,7 @@ class EffectiveReplacesDialog : BaseDialogFragment(R.layout.dialog_recycler_view
             viewModel.replaceRuleChanged()
         }
     }
-    
+
     private fun showChineseConvertAlert() {
         alert(titleResource = R.string.chinese_converter) {
             items(resources.getStringArray(R.array.chinese_mode).toList()) { _, i ->
@@ -79,14 +81,15 @@ class EffectiveReplacesDialog : BaseDialogFragment(R.layout.dialog_recycler_view
         }
     }
 
-    private inner class ReplaceAdapter(context: Context) :
-        RecyclerAdapter<ReplaceRule, Item1lineTextBinding>(context) {
+    private inner class ReplaceAdapter(
+        context: Context,
+    ) : RecyclerAdapter<ReplaceRule, Item1lineTextBinding>(context) {
+        override fun getViewBinding(parent: ViewGroup): Item1lineTextBinding = Item1lineTextBinding.inflate(inflater, parent, false)
 
-        override fun getViewBinding(parent: ViewGroup): Item1lineTextBinding {
-            return Item1lineTextBinding.inflate(inflater, parent, false)
-        }
-
-        override fun registerListener(holder: ItemViewHolder, binding: Item1lineTextBinding) {
+        override fun registerListener(
+            holder: ItemViewHolder,
+            binding: Item1lineTextBinding,
+        ) {
             binding.root.setOnClickListener {
                 getItem(holder.layoutPosition)?.let { item ->
                     if (item == chineseConvert) {
@@ -102,11 +105,9 @@ class EffectiveReplacesDialog : BaseDialogFragment(R.layout.dialog_recycler_view
             holder: ItemViewHolder,
             binding: Item1lineTextBinding,
             item: ReplaceRule,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             binding.textView.text = item.name
         }
-
     }
-
 }

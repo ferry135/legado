@@ -1,7 +1,8 @@
 package io.legado.app.ui.book.read.page.api
 
-abstract class PageFactory<DATA>(protected val dataSource: DataSource) {
-
+abstract class PageFactory<DATA>(
+    protected val dataSource: DataSource,
+) {
     abstract fun moveToFirst()
 
     abstract fun moveToLast()

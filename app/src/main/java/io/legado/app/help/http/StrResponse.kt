@@ -27,17 +27,19 @@ class StrResponse {
     }
 
     constructor(url: String, body: String?) {
-        val request = try {
-            Request.Builder().url(url).build()
-        } catch (e: Exception) {
-            Request.Builder().url("http://localhost/").build()
-        }
-        raw = Builder()
-            .code(200)
-            .message("OK")
-            .protocol(Protocol.HTTP_1_1)
-            .request(request)
-            .build()
+        val request =
+            try {
+                Request.Builder().url(url).build()
+            } catch (e: Exception) {
+                Request.Builder().url("http://localhost/").build()
+            }
+        raw =
+            Builder()
+                .code(200)
+                .message("OK")
+                .protocol(Protocol.HTTP_1_1)
+                .request(request)
+                .build()
         this.body = body
     }
 
@@ -59,26 +61,15 @@ class StrResponse {
 
     fun body() = body
 
-    fun code(): Int {
-        return raw.code
-    }
+    fun code(): Int = raw.code
 
-    fun message(): String {
-        return raw.message
-    }
+    fun message(): String = raw.message
 
-    fun headers(): Headers {
-        return raw.headers
-    }
+    fun headers(): Headers = raw.headers
 
     fun isSuccessful(): Boolean = raw.isSuccessful
 
-    fun errorBody(): ResponseBody? {
-        return errorBody
-    }
+    fun errorBody(): ResponseBody? = errorBody
 
-    override fun toString(): String {
-        return raw.toString()
-    }
-
+    override fun toString(): String = raw.toString()
 }

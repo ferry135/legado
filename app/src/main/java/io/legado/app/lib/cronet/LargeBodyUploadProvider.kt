@@ -20,18 +20,21 @@ import java.util.concurrent.ExecutorService
 @Keep
 class LargeBodyUploadProvider(
     private val body: RequestBody,
-    private val executorService: ExecutorService
-) : UploadDataProvider(), AutoCloseable {
+    private val executorService: ExecutorService,
+) : UploadDataProvider(),
+    AutoCloseable {
     private val pipe = Pipe(BUFFER_SIZE.toLong())
     private var source: BufferedSource = pipe.source.buffer()
 
     @Volatile
     private var filled: Boolean = false
-    override fun getLength(): Long {
-        return body.contentLength()
-    }
 
-    override fun read(uploadDataSink: UploadDataSink, byteBuffer: ByteBuffer) {
+    override fun getLength(): Long = body.contentLength()
+
+    override fun read(
+        uploadDataSink: UploadDataSink,
+        byteBuffer: ByteBuffer,
+    ) {
         if (!filled) {
             fillBuffer()
         }
@@ -56,9 +59,7 @@ class LargeBodyUploadProvider(
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-
         }
-
     }
 
     override fun rewind(p0: UploadDataSink?) {

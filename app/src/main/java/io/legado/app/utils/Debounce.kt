@@ -9,7 +9,7 @@ open class Debounce<T>(
     var maxWait: Long = -1L,
     var leading: Boolean = false,
     var trailing: Boolean = true,
-    private val func: () -> T
+    private val func: () -> T,
 ) {
     companion object {
         private val handler by lazy { buildMainHandler() }
@@ -20,9 +20,10 @@ open class Debounce<T>(
     private val maxing get() = maxWait != -1L
     private var result: T? = null
     private var hasTimer = false
-    private val timerExpiredRunnable = Runnable {
-        timerExpired()
-    }
+    private val timerExpiredRunnable =
+        Runnable {
+            timerExpired()
+        }
 
     init {
         maxWait = if (maxing) max(maxWait, wait) else maxWait
@@ -65,10 +66,11 @@ open class Debounce<T>(
         val timeSinceLastCall = time - lastCallTime
         val timeSinceLastInvoke = time - lastInvokeTime
 
-        return lastCallTime == -1L
-                || timeSinceLastCall >= wait
-                || timeSinceLastCall < 0
-                || maxing && timeSinceLastInvoke >= maxWait
+        return lastCallTime == -1L ||
+            timeSinceLastCall >= wait ||
+            timeSinceLastCall < 0 ||
+            maxing &&
+            timeSinceLastInvoke >= maxWait
     }
 
     private fun timerExpired() {
@@ -89,9 +91,7 @@ open class Debounce<T>(
         hasTimer = false
     }
 
-    fun flush(): T? {
-        return if (hasTimer) trailingEdge(SystemClock.uptimeMillis()) else result
-    }
+    fun flush(): T? = if (hasTimer) trailingEdge(SystemClock.uptimeMillis()) else result
 
     fun pending(): Boolean = hasTimer
 
@@ -117,7 +117,6 @@ open class Debounce<T>(
 
         return result
     }
-
 }
 
 fun <T> debounce(
@@ -125,5 +124,5 @@ fun <T> debounce(
     maxWait: Long = -1L,
     leading: Boolean = false,
     trailing: Boolean = true,
-    func: () -> T
+    func: () -> T,
 ) = Debounce(wait, maxWait, leading, trailing, func)

@@ -11,7 +11,6 @@ import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.main.MainActivity
 
 object ShortCuts {
-
     private inline fun <reified T> buildIntent(context: Context): Intent {
         val intent = Intent(context, T::class.java)
         intent.action = Intent.ACTION_VIEW
@@ -20,7 +19,8 @@ object ShortCuts {
 
     private fun buildBookShelfShortCutInfo(context: Context): ShortcutInfoCompat {
         val bookShelfIntent = buildIntent<MainActivity>(context)
-        return ShortcutInfoCompat.Builder(context, "bookshelf")
+        return ShortcutInfoCompat
+            .Builder(context, "bookshelf")
             .setShortLabel(context.getString(R.string.bookshelf))
             .setLongLabel(context.getString(R.string.bookshelf))
             .setIcon(IconCompat.createWithResource(context, R.drawable.icon_read_book))
@@ -31,7 +31,8 @@ object ShortCuts {
     private fun buildReadBookShortCutInfo(context: Context): ShortcutInfoCompat {
         val bookShelfIntent = buildIntent<MainActivity>(context)
         val readBookIntent = buildIntent<ReadBookActivity>(context)
-        return ShortcutInfoCompat.Builder(context, "lastRead")
+        return ShortcutInfoCompat
+            .Builder(context, "lastRead")
             .setShortLabel(context.getString(R.string.last_read))
             .setLongLabel(context.getString(R.string.last_read))
             .setIcon(IconCompat.createWithResource(context, R.drawable.icon_read_book))
@@ -42,7 +43,8 @@ object ShortCuts {
     private fun buildReadAloudShortCutInfo(context: Context): ShortcutInfoCompat {
         val readAloudIntent = buildIntent<SharedReceiverActivity>(context)
         readAloudIntent.putExtra("action", "readAloud")
-        return ShortcutInfoCompat.Builder(context, "readAloud")
+        return ShortcutInfoCompat
+            .Builder(context, "readAloud")
             .setShortLabel(context.getString(R.string.read_aloud))
             .setLongLabel(context.getString(R.string.read_aloud))
             .setIcon(IconCompat.createWithResource(context, R.drawable.icon_read_book))
@@ -52,12 +54,12 @@ object ShortCuts {
 
     fun buildShortCuts(context: Context) {
         ShortcutManagerCompat.setDynamicShortcuts(
-            context, listOf(
+            context,
+            listOf(
                 buildReadBookShortCutInfo(context),
                 buildReadAloudShortCutInfo(context),
-                buildBookShelfShortCutInfo(context)
-            )
+                buildBookShelfShortCutInfo(context),
+            ),
         )
     }
-
 }

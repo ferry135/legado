@@ -12,8 +12,22 @@ plugins {
     alias libs.plugins.room
     alias libs.plugins.ksp
     alias libs.plugins.google.services
+    alias libs.plugins.spotless
 }
 apply from: 'download.gradle'
+
+spotless {
+    kotlin {
+        target 'src/**/*.kt'
+        ktlint(libs.versions.ktlint.get()).editorConfigOverride([
+                // 不可自动修复且属项目既有风格/交由 detekt(带 baseline)把关的规则
+                'ktlint_standard_max-line-length': 'disabled',
+                'ktlint_standard_no-wildcard-imports': 'disabled',
+                'ktlint_standard_property-naming': 'disabled',
+                'ktlint_standard_package-name': 'disabled',
+        ])
+    }
+}
 
 static def releaseTime() {
     return new Date().format("yy.MMddHH", TimeZone.getTimeZone("GMT+8"))

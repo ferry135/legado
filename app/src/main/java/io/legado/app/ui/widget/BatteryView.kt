@@ -16,9 +16,11 @@ import io.legado.app.utils.canvasrecorder.CanvasRecorderFactory
 import io.legado.app.utils.canvasrecorder.recordIfNeededThenDraw
 import io.legado.app.utils.dpToPx
 
-class BatteryView @JvmOverloads constructor(
+class BatteryView
+@JvmOverloads
+constructor(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet? = null,
 ) : AppCompatTextView(context, attrs) {
     private val batteryTypeface by lazy {
         Typeface.createFromAsset(context.assets, "font/number.ttf")
@@ -53,14 +55,19 @@ class BatteryView @JvmOverloads constructor(
         }
     }
 
-    fun setColor(@ColorInt color: Int) {
+    fun setColor(
+        @ColorInt color: Int,
+    ) {
         setTextColor(color)
         batteryPaint.color = color
         invalidate()
     }
 
     @SuppressLint("SetTextI18n")
-    fun setBattery(battery: Int, text: String? = null) {
+    fun setBattery(
+        battery: Int,
+        text: String? = null,
+    ) {
         this.battery = battery
         if (text.isNullOrEmpty()) {
             setText(battery.toString())
@@ -69,7 +76,13 @@ class BatteryView @JvmOverloads constructor(
         }
     }
 
-    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+    override fun onLayout(
+        changed: Boolean,
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int,
+    ) {
         super.onLayout(changed, left, top, right, bottom)
         canvasRecorder.invalidate()
     }
@@ -89,23 +102,25 @@ class BatteryView @JvmOverloads constructor(
     private fun drawBattery(canvas: Canvas) {
         if (!isBattery) return
         layout.getLineBounds(0, outFrame)
-        val batteryStart = layout
-            .getPrimaryHorizontal(text.length - battery.toString().length)
-            .toInt() + 2.dpToPx()
-        val batteryEnd = batteryStart +
+        val batteryStart =
+            layout
+                .getPrimaryHorizontal(text.length - battery.toString().length)
+                .toInt() + 2.dpToPx()
+        val batteryEnd =
+            batteryStart +
                 StaticLayout.getDesiredWidth(battery.toString(), paint).toInt() + 4.dpToPx()
         outFrame.set(
             batteryStart,
             2.dpToPx(),
             batteryEnd,
-            height - 2.dpToPx()
+            height - 2.dpToPx(),
         )
         val dj = (outFrame.bottom - outFrame.top) / 3
         polar.set(
             batteryEnd,
             outFrame.top + dj,
             batteryEnd + 2.dpToPx(),
-            outFrame.bottom - dj
+            outFrame.bottom - dj,
         )
         batteryPaint.style = Paint.Style.STROKE
         canvas.drawRect(outFrame, batteryPaint)
@@ -118,5 +133,4 @@ class BatteryView @JvmOverloads constructor(
         super.invalidate()
         canvasRecorder?.invalidate()
     }
-
 }

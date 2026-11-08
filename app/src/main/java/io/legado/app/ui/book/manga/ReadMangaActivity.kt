@@ -30,7 +30,6 @@ import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.BookChapter
 import io.legado.app.data.entities.BookProgress
 import io.legado.app.data.entities.BookSource
-import io.legado.app.lib.theme.primaryColor
 import io.legado.app.databinding.ActivityMangaBinding
 import io.legado.app.databinding.ViewLoadMoreBinding
 import io.legado.app.help.book.isImage
@@ -38,6 +37,7 @@ import io.legado.app.help.book.removeType
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.storage.Backup
 import io.legado.app.lib.dialogs.alert
+import io.legado.app.lib.theme.primaryColor
 import io.legado.app.model.ReadManga
 import io.legado.app.receiver.NetworkChangedListener
 import io.legado.app.ui.book.changesource.ChangeBookSourceDialog
@@ -78,10 +78,14 @@ import kotlinx.coroutines.withContext
 import java.text.DecimalFormat
 import kotlin.math.ceil
 
-class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewModel>(),
-    ReadManga.Callback, ChangeBookSourceDialog.CallBack, MangaMenu.CallBack,
-    MangaColorFilterDialog.Callback, ScrollTimer.ScrollCallback, MangaEpaperDialog.Callback {
-
+class ReadMangaActivity :
+    VMBaseActivity<ActivityMangaBinding, ReadMangaViewModel>(),
+    ReadManga.Callback,
+    ChangeBookSourceDialog.CallBack,
+    MangaMenu.CallBack,
+    MangaColorFilterDialog.Callback,
+    ScrollTimer.ScrollCallback,
+    MangaEpaperDialog.Callback {
     private val mLayoutManager by lazy {
         MangaLayoutManager(this)
     }
@@ -129,12 +133,13 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         }
     }
 
-    //打开目录返回选择章节返回结果
-    private val tocActivity = registerForActivityResult(TocActivityResult()) {
-        it?.let {
-            viewModel.openChapter(it.first, it.second)
+    // 打开目录返回选择章节返回结果
+    private val tocActivity =
+        registerForActivityResult(TocActivityResult()) {
+            it?.let {
+                viewModel.openChapter(it.first, it.second)
+            }
         }
-    }
     private val bookInfoActivity =
         registerForActivityResult(StartActivityContract(BookInfoActivity::class.java)) {
             if (it.resultCode == RESULT_OK) {
@@ -273,7 +278,8 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                     binding.flLoading.isGone = true
                     loadMoreView.visible()
                     binding.mangaMenu.upSeekBar(
-                        ReadManga.durChapterPos, ReadManga.curMangaChapter!!.imageCount
+                        ReadManga.durChapterPos,
+                        ReadManga.curMangaChapter!!.imageCount,
                     )
                 }
 
@@ -312,40 +318,41 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                 if (!hidePageNumberLabel) {
                     mLabelBuilder.append(getString(R.string.manga_check_page_number))
                 }
-                mLabelBuilder.append("${chapterPos + 1}/${imageCount}").append(" ")
+                mLabelBuilder.append("${chapterPos + 1}/$imageCount").append(" ")
             }
 
             if (!hideChapter) {
                 if (!hideChapterLabel) {
                     mLabelBuilder.append(getString(R.string.manga_check_chapter))
                 }
-                mLabelBuilder.append("${chapterIndex + 1}/${chapterSize}").append(" ")
+                mLabelBuilder.append("${chapterIndex + 1}/$chapterSize").append(" ")
             }
 
             if (!hideProgressRatio) {
                 if (!hideProgressRatioLabel) {
                     mLabelBuilder.append(getString(R.string.manga_check_progress))
                 }
-                val percent = if (chapterSize == 0 || imageCount == 0 && chapterIndex == 0) {
-                    "0.0%"
-                } else if (imageCount == 0) {
-                    df.format((chapterIndex + 1.0f) / chapterSize.toDouble())
-                } else {
-                    var percent =
-                        df.format(
-                            chapterIndex * 1.0f / chapterSize + 1.0f /
-                                    chapterSize * (chapterPos + 1) / imageCount.toDouble()
-                        )
-                    if (percent == "100.0%" && (chapterIndex + 1 != chapterSize || chapterPos + 1 != imageCount)) {
-                        percent = "99.9%"
+                val percent =
+                    if (chapterSize == 0 || imageCount == 0 && chapterIndex == 0) {
+                        "0.0%"
+                    } else if (imageCount == 0) {
+                        df.format((chapterIndex + 1.0f) / chapterSize.toDouble())
+                    } else {
+                        var percent =
+                            df.format(
+                                chapterIndex * 1.0f / chapterSize + 1.0f /
+                                    chapterSize * (chapterPos + 1) / imageCount.toDouble(),
+                            )
+                        if (percent == "100.0%" && (chapterIndex + 1 != chapterSize || chapterPos + 1 != imageCount)) {
+                            percent = "99.9%"
+                        }
+                        percent
                     }
-                    percent
-                }
                 mLabelBuilder.append(percent)
             }
         }
         binding.infobar.update(
-            if (mLabelBuilder.isEmpty()) "" else mLabelBuilder.toString()
+            if (mLabelBuilder.isEmpty()) "" else mLabelBuilder.toString(),
         )
     }
 
@@ -411,13 +418,14 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
 
     override fun sureNewProgress(progress: BookProgress) {
         syncDialog?.dismiss()
-        syncDialog = alert(R.string.get_book_progress) {
-            setMessage(R.string.cloud_progress_exceeds_current)
-            okButton {
-                ReadManga.setProgress(progress)
+        syncDialog =
+            alert(R.string.get_book_progress) {
+                setMessage(R.string.cloud_progress_exceeds_current)
+                okButton {
+                    ReadManga.setProgress(progress)
+                }
+                noButton()
             }
-            noButton()
-        }
     }
 
     override fun showLoading() {
@@ -447,7 +455,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
     override val oldBook: Book?
         get() = ReadManga.book
 
-    override fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
+    override fun changeTo(
+        source: BookSource,
+        book: Book,
+        toc: List<BookChapter>,
+    ) {
         if (book.isImage) {
             binding.flLoading.isVisible = true
             viewModel.changeTo(book, toc)
@@ -498,7 +510,7 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
                 showNumberPickerDialog(
                     0,
                     getString(R.string.pre_download),
-                    AppConfig.mangaPreDownloadNum
+                    AppConfig.mangaPreDownloadNum,
                 ) {
                     AppConfig.mangaPreDownloadNum = it
                     item.title = getString(R.string.pre_download_m, it)
@@ -531,8 +543,9 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
 
             R.id.menu_manga_auto_page_speed -> {
                 showNumberPickerDialog(
-                    1, getString(R.string.setting_manga_auto_page_speed),
-                    AppConfig.mangaAutoPageSpeed
+                    1,
+                    getString(R.string.setting_manga_auto_page_speed),
+                    AppConfig.mangaAutoPageSpeed,
                 ) {
                     AppConfig.mangaAutoPageSpeed = it
                     item.title = getString(R.string.manga_auto_page_speed, it)
@@ -657,9 +670,13 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         if (mRecyclerViewPreloader != null) {
             binding.recyclerView.removeOnScrollListener(mRecyclerViewPreloader!!)
         }
-        mRecyclerViewPreloader = RecyclerViewPreloader(
-            Glide.with(this), mAdapter, mSizeProvider, maxPreload
-        )
+        mRecyclerViewPreloader =
+            RecyclerViewPreloader(
+                Glide.with(this),
+                mAdapter,
+                mSizeProvider,
+                maxPreload,
+            )
         binding.recyclerView.addOnScrollListener(mRecyclerViewPreloader!!)
     }
 
@@ -718,10 +735,11 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
 
     private fun upLayoutInDisplayCutoutMode() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            window.attributes = window.attributes.apply {
-                layoutInDisplayCutoutMode =
-                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
-            }
+            window.attributes =
+                window.attributes.apply {
+                    layoutInDisplayCutoutMode =
+                        WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+                }
         }
     }
 
@@ -740,13 +758,15 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         var dx = 0
         var dy = 0
         if (AppConfig.enableMangaHorizontalScroll) {
-            dx = binding.recyclerView.run {
-                width - paddingStart - paddingEnd
-            }
+            dx =
+                binding.recyclerView.run {
+                    width - paddingStart - paddingEnd
+                }
         } else {
-            dy = binding.recyclerView.run {
-                height - paddingTop - paddingBottom
-            }
+            dy =
+                binding.recyclerView.run {
+                    height - paddingTop - paddingBottom
+                }
         }
         dx *= direction
         dy *= direction
@@ -803,22 +823,23 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
 
     override fun skipToPage(index: Int) {
         val durChapterIndex = ReadManga.durChapterIndex
-        val itemPos = mAdapter.getItems().fastBinarySearch {
-            val chapterIndex: Int
-            val pageIndex: Int
-            if (it is BaseMangaPage) {
-                chapterIndex = it.chapterIndex
-                pageIndex = it.index
-            } else {
-                error("unknown item type")
+        val itemPos =
+            mAdapter.getItems().fastBinarySearch {
+                val chapterIndex: Int
+                val pageIndex: Int
+                if (it is BaseMangaPage) {
+                    chapterIndex = it.chapterIndex
+                    pageIndex = it.index
+                } else {
+                    error("unknown item type")
+                }
+                val delta = chapterIndex - durChapterIndex
+                if (delta != 0) {
+                    delta
+                } else {
+                    pageIndex - index
+                }
             }
-            val delta = chapterIndex - durChapterIndex
-            if (delta != 0) {
-                delta
-            } else {
-                pageIndex - index
-            }
-        }
         if (itemPos > -1) {
             mLayoutManager.scrollToPositionWithOffset(itemPos, 0)
             upInfoBar(mAdapter.getItem(itemPos))
@@ -826,7 +847,10 @@ class ReadMangaActivity : VMBaseActivity<ActivityMangaBinding, ReadMangaViewMode
         }
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+    override fun onKeyDown(
+        keyCode: Int,
+        event: KeyEvent?,
+    ): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_VOLUME_UP -> {
                 scrollToPrev()

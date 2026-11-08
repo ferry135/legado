@@ -27,9 +27,9 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.init.appCtx
 import splitties.views.onClick
 
-class DirectLinkUploadConfig : BaseDialogFragment(R.layout.dialog_direct_link_upload_config),
+class DirectLinkUploadConfig :
+    BaseDialogFragment(R.layout.dialog_direct_link_upload_config),
     Toolbar.OnMenuItemClickListener {
-
     private val binding by viewBinding(DialogDirectLinkUploadConfigBinding::bind)
 
     override fun onStart() {
@@ -37,7 +37,10 @@ class DirectLinkUploadConfig : BaseDialogFragment(R.layout.dialog_direct_link_up
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         // config-form-dialogs §06 弹窗容器：本页卡面 surface_container + outline_variant 描边，
         // 与页面底色 surface 分层（全局 BaseDialogFragment 路径不动，逐页覆盖）；e-ink 模式
         // 维持基类 bg_eink_border_* 描边逻辑（BaseDialogFragment onStart 内再涂）
@@ -68,18 +71,20 @@ class DirectLinkUploadConfig : BaseDialogFragment(R.layout.dialog_direct_link_up
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_import_default -> importDefault()
-            R.id.menu_copy_rule -> getRule()?.let { rule ->
-                requireContext().sendToClip(GSON.toJson(rule))
-            }
-
-            R.id.menu_paste_rule -> runCatching {
-                requireContext().getClipText()!!.let {
-                    val rule = GSON.fromJsonObject<DirectLinkUpload.Rule>(it).getOrThrow()
-                    upView(rule)
+            R.id.menu_copy_rule ->
+                getRule()?.let { rule ->
+                    requireContext().sendToClip(GSON.toJson(rule))
                 }
-            }.onFailure {
-                toastOnUi("剪贴板为空或格式不对")
-            }
+
+            R.id.menu_paste_rule ->
+                runCatching {
+                    requireContext().getClipText()!!.let {
+                        val rule = GSON.fromJsonObject<DirectLinkUpload.Rule>(it).getOrThrow()
+                        upView(rule)
+                    }
+                }.onFailure {
+                    toastOnUi("剪贴板为空或格式不对")
+                }
         }
         return true
     }
@@ -157,10 +162,9 @@ class DirectLinkUploadConfig : BaseDialogFragment(R.layout.dialog_direct_link_up
             // config-form-dialogs §06 底栏主次色分离：逐弹窗重着色，不改全局 applyTint
             // 「拷贝内容」（NEGATIVE）次要色，「确定」（POSITIVE）运行时主色
             getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(
-                requireContext().getCompatColor(R.color.on_surface_variant)
+                requireContext().getCompatColor(R.color.on_surface_variant),
             )
             getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(requireContext().accentColor)
         }
     }
-
 }

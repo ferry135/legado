@@ -1,6 +1,5 @@
 package io.legado.app.api.controller
 
-
 import android.text.TextUtils
 import io.legado.app.api.ReturnData
 import io.legado.app.data.appDb
@@ -18,7 +17,9 @@ object BookSourceController {
             val returnData = ReturnData()
             return if (bookSources.isEmpty()) {
                 returnData.setErrorMsg("设备源列表为空")
-            } else returnData.setData(bookSources)
+            } else {
+                returnData.setData(bookSources)
+            }
         }
 
     fun saveSource(postData: String?): ReturnData {
@@ -46,8 +47,8 @@ object BookSourceController {
             return ReturnData().setErrorMsg("转换源失败")
         }
         bookSources.forEach { bookSource ->
-            if (bookSource.bookSourceName.isNotBlank()
-                && bookSource.bookSourceUrl.isNotBlank()
+            if (bookSource.bookSourceName.isNotBlank() &&
+                bookSource.bookSourceUrl.isNotBlank()
             ) {
                 appDb.bookSourceDao.insert(bookSource)
                 okSources.add(bookSource)
@@ -75,6 +76,7 @@ object BookSourceController {
         }.onFailure {
             return ReturnData().setErrorMsg(it.localizedMessage ?: "数据格式错误")
         }
-        return ReturnData().setData("已执行"/*okSources*/)
+        // okSources
+        return ReturnData().setData("已执行")
     }
 }

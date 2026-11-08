@@ -19,23 +19,24 @@ import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.init.appCtx
 
-class OpenUrlConfirmDialog() : BaseDialogFragment(R.layout.dialog_open_url_confirm),
+class OpenUrlConfirmDialog() :
+    BaseDialogFragment(R.layout.dialog_open_url_confirm),
     Toolbar.OnMenuItemClickListener {
-
     constructor(
         uri: String,
         mimeType: String?,
         sourceOrigin: String? = null,
         sourceName: String? = null,
-        sourceType: Int
+        sourceType: Int,
     ) : this() {
-        arguments = Bundle().apply {
-            putString("uri", uri)
-            putString("mimeType", mimeType)
-            putString("sourceOrigin", sourceOrigin)
-            putString("sourceName", sourceName)
-            putInt("sourceType", sourceType)
-        }
+        arguments =
+            Bundle().apply {
+                putString("uri", uri)
+                putString("mimeType", mimeType)
+                putString("sourceOrigin", sourceOrigin)
+                putString("sourceName", sourceName)
+                putInt("sourceType", sourceType)
+            }
     }
 
     val binding by viewBinding(DialogOpenUrlConfirmBinding::bind)
@@ -46,7 +47,10 @@ class OpenUrlConfirmDialog() : BaseDialogFragment(R.layout.dialog_open_url_confi
         setLayout(1f, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         initMenu()
         val arguments = arguments ?: return
         viewModel.initData(arguments)
@@ -81,15 +85,16 @@ class OpenUrlConfirmDialog() : BaseDialogFragment(R.layout.dialog_open_url_confi
             val uri = viewModel.uri.toUri()
             val mimeType = viewModel.mimeType
             // 创建目标 Intent 并设置类型
-            val targetIntent = Intent(Intent.ACTION_VIEW).apply {
-                // 同时设置 Data 和 Type
-                if (!mimeType.isNullOrBlank()) {
-                    setDataAndType(uri, mimeType)
-                } else {
-                    data = uri
+            val targetIntent =
+                Intent(Intent.ACTION_VIEW).apply {
+                    // 同时设置 Data 和 Type
+                    if (!mimeType.isNullOrBlank()) {
+                        setDataAndType(uri, mimeType)
+                    } else {
+                        data = uri
+                    }
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
 
             // 验证是否有应用可以处理
             if (targetIntent.resolveActivity(appCtx.packageManager) != null) {
@@ -129,5 +134,4 @@ class OpenUrlConfirmDialog() : BaseDialogFragment(R.layout.dialog_open_url_confi
         super.onDestroy()
         activity?.finish()
     }
-
 }

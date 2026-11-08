@@ -14,7 +14,7 @@ open class SimpleScriptContext(
     private var engineScope: Bindings = SimpleBindings(),
     override var errorWriter: Writer = PrintWriter(System.err, true),
     override var reader: Reader = InputStreamReader(System.`in`),
-    override var writer: Writer = PrintWriter(System.out, true)
+    override var writer: Writer = PrintWriter(System.out, true),
 ) : ScriptContext {
     private var globalScope: Bindings? = null
 
@@ -36,14 +36,12 @@ open class SimpleScriptContext(
         throw IllegalArgumentException("Invalid scope value.")
     }
 
-    override fun getAttribute(name: String): Any? {
-        return if (engineScope.containsKey(name)) {
-            this.getAttribute(name, ENGINE_SCOPE)
-        } else if (globalScope?.containsKey(name) == true) {
-            this.getAttribute(name, GLOBAL_SCOPE)
-        } else {
-            null
-        }
+    override fun getAttribute(name: String): Any? = if (engineScope.containsKey(name)) {
+        this.getAttribute(name, ENGINE_SCOPE)
+    } else if (globalScope?.containsKey(name) == true) {
+        this.getAttribute(name, GLOBAL_SCOPE)
+    } else {
+        null
     }
 
     override fun getAttribute(name: String, scope: Int): Any? {
@@ -80,14 +78,12 @@ open class SimpleScriptContext(
         }
     }
 
-    override fun getAttributesScope(name: String): Int {
-        return if (engineScope.containsKey(name)) {
-            ENGINE_SCOPE
-        } else if (globalScope?.containsKey(name) == true) {
-            GLOBAL_SCOPE
-        } else {
-            -1
-        }
+    override fun getAttributesScope(name: String): Int = if (engineScope.containsKey(name)) {
+        ENGINE_SCOPE
+    } else if (globalScope?.containsKey(name) == true) {
+        GLOBAL_SCOPE
+    } else {
+        -1
     }
 
     override fun getBindings(scope: Int): Bindings? {

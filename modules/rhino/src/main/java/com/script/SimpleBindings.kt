@@ -4,12 +4,10 @@
 package com.script
 
 class SimpleBindings @JvmOverloads constructor(
-    private val map: MutableMap<String, Any?> = HashMap()
+    private val map: MutableMap<String, Any?> = HashMap(),
 ) : Bindings {
 
-    override fun put(key: String, value: Any?): Any? {
-        return map.put(key, value)
-    }
+    override fun put(key: String, value: Any?): Any? = map.put(key, value)
 
     override fun putAll(from: Map<out String, Any?>) {
         map.putAll(from)
@@ -19,36 +17,25 @@ class SimpleBindings @JvmOverloads constructor(
         map.clear()
     }
 
-    override fun containsKey(key: String): Boolean {
-        return map.containsKey(key)
-    }
+    override fun containsKey(key: String): Boolean = map.containsKey(key)
 
-    override fun containsValue(value: Any?): Boolean {
-        return map.containsValue(value)
-    }
+    override fun containsValue(value: Any?): Boolean = map.containsValue(value)
 
     override val entries: MutableSet<MutableMap.MutableEntry<String, Any?>>
         get() = map.entries
 
-    override operator fun get(key: String): Any? {
-        return map[key]
-    }
+    override operator fun get(key: String): Any? = map[key]
 
-    override fun isEmpty(): Boolean {
-        return map.isEmpty()
-    }
+    override fun isEmpty(): Boolean = map.isEmpty()
 
     override val keys: MutableSet<String>
         get() = map.keys
 
-    override fun remove(key: String): Any? {
-        return map.remove(key)
-    }
+    override fun remove(key: String): Any? = map.remove(key)
 
     override val size: Int
         get() = map.size
 
     override val values: MutableCollection<Any?>
         get() = map.values
-
 }

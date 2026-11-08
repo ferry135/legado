@@ -8,9 +8,9 @@ import org.junit.Assert
 import org.junit.Test
 
 class JsTest {
-
     @Language("js")
-    private val printJs = """
+    private val printJs =
+        """
         function print(str, newline) {
             if (typeof(str) == 'undefined') {
                 str = 'undefined';
@@ -23,7 +23,7 @@ class JsTest {
         function println(str) { 
             print(str, true);
         }
-    """.trimIndent()
+        """.trimIndent()
 
     @Test
     fun testMap() {
@@ -42,14 +42,16 @@ class JsTest {
 
     @Test
     fun testFor() {
-        val scope = RhinoScriptEngine.run {
-            val scope = getRuntimeScope(ScriptBindings())
-            eval(printJs, scope)
-            scope
-        }
+        val scope =
+            RhinoScriptEngine.run {
+                val scope = getRuntimeScope(ScriptBindings())
+                eval(printJs, scope)
+                scope
+            }
 
         @Language("js")
-        val jsFor = """
+        val jsFor =
+            """
             let result = 0
             let a=[1,2,3]
             let l=a.length
@@ -66,7 +68,7 @@ class JsTest {
                 println(o)
             }
             result
-        """.trimIndent()
+            """.trimIndent()
         val result = RhinoScriptEngine.eval(jsFor, scope)
         Assert.assertEquals("12012", result)
     }
@@ -80,19 +82,20 @@ class JsTest {
     @Test
     fun testReplace() {
         @Language("js")
-        val js = """
+        val js =
+            """
             s=result.match(/(.{1,6}?)(第.*)/);
             n=s[2].length-parseInt(6-s[1].length);
             s[2].substr(0,n);
-        """.trimIndent()
-        val x = RhinoScriptEngine.run {
-            val bindings = ScriptBindings()
-            bindings["result"] = "筳彩涫第七百一十四章 人头树鮺舦綸"
-            eval(js, bindings)
-        }
+            """.trimIndent()
+        val x =
+            RhinoScriptEngine.run {
+                val bindings = ScriptBindings()
+                bindings["result"] = "筳彩涫第七百一十四章 人头树鮺舦綸"
+                eval(js, bindings)
+            }
         Assert.assertEquals(x, "第七百一十四章 人头树")
     }
-
 
     @Test
     fun chapterText() {
@@ -111,11 +114,12 @@ class JsTest {
         val bindings = ScriptBindings()
         bindings["list"] = list
         @Language("js")
-        val js = """
+        val js =
+            """
             var result = 0
             list.forEach(item => {result = result + item})
             result
-        """.trimIndent()
+            """.trimIndent()
         val result = RhinoScriptEngine.eval(js, bindings)
         Assert.assertEquals(result, 6.0)
     }
@@ -123,13 +127,14 @@ class JsTest {
     @Test
     fun typeofString() {
         val bindings = ScriptBindings()
+
         @Language("js")
-        val js = """
+        val js =
+            """
             s = "" + String()
             typeof s
-        """.trimIndent()
+            """.trimIndent()
         val result = RhinoScriptEngine.eval(js, bindings)
         Assert.assertEquals(result, "string")
     }
-
 }

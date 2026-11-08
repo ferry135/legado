@@ -18,34 +18,32 @@ import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
 import splitties.views.onLongClick
 
-
 class ChangeChapterSourceAdapter(
     context: Context,
     val viewModel: ChangeChapterSourceViewModel,
-    val callBack: CallBack
+    val callBack: CallBack,
 ) : DiffRecyclerAdapter<SearchBook, ItemChangeSourceBinding>(context) {
+    override val diffItemCallback =
+        object : DiffUtil.ItemCallback<SearchBook>() {
+            override fun areItemsTheSame(
+                oldItem: SearchBook,
+                newItem: SearchBook,
+            ): Boolean = oldItem.bookUrl == newItem.bookUrl
 
-    override val diffItemCallback = object : DiffUtil.ItemCallback<SearchBook>() {
-        override fun areItemsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
-            return oldItem.bookUrl == newItem.bookUrl
+            override fun areContentsTheSame(
+                oldItem: SearchBook,
+                newItem: SearchBook,
+            ): Boolean = oldItem.originName == newItem.originName &&
+                oldItem.getDisplayLastChapterTitle() == newItem.getDisplayLastChapterTitle()
         }
 
-        override fun areContentsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
-            return oldItem.originName == newItem.originName
-                    && oldItem.getDisplayLastChapterTitle() == newItem.getDisplayLastChapterTitle()
-        }
-
-    }
-
-    override fun getViewBinding(parent: ViewGroup): ItemChangeSourceBinding {
-        return ItemChangeSourceBinding.inflate(inflater, parent, false)
-    }
+    override fun getViewBinding(parent: ViewGroup): ItemChangeSourceBinding = ItemChangeSourceBinding.inflate(inflater, parent, false)
 
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemChangeSourceBinding,
         item: SearchBook,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
         binding.apply {
             if (payloads.isEmpty()) {
@@ -66,11 +64,12 @@ class ChangeChapterSourceAdapter(
                         when (it) {
                             "name" -> tvOrigin.text = item.originName
                             "latest" -> tvLast.text = item.getDisplayLastChapterTitle()
-                            "upCurSource" -> if (callBack.oldBookUrl == item.bookUrl) {
-                                ivChecked.visible()
-                            } else {
-                                ivChecked.invisible()
-                            }
+                            "upCurSource" ->
+                                if (callBack.oldBookUrl == item.bookUrl) {
+                                    ivChecked.visible()
+                                } else {
+                                    ivChecked.invisible()
+                                }
                         }
                     }
                 }
@@ -91,7 +90,10 @@ class ChangeChapterSourceAdapter(
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemChangeSourceBinding) {
+    override fun registerListener(
+        holder: ItemViewHolder,
+        binding: ItemChangeSourceBinding,
+    ) {
         binding.ivGood.setOnClickListener {
             if (binding.ivBad.isVisible) {
                 tintVoteIcons(binding.ivGood, binding.ivBad, 1)
@@ -128,7 +130,10 @@ class ChangeChapterSourceAdapter(
         }
     }
 
-    private fun showMenu(view: View, searchBook: SearchBook?) {
+    private fun showMenu(
+        view: View,
+        searchBook: SearchBook?,
+    ) {
         searchBook ?: return
         val popupMenu = PopupMenu(context, view)
         popupMenu.inflate(R.menu.change_source_item)
@@ -158,13 +163,24 @@ class ChangeChapterSourceAdapter(
 
     interface CallBack {
         val oldBookUrl: String?
+
         fun openToc(searchBook: SearchBook)
+
         fun topSource(searchBook: SearchBook)
+
         fun bottomSource(searchBook: SearchBook)
+
         fun editSource(searchBook: SearchBook)
+
         fun disableSource(searchBook: SearchBook)
+
         fun deleteSource(searchBook: SearchBook)
-        fun setBookScore(searchBook: SearchBook, score: Int)
+
+        fun setBookScore(
+            searchBook: SearchBook,
+            score: Int,
+        )
+
         fun getBookScore(searchBook: SearchBook): Int
     }
 }

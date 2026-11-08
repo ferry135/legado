@@ -9,10 +9,10 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceViewHolder
 import io.legado.app.R
 
-
-class PreferenceCategory(context: Context, attrs: AttributeSet) :
-    PreferenceCategory(context, attrs) {
-
+class PreferenceCategory(
+    context: Context,
+    attrs: AttributeSet,
+) : PreferenceCategory(context, attrs) {
     init {
         isPersistent = true
         layoutResource = R.layout.view_preference_category
@@ -21,7 +21,7 @@ class PreferenceCategory(context: Context, attrs: AttributeSet) :
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
         val view = holder.findViewById(R.id.preference_title)
-        if (view is TextView) {  //  && !view.isInEditMode
+        if (view is TextView) { //  && !view.isInEditMode
             view.text = title
             if (view.isInEditMode) return
             // 09稿改动④：组题色回归 XML 的 on_surface_variant，不再用运行时 accentColor 覆盖
@@ -38,5 +38,4 @@ class PreferenceCategory(context: Context, attrs: AttributeSet) :
             }
         }
     }
-
 }

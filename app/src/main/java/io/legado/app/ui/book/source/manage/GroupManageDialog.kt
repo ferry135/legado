@@ -10,8 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -33,11 +31,10 @@ import io.legado.app.utils.requestInputMethod
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import io.legado.app.utils.visible
-import kotlinx.coroutines.launch
 
-class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
+class GroupManageDialog :
+    BaseDialogFragment(R.layout.dialog_recycler_view),
     Toolbar.OnMenuItemClickListener {
-
     private val viewModel: BookSourceViewModel by activityViewModels()
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
     private val adapter by lazy { GroupAdapter(requireContext()) }
@@ -47,7 +44,10 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         setLayout(0.9f, 0.9f)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         // 根平涂已删（group-manage 稿 §05）：BaseDialogFragment.onViewCreated 先铺 16dp 圆角弹层底
         // （:84 setSheetBackground → ViewExtensions.kt:342），kt 根平涂在其后会覆盖圆角退回直角
         binding.toolBar.title = getString(R.string.group_manage)
@@ -64,11 +64,12 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         // 副行文案随壳内 include 的 group_manage_empty_tip（分组管理域，避免书架语境的
         // group_empty_tip）；点击走既有 menu_add → addGroup 同一 alert 路径，不新增代码路径
         binding.tvAddGroup.setTextColor(requireContext().accentColor)
-        binding.tvAddGroup.background = GradientDrawable().apply {
-            setColor(Color.TRANSPARENT)
-            setStroke(1.dpToPx(), requireContext().accentColor)
-            cornerRadius = 9.dpToPx().toFloat()
-        }
+        binding.tvAddGroup.background =
+            GradientDrawable().apply {
+                setColor(Color.TRANSPARENT)
+                setStroke(1.dpToPx(), requireContext().accentColor)
+                cornerRadius = 9.dpToPx().toFloat()
+            }
         binding.tvAddGroup.setOnClickListener {
             addGroup()
         }
@@ -97,9 +98,10 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
     @SuppressLint("InflateParams")
     private fun addGroup() {
         alert(title = getString(R.string.add_group)) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.setHint(R.string.group_name)
-            }
+            val alertBinding =
+                DialogEditTextBinding.inflate(layoutInflater).apply {
+                    editView.setHint(R.string.group_name)
+                }
             customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let {
@@ -115,10 +117,11 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
     @SuppressLint("InflateParams")
     private fun editGroup(group: String) {
         alert(title = getString(R.string.group_edit)) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.setHint(R.string.group_name)
-                editView.setText(group)
-            }
+            val alertBinding =
+                DialogEditTextBinding.inflate(layoutInflater).apply {
+                    editView.setHint(R.string.group_name)
+                    editView.setText(group)
+                }
             customView { alertBinding.root }
             okButton {
                 viewModel.upGroup(group, alertBinding.editView.text?.toString())
@@ -127,18 +130,16 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         }.requestInputMethod()
     }
 
-    private inner class GroupAdapter(context: Context) :
-        RecyclerAdapter<String, ItemGroupManageBinding>(context) {
-
-        override fun getViewBinding(parent: ViewGroup): ItemGroupManageBinding {
-            return ItemGroupManageBinding.inflate(inflater, parent, false)
-        }
+    private inner class GroupAdapter(
+        context: Context,
+    ) : RecyclerAdapter<String, ItemGroupManageBinding>(context) {
+        override fun getViewBinding(parent: ViewGroup): ItemGroupManageBinding = ItemGroupManageBinding.inflate(inflater, parent, false)
 
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemGroupManageBinding,
             item: String,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             binding.run {
                 root.setBackgroundColor(context.backgroundColor)
@@ -146,7 +147,10 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder, binding: ItemGroupManageBinding) {
+        override fun registerListener(
+            holder: ItemViewHolder,
+            binding: ItemGroupManageBinding,
+        ) {
             binding.apply {
                 tvEdit.setOnClickListener {
                     getItem(holder.layoutPosition)?.let {
@@ -159,5 +163,4 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
             }
         }
     }
-
 }

@@ -12,7 +12,6 @@ import io.legado.app.utils.getPrefString
 import io.legado.app.utils.sysConfiguration
 import java.util.*
 
-
 @Suppress("unused")
 object AppContextWrapper {
 
@@ -46,7 +45,7 @@ object AppContextWrapper {
     @SuppressLint("ObsoleteSdkInt")
     private fun getSystemLocale(): Locale {
         val locale: Locale
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { //7.0有多语言设置获取顶部的语言
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // 7.0有多语言设置获取顶部的语言
             locale = sysConfiguration.locales.get(0)
         } else {
             @Suppress("DEPRECATION")
@@ -68,19 +67,16 @@ object AppContextWrapper {
             locale = context.resources.configuration.locale
         }
         return locale
-
     }
 
     /**
      * 当前设置语言
      */
-    private fun getSetLocale(context: Context): Locale {
-        return when (context.getPrefString(PreferKey.language)) {
-            "zh" -> Locale.SIMPLIFIED_CHINESE
-            "tw" -> Locale.TRADITIONAL_CHINESE
-            "en" -> Locale.ENGLISH
-            else -> getSystemLocale()
-        }
+    private fun getSetLocale(context: Context): Locale = when (context.getPrefString(PreferKey.language)) {
+        "zh" -> Locale.SIMPLIFIED_CHINESE
+        "tw" -> Locale.TRADITIONAL_CHINESE
+        "en" -> Locale.ENGLISH
+        else -> getSystemLocale()
     }
 
     /**
@@ -95,5 +91,4 @@ object AppContextWrapper {
         val pfCountry = pfLocale.country
         return language == pfLanguage && country == pfCountry
     }
-
 }

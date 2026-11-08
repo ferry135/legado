@@ -16,16 +16,20 @@ import io.legado.app.ui.book.read.page.provider.ChapterProvider
 data class ReviewColumn(
     override var start: Float,
     override var end: Float,
-    val count: Int = 0
+    val count: Int = 0,
 ) : BaseColumn {
-
     override var textLine: TextLine = emptyTextLine
-    override fun draw(view: ContentTextView, canvas: Canvas) {
-        val textPaint = if (textLine.isTitle) {
-            ChapterProvider.titlePaint
-        } else {
-            ChapterProvider.contentPaint
-        }
+
+    override fun draw(
+        view: ContentTextView,
+        canvas: Canvas,
+    ) {
+        val textPaint =
+            if (textLine.isTitle) {
+                ChapterProvider.titlePaint
+            } else {
+                ChapterProvider.contentPaint
+            }
         drawToCanvas(canvas, textLine.lineBase, textPaint.textSize)
     }
 
@@ -38,7 +42,11 @@ data class ReviewColumn(
 
     val path by lazy { Path() }
 
-    fun drawToCanvas(canvas: Canvas, baseLine: Float, height: Float) {
+    fun drawToCanvas(
+        canvas: Canvas,
+        baseLine: Float,
+        height: Float,
+    ) {
         if (count == 0) return
         path.reset()
         path.moveTo(start + 1, baseLine - height * 2 / 5)
@@ -57,9 +65,7 @@ data class ReviewColumn(
             countText,
             (start + height / 9 + end) / 2,
             baseLine - height * 0.23f,
-            reviewPaint
+            reviewPaint,
         )
     }
-
-
 }

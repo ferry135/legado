@@ -14,19 +14,17 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 
-
-class ExploreShowAdapter(context: Context, val callBack: CallBack) :
-    RecyclerAdapter<SearchBook, ItemSearchBinding>(context) {
-
-    override fun getViewBinding(parent: ViewGroup): ItemSearchBinding {
-        return ItemSearchBinding.inflate(inflater, parent, false)
-    }
+class ExploreShowAdapter(
+    context: Context,
+    val callBack: CallBack,
+) : RecyclerAdapter<SearchBook, ItemSearchBinding>(context) {
+    override fun getViewBinding(parent: ViewGroup): ItemSearchBinding = ItemSearchBinding.inflate(inflater, parent, false)
 
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemSearchBinding,
         item: SearchBook,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
         if (payloads.isEmpty()) {
             bind(binding, item)
@@ -36,10 +34,12 @@ class ExploreShowAdapter(context: Context, val callBack: CallBack) :
                 bindChange(binding, item, bundle)
             }
         }
-
     }
 
-    private fun bind(binding: ItemSearchBinding, item: SearchBook) {
+    private fun bind(
+        binding: ItemSearchBinding,
+        item: SearchBook,
+    ) {
         binding.run {
             tvName.text = item.name
             tvAuthor.text = context.getString(R.string.author_show, item.author)
@@ -63,23 +63,31 @@ class ExploreShowAdapter(context: Context, val callBack: CallBack) :
                 item.name,
                 item.author,
                 AppConfig.loadCoverOnlyWifi,
-                item.origin
+                item.origin,
             )
         }
     }
 
-    private fun bindChange(binding: ItemSearchBinding, item: SearchBook, bundle: Bundle) {
+    private fun bindChange(
+        binding: ItemSearchBinding,
+        item: SearchBook,
+        bundle: Bundle,
+    ) {
         binding.run {
             bundle.keySet().forEach {
                 when (it) {
-                    "isInBookshelf" -> ivInBookshelf.isVisible =
-                        callBack.isInBookshelf(item.name, item.author)
+                    "isInBookshelf" ->
+                        ivInBookshelf.isVisible =
+                            callBack.isInBookshelf(item.name, item.author)
                 }
             }
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemSearchBinding) {
+    override fun registerListener(
+        holder: ItemViewHolder,
+        binding: ItemSearchBinding,
+    ) {
         holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
                 callBack.showBookInfo(it.toBook())
@@ -91,7 +99,10 @@ class ExploreShowAdapter(context: Context, val callBack: CallBack) :
         /**
          * 是否已经加入书架
          */
-        fun isInBookshelf(name: String, author: String): Boolean
+        fun isInBookshelf(
+            name: String,
+            author: String,
+        ): Boolean
 
         fun showBookInfo(book: Book)
     }

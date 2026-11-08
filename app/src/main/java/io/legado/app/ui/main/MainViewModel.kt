@@ -82,9 +82,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         upTocPool = Executors.newFixedThreadPool(poolSize).asCoroutineDispatcher()
     }
 
-    fun isUpdate(bookUrl: String): Boolean {
-        return onUpTocBooks.contains(bookUrl)
-    }
+    fun isUpdate(bookUrl: String): Boolean = onUpTocBooks.contains(bookUrl)
 
     fun upAllBookToc() {
         execute {
@@ -136,7 +134,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                     startUpTocJob()
                 }
                 if (it == null && cacheBookJob == null && !CacheBookService.isRun) {
-                    //所有目录更新完再开始缓存章节
+                    // 所有目录更新完再开始缓存章节
                     cacheBook()
                 }
             }.catch {
@@ -177,7 +175,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             addDownload(source, book)
         }.onFailure {
             AppLog.put("${book.name} 更新目录失败\n${it.localizedMessage}", it)
-            //这里可能因为时间太长书籍信息已经更改,所以重新获取
+            // 这里可能因为时间太长书籍信息已经更改,所以重新获取
             appDb.bookDao.getBook(book.bookUrl)?.let { book ->
                 book.addType(BookType.updateError)
                 appDb.bookDao.update(book)
@@ -200,16 +198,17 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         if (AppConfig.preDownloadNum == 0) return
         val endIndex = min(
             book.totalChapterNum - 1,
-            book.durChapterIndex.plus(AppConfig.preDownloadNum)
+            book.durChapterIndex.plus(AppConfig.preDownloadNum),
         )
         val cacheBook = CacheBook.getOrCreate(source, book)
         cacheBook.addDownload(book.durChapterIndex, endIndex)
     }
 
+    // KeySetView 需 API 24，minSdk 21 会崩：存量已知问题，并发容器统一替换后移除
+
     /**
      * 缓存书籍
      */
-    // KeySetView 需 API 24，minSdk 21 会崩：存量已知问题，并发容器统一替换后移除
     @SuppressLint("NewApi")
     private fun cacheBook() {
         if (AppConfig.preDownloadNum == 0) return
@@ -224,10 +223,10 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
                 CacheBook.cacheBookMap.forEach {
                     val cacheBookModel = it.value
                     while (cacheBookModel.waitCount > 0) {
-                        //有目录更新是不缓存,优先更新目录,现在更多网站限制并发
-                        if (waitUpTocBooks.isEmpty()
-                            && onUpTocBooks.isEmpty()
-                            && CacheBook.onDownloadCount < threadCount
+                        // 有目录更新是不缓存,优先更新目录,现在更多网站限制并发
+                        if (waitUpTocBooks.isEmpty() &&
+                            onUpTocBooks.isEmpty() &&
+                            CacheBook.onDownloadCount < threadCount
                         ) {
                             cacheBookModel.download(this, upTocPool)
                         } else {
@@ -261,5 +260,4 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
             appDb.bookDao.deleteNotShelfBook()
         }
     }
-
 }

@@ -13,19 +13,20 @@ import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.entities.PageDirection
 import kotlin.math.abs
 
-abstract class PageDelegate(protected val readView: ReadView) {
-
+abstract class PageDelegate(
+    protected val readView: ReadView,
+) {
     protected val context: Context = readView.context
 
-    //起始点
+    // 起始点
     protected val startX: Float get() = readView.startX
     protected val startY: Float get() = readView.startY
 
-    //上一个触碰点
+    // 上一个触碰点
     protected val lastX: Float get() = readView.lastX
     protected val lastY: Float get() = readView.lastY
 
-    //触碰点
+    // 触碰点
     protected val touchX: Float get() = readView.touchX
     protected val touchY: Float get() = readView.touchY
 
@@ -47,7 +48,7 @@ abstract class PageDelegate(protected val readView: ReadView) {
     var isMoved = false
     var noNext = true
 
-    //移动方向
+    // 移动方向
     var mDirection = PageDirection.NONE
     var isCancel = false
     var isRunning = false
@@ -60,8 +61,14 @@ abstract class PageDelegate(protected val readView: ReadView) {
     }
 
     open fun fling(
-        startX: Int, startY: Int, velocityX: Int, velocityY: Int,
-        minX: Int, maxX: Int, minY: Int, maxY: Int
+        startX: Int,
+        startY: Int,
+        velocityX: Int,
+        velocityY: Int,
+        minX: Int,
+        maxX: Int,
+        minY: Int,
+        maxY: Int,
     ) {
         scroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY)
         isRunning = true
@@ -69,12 +76,19 @@ abstract class PageDelegate(protected val readView: ReadView) {
         readView.invalidate()
     }
 
-    protected fun startScroll(startX: Int, startY: Int, dx: Int, dy: Int, animationSpeed: Int) {
-        val duration = if (dx != 0) {
-            (animationSpeed * abs(dx)) / viewWidth
-        } else {
-            (animationSpeed * abs(dy)) / viewHeight
-        }
+    protected fun startScroll(
+        startX: Int,
+        startY: Int,
+        dx: Int,
+        dy: Int,
+        animationSpeed: Int,
+    ) {
+        val duration =
+            if (dx != 0) {
+                (animationSpeed * abs(dx)) / viewWidth
+            } else {
+                (animationSpeed * abs(dy)) / viewHeight
+            }
         scroller.startScroll(startX, startY, dx, dy, duration)
         isRunning = true
         isStarted = true
@@ -91,7 +105,10 @@ abstract class PageDelegate(protected val readView: ReadView) {
     }
 
     @CallSuper
-    open fun setViewSize(width: Int, height: Int) {
+    open fun setViewSize(
+        width: Int,
+        height: Int,
+    ) {
         viewWidth = width
         viewHeight = height
     }
@@ -109,11 +126,11 @@ abstract class PageDelegate(protected val readView: ReadView) {
 
     abstract fun abortAnim()
 
-    abstract fun onAnimStart(animationSpeed: Int) //scroller start
+    abstract fun onAnimStart(animationSpeed: Int) // scroller start
 
-    abstract fun onDraw(canvas: Canvas) //绘制
+    abstract fun onDraw(canvas: Canvas) // 绘制
 
-    abstract fun onAnimStop() //scroller finish
+    abstract fun onAnimStop() // scroller finish
 
     abstract fun nextPageByAnim(animationSpeed: Int)
 
@@ -142,15 +159,15 @@ abstract class PageDelegate(protected val readView: ReadView) {
      * 按下
      */
     fun onDown() {
-        //是否移动
+        // 是否移动
         isMoved = false
-        //是否存在下一章
+        // 是否存在下一章
         noNext = false
-        //是否正在执行动画
+        // 是否正在执行动画
         isRunning = false
-        //取消
+        // 取消
         isCancel = false
-        //是下一章还是前一章
+        // 是下一章还是前一章
         setDirection(PageDirection.NONE)
     }
 
@@ -204,5 +221,4 @@ abstract class PageDelegate(protected val readView: ReadView) {
     open fun onDestroy() {
         // run on destroy
     }
-
 }

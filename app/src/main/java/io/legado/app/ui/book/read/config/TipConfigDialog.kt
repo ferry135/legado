@@ -27,15 +27,14 @@ import io.legado.app.utils.postEvent
 import io.legado.app.utils.setSheetBackground
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-
 class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
-
     companion object {
         const val TIP_COLOR = 7897
         const val TIP_DIVIDER_COLOR = 7898
     }
 
     private val binding by viewBinding(DialogTipConfigBinding::bind)
+
     // 14-reader-brightness#06：自适应 ink 派生三元组（行卡/值胶囊/色点描边取 SheetInk 档位，
     // 同 ReadStyleDialog 口径；派生块收敛至 lib/theme SheetInk）
     private lateinit var sheetInk: SheetInk
@@ -47,7 +46,10 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
         dialog?.window?.applyBottomSheetWindow(ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         initView()
         initEvent()
         observeEvent<String>(EventBus.TIP_COLOR) {
@@ -100,12 +102,12 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
             binding.tvTipGroupTitle,
             binding.tvTipGroupHeader,
             binding.tvTipGroupFooter,
-            binding.tvTipGroupHf
+            binding.tvTipGroupHf,
         ).forEach { it.setTextColor(sheetInk.secondary) }
         listOf(
             binding.vwTipDivider,
             binding.vwTipDividerFooter,
-            binding.vwTipDividerColor
+            binding.vwTipDividerColor,
         ).forEach { it.background = sheetInk.divider() }
         listOf(
             binding.llHeaderShow,
@@ -117,7 +119,7 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
             binding.llFooterMiddle,
             binding.llFooterRight,
             binding.llTipColor,
-            binding.llTipDividerColor
+            binding.llTipDividerColor,
         ).forEach {
             // 整行可点：行卡底叠 selectableItemBackground 按压态，触控反馈不因静态卡覆盖而丢失
             it.background = sheetInk.rowCardSelectable()
@@ -134,18 +136,19 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
             binding.tvFooterMiddle,
             binding.tvFooterRight,
             binding.llTipColorChip,
-            binding.llTipDividerColorChip
+            binding.llTipDividerColorChip,
         ).forEach { it.background = sheetInk.chip() }
     }
 
     private fun upTvTipColor() {
         val tipColorNames = ReadTipConfig.tipColorNames
         val tipColor = ReadTipConfig.tipColor
-        binding.tvTipColor.text = if (tipColor == 0) {
-            tipColorNames.first()
-        } else {
-            "#${tipColor.hexString}"
-        }
+        binding.tvTipColor.text =
+            if (tipColor == 0) {
+                tipColorNames.first()
+            } else {
+                "#${tipColor.hexString}"
+            }
         // 14-reader-brightness#06：值胶囊内 12dp 色点仅自定义 hex 时出现（「正文颜色」无点）
         binding.vwTipColorDot.isVisible = tipColor != 0
         if (tipColor != 0) {
@@ -156,10 +159,11 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
     private fun upTvTipDividerColor() {
         val tipDividerColorNames = ReadTipConfig.tipDividerColorNames
         val tipDividerColor = ReadTipConfig.tipDividerColor
-        binding.tvTipDividerColor.text = when (tipDividerColor) {
-            -1, 0 -> tipDividerColorNames[tipDividerColor + 1]
-            else -> "#${tipDividerColor.hexString}"
-        }
+        binding.tvTipDividerColor.text =
+            when (tipDividerColor) {
+                -1, 0 -> tipDividerColorNames[tipDividerColor + 1]
+                else -> "#${tipDividerColor.hexString}"
+            }
         // 14-reader-brightness#06：-1/0（正文/分隔线颜色）无点，>0 自定义 hex 显点
         binding.vwTipDividerColorDot.isVisible = tipDividerColor > 0
         if (tipDividerColor > 0) {
@@ -167,12 +171,16 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
         }
     }
 
-    private fun upColorDot(dot: View, color: Int) {
-        dot.background = GradientDrawable().apply {
-            shape = GradientDrawable.OVAL
-            setColor(color)
-            setStroke(1.dpToPx(), ColorUtils.adjustAlpha(sheetInk.ink, InkGradient.STROKE_MUTED))
-        }
+    private fun upColorDot(
+        dot: View,
+        color: Int,
+    ) {
+        dot.background =
+            GradientDrawable().apply {
+                shape = GradientDrawable.OVAL
+                setColor(color)
+                setStroke(1.dpToPx(), ColorUtils.adjustAlpha(sheetInk.ink, InkGradient.STROKE_MUTED))
+            }
     }
 
     private fun initEvent() = binding.run {
@@ -271,11 +279,13 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
                         postEvent(EventBus.UP_CONFIG, arrayListOf(2))
                     }
 
-                    1 -> ColorPickerDialog.newBuilder()
-                        .setShowAlphaSlider(false)
-                        .setDialogType(ColorPickerDialog.TYPE_CUSTOM)
-                        .setDialogId(TIP_COLOR)
-                        .show(requireActivity())
+                    1 ->
+                        ColorPickerDialog
+                            .newBuilder()
+                            .setShowAlphaSlider(false)
+                            .setDialogType(ColorPickerDialog.TYPE_CUSTOM)
+                            .setDialogId(TIP_COLOR)
+                            .show(requireActivity())
                 }
             }
         }
@@ -288,11 +298,13 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
                         postEvent(EventBus.UP_CONFIG, arrayListOf(2))
                     }
 
-                    2 -> ColorPickerDialog.newBuilder()
-                        .setShowAlphaSlider(false)
-                        .setDialogType(ColorPickerDialog.TYPE_CUSTOM)
-                        .setDialogId(TIP_DIVIDER_COLOR)
-                        .show(requireActivity())
+                    2 ->
+                        ColorPickerDialog
+                            .newBuilder()
+                            .setShowAlphaSlider(false)
+                            .setDialogType(ColorPickerDialog.TYPE_CUSTOM)
+                            .setDialogId(TIP_DIVIDER_COLOR)
+                            .show(requireActivity())
                 }
             }
         }
@@ -326,5 +338,4 @@ class TipConfigDialog : BaseDialogFragment(R.layout.dialog_tip_config) {
             }
         }
     }
-
 }

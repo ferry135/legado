@@ -21,24 +21,30 @@ open class LiftItemTouchCallback(
     @ColorRes private val bgColorRes: Int,
     private val liftZDp: Int,
 ) : ItemTouchCallback(callback) {
-
     private var liftedBackground: Drawable? = null
 
-    override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+    override fun onSelectedChanged(
+        viewHolder: RecyclerView.ViewHolder?,
+        actionState: Int,
+    ) {
         super.onSelectedChanged(viewHolder, actionState)
         if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
             viewHolder?.itemView?.let { view ->
                 liftedBackground = view.background
-                view.background = GradientDrawable().apply {
-                    cornerRadius = cornerRadiusDp.dpToPx().toFloat()
-                    setColor(ContextCompat.getColor(view.context, bgColorRes))
-                }
+                view.background =
+                    GradientDrawable().apply {
+                        cornerRadius = cornerRadiusDp.dpToPx().toFloat()
+                        setColor(ContextCompat.getColor(view.context, bgColorRes))
+                    }
                 view.translationZ = liftZDp.dpToPx().toFloat()
             }
         }
     }
 
-    override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+    override fun clearView(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+    ) {
         viewHolder.itemView.let { view ->
             liftedBackground?.let(view::setBackground)
             view.translationZ = 0f

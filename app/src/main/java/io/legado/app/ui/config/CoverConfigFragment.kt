@@ -17,7 +17,8 @@ import io.legado.app.utils.*
 import splitties.init.appCtx
 import java.io.FileOutputStream
 
-class CoverConfigFragment : PreferenceFragment(),
+class CoverConfigFragment :
+    PreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
     private val requestCodeCover = 111
@@ -61,7 +62,8 @@ class CoverConfigFragment : PreferenceFragment(),
         sharedPreferences ?: return
         when (key) {
             PreferKey.defaultCover,
-            PreferKey.defaultCoverDark -> {
+            PreferKey.defaultCoverDark,
+            -> {
                 upPreferenceSummary(key, getPrefString(key))
             }
             PreferKey.coverShowName -> {
@@ -75,7 +77,8 @@ class CoverConfigFragment : PreferenceFragment(),
                 BookCover.upDefaultCover()
             }
             PreferKey.coverShowAuthor,
-            PreferKey.coverShowAuthorN -> {
+            PreferKey.coverShowAuthorN,
+            -> {
                 BookCover.upDefaultCover()
             }
         }
@@ -92,8 +95,8 @@ class CoverConfigFragment : PreferenceFragment(),
                     context?.selector(
                         items = arrayListOf(
                             getString(R.string.delete),
-                            getString(R.string.select_image)
-                        )
+                            getString(R.string.select_image),
+                        ),
                     ) { _, i ->
                         if (i == 0) {
                             removePref(preference.key)
@@ -110,8 +113,8 @@ class CoverConfigFragment : PreferenceFragment(),
                     context?.selector(
                         items = arrayListOf(
                             getString(R.string.delete),
-                            getString(R.string.select_image)
-                        )
+                            getString(R.string.select_image),
+                        ),
                     ) { _, i ->
                         if (i == 0) {
                             removePref(preference.key)
@@ -129,7 +132,8 @@ class CoverConfigFragment : PreferenceFragment(),
         val preference = findPreference<Preference>(preferenceKey) ?: return
         when (preferenceKey) {
             PreferKey.defaultCover,
-            PreferKey.defaultCoverDark -> preference.summary = if (value.isNullOrBlank()) {
+            PreferKey.defaultCoverDark,
+            -> preference.summary = if (value.isNullOrBlank()) {
                 getString(R.string.select_image)
             } else {
                 value
@@ -157,5 +161,4 @@ class CoverConfigFragment : PreferenceFragment(),
             }
         }
     }
-
 }

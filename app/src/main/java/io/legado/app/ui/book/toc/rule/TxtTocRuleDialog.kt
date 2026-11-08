@@ -10,8 +10,6 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -56,14 +54,15 @@ import kotlinx.coroutines.launch
 /**
  * txt目录规则
  */
-class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
+class TxtTocRuleDialog() :
+    BaseDialogFragment(R.layout.dialog_toc_regex),
     Toolbar.OnMenuItemClickListener,
     TxtTocRuleEditDialog.Callback {
-
     constructor(tocRegex: String?) : this() {
-        arguments = Bundle().apply {
-            putString("tocRegex", tocRegex)
-        }
+        arguments =
+            Bundle().apply {
+                putString("tocRegex", tocRegex)
+            }
     }
 
     private val importTocRuleKey = "tocRuleUrl"
@@ -72,26 +71,32 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
     private val adapter by lazy { TocRegexAdapter(requireContext()) }
     var selectedName: String? = null
     private var durRegex: String? = null
-    private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
-        it ?: return@registerForActivityResult
-        showDialogFragment(ImportTxtTocRuleDialog(it))
-    }
-    private val importDoc = registerForActivityResult(HandleFileContract()) {
-        kotlin.runCatching {
-            it.uri?.readText(requireContext())?.let {
-                showDialogFragment(ImportTxtTocRuleDialog(it))
-            }
-        }.onFailure {
-            toastOnUi("readTextError:${it.localizedMessage}")
+    private val qrCodeResult =
+        registerForActivityResult(QrCodeResult()) {
+            it ?: return@registerForActivityResult
+            showDialogFragment(ImportTxtTocRuleDialog(it))
         }
-    }
+    private val importDoc =
+        registerForActivityResult(HandleFileContract()) {
+            kotlin
+                .runCatching {
+                    it.uri?.readText(requireContext())?.let {
+                        showDialogFragment(ImportTxtTocRuleDialog(it))
+                    }
+                }.onFailure {
+                    toastOnUi("readTextError:${it.localizedMessage}")
+                }
+        }
 
     override fun onStart() {
         super.onStart()
         setLayout(0.9f, 0.8f)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         durRegex = arguments?.getString("tocRegex")
         binding.toolBar.setTitle(R.string.txt_toc_rule)
         binding.toolBar.inflateMenu(R.menu.txt_toc_rule)
@@ -125,7 +130,8 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
         // 点击与 toolbar menu_add 同一入口（TxtTocRuleEditDialog 新建态），不新增代码路径
         btnRuleAdd.setTextColor(requireContext().accentColor)
         (btnRuleAdd.background.mutate() as? GradientDrawable)?.setStroke(
-            1.dpToPx(), requireContext().accentColor
+            1.dpToPx(),
+            requireContext().accentColor,
         )
         btnRuleAdd.setOnClickListener {
             showDialogFragment(TxtTocRuleEditDialog())
@@ -134,18 +140,21 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
 
     private fun initData() {
         launchCollectWithLifecycle {
-            appDb.txtTocRuleDao.observeAll().catch {
-                AppLog.put("TXT目录规则对话框获取数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).conflate().collect { tocRules ->
-                initSelectedName(tocRules)
-                adapter.setItems(tocRules, adapter.diffItemCallBack)
-                reconcileSelectedName(tocRules)
-                // 空态显隐（稿 §04，纯展示层：Room flow 首帧即当前库内容，无闪空）+ 底栏提示行刷新
-                binding.vwEmptyRule.visibility =
-                    if (tocRules.isEmpty()) View.VISIBLE else View.GONE
-                updateOkHint()
-            }
-
+            appDb.txtTocRuleDao
+                .observeAll()
+                .catch {
+                    AppLog.put("TXT目录规则对话框获取数据失败\n${it.localizedMessage}", it)
+                }.flowOn(IO)
+                .conflate()
+                .collect { tocRules ->
+                    initSelectedName(tocRules)
+                    adapter.setItems(tocRules, adapter.diffItemCallBack)
+                    reconcileSelectedName(tocRules)
+                    // 空态显隐（稿 §04，纯展示层：Room flow 首帧即当前库内容，无闪空）+ 底栏提示行刷新
+                    binding.vwEmptyRule.visibility =
+                        if (tocRules.isEmpty()) View.VISIBLE else View.GONE
+                    updateOkHint()
+                }
         }
     }
 
@@ -160,21 +169,23 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
         if (tocRules.any { it.name == name }) {
             return
         }
-        selectedName = if (durRegex != null) {
-            tocRules.firstOrNull { durRegex == it.rule }?.name ?: ""
-        } else {
-            ""
-        }
+        selectedName =
+            if (durRegex != null) {
+                tocRules.firstOrNull { durRegex == it.rule }?.name ?: ""
+            } else {
+                ""
+            }
         adapter.updateItems(0, adapter.itemCount - 1, bundleOf("upSelect" to null))
     }
 
     /** 底栏提示行（稿 §05，展示层）：「将使用：<规则名>」/「未选择规则」，随选中即时刷新 */
     private fun updateOkHint() {
-        binding.tvOkHint.text = if (selectedName.isNullOrBlank()) {
-            getString(R.string.no_rule_selected)
-        } else {
-            getString(R.string.using_rule, selectedName)
-        }
+        binding.tvOkHint.text =
+            if (selectedName.isNullOrBlank()) {
+                getString(R.string.no_rule_selected)
+            } else {
+                getString(R.string.using_rule, selectedName)
+            }
     }
 
     private fun initSelectedName(tocRules: List<TxtTocRule>) {
@@ -194,10 +205,11 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_add -> showDialogFragment(TxtTocRuleEditDialog())
-            R.id.menu_import_local -> importDoc.launch {
-                mode = HandleFileContract.FILE
-                allowExtensions = arrayOf("txt", "json")
-            }
+            R.id.menu_import_local ->
+                importDoc.launch {
+                    mode = HandleFileContract.FILE
+                    allowExtensions = arrayOf("txt", "json")
+                }
             R.id.menu_import_onLine -> showImportDialog()
             R.id.menu_import_qr -> qrCodeResult.launch()
             R.id.menu_import_default -> viewModel.importDefault()
@@ -214,23 +226,25 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
     private fun showImportDialog() {
         val aCache = ACache.get(cacheDir = false)
         val defaultUrl = "https://gitee.com/fisher52/YueDuJson/raw/master/myTxtChapterRule.json"
-        val cacheUrls: MutableList<String> = aCache
-            .getAsString(importTocRuleKey)
-            ?.splitNotBlank(",")
-            ?.toMutableList()
-            ?: mutableListOf()
+        val cacheUrls: MutableList<String> =
+            aCache
+                .getAsString(importTocRuleKey)
+                ?.splitNotBlank(",")
+                ?.toMutableList()
+                ?: mutableListOf()
         if (!cacheUrls.contains(defaultUrl)) {
             cacheUrls.add(0, defaultUrl)
         }
         requireContext().alert(titleResource = R.string.import_on_line) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = "url"
-                editView.setFilterValues(cacheUrls)
-                editView.delCallBack = {
-                    cacheUrls.remove(it)
-                    aCache.put(importTocRuleKey, cacheUrls.joinToString(","))
+            val alertBinding =
+                DialogEditTextBinding.inflate(layoutInflater).apply {
+                    editView.hint = "url"
+                    editView.setFilterValues(cacheUrls)
+                    editView.delCallBack = {
+                        cacheUrls.remove(it)
+                        aCache.put(importTocRuleKey, cacheUrls.joinToString(","))
+                    }
                 }
-            }
             customView { alertBinding.root }
             okButton {
                 val text = alertBinding.editView.text?.toString()
@@ -246,56 +260,61 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
         }
     }
 
-    inner class TocRegexAdapter(context: Context) :
-        RecyclerAdapter<TxtTocRule, ItemTocRegexBinding>(context),
+    inner class TocRegexAdapter(
+        context: Context,
+    ) : RecyclerAdapter<TxtTocRule, ItemTocRegexBinding>(context),
         ItemTouchCallback.Callback {
+        val diffItemCallBack =
+            object : DiffUtil.ItemCallback<TxtTocRule>() {
+                override fun areItemsTheSame(
+                    oldItem: TxtTocRule,
+                    newItem: TxtTocRule,
+                ): Boolean = oldItem.id == newItem.id
 
-        val diffItemCallBack = object : DiffUtil.ItemCallback<TxtTocRule>() {
+                override fun areContentsTheSame(
+                    oldItem: TxtTocRule,
+                    newItem: TxtTocRule,
+                ): Boolean {
+                    if (oldItem.name != newItem.name) {
+                        return false
+                    }
+                    if (oldItem.enable != newItem.enable) {
+                        return false
+                    }
+                    if (oldItem.example != newItem.example) {
+                        return false
+                    }
+                    return true
+                }
 
-            override fun areItemsTheSame(oldItem: TxtTocRule, newItem: TxtTocRule): Boolean {
-                return oldItem.id == newItem.id
+                override fun getChangePayload(
+                    oldItem: TxtTocRule,
+                    newItem: TxtTocRule,
+                ): Any? {
+                    val payload = Bundle()
+                    if (oldItem.name != newItem.name) {
+                        payload.putBoolean("upName", true)
+                    }
+                    if (oldItem.enable != newItem.enable) {
+                        payload.putBoolean("enabled", newItem.enable)
+                    }
+                    if (oldItem.example != newItem.example) {
+                        payload.putBoolean("upExample", true)
+                    }
+                    if (payload.isEmpty) {
+                        return null
+                    }
+                    return payload
+                }
             }
 
-            override fun areContentsTheSame(oldItem: TxtTocRule, newItem: TxtTocRule): Boolean {
-                if (oldItem.name != newItem.name) {
-                    return false
-                }
-                if (oldItem.enable != newItem.enable) {
-                    return false
-                }
-                if (oldItem.example != newItem.example) {
-                    return false
-                }
-                return true
-            }
-
-            override fun getChangePayload(oldItem: TxtTocRule, newItem: TxtTocRule): Any? {
-                val payload = Bundle()
-                if (oldItem.name != newItem.name) {
-                    payload.putBoolean("upName", true)
-                }
-                if (oldItem.enable != newItem.enable) {
-                    payload.putBoolean("enabled", newItem.enable)
-                }
-                if (oldItem.example != newItem.example) {
-                    payload.putBoolean("upExample", true)
-                }
-                if (payload.isEmpty) {
-                    return null
-                }
-                return payload
-            }
-        }
-
-        override fun getViewBinding(parent: ViewGroup): ItemTocRegexBinding {
-            return ItemTocRegexBinding.inflate(inflater, parent, false)
-        }
+        override fun getViewBinding(parent: ViewGroup): ItemTocRegexBinding = ItemTocRegexBinding.inflate(inflater, parent, false)
 
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemTocRegexBinding,
             item: TxtTocRule,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             binding.apply {
                 if (payloads.isEmpty()) {
@@ -308,8 +327,8 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
                     // on_surface_variant 间切换；示例行 XML 固定 on_surface_variant 两态一致
                     rbRegexName.setTextColor(
                         context.getCompatColor(
-                            if (item.enable) R.color.on_surface else R.color.on_surface_variant
-                        )
+                            if (item.enable) R.color.on_surface else R.color.on_surface_variant,
+                        ),
                     )
                 } else {
                     for (i in payloads.indices) {
@@ -322,9 +341,12 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
                                     swtEnabled.isChecked = item.enable
                                     rbRegexName.setTextColor(
                                         context.getCompatColor(
-                                            if (item.enable) R.color.on_surface
-                                            else R.color.on_surface_variant
-                                        )
+                                            if (item.enable) {
+                                                R.color.on_surface
+                                            } else {
+                                                R.color.on_surface_variant
+                                            },
+                                        ),
                                     )
                                 }
                                 "upSelect" -> rbRegexName.isChecked = item.name == selectedName
@@ -335,7 +357,10 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder, binding: ItemTocRegexBinding) {
+        override fun registerListener(
+            holder: ItemViewHolder,
+            binding: ItemTocRegexBinding,
+        ) {
             binding.apply {
                 rbRegexName.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (buttonView.isPressed && isChecked) {
@@ -371,13 +396,19 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
 
         private var isMoved = false
 
-        override fun swap(srcPosition: Int, targetPosition: Int): Boolean {
+        override fun swap(
+            srcPosition: Int,
+            targetPosition: Int,
+        ): Boolean {
             swapItem(srcPosition, targetPosition)
             isMoved = true
             return super.swap(srcPosition, targetPosition)
         }
 
-        override fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        override fun onClearView(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+        ) {
             super.onClearView(recyclerView, viewHolder)
             if (isMoved) {
                 for ((index, item) in getItems().withIndex()) {
@@ -392,5 +423,4 @@ class TxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_toc_regex),
     interface CallBack {
         fun onTocRegexDialogResult(tocRegex: String) {}
     }
-
 }

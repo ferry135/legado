@@ -17,22 +17,22 @@ import io.legado.app.utils.openUrl
 import io.legado.app.utils.share
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-
 class AboutActivity : BaseActivity<ActivityAboutBinding>() {
-
     override val binding by viewBinding(ActivityAboutBinding::inflate)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         // 独立 3dp 圆角卡底（随换肤 backgroundColor），不再借用 alert 窗底通道 alertCardBackground（原 filletBackground）：
         // 14-reader-brightness#07 将其升至 16dp 供全局 alert 卡，其映射清单未含本页，解耦防误伤
-        binding.llAbout.background = GradientDrawable().apply {
-            cornerRadius = 3f.dpToPx()
-            setColor(backgroundColor)
-        }
+        binding.llAbout.background =
+            GradientDrawable().apply {
+                cornerRadius = 3f.dpToPx()
+                setColor(backgroundColor)
+            }
         val fTag = "aboutFragment"
         var aboutFragment = supportFragmentManager.findFragmentByTag(fTag)
         if (aboutFragment == null) aboutFragment = AboutFragment()
-        supportFragmentManager.beginTransaction()
+        supportFragmentManager
+            .beginTransaction()
             .replace(R.id.fl_fragment, aboutFragment, fTag)
             .commit()
         binding.tvAppSummary.post {
@@ -42,8 +42,10 @@ class AboutActivity : BaseActivity<ActivityAboutBinding>() {
                 val gzh = getString(R.string.legado_gzh)
                 val start = spannableString.indexOf(gzh)
                 spannableString.setSpan(
-                    span, start, start + gzh.length,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    span,
+                    start,
+                    start + gzh.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
                 )
                 binding.tvAppSummary.text = spannableString
             }
@@ -58,12 +60,12 @@ class AboutActivity : BaseActivity<ActivityAboutBinding>() {
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_scoring -> openUrl("market://details?id=$packageName")
-            R.id.menu_share_it -> share(
-                getString(R.string.app_share_description),
-                getString(R.string.app_name)
-            )
+            R.id.menu_share_it ->
+                share(
+                    getString(R.string.app_share_description),
+                    getString(R.string.app_name),
+                )
         }
         return super.onCompatOptionsItemSelected(item)
     }
-
 }

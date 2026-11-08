@@ -16,9 +16,7 @@ import io.legado.app.utils.applyTint
 import io.legado.app.utils.dpToPx
 
 class ListPreferenceDialog : ListPreferenceDialogFragmentCompat() {
-
     companion object {
-
         fun newInstance(key: String?): ListPreferenceDialog {
             val fragment = ListPreferenceDialog()
             val b = Bundle(1)
@@ -26,7 +24,6 @@ class ListPreferenceDialog : ListPreferenceDialogFragmentCompat() {
             fragment.arguments = b
             return fragment
         }
-
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -59,7 +56,7 @@ class ListPreferenceDialog : ListPreferenceDialogFragmentCompat() {
                     Gravity.TOP -> it.decorView.setBackgroundResource(R.drawable.bg_eink_border_bottom)
                     Gravity.BOTTOM -> it.decorView.setBackgroundResource(R.drawable.bg_eink_border_top)
                     else -> {
-                        val padding = 2.dpToPx();
+                        val padding = 2.dpToPx()
                         it.decorView.setPadding(padding, padding, padding, padding)
                         it.decorView.setBackgroundResource(R.drawable.bg_eink_border_dialog)
                     }
@@ -67,5 +64,4 @@ class ListPreferenceDialog : ListPreferenceDialogFragmentCompat() {
             }
         }
     }
-
 }

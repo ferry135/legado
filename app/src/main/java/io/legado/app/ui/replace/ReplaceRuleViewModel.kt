@@ -11,8 +11,9 @@ import io.legado.app.utils.splitNotBlank
  * 替换规则数据修改
  * 修改数据要copy,直接修改会导致界面不刷新
  */
-class ReplaceRuleViewModel(application: Application) : BaseViewModel(application) {
-
+class ReplaceRuleViewModel(
+    application: Application,
+) : BaseViewModel(application) {
     fun update(vararg rule: ReplaceRule) {
         execute {
             appDb.replaceRuleDao.update(*rule)
@@ -71,18 +72,20 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
 
     fun enableSelection(rules: List<ReplaceRule>) {
         execute {
-            val array = Array(rules.size) {
-                rules[it].copy(isEnabled = true)
-            }
+            val array =
+                Array(rules.size) {
+                    rules[it].copy(isEnabled = true)
+                }
             appDb.replaceRuleDao.update(*array)
         }
     }
 
     fun disableSelection(rules: List<ReplaceRule>) {
         execute {
-            val array = Array(rules.size) {
-                rules[it].copy(isEnabled = false)
-            }
+            val array =
+                Array(rules.size) {
+                    rules[it].copy(isEnabled = false)
+                }
             appDb.replaceRuleDao.update(*array)
         }
     }
@@ -103,14 +106,18 @@ class ReplaceRuleViewModel(application: Application) : BaseViewModel(application
         }
     }
 
-    fun upGroup(oldGroup: String, newGroup: String?) {
+    fun upGroup(
+        oldGroup: String,
+        newGroup: String?,
+    ) {
         execute {
             val sources = appDb.replaceRuleDao.getByGroup(oldGroup)
             sources.forEach { source ->
                 source.group?.splitNotBlank(",")?.toHashSet()?.let {
                     it.remove(oldGroup)
-                    if (!newGroup.isNullOrEmpty())
+                    if (!newGroup.isNullOrEmpty()) {
                         it.add(newGroup)
+                    }
                     source.group = TextUtils.join(",", it)
                 }
             }

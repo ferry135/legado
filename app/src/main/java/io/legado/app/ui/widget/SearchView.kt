@@ -18,10 +18,11 @@ import androidx.appcompat.widget.SearchView
 import io.legado.app.R
 import io.legado.app.utils.printOnDebug
 
-
-class SearchView @JvmOverloads constructor(
+class SearchView
+@JvmOverloads
+constructor(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet? = null,
 ) : SearchView(context, attrs) {
     private var mSearchHintIcon: Drawable? = null
     private var textView: TextView? = null
@@ -32,7 +33,7 @@ class SearchView @JvmOverloads constructor(
         left: Int,
         top: Int,
         right: Int,
-        bottom: Int
+        bottom: Int,
     ) {
         super.onLayout(changed, left, top, right, bottom)
         try {
@@ -89,18 +90,28 @@ class SearchView @JvmOverloads constructor(
         updateQueryHint()
     }
 
-    internal class CenteredImageSpan(drawable: Drawable?) : ImageSpan(drawable!!) {
+    internal class CenteredImageSpan(
+        drawable: Drawable?,
+    ) : ImageSpan(drawable!!) {
         override fun draw(
-            canvas: Canvas, text: CharSequence,
-            start: Int, end: Int, x: Float,
-            top: Int, y: Int, bottom: Int, paint: Paint
+            canvas: Canvas,
+            text: CharSequence,
+            start: Int,
+            end: Int,
+            x: Float,
+            top: Int,
+            y: Int,
+            bottom: Int,
+            paint: Paint,
         ) {
             // image to draw
             val b = drawable
             // font metrics of text to be replaced
             val fm = paint.fontMetricsInt
-            val transY = ((y + fm.descent + y + fm.ascent) / 2
-                    - b.bounds.bottom / 2)
+            val transY = (
+                (y + fm.descent + y + fm.ascent) / 2 -
+                    b.bounds.bottom / 2
+                )
             canvas.save()
             canvas.translate(x, transY.toFloat())
             b.draw(canvas)

@@ -4,7 +4,6 @@ import androidx.room.*
 import io.legado.app.data.entities.DictRule
 import kotlinx.coroutines.flow.Flow
 
-
 @Dao
 interface DictRuleDao {
 
@@ -28,5 +27,4 @@ interface DictRuleDao {
 
     @Delete
     fun delete(vararg dictRule: DictRule)
-
 }

@@ -7,22 +7,16 @@ import com.bumptech.glide.load.model.ModelLoader
 import java.io.InputStream
 
 object OkHttpModelLoader : ModelLoader<GlideUrl?, InputStream?> {
-
     val loadOnlyWifiOption = Option.memory("loadOnlyWifi", false)
     val sourceOriginOption = Option.memory<String>("sourceOrigin")
-    val mangaOption = Option.memory<Boolean>("manga",false)
+    val mangaOption = Option.memory<Boolean>("manga", false)
 
     override fun buildLoadData(
         model: GlideUrl,
         width: Int,
         height: Int,
         options: Options,
-    ): ModelLoader.LoadData<InputStream?> {
-        return ModelLoader.LoadData(model, OkHttpStreamFetcher(model, options))
-    }
+    ): ModelLoader.LoadData<InputStream?> = ModelLoader.LoadData(model, OkHttpStreamFetcher(model, options))
 
-    override fun handles(model: GlideUrl): Boolean {
-        return true
-    }
-
+    override fun handles(model: GlideUrl): Boolean = true
 }

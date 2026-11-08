@@ -4,7 +4,6 @@ import androidx.room.*
 import io.legado.app.data.entities.SearchKeyword
 import kotlinx.coroutines.flow.Flow
 
-
 @Dao
 interface SearchKeywordDao {
 
@@ -34,5 +33,4 @@ interface SearchKeywordDao {
 
     @Query("DELETE FROM search_keywords")
     fun deleteAll()
-
 }

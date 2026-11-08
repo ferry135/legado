@@ -41,22 +41,27 @@ import splitties.init.appCtx
 /**
  * 其它设置
  */
-class OtherConfigFragment : PreferenceFragment(),
+class OtherConfigFragment :
+    PreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
-
     private val viewModel by activityViewModels<ConfigViewModel>()
     private val packageManager = appCtx.packageManager
-    private val componentName = ComponentName(
-        appCtx,
-        SharedReceiverActivity::class.java.name
-    )
-    private val localBookTreeSelect = registerForActivityResult(HandleFileContract()) {
-        it.uri?.let { treeUri ->
-            AppConfig.defaultBookTreeUri = treeUri.toString()
+    private val componentName =
+        ComponentName(
+            appCtx,
+            SharedReceiverActivity::class.java.name,
+        )
+    private val localBookTreeSelect =
+        registerForActivityResult(HandleFileContract()) {
+            it.uri?.let { treeUri ->
+                AppConfig.defaultBookTreeUri = treeUri.toString()
+            }
         }
-    }
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+    override fun onCreatePreferences(
+        savedInstanceState: Bundle?,
+        rootKey: String?,
+    ) {
         putPrefBoolean(PreferKey.processText, isProcessTextEnabled())
         addPreferencesFromResource(R.xml.pref_config_other)
         upPreferenceSummary(PreferKey.userAgent, AppConfig.userAgent)
@@ -73,7 +78,10 @@ class OtherConfigFragment : PreferenceFragment(),
         upPreferenceSummary(PreferKey.sourceEditMaxLine, AppConfig.sourceEditMaxLine.toString())
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         activity?.setTitle(R.string.other_setting)
         preferenceManager.sharedPreferences?.registerOnSharedPreferenceChangeListener(this)
@@ -88,39 +96,43 @@ class OtherConfigFragment : PreferenceFragment(),
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference.key) {
             PreferKey.userAgent -> showUserAgentDialog()
-            PreferKey.defaultBookTreeUri -> localBookTreeSelect.launch {
-                title = getString(R.string.select_book_folder)
-                mode = HandleFileContract.DIR_SYS
-            }
-
-            PreferKey.preDownloadNum -> NumberPickerDialog(requireContext())
-                .setTitle(getString(R.string.pre_download))
-                .setMaxValue(9999)
-                .setMinValue(0)
-                .setValue(AppConfig.preDownloadNum)
-                .show {
-                    AppConfig.preDownloadNum = it
+            PreferKey.defaultBookTreeUri ->
+                localBookTreeSelect.launch {
+                    title = getString(R.string.select_book_folder)
+                    mode = HandleFileContract.DIR_SYS
                 }
 
-            PreferKey.threadCount -> NumberPickerDialog(requireContext())
-                .setTitle(getString(R.string.threads_num_title))
-                .setMaxValue(999)
-                .setMinValue(1)
-                .setValue(AppConfig.threadCount)
-                .show {
-                    AppConfig.threadCount = it
-                }
+            PreferKey.preDownloadNum ->
+                NumberPickerDialog(requireContext())
+                    .setTitle(getString(R.string.pre_download))
+                    .setMaxValue(9999)
+                    .setMinValue(0)
+                    .setValue(AppConfig.preDownloadNum)
+                    .show {
+                        AppConfig.preDownloadNum = it
+                    }
+
+            PreferKey.threadCount ->
+                NumberPickerDialog(requireContext())
+                    .setTitle(getString(R.string.threads_num_title))
+                    .setMaxValue(999)
+                    .setMinValue(1)
+                    .setValue(AppConfig.threadCount)
+                    .show {
+                        AppConfig.threadCount = it
+                    }
 
             PreferKey.webToken -> showWebTokenDialog()
 
-            PreferKey.webPort -> NumberPickerDialog(requireContext())
-                .setTitle(getString(R.string.web_port_title))
-                .setMaxValue(60000)
-                .setMinValue(1024)
-                .setValue(AppConfig.webPort)
-                .show {
-                    AppConfig.webPort = it
-                }
+            PreferKey.webPort ->
+                NumberPickerDialog(requireContext())
+                    .setTitle(getString(R.string.web_port_title))
+                    .setMaxValue(60000)
+                    .setMinValue(1024)
+                    .setValue(AppConfig.webPort)
+                    .show {
+                        AppConfig.webPort = it
+                    }
 
             PreferKey.cleanCache -> clearCache()
             PreferKey.uploadRule -> showDialogFragment<DirectLinkUploadConfig>()
@@ -136,14 +148,15 @@ class OtherConfigFragment : PreferenceFragment(),
                         ImageProvider.bitmapLruCache.resize(ImageProvider.cacheSize)
                     }
             }
-            PreferKey.imageRetainNum -> NumberPickerDialog(requireContext())
-                .setTitle(getString(R.string.image_retain_number))
-                .setMaxValue(999)
-                .setMinValue(0)
-                .setValue(AppConfig.imageRetainNum)
-                .show {
-                    AppConfig.imageRetainNum = it
-                }
+            PreferKey.imageRetainNum ->
+                NumberPickerDialog(requireContext())
+                    .setTitle(getString(R.string.image_retain_number))
+                    .setMaxValue(999)
+                    .setMinValue(0)
+                    .setValue(AppConfig.imageRetainNum)
+                    .show {
+                        AppConfig.imageRetainNum = it
+                    }
 
             PreferKey.sourceEditMaxLine -> {
                 NumberPickerDialog(requireContext())
@@ -163,7 +176,10 @@ class OtherConfigFragment : PreferenceFragment(),
         return super.onPreferenceTreeClick(preference)
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+    override fun onSharedPreferenceChanged(
+        sharedPreferences: SharedPreferences?,
+        key: String?,
+    ) {
         when (key) {
             PreferKey.preDownloadNum -> {
                 upPreferenceSummary(key, AppConfig.preDownloadNum.toString())
@@ -198,22 +214,26 @@ class OtherConfigFragment : PreferenceFragment(),
                 AppFreezeMonitor.init(appCtx)
             }
 
-            PreferKey.processText -> sharedPreferences?.let {
-                setProcessTextEnable(it.getBoolean(key, true))
-            }
+            PreferKey.processText ->
+                sharedPreferences?.let {
+                    setProcessTextEnable(it.getBoolean(key, true))
+                }
 
             PreferKey.showDiscovery -> postEvent(EventBus.NOTIFY_MAIN, true)
-            PreferKey.language -> listView.postDelayed(1000) {
-                appCtx.restart()
-            }
+            PreferKey.language ->
+                listView.postDelayed(1000) {
+                    appCtx.restart()
+                }
 
-            PreferKey.userAgent -> listView.post {
-                upPreferenceSummary(PreferKey.userAgent, AppConfig.userAgent)
-            }
+            PreferKey.userAgent ->
+                listView.post {
+                    upPreferenceSummary(PreferKey.userAgent, AppConfig.userAgent)
+                }
 
-            PreferKey.checkSource -> listView.post {
-                upPreferenceSummary(PreferKey.checkSource, CheckSource.summary)
-            }
+            PreferKey.checkSource ->
+                listView.post {
+                    upPreferenceSummary(PreferKey.checkSource, CheckSource.summary)
+                }
 
             PreferKey.bitmapCacheSize -> {
                 upPreferenceSummary(key, AppConfig.bitmapCacheSize.toString())
@@ -229,42 +249,54 @@ class OtherConfigFragment : PreferenceFragment(),
         }
     }
 
-    private fun upPreferenceSummary(preferenceKey: String, value: String?) {
+    private fun upPreferenceSummary(
+        preferenceKey: String,
+        value: String?,
+    ) {
         val preference = findPreference<Preference>(preferenceKey) ?: return
         when (preferenceKey) {
-            PreferKey.preDownloadNum -> preference.summary =
-                getString(R.string.pre_download_s, value)
+            PreferKey.preDownloadNum ->
+                preference.summary =
+                    getString(R.string.pre_download_s, value)
 
             PreferKey.threadCount -> preference.summary = getString(R.string.threads_num, value)
             PreferKey.webPort -> preference.summary = getString(R.string.web_port_summary, value)
-            PreferKey.bitmapCacheSize -> preference.summary =
-                getString(R.string.bitmap_cache_size_summary, value)
-            PreferKey.imageRetainNum -> preference.summary =
-                getString(R.string.image_retain_number_summary, value)
+            PreferKey.bitmapCacheSize ->
+                preference.summary =
+                    getString(R.string.bitmap_cache_size_summary, value)
+            PreferKey.imageRetainNum ->
+                preference.summary =
+                    getString(R.string.image_retain_number_summary, value)
 
-            PreferKey.sourceEditMaxLine -> preference.summary =
-                getString(R.string.source_edit_max_line_summary, value)
+            PreferKey.sourceEditMaxLine ->
+                preference.summary =
+                    getString(R.string.source_edit_max_line_summary, value)
 
-            else -> if (preference is ListPreference) {
-                val index = preference.findIndexOfValue(value)
-                // Set the summary to reflect the new value.
-                preference.summary = if (index >= 0) preference.entries[index] else null
-            } else {
-                preference.summary = value
-            }
+            else ->
+                if (preference is ListPreference) {
+                    val index = preference.findIndexOfValue(value)
+                    // Set the summary to reflect the new value.
+                    preference.summary = if (index >= 0) preference.entries[index] else null
+                } else {
+                    preference.summary = value
+                }
         }
     }
 
     @SuppressLint("InflateParams")
     private fun showWebTokenDialog() {
         alert(getString(R.string.web_token_title)) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = getString(R.string.web_token_summary)
-                editView.setText(AppConfig.webToken)
-            }
+            val alertBinding =
+                DialogEditTextBinding.inflate(layoutInflater).apply {
+                    editView.hint = getString(R.string.web_token_summary)
+                    editView.setText(AppConfig.webToken)
+                }
             customView { alertBinding.root }
             okButton {
-                val token = alertBinding.editView.text?.toString()?.trim()
+                val token =
+                    alertBinding.editView.text
+                        ?.toString()
+                        ?.trim()
                 if (token.isNullOrBlank()) {
                     removePref(PreferKey.webToken)
                 } else {
@@ -277,10 +309,11 @@ class OtherConfigFragment : PreferenceFragment(),
 
     private fun showUserAgentDialog() {
         alert(getString(R.string.user_agent)) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = getString(R.string.user_agent)
-                editView.setText(AppConfig.userAgent)
-            }
+            val alertBinding =
+                DialogEditTextBinding.inflate(layoutInflater).apply {
+                    editView.hint = getString(R.string.user_agent)
+                    editView.setText(AppConfig.userAgent)
+                }
             customView { alertBinding.root }
             okButton {
                 val userAgent = alertBinding.editView.text?.toString()
@@ -297,7 +330,7 @@ class OtherConfigFragment : PreferenceFragment(),
     private fun clearCache() {
         requireContext().alert(
             titleResource = R.string.clear_cache,
-            messageResource = R.string.sure_del
+            messageResource = R.string.sure_del,
         ) {
             okButton {
                 viewModel.clearCache()
@@ -324,29 +357,30 @@ class OtherConfigFragment : PreferenceFragment(),
         }
     }
 
-    private fun isProcessTextEnabled(): Boolean {
-        return packageManager.getComponentEnabledSetting(componentName) != PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-    }
+    private fun isProcessTextEnabled(): Boolean = packageManager.getComponentEnabledSetting(componentName) != PackageManager.COMPONENT_ENABLED_STATE_DISABLED
 
     private fun setProcessTextEnable(enable: Boolean) {
         if (enable) {
             packageManager.setComponentEnabledSetting(
                 componentName,
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP,
             )
         } else {
             packageManager.setComponentEnabledSetting(
                 componentName,
-                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP,
             )
         }
     }
 
     private fun alertLocalPassword() {
         context?.alert(R.string.set_local_password, R.string.set_local_password_summary) {
-            val editTextBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = "password"
-            }
+            val editTextBinding =
+                DialogEditTextBinding.inflate(layoutInflater).apply {
+                    editView.hint = "password"
+                }
             customView {
                 editTextBinding.root
             }
@@ -356,5 +390,4 @@ class OtherConfigFragment : PreferenceFragment(),
             cancelButton()
         }
     }
-
 }

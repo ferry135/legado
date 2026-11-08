@@ -48,9 +48,7 @@ object ThemeConfig {
         else -> Theme.Light
     }
 
-    fun isDarkTheme(): Boolean {
-        return getTheme() == Theme.Dark
-    }
+    fun isDarkTheme(): Boolean = getTheme() == Theme.Dark
 
     fun applyDayNight(context: Context) {
         applyTheme(context)
@@ -78,12 +76,12 @@ object ThemeConfig {
         val bgCfg = when (getTheme()) {
             Theme.Light -> Pair(
                 context.getPrefString(PreferKey.bgImage),
-                context.getPrefInt(PreferKey.bgImageBlurring, 0)
+                context.getPrefInt(PreferKey.bgImageBlurring, 0),
             )
 
             Theme.Dark -> Pair(
                 context.getPrefString(PreferKey.bgImageN),
-                context.getPrefInt(PreferKey.bgImageNBlurring, 0)
+                context.getPrefInt(PreferKey.bgImageNBlurring, 0),
             )
 
             else -> null
@@ -203,7 +201,7 @@ object ThemeConfig {
             primaryColor = "#${primary.hexString}",
             accentColor = "#${accent.hexString}",
             backgroundColor = "#${background.hexString}",
-            bottomBackground = "#${bBackground.hexString}"
+            bottomBackground = "#${bBackground.hexString}",
         )
         addConfig(config)
     }
@@ -212,12 +210,12 @@ object ThemeConfig {
         val primary =
             context.getPrefInt(
                 PreferKey.cNPrimary,
-                context.getCompatColor(R.color.design_orange)
+                context.getCompatColor(R.color.design_orange),
             )
         val accent =
             context.getPrefInt(
                 PreferKey.cNAccent,
-                context.getCompatColor(R.color.design_orange)
+                context.getCompatColor(R.color.design_orange),
             )
         val background =
             context.getPrefInt(PreferKey.cNBackground, context.getCompatColor(R.color.md_grey_900))
@@ -229,7 +227,7 @@ object ThemeConfig {
             primaryColor = "#${primary.hexString}",
             accentColor = "#${accent.hexString}",
             backgroundColor = "#${background.hexString}",
-            bottomBackground = "#${bBackground.hexString}"
+            bottomBackground = "#${bBackground.hexString}",
         )
         addConfig(config)
     }
@@ -257,16 +255,16 @@ object ThemeConfig {
                 val unset = Int.MIN_VALUE
                 val primary = getPrefInt(PreferKey.cNPrimary, unset)
                     .takeIf {
-                        it != unset && it != getCompatColor(R.color.md_blue_grey_600)
-                                && it != getCompatColor(R.color.md_red_600)
+                        it != unset && it != getCompatColor(R.color.md_blue_grey_600) &&
+                            it != getCompatColor(R.color.md_red_600)
                     }
                     ?: getCompatColor(R.color.design_orange).also {
                         putPrefInt(PreferKey.cNPrimary, it)
                     }
                 val accent = getPrefInt(PreferKey.cNAccent, unset)
                     .takeIf {
-                        it != unset && it != getCompatColor(R.color.md_deep_orange_800)
-                                && it != getCompatColor(R.color.md_red_600)
+                        it != unset && it != getCompatColor(R.color.md_deep_orange_800) &&
+                            it != getCompatColor(R.color.md_red_600)
                     }
                     ?: getCompatColor(R.color.design_orange).also {
                         putPrefInt(PreferKey.cNAccent, it)
@@ -282,8 +280,8 @@ object ThemeConfig {
                 }
                 val bBackground = getPrefInt(PreferKey.cNBBackground, unset)
                     .takeIf {
-                        it != unset && it != getCompatColor(R.color.md_grey_850)
-                                && it != getCompatColor(R.color.legacy_bottom_night)
+                        it != unset && it != getCompatColor(R.color.md_grey_850) &&
+                            it != getCompatColor(R.color.legacy_bottom_night)
                     }
                     ?: getCompatColor(R.color.night_bottom_nav).also {
                         putPrefInt(PreferKey.cNBBackground, it)
@@ -302,8 +300,8 @@ object ThemeConfig {
                 val unset = Int.MIN_VALUE
                 val primary = getPrefInt(PreferKey.cPrimary, unset)
                     .takeIf {
-                        it != unset && it != getCompatColor(R.color.md_brown_500)
-                                && it != getCompatColor(R.color.md_red_600)
+                        it != unset && it != getCompatColor(R.color.md_brown_500) &&
+                            it != getCompatColor(R.color.md_red_600)
                     }
                     ?: getCompatColor(R.color.design_orange).also {
                         putPrefInt(PreferKey.cPrimary, it)
@@ -324,8 +322,8 @@ object ThemeConfig {
                 }
                 val bBackground = getPrefInt(PreferKey.cBBackground, unset)
                     .takeIf {
-                        it != unset && it != getCompatColor(R.color.md_grey_200)
-                                && it != getCompatColor(R.color.legacy_bottom_day)
+                        it != unset && it != getCompatColor(R.color.md_grey_200) &&
+                            it != getCompatColor(R.color.legacy_bottom_day)
                     }
                     ?: getCompatColor(R.color.day_bottom_nav).also {
                         putPrefInt(PreferKey.cBBackground, it)
@@ -347,26 +345,22 @@ object ThemeConfig {
         var primaryColor: String,
         var accentColor: String,
         var backgroundColor: String,
-        var bottomBackground: String
+        var bottomBackground: String,
     ) {
 
-        override fun hashCode(): Int {
-            return GSON.toJson(this).hashCode()
-        }
+        override fun hashCode(): Int = GSON.toJson(this).hashCode()
 
         override fun equals(other: Any?): Boolean {
             other ?: return false
             if (other is Config) {
-                return other.themeName == themeName
-                        && other.isNightTheme == isNightTheme
-                        && other.primaryColor == primaryColor
-                        && other.accentColor == accentColor
-                        && other.backgroundColor == backgroundColor
-                        && other.bottomBackground == bottomBackground
+                return other.themeName == themeName &&
+                    other.isNightTheme == isNightTheme &&
+                    other.primaryColor == primaryColor &&
+                    other.accentColor == accentColor &&
+                    other.backgroundColor == backgroundColor &&
+                    other.bottomBackground == bottomBackground
             }
             return false
         }
-
     }
-
 }

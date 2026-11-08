@@ -15,7 +15,6 @@ import io.legado.app.utils.setSheetBackground
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class PaddingConfigDialog : BaseDialogFragment(R.layout.dialog_read_padding) {
-
     private val binding by viewBinding(DialogReadPaddingBinding::bind)
 
     override fun onStart() {
@@ -23,11 +22,14 @@ class PaddingConfigDialog : BaseDialogFragment(R.layout.dialog_read_padding) {
         // 14-reader-brightness#05：底部弹层窗口收口（透明窗底 + scrim_dialog 50% + 底部重力），
         // 替换原 clearFlags(FLAG_DIM_BEHIND) + dimAmount=0 无遮罩浮窗；高 80% 屏防超长（内部滚动）
         dialog?.window?.applyBottomSheetWindow(
-            (resources.displayMetrics.heightPixels * 0.8f).toInt()
+            (resources.displayMetrics.heightPixels * 0.8f).toInt(),
         )
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         initData()
         initView()
     }
@@ -38,17 +40,17 @@ class PaddingConfigDialog : BaseDialogFragment(R.layout.dialog_read_padding) {
     }
 
     private fun initData() = binding.run {
-        //正文
+        // 正文
         dsbPaddingTop.progress = ReadBookConfig.paddingTop
         dsbPaddingBottom.progress = ReadBookConfig.paddingBottom
         dsbPaddingLeft.progress = ReadBookConfig.paddingLeft
         dsbPaddingRight.progress = ReadBookConfig.paddingRight
-        //页眉
+        // 页眉
         dsbHeaderPaddingTop.progress = ReadBookConfig.headerPaddingTop
         dsbHeaderPaddingBottom.progress = ReadBookConfig.headerPaddingBottom
         dsbHeaderPaddingLeft.progress = ReadBookConfig.headerPaddingLeft
         dsbHeaderPaddingRight.progress = ReadBookConfig.headerPaddingRight
-        //页脚
+        // 页脚
         dsbFooterPaddingTop.progress = ReadBookConfig.footerPaddingTop
         dsbFooterPaddingBottom.progress = ReadBookConfig.footerPaddingBottom
         dsbFooterPaddingLeft.progress = ReadBookConfig.footerPaddingLeft
@@ -76,7 +78,7 @@ class PaddingConfigDialog : BaseDialogFragment(R.layout.dialog_read_padding) {
         // 显示分隔线整行可点（label 与开关同触控域）
         llShowTopLine.setOnClickListener { cbShowTopLine.toggle() }
         llShowBottomLine.setOnClickListener { cbShowBottomLine.toggle() }
-        //正文
+        // 正文
         dsbPaddingTop.onChanged = {
             ReadBookConfig.paddingTop = it
             postEvent(EventBus.UP_CONFIG, arrayListOf(10, 5))
@@ -93,7 +95,7 @@ class PaddingConfigDialog : BaseDialogFragment(R.layout.dialog_read_padding) {
             ReadBookConfig.paddingRight = it
             postEvent(EventBus.UP_CONFIG, arrayListOf(10, 5))
         }
-        //页眉
+        // 页眉
         dsbHeaderPaddingTop.onChanged = {
             ReadBookConfig.headerPaddingTop = it
             postEvent(EventBus.UP_CONFIG, arrayListOf(2))
@@ -110,7 +112,7 @@ class PaddingConfigDialog : BaseDialogFragment(R.layout.dialog_read_padding) {
             ReadBookConfig.headerPaddingRight = it
             postEvent(EventBus.UP_CONFIG, arrayListOf(2))
         }
-        //页脚
+        // 页脚
         dsbFooterPaddingTop.onChanged = {
             ReadBookConfig.footerPaddingTop = it
             postEvent(EventBus.UP_CONFIG, arrayListOf(2))
@@ -137,5 +139,4 @@ class PaddingConfigDialog : BaseDialogFragment(R.layout.dialog_read_padding) {
             postEvent(EventBus.UP_CONFIG, arrayListOf(2))
         }
     }
-
 }

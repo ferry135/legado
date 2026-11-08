@@ -13,48 +13,49 @@ private val queryTTFMap = LruCache<String, QueryTTF>(4)
 /**
  * 最多只缓存50M的数据,防止OOM
  */
-private val memoryLruCache = object : LruCache<String, Any>(1024 * 1024 * 50) {
-
-    override fun sizeOf(key: String, value: Any): Int {
-        return value.toString().memorySize()
+private val memoryLruCache =
+    object : LruCache<String, Any>(1024 * 1024 * 50) {
+        override fun sizeOf(
+            key: String,
+            value: Any,
+        ): Int = value.toString().memorySize()
     }
 
-}
-
 object AppCacheManager {
-
-    fun put(key: String, queryTTF: QueryTTF) {
+    fun put(
+        key: String,
+        queryTTF: QueryTTF,
+    ) {
         queryTTFMap.put(key, queryTTF)
     }
 
-    fun getQueryTTF(key: String): QueryTTF? {
-        return queryTTFMap[key]
-    }
+    fun getQueryTTF(key: String): QueryTTF? = queryTTFMap[key]
 
     fun clearSourceVariables() {
         memoryLruCache.snapshot().keys.forEach {
-            if (it.startsWith("v_")
-                || it.startsWith("userInfo_")
-                || it.startsWith("loginHeader_")
-                || it.startsWith("sourceVariable_")
+            if (it.startsWith("v_") ||
+                it.startsWith("userInfo_") ||
+                it.startsWith("loginHeader_") ||
+                it.startsWith("sourceVariable_")
             ) {
                 memoryLruCache.remove(it)
             }
         }
     }
-
 }
-
 
 @Keep
 @Suppress("unused")
 object CacheManager {
-
     /**
      * saveTime 单位为秒
      */
     @JvmOverloads
-    fun put(key: String, value: Any, saveTime: Int = 0) {
+    fun put(
+        key: String,
+        value: Any,
+        saveTime: Int = 0,
+    ) {
         val deadline =
             if (saveTime == 0) 0 else System.currentTimeMillis() + saveTime * 1000
         when (value) {
@@ -67,14 +68,15 @@ object CacheManager {
         }
     }
 
-    fun putMemory(key: String, value: Any) {
+    fun putMemory(
+        key: String,
+        value: Any,
+    ) {
         memoryLruCache.put(key, value)
     }
 
-    //从内存中获取数据 使用lruCache
-    fun getFromMemory(key: String): Any? {
-        return memoryLruCache[key]
-    }
+    // 从内存中获取数据 使用lruCache
+    fun getFromMemory(key: String): Any? = memoryLruCache[key]
 
     fun deleteMemory(key: String) {
         memoryLruCache.remove(key)
@@ -92,33 +94,25 @@ object CacheManager {
         return null
     }
 
-    fun getInt(key: String): Int? {
-        return get(key)?.toIntOrNull()
-    }
+    fun getInt(key: String): Int? = get(key)?.toIntOrNull()
 
-    fun getLong(key: String): Long? {
-        return get(key)?.toLongOrNull()
-    }
+    fun getLong(key: String): Long? = get(key)?.toLongOrNull()
 
-    fun getDouble(key: String): Double? {
-        return get(key)?.toDoubleOrNull()
-    }
+    fun getDouble(key: String): Double? = get(key)?.toDoubleOrNull()
 
-    fun getFloat(key: String): Float? {
-        return get(key)?.toFloatOrNull()
-    }
+    fun getFloat(key: String): Float? = get(key)?.toFloatOrNull()
 
-    fun getByteArray(key: String): ByteArray? {
-        return ACache.get().getAsBinary(key)
-    }
+    fun getByteArray(key: String): ByteArray? = ACache.get().getAsBinary(key)
 
-    fun putFile(key: String, value: String, saveTime: Int = 0) {
+    fun putFile(
+        key: String,
+        value: String,
+        saveTime: Int = 0,
+    ) {
         ACache.get().put(key, value, saveTime)
     }
 
-    fun getFile(key: String): String? {
-        return ACache.get().getAsString(key)
-    }
+    fun getFile(key: String): String? = ACache.get().getAsString(key)
 
     fun delete(key: String) {
         appDb.cacheDao.delete(key)

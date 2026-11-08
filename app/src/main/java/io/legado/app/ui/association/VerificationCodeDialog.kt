@@ -34,21 +34,22 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
  * val key = "${sourceOrigin ?: ""}_verificationResult"
  * CacheManager.get(key)
  */
-class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification_code_view),
+class VerificationCodeDialog() :
+    BaseDialogFragment(R.layout.dialog_verification_code_view),
     Toolbar.OnMenuItemClickListener {
-
     constructor(
         imageUrl: String,
         sourceOrigin: String? = null,
         sourceName: String? = null,
-        sourceType: Int
+        sourceType: Int,
     ) : this() {
-        arguments = Bundle().apply {
-            putString("imageUrl", imageUrl)
-            putString("sourceOrigin", sourceOrigin)
-            putString("sourceName", sourceName)
-            putInt("sourceType", sourceType)
-        }
+        arguments =
+            Bundle().apply {
+                putString("imageUrl", imageUrl)
+                putString("sourceOrigin", sourceOrigin)
+                putString("sourceName", sourceName)
+                putInt("sourceType", sourceType)
+            }
     }
 
     val binding by viewBinding(DialogVerificationCodeViewBinding::bind)
@@ -61,7 +62,10 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
 
     private var sourceOrigin: String? = null
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?): Unit = binding.run {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ): Unit = binding.run {
         initMenu()
         val arguments = arguments ?: return@run
         viewModel.initData(arguments)
@@ -81,38 +85,42 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
     }
 
     @SuppressLint("CheckResult")
-    private fun loadImage(url: String, sourceUrl: String?) {
+    private fun loadImage(
+        url: String,
+        sourceUrl: String?,
+    ) {
         ImageProvider.remove(url)
-        ImageLoader.loadBitmap(requireContext(), url).apply {
-            sourceUrl?.let {
-                apply(RequestOptions().set(OkHttpModelLoader.sourceOriginOption, it))
-            }
-        }.error(R.drawable.image_loading_error)
+        ImageLoader
+            .loadBitmap(requireContext(), url)
+            .apply {
+                sourceUrl?.let {
+                    apply(RequestOptions().set(OkHttpModelLoader.sourceOriginOption, it))
+                }
+            }.error(R.drawable.image_loading_error)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .skipMemoryCache(true)
-            .listener(object : RequestListener<Bitmap> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Bitmap?>,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    return false
-                }
+            .listener(
+                object : RequestListener<Bitmap> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Bitmap?>,
+                        isFirstResource: Boolean,
+                    ): Boolean = false
 
-                override fun onResourceReady(
-                    resource: Bitmap,
-                    model: Any,
-                    target: Target<Bitmap?>?,
-                    dataSource: DataSource,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    val bitmap = resource.copy(resource.config!!, true)
-                    ImageProvider.put(url, bitmap) // 传给 PhotoDialog
-                    return false
-                }
-            })
-            .into(binding.verificationCodeImageView)
+                    override fun onResourceReady(
+                        resource: Bitmap,
+                        model: Any,
+                        target: Target<Bitmap?>?,
+                        dataSource: DataSource,
+                        isFirstResource: Boolean,
+                    ): Boolean {
+                        val bitmap = resource.copy(resource.config!!, true)
+                        ImageProvider.put(url, bitmap) // 传给 PhotoDialog
+                        return false
+                    }
+                },
+            ).into(binding.verificationCodeImageView)
     }
 
     @SuppressLint("InflateParams")
@@ -150,5 +158,4 @@ class VerificationCodeDialog() : BaseDialogFragment(R.layout.dialog_verification
         super.onDestroy()
         activity?.finish()
     }
-
 }

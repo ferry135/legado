@@ -41,40 +41,45 @@ import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.toastOnUi
 
-abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfViewModel>(layoutId),
+abstract class BaseBookshelfFragment(
+    layoutId: Int,
+) : VMBaseFragment<BookshelfViewModel>(layoutId),
     MainFragmentInterface {
-
     override val position: Int? get() = arguments?.getInt("position")
 
     val activityViewModel by activityViewModels<MainViewModel>()
     override val viewModel by viewModels<BookshelfViewModel>()
 
-    private val importBookshelf = registerForActivityResult(HandleFileContract()) {
-        kotlin.runCatching {
-            it.uri?.readText(requireContext())?.let { text ->
-                viewModel.importBookshelf(text, groupId)
-            }
-        }.onFailure {
-            toastOnUi(it.localizedMessage ?: "ERROR")
+    private val importBookshelf =
+        registerForActivityResult(HandleFileContract()) {
+            kotlin
+                .runCatching {
+                    it.uri?.readText(requireContext())?.let { text ->
+                        viewModel.importBookshelf(text, groupId)
+                    }
+                }.onFailure {
+                    toastOnUi(it.localizedMessage ?: "ERROR")
+                }
         }
-    }
-    private val exportResult = registerForActivityResult(HandleFileContract()) {
-        it.uri?.let { uri ->
-            alert(R.string.export_success) {
-                if (uri.toString().isAbsUrl()) {
-                    setMessage(DirectLinkUpload.getSummary())
-                }
-                val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                    editView.hint = getString(R.string.path)
-                    editView.setText(uri.toString())
-                }
-                customView { alertBinding.root }
-                okButton {
-                    requireContext().sendToClip(uri.toString())
+    private val exportResult =
+        registerForActivityResult(HandleFileContract()) {
+            it.uri?.let { uri ->
+                alert(R.string.export_success) {
+                    if (uri.toString().isAbsUrl()) {
+                        setMessage(DirectLinkUpload.getSummary())
+                    }
+                    val alertBinding =
+                        DialogEditTextBinding.inflate(layoutInflater).apply {
+                            editView.hint = getString(R.string.path)
+                            editView.setText(uri.toString())
+                        }
+                    customView { alertBinding.root }
+                    okButton {
+                        requireContext().sendToClip(uri.toString())
+                    }
                 }
             }
         }
-    }
     abstract val groupId: Long
     abstract val books: List<Book>
     private var groupsLiveData: LiveData<List<BookGroup>>? = null
@@ -102,21 +107,24 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
             R.id.menu_group_manage -> showDialogFragment<GroupManageDialog>()
             R.id.menu_add_local -> startActivity<ImportBookActivity>()
             R.id.menu_add_url -> showAddBookByUrlAlert()
-            R.id.menu_bookshelf_manage -> startActivity<BookshelfManageActivity> {
-                putExtra("groupId", groupId)
-            }
-
-            R.id.menu_download -> startActivity<CacheActivity> {
-                putExtra("groupId", groupId)
-            }
-
-            R.id.menu_export_bookshelf -> viewModel.exportBookshelf(books) { file ->
-                exportResult.launch {
-                    mode = HandleFileContract.EXPORT
-                    fileData =
-                        HandleFileContract.FileData("bookshelf.json", file, "application/json")
+            R.id.menu_bookshelf_manage ->
+                startActivity<BookshelfManageActivity> {
+                    putExtra("groupId", groupId)
                 }
-            }
+
+            R.id.menu_download ->
+                startActivity<CacheActivity> {
+                    putExtra("groupId", groupId)
+                }
+
+            R.id.menu_export_bookshelf ->
+                viewModel.exportBookshelf(books) { file ->
+                    exportResult.launch {
+                        mode = HandleFileContract.EXPORT
+                        fileData =
+                            HandleFileContract.FileData("bookshelf.json", file, "application/json")
+                    }
+                }
 
             R.id.menu_import_bookshelf -> importBookshelfAlert(groupId)
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
@@ -125,11 +133,12 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
 
     protected fun initBookGroupData() {
         groupsLiveData?.removeObservers(viewLifecycleOwner)
-        groupsLiveData = appDb.bookGroupDao.show.apply {
-            observe(viewLifecycleOwner) {
-                upGroup(it)
+        groupsLiveData =
+            appDb.bookGroupDao.show.apply {
+                observe(viewLifecycleOwner) {
+                    upGroup(it)
+                }
             }
-        }
     }
 
     abstract fun upGroup(data: List<BookGroup>)
@@ -149,9 +158,10 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
     @SuppressLint("InflateParams")
     fun showAddBookByUrlAlert() {
         alert(titleResource = R.string.add_book_url) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = "url"
-            }
+            val alertBinding =
+                DialogEditTextBinding.inflate(layoutInflater).apply {
+                    editView.hint = "url"
+                }
             customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let {
@@ -170,7 +180,8 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
             val bookshelfLayout = AppConfig.bookshelfLayout
             val bookshelfSort = AppConfig.bookshelfSort
             val alertBinding =
-                DialogBookshelfConfigBinding.inflate(layoutInflater)
+                DialogBookshelfConfigBinding
+                    .inflate(layoutInflater)
                     .apply {
                         // 胶囊拆两行 RadioGroup（LinearLayout 无换行能力），先挂互斥同步再回显勾选
                         linkRadioGroups(rgLayoutRow1, rgLayoutRow2)
@@ -232,12 +243,12 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
         }
     }
 
-
     private fun importBookshelfAlert(groupId: Long) {
         alert(titleResource = R.string.import_bookshelf) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = "url/json"
-            }
+            val alertBinding =
+                DialogEditTextBinding.inflate(layoutInflater).apply {
+                    editView.hint = "url/json"
+                }
             customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let {
@@ -294,5 +305,4 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
             offset += group.childCount
         }
     }
-
 }

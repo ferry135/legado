@@ -9,8 +9,10 @@ import java.io.IOException
 import java.nio.ByteBuffer
 
 @Keep
-class BodyUploadProvider(private val body: RequestBody) : UploadDataProvider(), AutoCloseable {
-
+class BodyUploadProvider(
+    private val body: RequestBody,
+) : UploadDataProvider(),
+    AutoCloseable {
     private val buffer = Buffer()
 
     @Volatile
@@ -32,12 +34,13 @@ class BodyUploadProvider(private val body: RequestBody) : UploadDataProvider(), 
     }
 
     @Throws(IOException::class)
-    override fun getLength(): Long {
-        return body.contentLength()
-    }
+    override fun getLength(): Long = body.contentLength()
 
     @Throws(IOException::class)
-    override fun read(uploadDataSink: UploadDataSink, byteBuffer: ByteBuffer) {
+    override fun read(
+        uploadDataSink: UploadDataSink,
+        byteBuffer: ByteBuffer,
+    ) {
         if (!filled) {
             fillBuffer()
         }

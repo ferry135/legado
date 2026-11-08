@@ -12,25 +12,29 @@ import io.legado.app.R
 import io.legado.app.constant.IntentAction
 import io.legado.app.utils.printOnDebug
 
-
 /**
  * web服务快捷开关
  */
 @RequiresApi(Build.VERSION_CODES.N)
 class WebTileService : TileService() {
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    override fun onStartCommand(
+        intent: Intent?,
+        flags: Int,
+        startId: Int,
+    ): Int {
         try {
             when (intent?.action) {
-                IntentAction.start -> qsTile?.run {
-                    state = Tile.STATE_ACTIVE
-                    updateTile()
-                }
+                IntentAction.start ->
+                    qsTile?.run {
+                        state = Tile.STATE_ACTIVE
+                        updateTile()
+                    }
 
-                IntentAction.stop -> qsTile?.run {
-                    state = Tile.STATE_INACTIVE
-                    updateTile()
-                }
+                IntentAction.stop ->
+                    qsTile?.run {
+                        state = Tile.STATE_INACTIVE
+                        updateTile()
+                    }
             }
         } catch (e: Exception) {
             e.printOnDebug()
@@ -41,11 +45,12 @@ class WebTileService : TileService() {
     override fun onStartListening() {
         super.onStartListening()
         qsTile?.run {
-            state = if (WebService.isRun) {
-                Tile.STATE_ACTIVE
-            } else {
-                Tile.STATE_INACTIVE
-            }
+            state =
+                if (WebService.isRun) {
+                    Tile.STATE_ACTIVE
+                } else {
+                    Tile.STATE_INACTIVE
+                }
             updateTile()
         }
     }
@@ -75,5 +80,4 @@ class WebTileService : TileService() {
             }
         }
     }
-
 }

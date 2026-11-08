@@ -28,11 +28,11 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.views.onClick
 
-
 /**
  * 导入书源弹出窗口
  */
-class ImportBookSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_view),
+class ImportBookSourceDialog() :
+    BaseDialogFragment(R.layout.dialog_recycler_view),
     Toolbar.OnMenuItemClickListener,
     CodeDialog.Callback {
 
@@ -128,13 +128,13 @@ class ImportBookSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_vie
             binding.tvFooterLeft.text = getString(
                 R.string.select_cancel_count,
                 viewModel.selectCount,
-                viewModel.allSources.size
+                viewModel.allSources.size,
             )
         } else {
             binding.tvFooterLeft.text = getString(
                 R.string.select_all_count,
                 viewModel.selectCount,
-                viewModel.allSources.size
+                viewModel.allSources.size,
             )
         }
     }
@@ -233,18 +233,15 @@ class ImportBookSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_vie
         }
     }
 
-    inner class SourcesAdapter(context: Context) :
-        RecyclerAdapter<BookSource, ItemSourceImportBinding>(context) {
+    inner class SourcesAdapter(context: Context) : RecyclerAdapter<BookSource, ItemSourceImportBinding>(context) {
 
-        override fun getViewBinding(parent: ViewGroup): ItemSourceImportBinding {
-            return ItemSourceImportBinding.inflate(inflater, parent, false)
-        }
+        override fun getViewBinding(parent: ViewGroup): ItemSourceImportBinding = ItemSourceImportBinding.inflate(inflater, parent, false)
 
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemSourceImportBinding,
             item: BookSource,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             binding.apply {
                 cbSourceName.isChecked = viewModel.selectStatus[holder.layoutPosition]
@@ -280,13 +277,11 @@ class ImportBookSourceDialog() : BaseDialogFragment(R.layout.dialog_recycler_vie
                         CodeDialog(
                             GSON.toJson(source),
                             disableEdit = false,
-                            requestId = holder.layoutPosition.toString()
-                        )
+                            requestId = holder.layoutPosition.toString(),
+                        ),
                     )
                 }
             }
         }
-
     }
-
 }

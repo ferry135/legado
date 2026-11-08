@@ -51,7 +51,7 @@ object RhinoWrapFactory : WrapFactory() {
         cx: Context,
         scope: Scriptable?,
         javaObject: Any,
-        staticType: Class<*>?
+        staticType: Class<*>?,
     ): Scriptable? {
         if (!RhinoClassShutter.visibleToScripts(javaObject)) {
             return null
@@ -63,7 +63,7 @@ object RhinoWrapFactory : WrapFactory() {
     override fun wrapJavaClass(
         cx: Context,
         scope: Scriptable,
-        javaClass: Class<*>
+        javaClass: Class<*>,
     ): Scriptable {
         if (!RhinoClassShutter.visibleToScripts(javaClass)) {
             @Suppress("DEPRECATION")
@@ -77,15 +77,12 @@ object RhinoWrapFactory : WrapFactory() {
     private fun wrapOrNull(
         scope: Scriptable?,
         javaObject: Any,
-        staticType: Class<*>?
-    ): Scriptable? {
-        return factories[javaObject.javaClass]?.wrap(scope, javaObject, staticType)
-    }
+        staticType: Class<*>?,
+    ): Scriptable? = factories[javaObject.javaClass]?.wrap(scope, javaObject, staticType)
 
     fun register(clazz: Class<*>, factory: JavaObjectWrapFactory) {
         if (!factories.contains(clazz)) {
             factories.put(clazz, factory)
         }
     }
-
 }

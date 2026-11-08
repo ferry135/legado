@@ -26,7 +26,7 @@ import kotlinx.parcelize.Parcelize
 @TypeConverters(BookSource.Converters::class)
 @Entity(
     tableName = "book_sources",
-    indices = [(Index(value = ["bookSourceUrl"], unique = false))]
+    indices = [(Index(value = ["bookSourceUrl"], unique = false))],
 )
 data class BookSource(
     // 地址，包括 http/https
@@ -94,24 +94,16 @@ data class BookSource(
     // 正文页规则
     var ruleContent: ContentRule? = null,
     // 段评规则
-    var ruleReview: ReviewRule? = null
-) : Parcelable, BaseSource {
+    var ruleReview: ReviewRule? = null,
+) : Parcelable,
+    BaseSource {
+    override fun getTag(): String = bookSourceName
 
-    override fun getTag(): String {
-        return bookSourceName
-    }
+    override fun getKey(): String = bookSourceUrl
 
-    override fun getKey(): String {
-        return bookSourceUrl
-    }
+    override fun hashCode(): Int = bookSourceUrl.hashCode()
 
-    override fun hashCode(): Int {
-        return bookSourceUrl.hashCode()
-    }
-
-    override fun equals(other: Any?): Boolean {
-        return if (other is BookSource) other.bookSourceUrl == bookSourceUrl else false
-    }
+    override fun equals(other: Any?): Boolean = if (other is BookSource) other.bookSourceUrl == bookSourceUrl else false
 
     fun getSearchRule(): SearchRule {
         ruleSearch?.let { return it }
@@ -155,12 +147,10 @@ data class BookSource(
 //        return rule
 //    }
 
-    fun getDisPlayNameGroup(): String {
-        return if (bookSourceGroup.isNullOrBlank()) {
-            bookSourceName
-        } else {
-            String.format("%s (%s)", bookSourceName, bookSourceGroup)
-        }
+    fun getDisPlayNameGroup(): String = if (bookSourceGroup.isNullOrBlank()) {
+        bookSourceName
+    } else {
+        String.format("%s (%s)", bookSourceName, bookSourceGroup)
     }
 
     fun addGroup(groups: String): BookSource {
@@ -192,17 +182,22 @@ data class BookSource(
     }
 
     fun removeErrorComment() {
-        bookSourceComment = bookSourceComment
-            ?.split("\n\n")
-            ?.filterNot {
-                it.startsWith("// Error: ")
-            }?.joinToString("\n")
+        bookSourceComment =
+            bookSourceComment
+                ?.split("\n\n")
+                ?.filterNot {
+                    it.startsWith("// Error: ")
+                }?.joinToString("\n")
     }
 
     fun addErrorComment(e: Throwable) {
         bookSourceComment =
-            "// Error: ${e.localizedMessage}" + if (bookSourceComment.isNullOrBlank())
-                "" else "\n\n${bookSourceComment}"
+            "// Error: ${e.localizedMessage}" +
+            if (bookSourceComment.isNullOrBlank()) {
+                ""
+            } else {
+                "\n\n$bookSourceComment"
+            }
     }
 
     fun getCheckKeyword(default: String): String {
@@ -214,97 +209,85 @@ data class BookSource(
         return default
     }
 
-    fun getInvalidGroupNames(): String {
-        return bookSourceGroup?.splitNotBlank(AppPattern.splitGroupRegex)?.toHashSet()?.filter {
+    fun getInvalidGroupNames(): String = bookSourceGroup
+        ?.splitNotBlank(AppPattern.splitGroupRegex)
+        ?.toHashSet()
+        ?.filter {
             "失效" in it || it == "校验超时"
         }?.joinToString() ?: ""
+
+    fun getDisplayVariableComment(otherComment: String): String = if (variableComment.isNullOrBlank()) {
+        otherComment
+    } else {
+        "${variableComment}\n$otherComment"
     }
 
-    fun getDisplayVariableComment(otherComment: String): String {
-        return if (variableComment.isNullOrBlank()) {
-            otherComment
-        } else {
-            "${variableComment}\n$otherComment"
-        }
-    }
+    fun equal(source: BookSource): Boolean = equal(bookSourceName, source.bookSourceName) &&
+        equal(bookSourceUrl, source.bookSourceUrl) &&
+        equal(bookSourceGroup, source.bookSourceGroup) &&
+        bookSourceType == source.bookSourceType &&
+        equal(bookUrlPattern, source.bookUrlPattern) &&
+        equal(bookSourceComment, source.bookSourceComment) &&
+        customOrder == source.customOrder &&
+        enabled == source.enabled &&
+        enabledExplore == source.enabledExplore &&
+        enabledCookieJar == source.enabledCookieJar &&
+        equal(variableComment, source.variableComment) &&
+        equal(concurrentRate, source.concurrentRate) &&
+        equal(jsLib, source.jsLib) &&
+        equal(header, source.header) &&
+        equal(loginUrl, source.loginUrl) &&
+        equal(loginUi, source.loginUi) &&
+        equal(loginCheckJs, source.loginCheckJs) &&
+        equal(coverDecodeJs, source.coverDecodeJs) &&
+        equal(exploreUrl, source.exploreUrl) &&
+        equal(searchUrl, source.searchUrl) &&
+        getSearchRule() == source.getSearchRule() &&
+        getExploreRule() == source.getExploreRule() &&
+        getBookInfoRule() == source.getBookInfoRule() &&
+        getTocRule() == source.getTocRule() &&
+        getContentRule() == source.getContentRule()
 
-    fun equal(source: BookSource): Boolean {
-        return equal(bookSourceName, source.bookSourceName)
-                && equal(bookSourceUrl, source.bookSourceUrl)
-                && equal(bookSourceGroup, source.bookSourceGroup)
-                && bookSourceType == source.bookSourceType
-                && equal(bookUrlPattern, source.bookUrlPattern)
-                && equal(bookSourceComment, source.bookSourceComment)
-                && customOrder == source.customOrder
-                && enabled == source.enabled
-                && enabledExplore == source.enabledExplore
-                && enabledCookieJar == source.enabledCookieJar
-                && equal(variableComment, source.variableComment)
-                && equal(concurrentRate, source.concurrentRate)
-                && equal(jsLib, source.jsLib)
-                && equal(header, source.header)
-                && equal(loginUrl, source.loginUrl)
-                && equal(loginUi, source.loginUi)
-                && equal(loginCheckJs, source.loginCheckJs)
-                && equal(coverDecodeJs, source.coverDecodeJs)
-                && equal(exploreUrl, source.exploreUrl)
-                && equal(searchUrl, source.searchUrl)
-                && getSearchRule() == source.getSearchRule()
-                && getExploreRule() == source.getExploreRule()
-                && getBookInfoRule() == source.getBookInfoRule()
-                && getTocRule() == source.getTocRule()
-                && getContentRule() == source.getContentRule()
-    }
-
-    private fun equal(a: String?, b: String?) = a == b || (a.isNullOrEmpty() && b.isNullOrEmpty())
+    private fun equal(
+        a: String?,
+        b: String?,
+    ) = a == b || (a.isNullOrEmpty() && b.isNullOrEmpty())
 
     class Converters {
+        @TypeConverter
+        fun exploreRuleToString(exploreRule: ExploreRule?): String = GSON.toJson(exploreRule)
 
         @TypeConverter
-        fun exploreRuleToString(exploreRule: ExploreRule?): String =
-            GSON.toJson(exploreRule)
+        fun stringToExploreRule(json: String?) = GSON.fromJsonObject<ExploreRule>(json).getOrNull()
 
         @TypeConverter
-        fun stringToExploreRule(json: String?) =
-            GSON.fromJsonObject<ExploreRule>(json).getOrNull()
+        fun searchRuleToString(searchRule: SearchRule?): String = GSON.toJson(searchRule)
 
         @TypeConverter
-        fun searchRuleToString(searchRule: SearchRule?): String =
-            GSON.toJson(searchRule)
+        fun stringToSearchRule(json: String?) = GSON.fromJsonObject<SearchRule>(json).getOrNull()
 
         @TypeConverter
-        fun stringToSearchRule(json: String?) =
-            GSON.fromJsonObject<SearchRule>(json).getOrNull()
+        fun bookInfoRuleToString(bookInfoRule: BookInfoRule?): String = GSON.toJson(bookInfoRule)
 
         @TypeConverter
-        fun bookInfoRuleToString(bookInfoRule: BookInfoRule?): String =
-            GSON.toJson(bookInfoRule)
+        fun stringToBookInfoRule(json: String?) = GSON.fromJsonObject<BookInfoRule>(json).getOrNull()
 
         @TypeConverter
-        fun stringToBookInfoRule(json: String?) =
-            GSON.fromJsonObject<BookInfoRule>(json).getOrNull()
+        fun tocRuleToString(tocRule: TocRule?): String = GSON.toJson(tocRule)
 
         @TypeConverter
-        fun tocRuleToString(tocRule: TocRule?): String =
-            GSON.toJson(tocRule)
+        fun stringToTocRule(json: String?) = GSON.fromJsonObject<TocRule>(json).getOrNull()
 
         @TypeConverter
-        fun stringToTocRule(json: String?) =
-            GSON.fromJsonObject<TocRule>(json).getOrNull()
+        fun contentRuleToString(contentRule: ContentRule?): String = GSON.toJson(contentRule)
 
         @TypeConverter
-        fun contentRuleToString(contentRule: ContentRule?): String =
-            GSON.toJson(contentRule)
-
-        @TypeConverter
-        fun stringToContentRule(json: String?) =
-            GSON.fromJsonObject<ContentRule>(json).getOrNull()
+        fun stringToContentRule(json: String?) = GSON.fromJsonObject<ContentRule>(json).getOrNull()
 
         @TypeConverter
         fun stringToReviewRule(json: String?): ReviewRule? = null
 
         @TypeConverter
         fun reviewRuleToString(reviewRule: ReviewRule?): String = "null"
-
     }
 }

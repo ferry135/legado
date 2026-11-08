@@ -44,8 +44,7 @@ import java.security.AccessControlContext
  * @since 1.6
  */
 @Suppress("UNUSED_PARAMETER", "unused")
-class RhinoTopLevel(cx: Context, val scriptEngine: RhinoScriptEngine) :
-    ImporterTopLevel(cx, System.getSecurityManager() != null) {
+class RhinoTopLevel(cx: Context, val scriptEngine: RhinoScriptEngine) : ImporterTopLevel(cx, System.getSecurityManager() != null) {
 
     init {
 //        LazilyLoadedCtor(this, "JSAdapter", "com.script.rhino.JSAdapter", false)
@@ -64,7 +63,7 @@ class RhinoTopLevel(cx: Context, val scriptEngine: RhinoScriptEngine) :
             cx: Context,
             thisObj: Scriptable?,
             args: Array<Any?>,
-            funObj: Function?
+            funObj: Function?,
         ): Any {
             if (args.size == 1) {
                 var arg = args[0]
@@ -100,12 +99,10 @@ class RhinoTopLevel(cx: Context, val scriptEngine: RhinoScriptEngine) :
         }
 
         @JvmStatic
-        fun sync(cx: Context, thisObj: Scriptable?, args: Array<Any?>, funObj: Function?): Any {
-            return if (args.size == 1 && args[0] is Function) {
-                Synchronizer(args[0] as Function?)
-            } else {
-                throw Context.reportRuntimeError("wrong argument(s) for sync")
-            }
+        fun sync(cx: Context, thisObj: Scriptable?, args: Array<Any?>, funObj: Function?): Any = if (args.size == 1 && args[0] is Function) {
+            Synchronizer(args[0] as Function?)
+        } else {
+            throw Context.reportRuntimeError("wrong argument(s) for sync")
         }
     }
 }

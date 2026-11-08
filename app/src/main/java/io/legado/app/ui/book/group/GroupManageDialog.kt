@@ -7,8 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,14 +37,13 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 
 /**
  * 书籍分组管理
  */
-class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
+class GroupManageDialog :
+    BaseDialogFragment(R.layout.dialog_recycler_view),
     Toolbar.OnMenuItemClickListener {
-
     private val viewModel: GroupViewModel by viewModels()
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
     private val adapter by lazy { GroupAdapter(requireContext()) }
@@ -56,7 +53,10 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         setLayout(0.9f, 0.9f)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         binding.toolBar.setTitle(R.string.group_manage)
         initView()
         initData()
@@ -79,7 +79,7 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                 requireContext().getCompatColor(R.color.on_primary_soft)
             } else {
                 requireContext().accentColor
-            }
+            },
         )
         binding.tvOk.visible()
         binding.tvOk.setOnClickListener {
@@ -89,12 +89,15 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
 
     private fun initData() {
         launchCollectWithLifecycle {
-            appDb.bookGroupDao.flowAll().catch {
-                AppLog.put("书籍分组管理界面获取分组数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).conflate().collect {
-                adapter.setItems(it)
-            }
-
+            appDb.bookGroupDao
+                .flowAll()
+                .catch {
+                    AppLog.put("书籍分组管理界面获取分组数据失败\n${it.localizedMessage}", it)
+                }.flowOn(IO)
+                .conflate()
+                .collect {
+                    adapter.setItems(it)
+                }
         }
     }
 
@@ -117,21 +120,19 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         return true
     }
 
-    private inner class GroupAdapter(context: Context) :
-        RecyclerAdapter<BookGroup, ItemBookGroupManageBinding>(context),
+    private inner class GroupAdapter(
+        context: Context,
+    ) : RecyclerAdapter<BookGroup, ItemBookGroupManageBinding>(context),
         ItemTouchCallback.Callback {
-
         private var isMoved = false
 
-        override fun getViewBinding(parent: ViewGroup): ItemBookGroupManageBinding {
-            return ItemBookGroupManageBinding.inflate(inflater, parent, false)
-        }
+        override fun getViewBinding(parent: ViewGroup): ItemBookGroupManageBinding = ItemBookGroupManageBinding.inflate(inflater, parent, false)
 
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemBookGroupManageBinding,
             item: BookGroup,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             binding.run {
                 root.setBackgroundColor(context.backgroundColor)
@@ -140,12 +141,15 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder, binding: ItemBookGroupManageBinding) {
+        override fun registerListener(
+            holder: ItemViewHolder,
+            binding: ItemBookGroupManageBinding,
+        ) {
             binding.run {
                 tvEdit.setOnClickListener {
                     getItem(holder.bindingAdapterPosition)?.let { bookGroup ->
                         showDialogFragment(
-                            GroupEditDialog(bookGroup)
+                            GroupEditDialog(bookGroup),
                         )
                     }
                 }
@@ -159,13 +163,19 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
             }
         }
 
-        override fun swap(srcPosition: Int, targetPosition: Int): Boolean {
+        override fun swap(
+            srcPosition: Int,
+            targetPosition: Int,
+        ): Boolean {
             swapItem(srcPosition, targetPosition)
             isMoved = true
             return true
         }
 
-        override fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        override fun onClearView(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+        ) {
             if (isMoved) {
                 for ((index, item) in getItems().withIndex()) {
                     item.order = index + 1
@@ -175,5 +185,4 @@ class GroupManageDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
             isMoved = false
         }
     }
-
 }

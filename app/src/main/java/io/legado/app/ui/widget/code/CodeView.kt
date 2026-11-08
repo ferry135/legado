@@ -20,8 +20,7 @@ import java.util.regex.Pattern
 import kotlin.math.roundToInt
 
 @Suppress("unused")
-class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
-    ScrollMultiAutoCompleteTextView(context, attrs) {
+class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : ScrollMultiAutoCompleteTextView(context, attrs) {
 
     private var tabWidth = 0
     private var tabWidthInCharacters = 0
@@ -49,7 +48,7 @@ class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
             charSequence: CharSequence,
             start: Int,
             before: Int,
-            count: Int
+            count: Int,
         ) {
             this.start = start
             this.count = count
@@ -59,7 +58,7 @@ class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
             charSequence: CharSequence,
             start: Int,
             before: Int,
-            count: Int
+            count: Int,
         ) {
             if (!modified) return
             if (highlightWhileTextChanging) {
@@ -97,7 +96,7 @@ class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
                     }
                 }
                 source
-            }
+            },
         )
         addTextChangedListener(mEditorTextWatcher)
     }
@@ -121,7 +120,7 @@ class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         source: CharSequence,
         dest: Spanned,
         dStart: Int,
-        dEnd: Int
+        dEnd: Int,
     ): CharSequence {
         var indent = ""
         var iStart = dStart - 1
@@ -194,24 +193,26 @@ class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     private fun createForegroundColorSpan(
         editable: Editable,
         matcher: Matcher,
-        @ColorInt color: Int
+        @ColorInt color: Int,
     ) {
         editable.setSpan(
             ForegroundColorSpan(color),
-            matcher.start(), matcher.end(),
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            matcher.start(),
+            matcher.end(),
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
         )
     }
 
     private fun createBackgroundColorSpan(
         editable: Editable,
         matcher: Matcher,
-        @ColorInt color: Int
+        @ColorInt color: Int,
     ) {
         editable.setSpan(
             BackgroundColorSpan(color),
-            matcher.start(), matcher.end(),
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            matcher.start(),
+            matcher.end(),
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
         )
     }
 
@@ -254,7 +255,9 @@ class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     private fun clearSpans(editable: Editable) {
         val length = editable.length
         val foregroundSpans = editable.getSpans(
-            0, length, ForegroundColorSpan::class.java
+            0,
+            length,
+            ForegroundColorSpan::class.java,
         )
         run {
             var i = foregroundSpans.size
@@ -263,7 +266,9 @@ class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
             }
         }
         val backgroundSpans = editable.getSpans(
-            0, length, BackgroundColorSpan::class.java
+            0,
+            length,
+            BackgroundColorSpan::class.java,
         )
         var i = backgroundSpans.size
         while (i-- > 0) {
@@ -284,7 +289,8 @@ class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
             editable.setSpan(
                 TabWidthSpan(),
                 startIndex,
-                startIndex + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                startIndex + 1,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
             )
             ++startIndex
         }
@@ -303,9 +309,7 @@ class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         mSyntaxPatternMap.remove(pattern)
     }
 
-    fun getSyntaxPatternsSize(): Int {
-        return mSyntaxPatternMap.size
-    }
+    fun getSyntaxPatternsSize(): Int = mSyntaxPatternMap.size
 
     fun resetSyntaxPatternList() {
         mSyntaxPatternMap.clear()
@@ -319,9 +323,7 @@ class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         mIndentCharacterList.clear()
     }
 
-    fun getAutoIndentCharacterList(): List<Char> {
-        return mIndentCharacterList
-    }
+    fun getAutoIndentCharacterList(): List<Char> = mIndentCharacterList
 
     fun addErrorLine(lineNum: Int, color: Int) {
         mErrorHashSet[lineNum] = color
@@ -338,15 +340,11 @@ class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         hasErrors = false
     }
 
-    fun getErrorsSize(): Int {
-        return mErrorHashSet.size
-    }
+    fun getErrorsSize(): Int = mErrorHashSet.size
 
-    fun getTextWithoutTrailingSpace(): String {
-        return PATTERN_TRAILING_WHITE_SPACE
-            .matcher(text)
-            .replaceAll("")
-    }
+    fun getTextWithoutTrailingSpace(): String = PATTERN_TRAILING_WHITE_SPACE
+        .matcher(text)
+        .replaceAll("")
 
     fun setAutoCompleteTokenizer(tokenizer: Tokenizer?) {
         mAutoCompleteTokenizer = tokenizer
@@ -364,17 +362,13 @@ class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         highlightErrorLines(editableText)
     }
 
-    fun isHasError(): Boolean {
-        return hasErrors
-    }
+    fun isHasError(): Boolean = hasErrors
 
     fun setUpdateDelayTime(time: Int) {
         mUpdateDelayTime = time
     }
 
-    fun getUpdateDelayTime(): Int {
-        return mUpdateDelayTime
-    }
+    fun getUpdateDelayTime(): Int = mUpdateDelayTime
 
     fun setHighlightWhileTextChanging(updateWhileTextChanging: Boolean) {
         highlightWhileTextChanging = updateWhileTextChanging
@@ -386,10 +380,8 @@ class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
             text: CharSequence,
             start: Int,
             end: Int,
-            fm: FontMetricsInt?
-        ): Int {
-            return tabWidth
-        }
+            fm: FontMetricsInt?,
+        ): Int = tabWidth
 
         override fun draw(
             canvas: Canvas,
@@ -400,7 +392,7 @@ class CodeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
             top: Int,
             y: Int,
             bottom: Int,
-            paint: Paint
+            paint: Paint,
         ) {
         }
     }

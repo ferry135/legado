@@ -11,17 +11,17 @@ import android.widget.PopupWindow
 import android.widget.SeekBar
 import io.legado.app.R
 import io.legado.app.databinding.PopupSeekBarBinding
+import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.model.AudioPlay
 import io.legado.app.service.AudioPlayService
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.getCompatColor
-import io.legado.app.lib.theme.ThemeStore
 
-class TimerSliderPopup(private val context: Context) :
-    PopupWindow(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT) {
-
+class TimerSliderPopup(
+    private val context: Context,
+) : PopupWindow(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT) {
     private val binding = PopupSeekBarBinding.inflate(LayoutInflater.from(context))
 
     // 快捷预设芯片（popup_seek_bar 芯片行）：value=0 即「关闭」取消定时（AudioPlayService 现状语义）
@@ -52,30 +52,44 @@ class TimerSliderPopup(private val context: Context) :
         binding.seekBar.max = 180
         setProcessTextValue(binding.seekBar.progress)
         syncChips(binding.seekBar.progress)
-        binding.seekBar.setOnSeekBarChangeListener(object : SeekBarChangeListener {
-
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                setProcessTextValue(progress)
-                // 拖动（fromUser=true）与芯片回显（fromUser=false）共用同一芯片选中态刷新；
-                // 非预设值（如 45）全部中性、不近似取整（audio-timer-popup §02 芯片选中态同步规则）
-                syncChips(progress)
-                if (fromUser) {
-                    AudioPlay.setTimer(progress)
+        binding.seekBar.setOnSeekBarChangeListener(
+            object : SeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar,
+                    progress: Int,
+                    fromUser: Boolean,
+                ) {
+                    setProcessTextValue(progress)
+                    // 拖动（fromUser=true）与芯片回显（fromUser=false）共用同一芯片选中态刷新；
+                    // 非预设值（如 45）全部中性、不近似取整（audio-timer-popup §02 芯片选中态同步规则）
+                    syncChips(progress)
+                    if (fromUser) {
+                        AudioPlay.setTimer(progress)
+                    }
                 }
-            }
-
-        })
+            },
+        )
         chipValues.forEach { (chip, value) ->
             chip.setOnClickListener { applyTimer(value) }
         }
     }
 
-    override fun showAsDropDown(anchor: View?, xoff: Int, yoff: Int, gravity: Int) {
+    override fun showAsDropDown(
+        anchor: View?,
+        xoff: Int,
+        yoff: Int,
+        gravity: Int,
+    ) {
         super.showAsDropDown(anchor, xoff, yoff, gravity)
         binding.seekBar.progress = AudioPlayService.timeMinute
     }
 
-    override fun showAtLocation(parent: View?, gravity: Int, x: Int, y: Int) {
+    override fun showAtLocation(
+        parent: View?,
+        gravity: Int,
+        x: Int,
+        y: Int,
+    ) {
         super.showAtLocation(parent, gravity, x, y)
         binding.seekBar.progress = AudioPlayService.timeMinute
     }
@@ -102,15 +116,16 @@ class TimerSliderPopup(private val context: Context) :
         if (accentChanged || selectedBackground == null) {
             cachedAccentColor = accentColor
             // setLayerInset 自 API 1 可用（23 起有替代、本函数仍全版本生效），minSdk 21 兼容
-            selectedBackground = LayerDrawable(
-                arrayOf(
-                    GradientDrawable().apply {
-                        shape = GradientDrawable.RECTANGLE
-                        cornerRadius = 32.dpToPx() / 2f
-                        setColor(accentColor)
-                    }
-                )
-            ).apply { setLayerInset(0, 0, 8.dpToPx(), 0, 8.dpToPx()) }
+            selectedBackground =
+                LayerDrawable(
+                    arrayOf(
+                        GradientDrawable().apply {
+                            shape = GradientDrawable.RECTANGLE
+                            cornerRadius = 32.dpToPx() / 2f
+                            setColor(accentColor)
+                        },
+                    ),
+                ).apply { setLayerInset(0, 0, 8.dpToPx(), 0, 8.dpToPx()) }
         }
         chipValues.forEach { (chip, value) ->
             when {
@@ -118,7 +133,7 @@ class TimerSliderPopup(private val context: Context) :
                 value == progress && (lastSelectedValue != value || accentChanged) -> {
                     chip.background = selectedBackground
                     chip.setTextColor(
-                        if (ColorUtils.isColorLight(accentColor)) Color.BLACK else Color.WHITE
+                        if (ColorUtils.isColorLight(accentColor)) Color.BLACK else Color.WHITE,
                     )
                 }
                 // 此前选中、现已脱离：仅此时还原中性底与次要文字色
@@ -135,5 +150,4 @@ class TimerSliderPopup(private val context: Context) :
     private fun setProcessTextValue(process: Int) {
         binding.tvSeekValue.text = context.getString(R.string.timer_m, process)
     }
-
 }

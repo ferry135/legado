@@ -31,8 +31,6 @@ import io.legado.app.utils.MD5Utils
 import io.legado.app.utils.fromJsonObject
 import io.legado.app.utils.servicePendingIntent
 import io.legado.app.utils.toastOnUi
-import kotlin.math.sqrt
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
@@ -43,6 +41,7 @@ import java.io.File
 import java.io.FileInputStream
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.resume
+import kotlin.math.sqrt
 
 /**
  * 本地朗读：逐段调用系统 TTS 合成音频文件，再用 ExoPlayer 按播放列表播放。
@@ -50,7 +49,10 @@ import kotlin.coroutines.resume
  * 合成结果按 章节+引擎+语速+文本 缓存，重复朗读不重复合成。
  */
 @SuppressLint("UnsafeOptInUsageError")
-class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener, Player.Listener {
+class TTSReadAloudService :
+    BaseReadAloudService(),
+    TextToSpeech.OnInitListener,
+    Player.Listener {
 
     private var textToSpeech: TextToSpeech? = null
     private var ttsInitFinish = false
@@ -72,7 +74,8 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
                     .setUsage(C.USAGE_MEDIA)
                     .setContentType(C.AUDIO_CONTENT_TYPE_SPEECH)
                     .build(),
-                /* handleAudioFocus = */ false // 音频焦点由 BaseReadAloudService 统一管理
+                /* handleAudioFocus = */
+                false, // 音频焦点由 BaseReadAloudService 统一管理
             )
         }
     }
@@ -188,10 +191,10 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
                         val result = synthesizeAwait(tts, speakText, createSynthTempFile(fileName))
                         val target = getSpeakFile(fileName)
                         val ok = result == SynthResult.Ok &&
-                                synthTempToTarget(fileName) &&
-                                normalizeWavLoudness(target).also { audible ->
-                                    if (!audible) target.delete()
-                                }
+                            synthTempToTarget(fileName) &&
+                            normalizeWavLoudness(target).also { audible ->
+                                if (!audible) target.delete()
+                            }
                         if (ok) {
                             synthErrorNo = 0
                             synthRebuildCount = 0
@@ -254,7 +257,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
     private suspend fun synthesizeAwait(
         tts: TextToSpeech,
         text: String,
-        file: File
+        file: File,
     ): SynthResult {
         val ok = withTimeoutOrNull(60_000L) {
             suspendCancellableCoroutine { cont ->
@@ -508,9 +511,9 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
             while (pos + 8 <= bytes.size) {
                 val id = String(bytes, pos, 4, Charsets.US_ASCII)
                 val size = ((bytes[pos + 4].toInt() and 0xFF)) or
-                        ((bytes[pos + 5].toInt() and 0xFF) shl 8) or
-                        ((bytes[pos + 6].toInt() and 0xFF) shl 16) or
-                        ((bytes[pos + 7].toInt() and 0xFF) shl 24)
+                    ((bytes[pos + 5].toInt() and 0xFF) shl 8) or
+                    ((bytes[pos + 6].toInt() and 0xFF) shl 16) or
+                    ((bytes[pos + 7].toInt() and 0xFF) shl 24)
                 if (id == "data") {
                     dataStart = pos + 8
                     dataSize = size
@@ -557,7 +560,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
             val targetRms = 6000.0 // ≈-14.8dBFS：对齐上次峰值归一的实际响度（音乐App级听感），段间拉齐的目标
             var gain = targetRms / activeRms
             gain = gain.coerceAtMost(30100.0 / peak) // 防削波：增益后峰值 ≤ ~0.92 满幅
-            gain = gain.coerceIn(0.5, 12.0)          // 最多衰减 6dB / 最多放大 12 倍
+            gain = gain.coerceIn(0.5, 12.0) // 最多衰减 6dB / 最多放大 12 倍
             if (gain in 0.97..1.03) return true // 已在目标响度（含幂等二次处理）
             i = dataStart
             while (i + 1 < end) {
@@ -590,9 +593,9 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
                 if (!String(header, 0, 4, Charsets.US_ASCII).startsWith("RIFF")) return 0L
                 // 标准头：24-27采样率，28-31字节率(=采样率×块对齐)；时长按字节率换算
                 val byteRate = ((header[31].toInt() and 0xFF) shl 24) or
-                        ((header[30].toInt() and 0xFF) shl 16) or
-                        ((header[29].toInt() and 0xFF) shl 8) or
-                        (header[28].toInt() and 0xFF)
+                    ((header[30].toInt() and 0xFF) shl 16) or
+                    ((header[29].toInt() and 0xFF) shl 8) or
+                    (header[28].toInt() and 0xFF)
                 if (byteRate < 4000 || byteRate > 1_000_000) return 0L
                 (file.length() - 44L) * 1000L / byteRate
             }
@@ -610,23 +613,17 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
     private fun md5SpeakFileName(content: String): String {
         // 前缀 loudv2：响度归一化算法版本标记，升级后旧缓存（峰值归一化版）自动失效重合成
         return "loudv2_" + MD5Utils.md5Encode16(textChapter?.title ?: "") + "_" +
-                MD5Utils.md5Encode16("sysTts-|-${ttsEngineName}-|-$speechRate-|-$content")
+            MD5Utils.md5Encode16("sysTts-|-$ttsEngineName-|-$speechRate-|-$content")
     }
 
     private val speechRate: Float
         get() = (AppConfig.ttsSpeechRate + 5) / 10f
 
-    private fun hasSpeakFile(name: String): Boolean {
-        return FileUtils.exist("${ttsFolderPath}$name.wav")
-    }
+    private fun hasSpeakFile(name: String): Boolean = FileUtils.exist("${ttsFolderPath}$name.wav")
 
-    private fun getSpeakFile(name: String): File {
-        return File("${ttsFolderPath}$name.wav")
-    }
+    private fun getSpeakFile(name: String): File = File("${ttsFolderPath}$name.wav")
 
-    private fun createSynthTempFile(name: String): File {
-        return File("${ttsFolderPath}$name.wav.tmp")
-    }
+    private fun createSynthTempFile(name: String): File = File("${ttsFolderPath}$name.wav.tmp")
 
     /** 合成完成后临时文件转正，避免引擎中断留下半截文件被当成完整音频 */
     private fun synthTempToTarget(name: String): Boolean {
@@ -664,17 +661,16 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
         val titleMd5 = MD5Utils.md5Encode16(textChapter?.title ?: "")
         FileUtils.listDirsAndFiles(ttsFolderPath)?.forEach {
             val isSilentSound = it.length() == 2160L
-            if ((!it.name.startsWith(titleMd5)
-                        && System.currentTimeMillis() - it.lastModified() > 600000)
-                || isSilentSound
+            if ((
+                    !it.name.startsWith(titleMd5) &&
+                        System.currentTimeMillis() - it.lastModified() > 600000
+                    ) ||
+                isSilentSound
             ) {
                 FileUtils.delete(it.absolutePath)
             }
         }
     }
 
-    override fun aloudServicePendingIntent(actionStr: String): PendingIntent? {
-        return servicePendingIntent<TTSReadAloudService>(actionStr)
-    }
-
+    override fun aloudServicePendingIntent(actionStr: String): PendingIntent? = servicePendingIntent<TTSReadAloudService>(actionStr)
 }

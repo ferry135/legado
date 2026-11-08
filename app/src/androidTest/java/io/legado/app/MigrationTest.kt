@@ -17,15 +17,13 @@ class MigrationTest {
 
     private val TEST_DB = "migration-test"
 
-    private val ALL_MIGRATIONS = arrayOf<Migration>(
-
-    )
+    private val ALL_MIGRATIONS = arrayOf<Migration>()
 
     @get:Rule
     val helper: MigrationTestHelper = MigrationTestHelper(
         InstrumentationRegistry.getInstrumentation(),
         AppDatabase::class.java.canonicalName,
-        FrameworkSQLiteOpenHelperFactory()
+        FrameworkSQLiteOpenHelperFactory(),
     )
 
     @Test
@@ -41,7 +39,7 @@ class MigrationTest {
         Room.databaseBuilder(
             InstrumentationRegistry.getInstrumentation().targetContext,
             AppDatabase::class.java,
-            TEST_DB
+            TEST_DB,
         ).addMigrations(*ALL_MIGRATIONS)
             .build().apply {
                 openHelper.writableDatabase

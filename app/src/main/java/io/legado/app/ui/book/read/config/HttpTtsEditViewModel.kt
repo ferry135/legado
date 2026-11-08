@@ -12,11 +12,15 @@ import io.legado.app.utils.isJsonArray
 import io.legado.app.utils.isJsonObject
 import io.legado.app.utils.toastOnUi
 
-class HttpTtsEditViewModel(app: Application) : BaseViewModel(app) {
-
+class HttpTtsEditViewModel(
+    app: Application,
+) : BaseViewModel(app) {
     var id: Long? = null
 
-    fun initData(arguments: Bundle?, success: (httpTTS: HttpTTS) -> Unit) {
+    fun initData(
+        arguments: Bundle?,
+        success: (httpTTS: HttpTTS) -> Unit,
+    ) {
         execute {
             if (id == null) {
                 val argumentId = arguments?.getLong("id")
@@ -33,7 +37,10 @@ class HttpTtsEditViewModel(app: Application) : BaseViewModel(app) {
         }
     }
 
-    fun save(httpTTS: HttpTTS, success: (() -> Unit)? = null) {
+    fun save(
+        httpTTS: HttpTTS,
+        success: (() -> Unit)? = null,
+    ) {
         id = httpTTS.id
         execute {
             appDb.httpTTSDao.insert(httpTTS)
@@ -52,7 +59,10 @@ class HttpTtsEditViewModel(app: Application) : BaseViewModel(app) {
         }
     }
 
-    fun importSource(text: String, onSuccess: (httpTTS: HttpTTS) -> Unit) {
+    fun importSource(
+        text: String,
+        onSuccess: (httpTTS: HttpTTS) -> Unit,
+    ) {
         val text1 = text.trim()
         execute {
             when {
@@ -72,5 +82,4 @@ class HttpTtsEditViewModel(app: Application) : BaseViewModel(app) {
             context.toastOnUi(it.localizedMessage)
         }
     }
-
 }

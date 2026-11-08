@@ -11,26 +11,26 @@ import org.seimicrawler.xpath.JXDocument
 import org.seimicrawler.xpath.JXNode
 
 @Keep
-class AnalyzeByXPath(doc: Any) {
+class AnalyzeByXPath(
+    doc: Any,
+) {
     private var jxNode: Any = parse(doc)
 
-    private fun parse(doc: Any): Any {
-        return when (doc) {
-            is JXNode -> if (doc.isElement) doc else strToJXDocument(doc.toString())
-            is Document -> JXDocument.create(doc)
-            is Element -> JXDocument.create(Elements(doc))
-            is Elements -> JXDocument.create(doc)
-            else -> strToJXDocument(doc.toString())
-        }
+    private fun parse(doc: Any): Any = when (doc) {
+        is JXNode -> if (doc.isElement) doc else strToJXDocument(doc.toString())
+        is Document -> JXDocument.create(doc)
+        is Element -> JXDocument.create(Elements(doc))
+        is Elements -> JXDocument.create(doc)
+        else -> strToJXDocument(doc.toString())
     }
 
     private fun strToJXDocument(html: String): JXDocument {
         var html1 = html
         if (html1.endsWith("</td>")) {
-            html1 = "<tr>${html1}</tr>"
+            html1 = "<tr>$html1</tr>"
         }
         if (html1.endsWith("</tr>") || html1.endsWith("</tbody>")) {
-            html1 = "<table>${html1}</table>"
+            html1 = "<table>$html1</table>"
         }
         kotlin.runCatching {
             if (html1.trim().startsWith("<?xml", true)) {
@@ -50,7 +50,6 @@ class AnalyzeByXPath(doc: Any) {
     }
 
     internal fun getElements(xPath: String): List<JXNode>? {
-
         if (xPath.isEmpty()) return null
 
         val jxNodes = ArrayList<JXNode>()
@@ -90,7 +89,6 @@ class AnalyzeByXPath(doc: Any) {
     }
 
     internal fun getStringList(xPath: String): List<String> {
-
         val result = ArrayList<String>()
         val ruleAnalyzes = RuleAnalyzer(xPath)
         val rules = ruleAnalyzes.splitRule("&&", "||", "%%")

@@ -38,18 +38,14 @@ import org.mozilla.javascript.Function
  */
 internal class ExternalScriptable @JvmOverloads constructor(
     val context: ScriptContext,
-    private val indexedProps: MutableMap<Any, Any?> = HashMap()
+    private val indexedProps: MutableMap<Any, Any?> = HashMap(),
 ) : Scriptable {
     private var prototype: Scriptable? = null
     private var parent: Scriptable? = null
 
-    private fun isEmpty(name: String): Boolean {
-        return name == ""
-    }
+    private fun isEmpty(name: String): Boolean = name == ""
 
-    override fun getClassName(): String {
-        return "Global"
-    }
+    override fun getClassName(): String = "Global"
 
     @Synchronized
     override fun get(name: String, start: Scriptable): Any? {
@@ -69,9 +65,7 @@ internal class ExternalScriptable @JvmOverloads constructor(
     }
 
     @Synchronized
-    override fun get(index: Int, start: Scriptable): Any? {
-        return indexedProps.getOrElse(index) { Scriptable.NOT_FOUND }
-    }
+    override fun get(index: Int, start: Scriptable): Any? = indexedProps.getOrElse(index) { Scriptable.NOT_FOUND }
 
     @Synchronized
     override fun has(name: String, start: Scriptable): Boolean {
@@ -83,9 +77,7 @@ internal class ExternalScriptable @JvmOverloads constructor(
     }
 
     @Synchronized
-    override fun has(index: Int, start: Scriptable): Boolean {
-        return indexedProps.containsKey(index)
-    }
+    override fun has(index: Int, start: Scriptable): Boolean = indexedProps.containsKey(index)
 
     override fun put(name: String, start: Scriptable, value: Any?) {
         if (start === this) {
@@ -133,17 +125,13 @@ internal class ExternalScriptable @JvmOverloads constructor(
         indexedProps.remove(index)
     }
 
-    override fun getPrototype(): Scriptable? {
-        return prototype
-    }
+    override fun getPrototype(): Scriptable? = prototype
 
     override fun setPrototype(prototype: Scriptable?) {
         this.prototype = prototype
     }
 
-    override fun getParentScope(): Scriptable? {
-        return parent
-    }
+    override fun getParentScope(): Scriptable? = parent
 
     override fun setParentScope(parent: Scriptable?) {
         this.parent = parent
@@ -196,17 +184,17 @@ internal class ExternalScriptable @JvmOverloads constructor(
                         "function"
                     }
                     typeHint != ScriptRuntime.BooleanClass && typeHint != java.lang.Boolean.TYPE -> {
-                        if (typeHint != ScriptRuntime.NumberClass
-                            && typeHint != ScriptRuntime.ByteClass
-                            && typeHint != java.lang.Byte.TYPE
-                            && typeHint != ScriptRuntime.ShortClass
-                            && typeHint != java.lang.Short.TYPE
-                            && typeHint != ScriptRuntime.IntegerClass
-                            && typeHint != Integer.TYPE
-                            && typeHint != ScriptRuntime.FloatClass
-                            && typeHint != java.lang.Float.TYPE
-                            && typeHint != ScriptRuntime.DoubleClass
-                            && typeHint != java.lang.Double.TYPE
+                        if (typeHint != ScriptRuntime.NumberClass &&
+                            typeHint != ScriptRuntime.ByteClass &&
+                            typeHint != java.lang.Byte.TYPE &&
+                            typeHint != ScriptRuntime.ShortClass &&
+                            typeHint != java.lang.Short.TYPE &&
+                            typeHint != ScriptRuntime.IntegerClass &&
+                            typeHint != Integer.TYPE &&
+                            typeHint != ScriptRuntime.FloatClass &&
+                            typeHint != java.lang.Float.TYPE &&
+                            typeHint != ScriptRuntime.DoubleClass &&
+                            typeHint != java.lang.Double.TYPE
                         ) {
                             throw Context.reportRuntimeError("Invalid JavaScript value of type $typeHint")
                         }
@@ -279,16 +267,14 @@ internal class ExternalScriptable @JvmOverloads constructor(
             return list.toTypedArray()
         }
 
-    private fun jsToJava(jsObj: Any?): Any? {
-        return if (jsObj is Wrapper) {
-            if (jsObj is NativeJavaClass) {
-                jsObj
-            } else {
-                val obj = jsObj.unwrap()
-                if (obj !is Number && obj !is String && obj !is Boolean && obj !is Char) obj else jsObj
-            }
-        } else {
+    private fun jsToJava(jsObj: Any?): Any? = if (jsObj is Wrapper) {
+        if (jsObj is NativeJavaClass) {
             jsObj
+        } else {
+            val obj = jsObj.unwrap()
+            if (obj !is Number && obj !is String && obj !is Boolean && obj !is Char) obj else jsObj
         }
+    } else {
+        jsObj
     }
 }

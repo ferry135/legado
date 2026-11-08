@@ -16,31 +16,32 @@ import io.legado.app.model.CacheBook
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 
-class CacheAdapter(context: Context, private val callBack: CallBack) :
-    DiffRecyclerAdapter<Book, ItemDownloadBinding>(context) {
-
+class CacheAdapter(
+    context: Context,
+    private val callBack: CallBack,
+) : DiffRecyclerAdapter<Book, ItemDownloadBinding>(context) {
     override val diffItemCallback: DiffUtil.ItemCallback<Book>
-        get() = object : DiffUtil.ItemCallback<Book>() {
-            override fun areItemsTheSame(oldItem: Book, newItem: Book): Boolean {
-                return oldItem.bookUrl == newItem.bookUrl
+        get() =
+            object : DiffUtil.ItemCallback<Book>() {
+                override fun areItemsTheSame(
+                    oldItem: Book,
+                    newItem: Book,
+                ): Boolean = oldItem.bookUrl == newItem.bookUrl
+
+                override fun areContentsTheSame(
+                    oldItem: Book,
+                    newItem: Book,
+                ): Boolean = oldItem.name == newItem.name &&
+                    oldItem.author == newItem.author
             }
 
-            override fun areContentsTheSame(oldItem: Book, newItem: Book): Boolean {
-                return oldItem.name == newItem.name
-                        && oldItem.author == newItem.author
-            }
-
-        }
-
-    override fun getViewBinding(parent: ViewGroup): ItemDownloadBinding {
-        return ItemDownloadBinding.inflate(inflater, parent, false)
-    }
+    override fun getViewBinding(parent: ViewGroup): ItemDownloadBinding = ItemDownloadBinding.inflate(inflater, parent, false)
 
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemDownloadBinding,
         item: Book,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
         binding.run {
             if (payloads.isEmpty()) {
@@ -57,7 +58,7 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
                             context.getString(
                                 R.string.download_count,
                                 cs.size,
-                                item.totalChapterNum
+                                item.totalChapterNum,
                             )
                     }
                 }
@@ -75,7 +76,10 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemDownloadBinding) {
+    override fun registerListener(
+        holder: ItemViewHolder,
+        binding: ItemDownloadBinding,
+    ) {
         binding.run {
             ivDownload.setOnClickListener {
                 getItem(holder.bindingAdapterPosition)?.let { book ->
@@ -98,7 +102,10 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
         }
     }
 
-    private fun upDownloadIv(iv: ImageView, book: Book) {
+    private fun upDownloadIv(
+        iv: ImageView,
+        book: Book,
+    ) {
         if (book.isLocal) {
             iv.gone()
         } else {
@@ -115,7 +122,11 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
         }
     }
 
-    private fun upExportInfo(msgView: TextView, progressView: ProgressBar, book: Book) {
+    private fun upExportInfo(
+        msgView: TextView,
+        progressView: ProgressBar,
+        book: Book,
+    ) {
         val msg = callBack.exportMsg(book.bookUrl)
         if (msg != null) {
             msgView.text = msg
@@ -136,8 +147,11 @@ class CacheAdapter(context: Context, private val callBack: CallBack) :
 
     interface CallBack {
         val cacheChapters: HashMap<String, HashSet<String>>
+
         fun export(position: Int)
+
         fun exportProgress(bookUrl: String): Int?
+
         fun exportMsg(bookUrl: String): String?
     }
 }

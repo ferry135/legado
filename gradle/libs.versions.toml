@@ -3,6 +3,10 @@
 kotlin = "2.1.21"
 ksp = "2.1.21-2.0.1"
 agp = "8.10.1"
+
+# 代码质量门禁：格式化(spotless+ktlint)
+ktlint = "1.6.0"
+spotless = "8.11.0"
 appcompat = "1.7.0"
 colorpicker = "1.1.0"
 commonsText = "1.13.1"
@@ -195,3 +199,5 @@ room = { id = "androidx.room", version.ref = "room" }
 #protobuf = { id = "com.google.protobuf", version = "0.9.4" }
 
 download = { id = "de.undercouch.download", version = "5.6.0" }
+
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

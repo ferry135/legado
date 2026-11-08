@@ -20,36 +20,34 @@ import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
 import splitties.views.onLongClick
 
-
 class ChangeBookSourceAdapter(
     context: Context,
     val viewModel: ChangeBookSourceViewModel,
-    val callBack: CallBack
+    val callBack: CallBack,
 ) : DiffRecyclerAdapter<SearchBook, ItemChangeSourceBinding>(context) {
+    override val diffItemCallback =
+        object : DiffUtil.ItemCallback<SearchBook>() {
+            override fun areItemsTheSame(
+                oldItem: SearchBook,
+                newItem: SearchBook,
+            ): Boolean = oldItem.bookUrl == newItem.bookUrl
 
-    override val diffItemCallback = object : DiffUtil.ItemCallback<SearchBook>() {
-        override fun areItemsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
-            return oldItem.bookUrl == newItem.bookUrl
+            override fun areContentsTheSame(
+                oldItem: SearchBook,
+                newItem: SearchBook,
+            ): Boolean = oldItem.originName == newItem.originName &&
+                oldItem.getDisplayLastChapterTitle() == newItem.getDisplayLastChapterTitle() &&
+                oldItem.chapterWordCountText == newItem.chapterWordCountText &&
+                oldItem.respondTime == newItem.respondTime
         }
 
-        override fun areContentsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
-            return oldItem.originName == newItem.originName
-                    && oldItem.getDisplayLastChapterTitle() == newItem.getDisplayLastChapterTitle()
-                    && oldItem.chapterWordCountText == newItem.chapterWordCountText
-                    && oldItem.respondTime == newItem.respondTime
-        }
-
-    }
-
-    override fun getViewBinding(parent: ViewGroup): ItemChangeSourceBinding {
-        return ItemChangeSourceBinding.inflate(inflater, parent, false)
-    }
+    override fun getViewBinding(parent: ViewGroup): ItemChangeSourceBinding = ItemChangeSourceBinding.inflate(inflater, parent, false)
 
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemChangeSourceBinding,
         item: SearchBook,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
         binding.apply {
             if (payloads.isEmpty()) {
@@ -72,11 +70,12 @@ class ChangeBookSourceAdapter(
                         when (it) {
                             "name" -> tvOrigin.text = item.originName
                             "latest" -> tvLast.text = item.getDisplayLastChapterTitle()
-                            "upCurSource" -> if (callBack.oldBookUrl == item.bookUrl) {
-                                ivChecked.visible()
-                            } else {
-                                ivChecked.invisible()
-                            }
+                            "upCurSource" ->
+                                if (callBack.oldBookUrl == item.bookUrl) {
+                                    ivChecked.visible()
+                                } else {
+                                    ivChecked.invisible()
+                                }
                         }
                     }
                 }
@@ -97,7 +96,10 @@ class ChangeBookSourceAdapter(
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemChangeSourceBinding) {
+    override fun registerListener(
+        holder: ItemViewHolder,
+        binding: ItemChangeSourceBinding,
+    ) {
         binding.ivGood.setOnClickListener {
             if (binding.ivBad.isVisible) {
                 tintVoteIcons(binding.ivGood, binding.ivBad, 1)
@@ -136,7 +138,10 @@ class ChangeBookSourceAdapter(
         }
     }
 
-    private fun showMenu(view: View, searchBook: SearchBook?) {
+    private fun showMenu(
+        view: View,
+        searchBook: SearchBook?,
+    ) {
         searchBook ?: return
         val popupMenu = PopupMenu(context, view)
         popupMenu.inflate(R.menu.change_source_item)
@@ -158,14 +163,15 @@ class ChangeBookSourceAdapter(
                     callBack.disableSource(searchBook)
                 }
 
-                R.id.menu_delete_source -> context.alert(R.string.draw) {
-                    setMessage(context.getString(R.string.sure_del) + "\n" + searchBook.originName)
-                    noButton()
-                    yesButton {
-                        callBack.deleteSource(searchBook)
-                        updateItems(0, itemCount, listOf<Int>())
+                R.id.menu_delete_source ->
+                    context.alert(R.string.draw) {
+                        setMessage(context.getString(R.string.sure_del) + "\n" + searchBook.originName)
+                        noButton()
+                        yesButton {
+                            callBack.deleteSource(searchBook)
+                            updateItems(0, itemCount, listOf<Int>())
+                        }
                     }
-                }
             }
             true
         }
@@ -174,13 +180,24 @@ class ChangeBookSourceAdapter(
 
     interface CallBack {
         val oldBookUrl: String?
+
         fun changeTo(searchBook: SearchBook)
+
         fun topSource(searchBook: SearchBook)
+
         fun bottomSource(searchBook: SearchBook)
+
         fun editSource(searchBook: SearchBook)
+
         fun disableSource(searchBook: SearchBook)
+
         fun deleteSource(searchBook: SearchBook)
-        fun setBookScore(searchBook: SearchBook, score: Int)
+
+        fun setBookScore(
+            searchBook: SearchBook,
+            score: Int,
+        )
+
         fun getBookScore(searchBook: SearchBook): Int
     }
 }

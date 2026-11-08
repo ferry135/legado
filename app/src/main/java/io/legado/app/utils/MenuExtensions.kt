@@ -14,11 +14,13 @@ import androidx.appcompat.view.menu.SubMenuBuilder
 import androidx.core.view.forEach
 import io.legado.app.R
 import io.legado.app.constant.Theme
-import io.legado.app.lib.theme.primaryTextColor
 import java.lang.reflect.Method
 
 @SuppressLint("RestrictedApi")
-fun Menu.applyTint(context: Context, theme: Theme = Theme.Auto): Menu = this.let { menu ->
+fun Menu.applyTint(
+    context: Context,
+    theme: Theme = Theme.Auto,
+): Menu = this.let { menu ->
     if (menu is MenuBuilder) {
         menu.setOptionalIconsVisible(true)
     }
@@ -26,9 +28,9 @@ fun Menu.applyTint(context: Context, theme: Theme = Theme.Auto): Menu = this.let
     val tintColor = MenuExtensions.getMenuColor(context, theme)
     menu.forEach { item ->
         (item as MenuItemImpl).let { impl ->
-            //overflow：展开的item
+            // overflow：展开的item
             impl.icon?.setTintMutate(
-                if (impl.requiresOverflow()) defaultTextColor else tintColor
+                if (impl.requiresOverflow()) defaultTextColor else tintColor,
             )
         }
     }
@@ -37,7 +39,7 @@ fun Menu.applyTint(context: Context, theme: Theme = Theme.Auto): Menu = this.let
 
 @SuppressLint("RestrictedApi")
 fun Menu.applyOpenTint(context: Context) {
-    //展开菜单显示图标
+    // 展开菜单显示图标
     if (this.javaClass.simpleName.equals("MenuBuilder", ignoreCase = true)) {
         val defaultTextColor = context.getCompatColor(R.color.primaryText)
         kotlin.runCatching {
@@ -63,7 +65,10 @@ fun Menu.applyOpenTint(context: Context) {
     }
 }
 
-fun Menu.iconItemOnLongClick(id: Int, function: (view: View) -> Unit) {
+fun Menu.iconItemOnLongClick(
+    id: Int,
+    function: (view: View) -> Unit,
+) {
     findItem(id)?.let { item ->
         item.setActionView(R.layout.view_action_button)
         item.actionView?.run {
@@ -92,21 +97,20 @@ inline fun Menu.transaction(block: (Menu) -> Unit) {
 }
 
 object MenuExtensions {
-
     fun getMenuColor(
         context: Context,
         theme: Theme = Theme.Auto,
-        requiresOverflow: Boolean = false
+        requiresOverflow: Boolean = false,
     ): Int {
         val defaultTextColor = context.getCompatColor(R.color.primaryText)
-        if (requiresOverflow)
+        if (requiresOverflow) {
             return defaultTextColor
+        }
         return when (theme) {
             Theme.Dark -> context.getCompatColor(R.color.md_white_1000)
             Theme.Light -> context.getCompatColor(R.color.md_black_1000)
-            //浅色工具栏：图标跟随表面明暗（起点读书/QQ阅读风格）
+            // 浅色工具栏：图标跟随表面明暗（起点读书/QQ阅读风格）
             else -> context.getCompatColor(R.color.on_surface)
         }
     }
-
 }

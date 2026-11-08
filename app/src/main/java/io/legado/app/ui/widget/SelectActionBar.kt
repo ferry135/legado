@@ -21,21 +21,22 @@ import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.visible
 
-
 @Suppress("unused")
-class SelectActionBar @JvmOverloads constructor(
+class SelectActionBar
+@JvmOverloads
+constructor(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet? = null,
 ) : FrameLayout(context, attrs) {
-
     private val bgIsLight = ColorUtils.isColorLight(context.bottomBackground)
     private val primaryTextColor = context.getPrimaryTextColor(bgIsLight)
     private val disabledColor = context.getSecondaryDisabledTextColor(bgIsLight)
 
     private var callBack: CallBack? = null
     private var selMenu: PopupMenu? = null
-    private val binding = ViewSelectActionBarBinding
-        .inflate(LayoutInflater.from(context), this, true)
+    private val binding =
+        ViewSelectActionBarBinding
+            .inflate(LayoutInflater.from(context), this, true)
 
     init {
         if (!isInEditMode) {
@@ -61,12 +62,16 @@ class SelectActionBar @JvmOverloads constructor(
         btnSelectActionMain.visible()
     }
 
-    fun setMainActionText(@StringRes id: Int) = binding.run {
+    fun setMainActionText(
+        @StringRes id: Int,
+    ) = binding.run {
         btnSelectActionMain.setText(id)
         btnSelectActionMain.visible()
     }
 
-    fun inflateMenu(@MenuRes resId: Int): Menu? {
+    fun inflateMenu(
+        @MenuRes resId: Int,
+    ): Menu? {
         selMenu = PopupMenu(context, binding.ivMenuMore)
         selMenu?.inflate(resId)
         binding.ivMenuMore.visible()
@@ -81,26 +86,31 @@ class SelectActionBar @JvmOverloads constructor(
         selMenu?.setOnMenuItemClickListener(listener)
     }
 
-    fun upCountView(selectCount: Int, allCount: Int) = binding.run {
+    fun upCountView(
+        selectCount: Int,
+        allCount: Int,
+    ) = binding.run {
         if (selectCount == 0) {
             cbSelectedAll.isChecked = false
         } else {
             cbSelectedAll.isChecked = selectCount >= allCount
         }
 
-        //重置全选的文字
+        // 重置全选的文字
         if (cbSelectedAll.isChecked) {
-            cbSelectedAll.text = context.getString(
-                R.string.select_cancel_count,
-                selectCount,
-                allCount
-            )
+            cbSelectedAll.text =
+                context.getString(
+                    R.string.select_cancel_count,
+                    selectCount,
+                    allCount,
+                )
         } else {
-            cbSelectedAll.text = context.getString(
-                R.string.select_all_count,
-                selectCount,
-                allCount
-            )
+            cbSelectedAll.text =
+                context.getString(
+                    R.string.select_all_count,
+                    selectCount,
+                    allCount,
+                )
         }
         setMenuClickable(selectCount > 0)
     }
@@ -120,7 +130,6 @@ class SelectActionBar @JvmOverloads constructor(
     }
 
     interface CallBack {
-
         fun selectAll(selectAll: Boolean)
 
         fun revertSelection()

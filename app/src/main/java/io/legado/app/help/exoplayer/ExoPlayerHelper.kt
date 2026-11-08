@@ -25,7 +25,6 @@ import splitties.init.appCtx
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-
 @Suppress("unused")
 @SuppressLint("UnsafeOptInUsageError")
 object ExoPlayerHelper {
@@ -41,24 +40,19 @@ object ExoPlayerHelper {
         return MediaItem.Builder().setUri(formatUrl).build()
     }
 
-    fun createHttpExoPlayer(context: Context): ExoPlayer {
-        return ExoPlayer.Builder(context).setLoadControl(
-            DefaultLoadControl.Builder().setBufferDurationsMs(
-                DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
-                DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
-                DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS / 10,
-                DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS / 10
-            ).build()
+    fun createHttpExoPlayer(context: Context): ExoPlayer = ExoPlayer.Builder(context).setLoadControl(
+        DefaultLoadControl.Builder().setBufferDurationsMs(
+            DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
+            DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
+            DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS / 10,
+            DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS / 10,
+        ).build(),
 
-        ).setMediaSourceFactory(
-            DefaultMediaSourceFactory(context)
-                .setDataSourceFactory(resolvingDataSource)
-                .setLiveTargetOffsetMs(5000)
-        ).build()
-    }
-
-
-
+    ).setMediaSourceFactory(
+        DefaultMediaSourceFactory(context)
+            .setDataSourceFactory(resolvingDataSource)
+            .setLiveTargetOffsetMs(5000),
+    ).build()
 
     private val resolvingDataSource: ResolvingDataSource.Factory by lazy {
         ResolvingDataSource.Factory(cacheDataSourceFactory) {
@@ -76,16 +70,14 @@ object ExoPlayerHelper {
             }
 
             res
-
         }
     }
-
 
     /**
      * 支持缓存的DataSource.Factory
      */
     private val cacheDataSourceFactory by lazy {
-        //使用自定义的CacheDataSource以支持设置UA
+        // 使用自定义的CacheDataSource以支持设置UA
         return@lazy CacheDataSource.Factory()
             .setCache(cache)
             .setUpstreamDataSourceFactory(okhttpDataFactory)
@@ -93,7 +85,7 @@ object ExoPlayerHelper {
             .setCacheWriteDataSinkFactory(
                 CacheDataSink.Factory()
                     .setCache(cache)
-                    .setFragmentSize(CacheDataSink.DEFAULT_FRAGMENT_SIZE)
+                    .setFragmentSize(CacheDataSink.DEFAULT_FRAGMENT_SIZE),
             )
     }
 
@@ -114,12 +106,12 @@ object ExoPlayerHelper {
     private val cache: Cache by lazy {
         val databaseProvider = StandaloneDatabaseProvider(appCtx)
         return@lazy SimpleCache(
-            //Exoplayer的缓存路径
+            // Exoplayer的缓存路径
             File(appCtx.externalCache, "exoplayer"),
-            //100M的缓存
+            // 100M的缓存
             LeastRecentlyUsedCacheEvictor((100 * 1024 * 1024).toLong()),
-            //记录缓存的数据库
-            databaseProvider
+            // 记录缓存的数据库
+            databaseProvider,
         )
     }
 
@@ -129,6 +121,7 @@ object ExoPlayerHelper {
      * @param headers
      * @return
      */
+
 //    private fun CacheDataSource.Factory.setDefaultRequestProperties(headers: Map<String, String> = mapOf()): CacheDataSource.Factory {
 //        val declaredField = this.javaClass.getDeclaredField("upstreamDataSourceFactory")
 //        declaredField.isAccessible = true
@@ -138,5 +131,4 @@ object ExoPlayerHelper {
 //        }
 //        return this
 //    }
-
 }

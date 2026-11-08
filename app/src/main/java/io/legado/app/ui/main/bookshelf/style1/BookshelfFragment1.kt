@@ -32,10 +32,10 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 /**
  * 书架界面
  */
-class BookshelfFragment1() : BaseBookshelfFragment(R.layout.fragment_bookshelf1),
+class BookshelfFragment1() :
+    BaseBookshelfFragment(R.layout.fragment_bookshelf1),
     TabLayout.OnTabSelectedListener,
     SearchView.OnQueryTextListener {
-
     constructor(position: Int) : this() {
         val bundle = Bundle()
         bundle.putInt("position", position)
@@ -46,14 +46,15 @@ class BookshelfFragment1() : BaseBookshelfFragment(R.layout.fragment_bookshelf1)
     private val adapter by lazy { TabFragmentPageAdapter(childFragmentManager, viewLifecycleOwner.lifecycle) }
     private val tabLayout: TabLayout by lazy { binding.tabLayout }
     private val bookGroups = mutableListOf<BookGroup>()
-    private val sortLabelResList = intArrayOf(
-        R.string.bookshelf_px_0,
-        R.string.bookshelf_px_1,
-        R.string.bookshelf_px_2,
-        R.string.bookshelf_px_3,
-        R.string.bookshelf_px_4,
-        R.string.bookshelf_px_5
-    )
+    private val sortLabelResList =
+        intArrayOf(
+            R.string.bookshelf_px_0,
+            R.string.bookshelf_px_1,
+            R.string.bookshelf_px_2,
+            R.string.bookshelf_px_3,
+            R.string.bookshelf_px_4,
+            R.string.bookshelf_px_5,
+        )
     private var fakeDragAnimator: ValueAnimator? = null
     override val groupId: Long get() = selectedGroup?.groupId ?: 0
 
@@ -63,7 +64,10 @@ class BookshelfFragment1() : BaseBookshelfFragment(R.layout.fragment_bookshelf1)
             return fragment?.getBooks() ?: emptyList()
         }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         setSupportToolbar(binding.titleBar.toolbar)
         binding.titleBar.setTitleTextAppearance(R.style.TextAppearance_Legado_PageTitle)
         initView()
@@ -76,9 +80,7 @@ class BookshelfFragment1() : BaseBookshelfFragment(R.layout.fragment_bookshelf1)
     /**
      * FragmentStateAdapter 以 getItemId 作为 Fragment tag 保存 ("f" + itemId)
      */
-    private fun findFragment(groupId: Long): BooksFragment? {
-        return childFragmentManager.findFragmentByTag("f$groupId") as? BooksFragment
-    }
+    private fun findFragment(groupId: Long): BooksFragment? = childFragmentManager.findFragmentByTag("f$groupId") as? BooksFragment
 
     private fun initView() {
         binding.viewPagerBookshelf.offscreenPageLimit = 1
@@ -91,29 +93,34 @@ class BookshelfFragment1() : BaseBookshelfFragment(R.layout.fragment_bookshelf1)
         binding.tvSort.setOnClickListener { showSortMenu() }
     }
 
-    private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
-        private var scrollState = ViewPager2.SCROLL_STATE_IDLE
+    private val pageChangeCallback =
+        object : ViewPager2.OnPageChangeCallback() {
+            private var scrollState = ViewPager2.SCROLL_STATE_IDLE
 
-        override fun onPageScrollStateChanged(state: Int) {
-            scrollState = state
-        }
+            override fun onPageScrollStateChanged(state: Int) {
+                scrollState = state
+            }
 
-        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-            // 胶囊指示器实时跟随页面滑动，与内容保持同步（与官方 TabLayoutMediator 一致）
-            if (position in bookGroups.indices) {
-                tabLayout.setScrollPosition(position, positionOffset, true, true)
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int,
+            ) {
+                // 胶囊指示器实时跟随页面滑动，与内容保持同步（与官方 TabLayoutMediator 一致）
+                if (position in bookGroups.indices) {
+                    tabLayout.setScrollPosition(position, positionOffset, true, true)
+                }
+            }
+
+            override fun onPageSelected(position: Int) {
+                val tab = tabLayout.getTabAt(position) ?: return
+                if (tabLayout.selectedTabPosition == position) {
+                    return
+                }
+                // 滑动/settle 过程中指示器由 onPageScrolled 驱动，select 不再另起动画
+                tabLayout.selectTab(tab, scrollState == ViewPager2.SCROLL_STATE_IDLE)
             }
         }
-
-        override fun onPageSelected(position: Int) {
-            val tab = tabLayout.getTabAt(position) ?: return
-            if (tabLayout.selectedTabPosition == position) {
-                return
-            }
-            // 滑动/settle 过程中指示器由 onPageScrolled 驱动，select 不再另起动画
-            tabLayout.selectTab(tab, scrollState == ViewPager2.SCROLL_STATE_IDLE)
-        }
-    }
 
     /**
      * 点击 tab 用 fakeDrag 模拟匀减速滑动，比 setCurrentItem 的默认动画更平滑
@@ -131,33 +138,35 @@ class BookshelfFragment1() : BaseBookshelfFragment(R.layout.fragment_bookshelf1)
             return
         }
         var lastOffset = 0f
-        fakeDragAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
-            duration = 300
-            interpolator = FastOutSlowInInterpolator()
-            addUpdateListener { animation ->
-                if (viewPager.isFakeDragging) {
-                    val offset = -distance * (animation.animatedValue as Float)
-                    viewPager.fakeDragBy(offset - lastOffset)
-                    lastOffset = offset
-                }
-            }
-            addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
+        fakeDragAnimator =
+            ValueAnimator.ofFloat(0f, 1f).apply {
+                duration = 300
+                interpolator = FastOutSlowInInterpolator()
+                addUpdateListener { animation ->
                     if (viewPager.isFakeDragging) {
-                        viewPager.endFakeDrag()
+                        val offset = -distance * (animation.animatedValue as Float)
+                        viewPager.fakeDragBy(offset - lastOffset)
+                        lastOffset = offset
                     }
                 }
-            })
-            start()
-        }
+                addListener(
+                    object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator) {
+                            if (viewPager.isFakeDragging) {
+                                viewPager.endFakeDrag()
+                            }
+                        }
+                    },
+                )
+                start()
+            }
     }
 
     private fun upSortLabel() {
         binding.tvSort.setText(sortLabelRes(AppConfig.bookshelfSort))
     }
 
-    private fun sortLabelRes(sort: Int): Int =
-        sortLabelResList[sort.coerceIn(0, sortLabelResList.lastIndex)]
+    private fun sortLabelRes(sort: Int): Int = sortLabelResList[sort.coerceIn(0, sortLabelResList.lastIndex)]
 
     private fun showSortMenu() {
         val popup = PopupMenu(requireContext(), binding.tvSort)
@@ -186,9 +195,7 @@ class BookshelfFragment1() : BaseBookshelfFragment(R.layout.fragment_bookshelf1)
         return false
     }
 
-    override fun onQueryTextChange(newText: String?): Boolean {
-        return false
-    }
+    override fun onQueryTextChange(newText: String?): Boolean = false
 
     @Synchronized
     override fun upGroup(data: List<BookGroup>) {
@@ -268,12 +275,9 @@ class BookshelfFragment1() : BaseBookshelfFragment(R.layout.fragment_bookshelf1)
 
     private inner class TabFragmentPageAdapter(
         fm: FragmentManager,
-        lifecycle: Lifecycle
+        lifecycle: Lifecycle,
     ) : FragmentStateAdapter(fm, lifecycle) {
-
-        override fun getItemCount(): Int {
-            return bookGroups.size
-        }
+        override fun getItemCount(): Int = bookGroups.size
 
         override fun createFragment(position: Int): Fragment {
             val group = bookGroups[position]
@@ -283,13 +287,8 @@ class BookshelfFragment1() : BaseBookshelfFragment(R.layout.fragment_bookshelf1)
         /**
          * 以 groupId 作为稳定 item id，分组变化时仅重建对应页
          */
-        override fun getItemId(position: Int): Long {
-            return bookGroups[position].groupId
-        }
+        override fun getItemId(position: Int): Long = bookGroups[position].groupId
 
-        override fun containsItem(itemId: Long): Boolean {
-            return bookGroups.any { it.groupId == itemId }
-        }
-
+        override fun containsItem(itemId: Long): Boolean = bookGroups.any { it.groupId == itemId }
     }
 }

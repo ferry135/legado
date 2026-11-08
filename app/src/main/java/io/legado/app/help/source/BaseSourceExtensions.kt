@@ -7,13 +7,9 @@ import io.legado.app.model.SharedJsScope
 import org.mozilla.javascript.Scriptable
 import kotlin.coroutines.CoroutineContext
 
-fun BaseSource.getShareScope(coroutineContext: CoroutineContext? = null): Scriptable? {
-    return SharedJsScope.getScope(jsLib, coroutineContext)
-}
+fun BaseSource.getShareScope(coroutineContext: CoroutineContext? = null): Scriptable? = SharedJsScope.getScope(jsLib, coroutineContext)
 
-fun BaseSource.getSourceType(): Int {
-    return when (this) {
-        is BookSource -> SourceType.book
-        else -> error("unknown source type: ${this::class.simpleName}.")
-    }
+fun BaseSource.getSourceType(): Int = when (this) {
+    is BookSource -> SourceType.book
+    else -> error("unknown source type: ${this::class.simpleName}.")
 }

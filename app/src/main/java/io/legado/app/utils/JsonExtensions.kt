@@ -6,7 +6,7 @@ val jsonPath: ParseContext by lazy {
     JsonPath.using(
         Configuration.builder()
             .options(Option.SUPPRESS_EXCEPTIONS)
-            .build()
+            .build(),
     )
 }
 
@@ -17,4 +17,3 @@ fun ReadContext.readBool(path: String): Boolean? = this.read(path, Boolean::clas
 fun ReadContext.readInt(path: String): Int? = this.read(path, Int::class.java)
 
 fun ReadContext.readLong(path: String): Long? = this.read(path, Long::class.java)
-

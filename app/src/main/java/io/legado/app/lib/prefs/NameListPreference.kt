@@ -10,9 +10,10 @@ import io.legado.app.lib.theme.bottomBackground
 import io.legado.app.lib.theme.getPrimaryTextColor
 import io.legado.app.utils.ColorUtils
 
-
-class NameListPreference(context: Context, attrs: AttributeSet) : ListPreference(context, attrs) {
-
+class NameListPreference(
+    context: Context,
+    attrs: AttributeSet,
+) : ListPreference(context, attrs) {
     private val isBottomBackground: Boolean
 
     init {
@@ -25,10 +26,13 @@ class NameListPreference(context: Context, attrs: AttributeSet) : ListPreference
     }
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
-        val v = bindView<TextView>(
-            holder, widgetLayoutResource,
-            R.id.text_view, isBottomBackground = isBottomBackground
-        )
+        val v =
+            bindView<TextView>(
+                holder,
+                widgetLayoutResource,
+                R.id.text_view,
+                isBottomBackground = isBottomBackground,
+            )
         if (v is TextView) {
             v.text = entry
             if (isBottomBackground) {
@@ -39,5 +43,4 @@ class NameListPreference(context: Context, attrs: AttributeSet) : ListPreference
         }
         super.onBindViewHolder(holder)
     }
-
 }

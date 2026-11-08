@@ -13,8 +13,9 @@ import io.legado.app.utils.isJsonObject
 import io.legado.app.utils.readText
 import io.legado.app.utils.toastOnUi
 
-class SpeakEngineViewModel(application: Application) : BaseViewModel(application) {
-
+class SpeakEngineViewModel(
+    application: Application,
+) : BaseViewModel(application) {
     val sysEngines: List<TextToSpeech.EngineInfo> by lazy {
         val tts = TextToSpeech(context, null)
         val engines = tts.engines
@@ -57,5 +58,4 @@ class SpeakEngineViewModel(application: Application) : BaseViewModel(application
             }
         }
     }
-
 }

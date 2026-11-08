@@ -6,8 +6,9 @@ import io.legado.app.data.appDb
 import io.legado.app.data.entities.TxtTocRule
 import io.legado.app.help.DefaultData
 
-class TxtTocRuleViewModel(app: Application) : BaseViewModel(app) {
-
+class TxtTocRuleViewModel(
+    app: Application,
+) : BaseViewModel(app) {
     fun save(txtTocRule: TxtTocRule) {
         execute {
             appDb.txtTocRuleDao.insert(txtTocRule)
@@ -75,5 +76,4 @@ class TxtTocRuleViewModel(app: Application) : BaseViewModel(app) {
             appDb.txtTocRuleDao.insert(*array)
         }
     }
-
 }

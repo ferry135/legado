@@ -21,7 +21,8 @@ import kotlinx.coroutines.Dispatchers
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
 
-class TxtTocRuleEditDialog() : BaseDialogFragment(R.layout.dialog_toc_regex_edit, true),
+class TxtTocRuleEditDialog() :
+    BaseDialogFragment(R.layout.dialog_toc_regex_edit, true),
     Toolbar.OnMenuItemClickListener {
 
     constructor(id: Long?) : this() {
@@ -133,13 +134,10 @@ class TxtTocRuleEditDialog() : BaseDialogFragment(R.layout.dialog_toc_regex_edit
                 it.printOnDebug()
             }
         }
-
     }
 
     interface Callback {
 
         fun saveTxtTocRule(txtTocRule: TxtTocRule)
-
     }
-
 }

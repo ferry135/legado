@@ -88,7 +88,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     override fun eval(
         reader: Reader,
         scope: Scriptable,
-        coroutineContext: CoroutineContext?
+        coroutineContext: CoroutineContext?,
     ): Any? {
         val cx = Context.enter() as RhinoContext
         val previousCoroutineContext = cx.coroutineContext
@@ -174,22 +174,16 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         return unwrapReturnValue(ret)
     }
 
-    override fun createBindings(): Bindings {
-        return SimpleBindings()
-    }
+    override fun createBindings(): Bindings = SimpleBindings()
 
     @Throws(ScriptException::class, NoSuchMethodException::class)
-    override fun invokeFunction(name: String, vararg args: Any): Any? {
-        return this.invoke(null, name, *args)
-    }
+    override fun invokeFunction(name: String, vararg args: Any): Any? = this.invoke(null, name, *args)
 
     @Throws(ScriptException::class, NoSuchMethodException::class)
-    override fun invokeMethod(obj: Any?, name: String, vararg args: Any): Any? {
-        return if (obj == null) {
-            throw IllegalArgumentException("脚本对象不能为空")
-        } else {
-            this.invoke(obj, name, *args)
-        }
+    override fun invokeMethod(obj: Any?, name: String, vararg args: Any): Any? = if (obj == null) {
+        throw IllegalArgumentException("脚本对象不能为空")
+    } else {
+        this.invoke(obj, name, *args)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -226,23 +220,19 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         return var11
     }
 
-    override fun <T> getInterface(clazz: Class<T>): T? {
-        return try {
-            implementor.getInterface(null, clazz)
-        } catch (var3: ScriptException) {
-            null
-        }
+    override fun <T> getInterface(clazz: Class<T>): T? = try {
+        implementor.getInterface(null, clazz)
+    } catch (var3: ScriptException) {
+        null
     }
 
-    override fun <T> getInterface(obj: Any?, paramClass: Class<T>): T? {
-        return if (obj == null) {
-            throw IllegalArgumentException("脚本对象不能为空")
-        } else {
-            try {
-                implementor.getInterface(obj, paramClass)
-            } catch (var4: ScriptException) {
-                null
-            }
+    override fun <T> getInterface(obj: Any?, paramClass: Class<T>): T? = if (obj == null) {
+        throw IllegalArgumentException("脚本对象不能为空")
+    } else {
+        try {
+            implementor.getInterface(obj, paramClass)
+        } catch (var4: ScriptException) {
+            null
         }
     }
 
@@ -254,7 +244,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         } finally {
             Context.exit()
         }
-        //newScope.put("context", newScope, context)
+        // newScope.put("context", newScope, context)
         return newScope
     }
 
@@ -269,9 +259,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
     }
 
     @Throws(ScriptException::class)
-    override fun compile(script: String): CompiledScript {
-        return this.compile(StringReader(script) as Reader)
-    }
+    override fun compile(script: String): CompiledScript = this.compile(StringReader(script) as Reader)
 
     @Throws(ScriptException::class)
     override fun compile(script: Reader): CompiledScript {
@@ -292,16 +280,14 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
         return ret
     }
 
-    fun wrapArguments(args: Array<Any?>?): Array<Any?> {
-        return if (args == null) {
-            Context.emptyArgs
-        } else {
-            val res = arrayOfNulls<Any>(args.size)
-            for (i in res.indices) {
-                res[i] = Context.javaToJS(args[i], topLevel)
-            }
-            res
+    fun wrapArguments(args: Array<Any?>?): Array<Any?> = if (args == null) {
+        Context.emptyArgs
+    } else {
+        val res = arrayOfNulls<Any>(args.size)
+        for (i in res.indices) {
+            res[i] = Context.javaToJS(args[i], topLevel)
         }
+        res
     }
 
     fun unwrapReturnValue(result: Any?): Any? {
@@ -348,7 +334,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                 cx: Context,
                 scope: Scriptable,
                 thisObj: Scriptable?,
-                args: Array<Any>
+                args: Array<Any>,
             ): Any? {
                 var accContext: AccessControlContext? = null
                 val global = ScriptableObject.getTopLevelScope(scope)
@@ -356,17 +342,22 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                 if (globalProto is RhinoTopLevel) {
                     accContext = globalProto.accessContext
                 }
-                return if (accContext != null) AccessController.doPrivileged(
-                    PrivilegedAction {
-                        superDoTopCall(callable, cx, scope, thisObj, args)
-                    }, accContext
-                ) else superDoTopCall(
-                    callable,
-                    cx,
-                    scope,
-                    thisObj,
-                    args
-                )
+                return if (accContext != null) {
+                    AccessController.doPrivileged(
+                        PrivilegedAction {
+                            superDoTopCall(callable, cx, scope, thisObj, args)
+                        },
+                        accContext,
+                    )
+                } else {
+                    superDoTopCall(
+                        callable,
+                        cx,
+                        scope,
+                        thisObj,
+                        args,
+                    )
+                }
             }
 
             private fun superDoTopCall(
@@ -374,7 +365,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                 cx: Context,
                 scope: Scriptable,
                 thisObj: Scriptable?,
-                args: Array<Any>
+                args: Array<Any>,
             ): Any? {
                 try {
                     if (cx is RhinoContext) {
@@ -421,7 +412,7 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
                         if (method.declaringClass != Any::class.java) {
                             if (ScriptableObject.getProperty(
                                     localScope,
-                                    method.name
+                                    method.name,
                                 ) !is Function
                             ) {
                                 return false
@@ -442,5 +433,4 @@ object RhinoScriptEngine : AbstractScriptEngine(), Invocable, Compilable {
             }
         }
     }
-
 }

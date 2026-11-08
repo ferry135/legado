@@ -10,7 +10,6 @@ import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
 
 class TTS {
-
     private val handler by lazy { buildMainHandler() }
 
     private val tag = "legado_tts"
@@ -78,30 +77,30 @@ class TTS {
 
     private fun addTextToSpeakList() {
         val tts = textToSpeech ?: return
-        kotlin.runCatching {
-            var result = tts.speak("", TextToSpeech.QUEUE_FLUSH, null, null)
-            if (result == TextToSpeech.ERROR) {
-                clearTts()
-                textToSpeech = TextToSpeech(appCtx, initListener)
-                return
-            }
-            text?.splitNotBlank("\n")?.forEachIndexed { i, s ->
-                result = tts.speak(s, TextToSpeech.QUEUE_ADD, null, tag + i)
+        kotlin
+            .runCatching {
+                var result = tts.speak("", TextToSpeech.QUEUE_FLUSH, null, null)
                 if (result == TextToSpeech.ERROR) {
-                    AppLog.put("tts朗读出错:$text")
+                    clearTts()
+                    textToSpeech = TextToSpeech(appCtx, initListener)
+                    return
                 }
+                text?.splitNotBlank("\n")?.forEachIndexed { i, s ->
+                    result = tts.speak(s, TextToSpeech.QUEUE_ADD, null, tag + i)
+                    if (result == TextToSpeech.ERROR) {
+                        AppLog.put("tts朗读出错:$text")
+                    }
+                }
+            }.onFailure {
+                AppLog.put("tts朗读出错", it)
+                appCtx.toastOnUi(it.localizedMessage)
             }
-        }.onFailure {
-            AppLog.put("tts朗读出错", it)
-            appCtx.toastOnUi(it.localizedMessage)
-        }
     }
 
     /**
      * 初始化监听
      */
     private inner class InitListener : TextToSpeech.OnInitListener {
-
         override fun onInit(status: Int) {
             if (status == TextToSpeech.SUCCESS) {
                 textToSpeech?.setOnUtteranceProgressListener(utteranceListener)
@@ -111,35 +110,33 @@ class TTS {
             }
             onInit = false
         }
-
     }
 
     /**
      * 朗读监听
      */
     private inner class TTSUtteranceListener : UtteranceProgressListener() {
-
         override fun onStart(utteranceId: String?) {
-            //开始朗读取消释放资源任务
+            // 开始朗读取消释放资源任务
             handler.removeCallbacks(clearTtsRunnable)
             speakStateListener?.onStart()
         }
 
         override fun onDone(utteranceId: String?) {
-            //一分钟没有朗读释放资源
+            // 一分钟没有朗读释放资源
             handler.postDelayed(clearTtsRunnable, 60000L)
             speakStateListener?.onDone()
         }
 
         @Deprecated("Deprecated in Java")
         override fun onError(utteranceId: String?) {
-            //Deprecated
+            // Deprecated
         }
-
     }
 
     interface SpeakStateListener {
         fun onStart()
+
         fun onDone()
     }
 }

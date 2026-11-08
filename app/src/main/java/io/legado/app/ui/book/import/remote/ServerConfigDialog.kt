@@ -22,30 +22,35 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import org.json.JSONObject
 
-class ServerConfigDialog() : BaseDialogFragment(R.layout.dialog_webdav_server, true),
+class ServerConfigDialog() :
+    BaseDialogFragment(R.layout.dialog_webdav_server, true),
     Toolbar.OnMenuItemClickListener {
-
     constructor(id: Long) : this() {
-        arguments = Bundle().apply {
-            putLong("id", id)
-        }
+        arguments =
+            Bundle().apply {
+                putLong("id", id)
+            }
     }
 
     private val binding by viewBinding(DialogWebdavServerBinding::bind)
     private val viewModel by viewModels<ServerConfigViewModel>()
 
-    private val webDavServerUi = listOf(
-        RowUi("url"),
-        RowUi("username"),
-        RowUi("password", RowUi.Type.password)
-    )
+    private val webDavServerUi =
+        listOf(
+            RowUi("url"),
+            RowUi("username"),
+            RowUi("password", RowUi.Type.password),
+        )
 
     override fun onStart() {
         super.onStart()
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         // 设计稿 §04⑨：hint 浮标 on_surface_variant。theme 类 TextInputLayout 构造即
         // defaultHintTextColor=accentColor（TextInputLayout.kt:13-14），须在本弹窗逐实例覆盖；
         // til_name 与动态行必须一起换，只换其一会同弹窗两种 hint 色（改全局类牵连面大）
@@ -60,11 +65,12 @@ class ServerConfigDialog() : BaseDialogFragment(R.layout.dialog_webdav_server, t
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_save -> getServer().let {
-                viewModel.save(it) {
-                    dismissAllowingStateLoss()
+            R.id.menu_save ->
+                getServer().let {
+                    viewModel.save(it) {
+                        dismissAllowingStateLoss()
+                    }
                 }
-            }
         }
         return true
     }
@@ -74,7 +80,7 @@ class ServerConfigDialog() : BaseDialogFragment(R.layout.dialog_webdav_server, t
         binding.spType.setSelection(
             when (server?.type) {
                 else -> 0
-            }
+            },
         )
         when (server?.type) {
             else -> upWebDavServerUi(server?.getConfigJsonObject())
@@ -84,30 +90,34 @@ class ServerConfigDialog() : BaseDialogFragment(R.layout.dialog_webdav_server, t
     private fun upWebDavServerUi(config: JSONObject?) {
         webDavServerUi.forEachIndexed { index, rowUi ->
             when (rowUi.type) {
-                RowUi.Type.text -> ItemSourceEditBinding.inflate(
-                    layoutInflater,
-                    binding.root,
-                    false
-                ).let {
-                    binding.flexbox.addView(it.root)
-                    it.root.id = index + 1000
-                    it.textInputLayout.hint = rowUi.name
-                    applyHintColor(it.textInputLayout)
-                    it.editText.setText(config?.getString(rowUi.name))
-                }
-                RowUi.Type.password -> ItemSourceEditBinding.inflate(
-                    layoutInflater,
-                    binding.root,
-                    false
-                ).let {
-                    binding.flexbox.addView(it.root)
-                    it.root.id = index + 1000
-                    it.textInputLayout.hint = rowUi.name
-                    applyHintColor(it.textInputLayout)
-                    it.editText.inputType =
-                        InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
-                    it.editText.setText(config?.getString(rowUi.name))
-                }
+                RowUi.Type.text ->
+                    ItemSourceEditBinding
+                        .inflate(
+                            layoutInflater,
+                            binding.root,
+                            false,
+                        ).let {
+                            binding.flexbox.addView(it.root)
+                            it.root.id = index + 1000
+                            it.textInputLayout.hint = rowUi.name
+                            applyHintColor(it.textInputLayout)
+                            it.editText.setText(config?.getString(rowUi.name))
+                        }
+                RowUi.Type.password ->
+                    ItemSourceEditBinding
+                        .inflate(
+                            layoutInflater,
+                            binding.root,
+                            false,
+                        ).let {
+                            binding.flexbox.addView(it.root)
+                            it.root.id = index + 1000
+                            it.textInputLayout.hint = rowUi.name
+                            applyHintColor(it.textInputLayout)
+                            it.editText.inputType =
+                                InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
+                            it.editText.setText(config?.getString(rowUi.name))
+                        }
             }
         }
     }
@@ -115,9 +125,10 @@ class ServerConfigDialog() : BaseDialogFragment(R.layout.dialog_webdav_server, t
     // 设计稿 §04⑨：hint 浮标 on_surface_variant（聚焦浮标同色，稿面聚焦态标签同为次要色；
     // 写法同 CheckSourceConfig.kt:49-54 / CoverRuleConfigDialog.kt:95，运行时取语义令牌可换肤）
     private fun applyHintColor(layout: TextInputLayout) {
-        val hintColors = ColorStateList.valueOf(
-            layout.context.getCompatColor(R.color.on_surface_variant)
-        )
+        val hintColors =
+            ColorStateList.valueOf(
+                layout.context.getCompatColor(R.color.on_surface_variant),
+            )
         layout.defaultHintTextColor = hintColors
         layout.hintTextColor = hintColors
     }
@@ -125,12 +136,14 @@ class ServerConfigDialog() : BaseDialogFragment(R.layout.dialog_webdav_server, t
     private fun getServer(): Server {
         val server = viewModel.mServer?.copy() ?: Server()
         server.name = binding.etName.text.toString()
-        server.type = when (binding.spType.selectedItemPosition) {
-            else -> Server.TYPE.WEBDAV
-        }
-        server.config = when (server.type) {
-            else -> GSON.toJson(getWebDavConfig())
-        }
+        server.type =
+            when (binding.spType.selectedItemPosition) {
+                else -> Server.TYPE.WEBDAV
+            }
+        server.config =
+            when (server.type) {
+                else -> GSON.toJson(getWebDavConfig())
+            }
         return server
     }
 
@@ -144,5 +157,4 @@ class ServerConfigDialog() : BaseDialogFragment(R.layout.dialog_webdav_server, t
         }
         return data
     }
-
 }

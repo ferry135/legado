@@ -23,12 +23,12 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
  * 显示图片
  */
 class PhotoDialog() : BaseDialogFragment(R.layout.dialog_photo_view) {
-
     constructor(src: String, sourceOrigin: String? = null) : this() {
-        arguments = Bundle().apply {
-            putString("src", src)
-            putString("sourceOrigin", sourceOrigin)
-        }
+        arguments =
+            Bundle().apply {
+                putString("src", src)
+                putString("sourceOrigin", sourceOrigin)
+            }
     }
 
     private val binding by viewBinding(DialogPhotoViewBinding::bind)
@@ -42,7 +42,10 @@ class PhotoDialog() : BaseDialogFragment(R.layout.dialog_photo_view) {
     }
 
     @SuppressLint("CheckResult")
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         // 右上关闭钮（§05 ⑥ 新增·可移除），全屏窗口无点外关闭区域，点击即退
         binding.ivClose.setOnClickListener { dismiss() }
         val arguments = arguments ?: return
@@ -51,26 +54,29 @@ class PhotoDialog() : BaseDialogFragment(R.layout.dialog_photo_view) {
             binding.photoView.setImageBitmap(it)
             return
         }
-        val file = ReadBook.book?.let { book ->
-            BookHelp.getImage(book, src)
-        }
+        val file =
+            ReadBook.book?.let { book ->
+                BookHelp.getImage(book, src)
+            }
         if (file?.exists() == true) {
-            ImageLoader.load(requireContext(), file)
+            ImageLoader
+                .load(requireContext(), file)
                 .error(R.drawable.image_loading_error)
                 .dontTransform()
                 .downsample(DownsampleStrategy.NONE)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(binding.photoView)
         } else {
-            ImageLoader.load(requireContext(), src).apply {
-                arguments.getString("sourceOrigin")?.let { sourceOrigin ->
-                    apply(RequestOptions().set(OkHttpModelLoader.sourceOriginOption, sourceOrigin))
-                }
-            }.error(BookCover.defaultDrawable)
+            ImageLoader
+                .load(requireContext(), src)
+                .apply {
+                    arguments.getString("sourceOrigin")?.let { sourceOrigin ->
+                        apply(RequestOptions().set(OkHttpModelLoader.sourceOriginOption, sourceOrigin))
+                    }
+                }.error(BookCover.defaultDrawable)
                 .dontTransform()
                 .downsample(DownsampleStrategy.NONE)
                 .into(binding.photoView)
         }
     }
-
 }

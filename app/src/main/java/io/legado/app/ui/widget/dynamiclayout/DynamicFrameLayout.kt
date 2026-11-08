@@ -15,11 +15,13 @@ import io.legado.app.R
 import io.legado.app.lib.theme.primaryColor
 
 @Suppress("unused")
-class DynamicFrameLayout @JvmOverloads constructor(
+class DynamicFrameLayout
+@JvmOverloads
+constructor(
     context: Context,
-    attrs: AttributeSet? = null
-) : FrameLayout(context, attrs), ViewSwitcher {
-
+    attrs: AttributeSet? = null,
+) : FrameLayout(context, attrs),
+    ViewSwitcher {
     private var errorView: View? = null
     private var errorImage: AppCompatImageView? = null
     private var errorTextView: AppCompatTextView? = null
@@ -144,7 +146,10 @@ class DynamicFrameLayout @JvmOverloads constructor(
         emptyAction = action
     }
 
-    private fun setViewVisible(view: View?, visible: Boolean) {
+    private fun setViewVisible(
+        view: View?,
+        visible: Boolean,
+    ) {
         view?.let {
             it.visibility = if (visible) View.VISIBLE else View.INVISIBLE
         }
@@ -179,7 +184,9 @@ class DynamicFrameLayout @JvmOverloads constructor(
         }
     }
 
-    private fun dispatchVisibilityChanged(@ViewSwitcher.Visibility visibility: Int) {
+    private fun dispatchVisibilityChanged(
+        @ViewSwitcher.Visibility visibility: Int,
+    ) {
         changeListener?.onVisibilityChanged(visibility)
     }
 
@@ -187,10 +194,10 @@ class DynamicFrameLayout @JvmOverloads constructor(
         fun onAction(switcher: ViewSwitcher)
     }
 
-
     interface OnVisibilityChangeListener {
-
-        fun onVisibilityChanged(@ViewSwitcher.Visibility visibility: Int)
+        fun onVisibilityChanged(
+            @ViewSwitcher.Visibility visibility: Int,
+        )
     }
 
     companion object {

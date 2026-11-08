@@ -10,13 +10,9 @@ import kotlin.jvm.Throws
 
 class ProgressResponseBody internal constructor(private val url: String, private val internalProgressListener: InternalProgressListener?, private val responseBody: ResponseBody) : ResponseBody() {
     private var bufferedSource: BufferedSource? = null
-    override fun contentType(): MediaType? {
-        return responseBody.contentType()
-    }
+    override fun contentType(): MediaType? = responseBody.contentType()
 
-    override fun contentLength(): Long {
-        return responseBody.contentLength()
-    }
+    override fun contentLength(): Long = responseBody.contentLength()
 
     override fun source(): BufferedSource {
         if (bufferedSource == null) {
@@ -50,5 +46,4 @@ class ProgressResponseBody internal constructor(private val url: String, private
     companion object {
         private val mainThreadHandler = Handler(Looper.getMainLooper())
     }
-
 }

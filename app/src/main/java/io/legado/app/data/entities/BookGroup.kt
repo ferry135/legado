@@ -23,9 +23,8 @@ data class BookGroup(
     @ColumnInfo(defaultValue = "1")
     var show: Boolean = true,
     @ColumnInfo(defaultValue = "-1")
-    var bookSort: Int = -1
+    var bookSort: Int = -1,
 ) : Parcelable {
-
     companion object {
         const val IdRoot = -100L
         const val IdAll = -1L
@@ -36,16 +35,14 @@ data class BookGroup(
         const val IdError = -11L
     }
 
-    fun getManageName(context: Context): String {
-        return when (groupId) {
-            IdAll -> "$groupName(${context.getString(R.string.all)})"
-            IdAudio -> "$groupName(${context.getString(R.string.audio)})"
-            IdLocal -> "$groupName(${context.getString(R.string.local)})"
-            IdNetNone -> "$groupName(${context.getString(R.string.net_no_group)})"
-            IdLocalNone -> "$groupName(${context.getString(R.string.local_no_group)})"
-            IdError -> "$groupName(${context.getString(R.string.update_book_fail)})"
-            else -> groupName
-        }
+    fun getManageName(context: Context): String = when (groupId) {
+        IdAll -> "$groupName(${context.getString(R.string.all)})"
+        IdAudio -> "$groupName(${context.getString(R.string.audio)})"
+        IdLocal -> "$groupName(${context.getString(R.string.local)})"
+        IdNetNone -> "$groupName(${context.getString(R.string.net_no_group)})"
+        IdLocalNone -> "$groupName(${context.getString(R.string.local_no_group)})"
+        IdError -> "$groupName(${context.getString(R.string.update_book_fail)})"
+        else -> groupName
     }
 
     fun getRealBookSort(): Int {
@@ -55,21 +52,18 @@ data class BookGroup(
         return bookSort
     }
 
-    override fun hashCode(): Int {
-        return groupId.hashCode()
-    }
+    override fun hashCode(): Int = groupId.hashCode()
 
     override fun equals(other: Any?): Boolean {
         if (other is BookGroup) {
-            return other.groupId == groupId
-                    && other.groupName == groupName
-                    && other.cover == cover
-                    && other.bookSort == bookSort
-                    && other.enableRefresh == enableRefresh
-                    && other.show == show
-                    && other.order == order
+            return other.groupId == groupId &&
+                other.groupName == groupName &&
+                other.cover == cover &&
+                other.bookSort == bookSort &&
+                other.enableRefresh == enableRefresh &&
+                other.show == show &&
+                other.order == order
         }
         return false
     }
-
 }

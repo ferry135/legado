@@ -44,7 +44,9 @@ import io.legado.app.utils.toastOnUi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 
-class BookInfoViewModel(application: Application) : BaseViewModel(application) {
+class BookInfoViewModel(
+    application: Application,
+) : BaseViewModel(application) {
     val bookData = MutableLiveData<Book>()
     val chapterListData = MutableLiveData<List<BookChapter>>()
     val webFiles = mutableListOf<WebFile>()
@@ -95,8 +97,12 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         execute {
             bookData.postValue(book)
             upCoverByRule(book)
-            bookSource = if (book.isLocal) null else
-                appDb.bookSourceDao.getBookSource(book.origin)
+            bookSource =
+                if (book.isLocal) {
+                    null
+                } else {
+                    appDb.bookSourceDao.getBookSource(book.origin)
+                }
             if (book.tocUrl.isEmpty() && !book.isLocal) {
                 loadBookInfo(book, runPreUpdateJs = inBookshelf)
             } else {
@@ -131,8 +137,9 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
             if (book.isLocal) {
                 book.tocUrl = ""
                 book.getRemoteUrl()?.let {
-                    val bookWebDav = AppWebDav.defaultBookWebDav
-                        ?: throw NoStackTraceException("webDav没有配置")
+                    val bookWebDav =
+                        AppWebDav.defaultBookWebDav
+                            ?: throw NoStackTraceException("webDav没有配置")
                     val remoteBook = bookWebDav.getRemoteBook(it)
                     if (remoteBook == null) {
                         book.origin = BookType.localTag
@@ -167,19 +174,21 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         book: Book,
         canReName: Boolean = true,
         runPreUpdateJs: Boolean = true,
-        scope: CoroutineScope = viewModelScope
+        scope: CoroutineScope = viewModelScope,
     ) {
         if (book.isLocal) {
             LocalBook.upBookInfo(book)
             bookData.postValue(book)
             loadChapter(book)
         } else {
-            val bookSource = bookSource ?: let {
-                chapterListData.postValue(emptyList())
-                context.toastOnUi(R.string.error_no_source)
-                return
-            }
-            WebBook.getBookInfo(scope, bookSource, book, canReName = canReName)
+            val bookSource =
+                bookSource ?: let {
+                    chapterListData.postValue(emptyList())
+                    context.toastOnUi(R.string.error_no_source)
+                    return
+                }
+            WebBook
+                .getBookInfo(scope, bookSource, book, canReName = canReName)
                 .onSuccess(IO) {
                     val dbBook = appDb.bookDao.getBook(book.name, book.author)
                     if (!inBookshelf && dbBook != null && !dbBook.isNotShelf && dbBook.origin == book.origin) {
@@ -210,7 +219,7 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     private fun loadChapter(
         book: Book,
         runPreUpdateJs: Boolean = true,
-        scope: CoroutineScope = viewModelScope
+        scope: CoroutineScope = viewModelScope,
     ) {
         if (book.isLocal) {
             execute(scope) {
@@ -226,13 +235,15 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
                 context.toastOnUi("LoadTocError:${it.localizedMessage}")
             }
         } else {
-            val bookSource = bookSource ?: let {
-                chapterListData.postValue(emptyList())
-                context.toastOnUi(R.string.error_no_source)
-                return
-            }
+            val bookSource =
+                bookSource ?: let {
+                    chapterListData.postValue(emptyList())
+                    context.toastOnUi(R.string.error_no_source)
+                    return
+                }
             val oldBook = book.copy()
-            WebBook.getChapterList(scope, bookSource, book, runPreUpdateJs)
+            WebBook
+                .getChapterList(scope, bookSource, book, runPreUpdateJs)
                 .onSuccess(IO) {
                     if (inBookshelf) {
                         book.save()
@@ -256,8 +267,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-
-    fun loadGroup(groupId: Long, success: ((groupNames: String?) -> Unit)) {
+    fun loadGroup(
+        groupId: Long,
+        success: ((groupNames: String?) -> Unit),
+    ) {
         execute {
             appDb.bookGroupDao.getGroupNames(groupId).joinToString(",")
         }.onSuccess {
@@ -268,15 +281,22 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     private fun loadWebFile(book: Book) {
         execute {
             webFiles.clear()
-            val fileNameNoExtension = if (book.author.isBlank()) book.name
-            else "${book.name} 作者：${book.author}"
+            val fileNameNoExtension =
+                if (book.author.isBlank()) {
+                    book.name
+                } else {
+                    "${book.name} 作者：${book.author}"
+                }
             book.downloadUrls!!.map {
-                val analyzeUrl = AnalyzeUrl(
-                    it, source = bookSource,
-                    coroutineContext = coroutineContext
-                )
-                val mFileName = UrlUtil.getFileName(analyzeUrl)
-                    ?: "${fileNameNoExtension}.${analyzeUrl.type}"
+                val analyzeUrl =
+                    AnalyzeUrl(
+                        it,
+                        source = bookSource,
+                        coroutineContext = coroutineContext,
+                    )
+                val mFileName =
+                    UrlUtil.getFileName(analyzeUrl)
+                        ?: "$fileNameNoExtension.${analyzeUrl.type}"
                 WebFile(it, mFileName)
             }
         }.onError {
@@ -286,23 +306,27 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    /* 导入或者下载在线文件 */
-    fun <T> importOrDownloadWebFile(webFile: WebFile, success: ((T) -> Unit)?) {
+    // 导入或者下载在线文件
+    fun <T> importOrDownloadWebFile(
+        webFile: WebFile,
+        success: ((T) -> Unit)?,
+    ) {
         bookSource ?: return
         execute {
             waitDialogData.postValue(true)
             if (webFile.isSupported) {
-                val book = LocalBook.importFileOnLine(
-                    webFile.url,
-                    bookData.value!!.getExportFileName(webFile.suffix),
-                    bookSource
-                )
+                val book =
+                    LocalBook.importFileOnLine(
+                        webFile.url,
+                        bookData.value!!.getExportFileName(webFile.suffix),
+                        bookSource,
+                    )
                 changeToLocalBook(book)
             } else {
                 LocalBook.saveBookFile(
                     webFile.url,
                     bookData.value!!.getExportFileName(webFile.suffix),
-                    bookSource
+                    bookSource,
                 )
             }
         }.onSuccess {
@@ -322,7 +346,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun getArchiveFilesName(archiveFileUri: Uri, onSuccess: (List<String>) -> Unit) {
+    fun getArchiveFilesName(
+        archiveFileUri: Uri,
+        onSuccess: (List<String>) -> Unit,
+    ) {
         execute {
             ArchiveUtils.getArchiveFilesName(archiveFileUri) {
                 AppPattern.bookFileRegex.matches(it)
@@ -338,16 +365,17 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
     fun importArchiveBook(
         archiveFileUri: Uri,
         archiveEntryName: String,
-        success: ((Book) -> Unit)? = null
+        success: ((Book) -> Unit)? = null,
     ) {
         execute {
             val suffix = archiveEntryName.substringAfterLast(".")
-            LocalBook.importArchiveFile(
-                archiveFileUri,
-                bookData.value!!.getExportFileName(suffix)
-            ) {
-                it.contains(archiveEntryName)
-            }.first()
+            LocalBook
+                .importArchiveFile(
+                    archiveFileUri,
+                    bookData.value!!.getExportFileName(suffix),
+                ) {
+                    it.contains(archiveEntryName)
+                }.first()
         }.onSuccess {
             val book = changeToLocalBook(it)
             success?.invoke(book)
@@ -357,22 +385,27 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
+    fun changeTo(
+        source: BookSource,
+        book: Book,
+        toc: List<BookChapter>,
+    ) {
         changeSourceCoroutine?.cancel()
-        changeSourceCoroutine = execute {
-            bookSource = source
-            bookData.value?.migrateTo(book, toc)
-            if (inBookshelf) {
-                book.removeType(BookType.updateError)
-                bookData.value?.delete()
-                appDb.bookDao.insert(book)
-                appDb.bookChapterDao.insert(*toc.toTypedArray())
+        changeSourceCoroutine =
+            execute {
+                bookSource = source
+                bookData.value?.migrateTo(book, toc)
+                if (inBookshelf) {
+                    book.removeType(BookType.updateError)
+                    bookData.value?.delete()
+                    appDb.bookDao.insert(book)
+                    appDb.bookChapterDao.insert(*toc.toTypedArray())
+                }
+                bookData.postValue(book)
+                chapterListData.postValue(toc)
+            }.onFinally {
+                postEvent(EventBus.SOURCE_CHANGED, book.bookUrl)
             }
-            bookData.postValue(book)
-            chapterListData.postValue(toc)
-        }.onFinally {
-            postEvent(EventBus.SOURCE_CHANGED, book.bookUrl)
-        }
     }
 
     fun topBook() {
@@ -386,7 +419,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun saveBook(book: Book?, success: (() -> Unit)? = null) {
+    fun saveBook(
+        book: Book?,
+        success: (() -> Unit)? = null,
+    ) {
         book ?: return
         execute {
             book.saveWithOrderBackfill(backfillProgress = true)
@@ -446,7 +482,10 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         return book
     }
 
-    fun delBook(deleteOriginal: Boolean = false, success: (() -> Unit)? = null) {
+    fun delBook(
+        deleteOriginal: Boolean = false,
+        success: (() -> Unit)? = null,
+    ) {
         execute {
             bookData.value?.let {
                 it.delete()
@@ -484,23 +523,18 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private fun changeToLocalBook(localBook: Book): Book {
-        return LocalBook.mergeBook(localBook, bookData.value).let {
-            bookData.postValue(it)
-            loadChapter(it)
-            inBookshelf = true
-            it
-        }
+    private fun changeToLocalBook(localBook: Book): Book = LocalBook.mergeBook(localBook, bookData.value).let {
+        bookData.postValue(it)
+        loadChapter(it)
+        inBookshelf = true
+        it
     }
 
     data class WebFile(
         val url: String,
         val name: String,
     ) {
-
-        override fun toString(): String {
-            return name
-        }
+        override fun toString(): String = name
 
         // 后缀
         val suffix: String = UrlUtil.getSuffix(name)
@@ -510,7 +544,5 @@ class BookInfoViewModel(application: Application) : BaseViewModel(application) {
 
         // 压缩包形式的txt epub umd pdf文件
         val isSupportDecompress: Boolean = AppPattern.archiveFileRegex.matches(name)
-
     }
-
 }

@@ -23,7 +23,7 @@ class EpaperTransformation(
 ) : BitmapTransformation() {
 
     private val ID =
-        "io.legado.app.model.EpaperTransformation.${threshold}"
+        "io.legado.app.model.EpaperTransformation.$threshold"
     private val ID_BYTES = ID.toByteArray(CHARSET)
 
     override fun transform(

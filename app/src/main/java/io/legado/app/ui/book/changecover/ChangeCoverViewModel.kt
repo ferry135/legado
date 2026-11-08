@@ -33,7 +33,9 @@ import java.util.Collections
 import java.util.concurrent.Executors
 import kotlin.math.min
 
-class ChangeCoverViewModel(application: Application) : BaseViewModel(application) {
+class ChangeCoverViewModel(
+    application: Application,
+) : BaseViewModel(application) {
     private val threadCount = AppConfig.threadCount
     private var searchPool: ExecutorCoroutineDispatcher? = null
     private var searchSuccess: ((SearchBook) -> Unit)? = null
@@ -45,8 +47,8 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
                 originName = "默认封面",
                 name = name,
                 author = author,
-                coverUrl = "use_default_cover"
-            )
+                coverUrl = "use_default_cover",
+            ),
         )
     }
     private var task: Job? = null
@@ -54,34 +56,35 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     var name: String = ""
     var author: String = ""
     val searchBooks: MutableList<SearchBook> = Collections.synchronizedList(arrayListOf())
-    val dataFlow = callbackFlow {
+    val dataFlow =
+        callbackFlow {
 
-        searchSuccess = { searchBook ->
-            if (!searchBooks.contains(searchBook)) {
-                searchBooks.add(searchBook)
+            searchSuccess = { searchBook ->
+                if (!searchBooks.contains(searchBook)) {
+                    searchBooks.add(searchBook)
+                    trySend(defaultCover + searchBooks.sortedBy { it.originOrder })
+                }
+            }
+
+            upAdapter = {
                 trySend(defaultCover + searchBooks.sortedBy { it.originOrder })
             }
-        }
 
-        upAdapter = {
-            trySend(defaultCover + searchBooks.sortedBy { it.originOrder })
-        }
+            appDb.searchBookDao.getEnableHasCover(name, author).let {
+                searchBooks.addAll(it)
+                trySend(defaultCover + searchBooks.toList())
+            }
 
-        appDb.searchBookDao.getEnableHasCover(name, author).let {
-            searchBooks.addAll(it)
-            trySend(defaultCover + searchBooks.toList())
-        }
+            if (searchBooks.size <= 1) {
+                startSearch()
+            }
 
-        if (searchBooks.size <= 1) {
-            startSearch()
-        }
-
-        awaitClose {
-            searchBooks.clear()
-            searchSuccess = null
-            upAdapter = null
-        }
-    }.flowOn(IO)
+            awaitClose {
+                searchBooks.clear()
+                searchSuccess = null
+                upAdapter = null
+            }
+        }.flowOn(IO)
 
     fun initData(arguments: Bundle?) {
         arguments?.let { bundle ->
@@ -95,8 +98,10 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     }
 
     private fun initSearchPool() {
-        searchPool = Executors
-            .newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD)).asCoroutineDispatcher()
+        searchPool =
+            Executors
+                .newFixedThreadPool(min(threadCount, AppConst.MAX_THREAD))
+                .asCoroutineDispatcher()
     }
 
     private fun startSearch() {
@@ -115,36 +120,42 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
     }
 
     private fun search() {
-        task = viewModelScope.launch(searchPool!!) {
-            flow {
-                for (bs in bookSourceParts) {
-                    bs.getBookSource()?.let {
-                        emit(it)
+        task =
+            viewModelScope.launch(searchPool!!) {
+                flow {
+                    for (bs in bookSourceParts) {
+                        bs.getBookSource()?.let {
+                            emit(it)
+                        }
                     }
-                }
-            }.onStart {
-                searchStateData.postValue(true)
-            }.mapParallelSafe(threadCount) {
-                withTimeout(60000L) {
-                    search(it)
-                }
-            }.onCompletion {
-                searchStateData.postValue(false)
-            }.catch {
-                AppLog.put("封面换源搜索出错\n${it.localizedMessage}", it)
-            }.collect()
-        }
+                }.onStart {
+                    searchStateData.postValue(true)
+                }.mapParallelSafe(threadCount) {
+                    withTimeout(60000L) {
+                        search(it)
+                    }
+                }.onCompletion {
+                    searchStateData.postValue(false)
+                }.catch {
+                    AppLog.put("封面换源搜索出错\n${it.localizedMessage}", it)
+                }.collect()
+            }
     }
 
     private suspend fun search(source: BookSource) {
         if (source.getSearchRule().coverUrl.isNullOrBlank()) {
             return
         }
-        val searchBook = WebBook.searchBookAwait(
-            source, name,
-            shouldBreak = { it > 0 }).firstOrNull() ?: return
-        if (searchBook.name == name && searchBook.author == author
-            && !searchBook.coverUrl.isNullOrEmpty()
+        val searchBook =
+            WebBook
+                .searchBookAwait(
+                    source,
+                    name,
+                    shouldBreak = { it > 0 },
+                ).firstOrNull() ?: return
+        if (searchBook.name == name &&
+            searchBook.author == author &&
+            !searchBook.coverUrl.isNullOrEmpty()
         ) {
             appDb.searchBookDao.insert(searchBook)
             searchSuccess?.invoke(searchBook)
@@ -169,5 +180,4 @@ class ChangeCoverViewModel(application: Application) : BaseViewModel(application
         super.onCleared()
         searchPool?.close()
     }
-
 }

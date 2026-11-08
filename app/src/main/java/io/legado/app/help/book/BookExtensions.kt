@@ -33,7 +33,6 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.max
 import kotlin.math.min
 
-
 val Book.isAudio: Boolean
     get() = isType(BookType.audio)
 
@@ -61,9 +60,13 @@ val Book.isPdf: Boolean
     get() = isLocal && originName.endsWith(".pdf", true)
 
 val Book.isMobi: Boolean
-    get() = isLocal && (originName.endsWith(".mobi", true) ||
-            originName.endsWith(".azw3", true) ||
-            originName.endsWith(".azw", true))
+    get() =
+        isLocal &&
+            (
+                originName.endsWith(".mobi", true) ||
+                    originName.endsWith(".azw3", true) ||
+                    originName.endsWith(".azw", true)
+                )
 
 val Book.isOnLineTxt: Boolean
     get() = !isLocal && isType(BookType.text)
@@ -92,12 +95,12 @@ fun Book.contains(word: String?): Boolean {
     if (word.isNullOrEmpty()) {
         return true
     }
-    return name.contains(word)
-            || author.contains(word)
-            || originName.contains(word)
-            || origin.contains(word)
-            || kind?.contains(word) == true
-            || intro?.contains(word) == true
+    return name.contains(word) ||
+        author.contains(word) ||
+        originName.contains(word) ||
+        origin.contains(word) ||
+        kind?.contains(word) == true ||
+        intro?.contains(word) == true
 }
 
 private val localUriCache by lazy {
@@ -112,18 +115,22 @@ fun Book.getLocalUri(): Uri {
     if (uri != null) {
         return uri
     }
-    uri = if (bookUrl.isUri()) {
-        Uri.parse(bookUrl)
-    } else {
-        Uri.fromFile(File(bookUrl))
-    }
-    //先检测uri是否有效,这个比较快
-    uri.inputStream(appCtx).getOrNull()?.use {
-        localUriCache[bookUrl] = uri
-    }?.let {
-        return uri
-    }
-    //不同的设备书籍保存路径可能不一样, uri无效时尝试寻找当前保存路径下的文件
+    uri =
+        if (bookUrl.isUri()) {
+            Uri.parse(bookUrl)
+        } else {
+            Uri.fromFile(File(bookUrl))
+        }
+    // 先检测uri是否有效,这个比较快
+    uri
+        .inputStream(appCtx)
+        .getOrNull()
+        ?.use {
+            localUriCache[bookUrl] = uri
+        }?.let {
+            return uri
+        }
+    // 不同的设备书籍保存路径可能不一样, uri无效时尝试寻找当前保存路径下的文件
     val defaultBookDir = AppConfig.defaultBookTreeUri
     val importBookDir = AppConfig.importBookPath
 
@@ -137,7 +144,7 @@ fun Book.getLocalUri(): Uri {
             val fileDoc = treeFileDoc.find(originName, 5, 100)
             if (fileDoc != null) {
                 localUriCache[bookUrl] = fileDoc.uri
-                //更新bookUrl 重启不用再找一遍
+                // 更新bookUrl 重启不用再找一遍
                 bookUrl = fileDoc.toString()
                 save()
                 return fileDoc.uri
@@ -147,11 +154,12 @@ fun Book.getLocalUri(): Uri {
 
     // 查找添加本地选择的目录
     if (!importBookDir.isNullOrBlank() && defaultBookDir != importBookDir) {
-        val treeUri = if (importBookDir.isUri()) {
-            Uri.parse(importBookDir)
-        } else {
-            Uri.fromFile(File(importBookDir))
-        }
+        val treeUri =
+            if (importBookDir.isUri()) {
+                Uri.parse(importBookDir)
+            } else {
+                Uri.fromFile(File(importBookDir))
+            }
         val treeFileDoc = FileDoc.fromUri(treeUri, true)
         val fileDoc = treeFileDoc.find(originName, 5, 100)
         if (fileDoc != null) {
@@ -166,12 +174,13 @@ fun Book.getLocalUri(): Uri {
     return uri
 }
 
-
 fun Book.getArchiveUri(): Uri? {
     val defaultBookDir = AppConfig.defaultBookTreeUri
     return if (isArchive && !defaultBookDir.isNullOrBlank()) {
-        FileDoc.fromUri(Uri.parse(defaultBookDir), true)
-            .find(archiveName)?.uri
+        FileDoc
+            .fromUri(Uri.parse(defaultBookDir), true)
+            .find(archiveName)
+            ?.uri
     } else {
         null
     }
@@ -192,18 +201,24 @@ fun Book.getRemoteUrl(): String? {
     return null
 }
 
-fun Book.setType(@BookType.Type vararg types: Int) {
+fun Book.setType(
+    @BookType.Type vararg types: Int,
+) {
     type = 0
     addType(*types)
 }
 
-fun Book.addType(@BookType.Type vararg types: Int) {
+fun Book.addType(
+    @BookType.Type vararg types: Int,
+) {
     types.forEach {
         type = type or it
     }
 }
 
-fun Book.removeType(@BookType.Type vararg types: Int) {
+fun Book.removeType(
+    @BookType.Type vararg types: Int,
+) {
     types.forEach {
         type = type and it.inv()
     }
@@ -217,16 +232,19 @@ fun Book.clearType() {
     type = 0
 }
 
-fun Book.isType(@BookType.Type bookType: Int): Boolean = type and bookType > 0
+fun Book.isType(
+    @BookType.Type bookType: Int,
+): Boolean = type and bookType > 0
 
 fun Book.upType() {
     if (type < 8) {
-        type = when (type) {
-            BookSourceType.image -> BookType.image
-            BookSourceType.audio -> BookType.audio
-            BookSourceType.file -> BookType.webFile
-            else -> BookType.text
-        }
+        type =
+            when (type) {
+                BookSourceType.image -> BookType.image
+                BookSourceType.audio -> BookType.audio
+                BookSourceType.file -> BookType.webFile
+                else -> BookType.text
+            }
         if (origin == BookType.localTag || origin.startsWith(BookType.webDavTag)) {
             type = type or BookType.local
         }
@@ -252,9 +270,7 @@ fun Book.update() {
     appDb.bookDao.update(this)
 }
 
-fun Book.primaryStr(): String {
-    return origin + bookUrl
-}
+fun Book.primaryStr(): String = origin + bookUrl
 
 fun Book.updateTo(newBook: Book): Book {
     newBook.durChapterIndex = durChapterIndex
@@ -277,23 +293,15 @@ fun Book.updateTo(newBook: Book): Book {
     return newBook
 }
 
-fun Book.hasVariable(key: String): Boolean {
-    return variableMap.contains(key) || RuleBigDataHelp.hasBookVariable(bookUrl, key)
+fun Book.hasVariable(key: String): Boolean = variableMap.contains(key) || RuleBigDataHelp.hasBookVariable(bookUrl, key)
+
+fun Book.getFolderNameNoCache(): String = name.replace(AppPattern.fileNameRegex, "").let {
+    it.substring(0, min(9, it.length)) + MD5Utils.md5Encode16(bookUrl)
 }
 
-fun Book.getFolderNameNoCache(): String {
-    return name.replace(AppPattern.fileNameRegex, "").let {
-        it.substring(0, min(9, it.length)) + MD5Utils.md5Encode16(bookUrl)
-    }
-}
+fun Book.getBookSource(): BookSource? = appDb.bookSourceDao.getBookSource(origin)
 
-fun Book.getBookSource(): BookSource? {
-    return appDb.bookSourceDao.getBookSource(origin)
-}
-
-fun Book.isLocalModified(): Boolean {
-    return isLocal && LocalBook.getLastModified(this).getOrDefault(0L) > latestChapterTime
-}
+fun Book.isLocalModified(): Boolean = isLocal && LocalBook.getLastModified(this).getOrDefault(0L) > latestChapterTime
 
 fun Book.releaseHtmlData() {
     infoHtml = null
@@ -312,16 +320,18 @@ fun Book.getExportFileName(suffix: String): String {
     if (jsStr.isNullOrBlank()) {
         return "$name 作者：${getRealAuthor()}.$suffix"
     }
-    val bindings = buildScriptBindings { bindings ->
-        bindings["epubIndex"] = ""// 兼容老版本,修复可能存在的错误
-        bindings["name"] = name
-        bindings["author"] = getRealAuthor()
-    }
-    return kotlin.runCatching {
-        RhinoScriptEngine.eval(jsStr, bindings).toString() + "." + suffix
-    }.onFailure {
-        AppLog.put("导出书名规则错误,使用默认规则\n${it.localizedMessage}", it)
-    }.getOrDefault("$name 作者：${getRealAuthor()}.$suffix")
+    val bindings =
+        buildScriptBindings { bindings ->
+            bindings["epubIndex"] = "" // 兼容老版本,修复可能存在的错误
+            bindings["name"] = name
+            bindings["author"] = getRealAuthor()
+        }
+    return kotlin
+        .runCatching {
+            RhinoScriptEngine.eval(jsStr, bindings).toString() + "." + suffix
+        }.onFailure {
+            AppLog.put("导出书名规则错误,使用默认规则\n${it.localizedMessage}", it)
+        }.getOrDefault("$name 作者：${getRealAuthor()}.$suffix")
 }
 
 /**
@@ -330,49 +340,48 @@ fun Book.getExportFileName(suffix: String): String {
 fun Book.getExportFileName(
     suffix: String,
     epubIndex: Int,
-    jsStr: String? = AppConfig.episodeExportFileName
+    jsStr: String? = AppConfig.episodeExportFileName,
 ): String {
     // 默认规则
-    val default = "$name 作者：${getRealAuthor()} [${epubIndex}].$suffix"
+    val default = "$name 作者：${getRealAuthor()} [$epubIndex].$suffix"
     if (jsStr.isNullOrBlank()) {
         return default
     }
-    val bindings = buildScriptBindings { bindings ->
-        bindings["name"] = name
-        bindings["author"] = getRealAuthor()
-        bindings["epubIndex"] = epubIndex
-    }
-    return kotlin.runCatching {
-        RhinoScriptEngine.eval(jsStr, bindings).toString() + "." + suffix
-    }.onFailure {
-        AppLog.put("导出书名规则错误,使用默认规则\n${it.localizedMessage}", it)
-    }.getOrDefault(default)
+    val bindings =
+        buildScriptBindings { bindings ->
+            bindings["name"] = name
+            bindings["author"] = getRealAuthor()
+            bindings["epubIndex"] = epubIndex
+        }
+    return kotlin
+        .runCatching {
+            RhinoScriptEngine.eval(jsStr, bindings).toString() + "." + suffix
+        }.onFailure {
+            AppLog.put("导出书名规则错误,使用默认规则\n${it.localizedMessage}", it)
+        }.getOrDefault(default)
 }
 
 // 根据当前日期计算章节总数
-fun Book.simulatedTotalChapterNum(): Int {
-    return if (readSimulating()) {
-        val currentDate = LocalDate.now()
-        val daysPassed = between(config.startDate, currentDate).days + 1
-        // 计算当前应该解锁到哪一章
-        val chaptersToUnlock =
-            max(0, (config.startChapter ?: 0) + (daysPassed * config.dailyChapters))
-        min(totalChapterNum, chaptersToUnlock)
-    } else {
-        totalChapterNum
-    }
+fun Book.simulatedTotalChapterNum(): Int = if (readSimulating()) {
+    val currentDate = LocalDate.now()
+    val daysPassed = between(config.startDate, currentDate).days + 1
+    // 计算当前应该解锁到哪一章
+    val chaptersToUnlock =
+        max(0, (config.startChapter ?: 0) + (daysPassed * config.dailyChapters))
+    min(totalChapterNum, chaptersToUnlock)
+} else {
+    totalChapterNum
 }
 
-fun Book.readSimulating(): Boolean {
-    return config.readSimulating
-}
+fun Book.readSimulating(): Boolean = config.readSimulating
 
 fun tryParesExportFileName(jsStr: String): Boolean {
-    val bindings = buildScriptBindings { bindings ->
-        bindings["name"] = "name"
-        bindings["author"] = "author"
-        bindings["epubIndex"] = "epubIndex"
-    }
+    val bindings =
+        buildScriptBindings { bindings ->
+            bindings["name"] = "name"
+            bindings["author"] = "author"
+            bindings["epubIndex"] = "epubIndex"
+        }
     return runCatching {
         RhinoScriptEngine.eval(jsStr, bindings)
         true

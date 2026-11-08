@@ -8,10 +8,10 @@ object AppPattern {
         Pattern.compile("<js>([\\w\\W]*?)</js>|@js:([\\w\\W]*)", Pattern.CASE_INSENSITIVE)
     val EXP_PATTERN: Pattern = Pattern.compile("\\{\\{([\\w\\W]*?)\\}\\}")
 
-    //匹配格式化后的图片格式
+    // 匹配格式化后的图片格式
     val imgPattern: Pattern = Pattern.compile("<img[^>]*src=['\"]([^'\"]*(?:['\"][^>]+\\})?)['\"][^>]*>")
 
-    //dataURL图片类型
+    // dataURL图片类型
     val dataUriRegex = Regex("^data:.*?;base64,(.*)")
 
     val nameRegex = Regex("\\s+作\\s*者.*|\\s+\\S+\\s+著")
@@ -20,12 +20,13 @@ object AppPattern {
     val splitGroupRegex = Regex("[,;，；]")
     val titleNumPattern: Pattern = Pattern.compile("(第)(.+?)(章)")
 
-    //书源调试信息中的各种符号
+    // 书源调试信息中的各种符号
     val debugMessageSymbolRegex = Regex("[⇒◇┌└≡]")
 
-    //本地书籍支持类型
+    // 本地书籍支持类型
     val bookFileRegex = Regex(".*\\.(txt|epub|umd|pdf|mobi|azw3|azw)", RegexOption.IGNORE_CASE)
-    //压缩文件支持类型
+
+    // 压缩文件支持类型
     val archiveFileRegex = Regex(".*\\.(zip|rar|7z)$", RegexOption.IGNORE_CASE)
 
     /**

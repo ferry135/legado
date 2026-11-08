@@ -15,7 +15,6 @@
  */
 package io.legado.app.ui.widget.anima.explosion_field
 
-
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -23,8 +22,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.view.View
 import android.widget.ImageView
 import io.legado.app.utils.printOnDebug
-
-
 import kotlin.math.roundToInt
 
 object Utils {
@@ -32,9 +29,7 @@ object Utils {
     private val DENSITY = Resources.getSystem().displayMetrics.density
     private val sCanvas = Canvas()
 
-    fun dp2Px(dp: Int): Int {
-        return (dp * DENSITY).roundToInt()
-    }
+    fun dp2Px(dp: Int): Int = (dp * DENSITY).roundToInt()
 
     fun createBitmapFromView(view: View): Bitmap? {
         if (view is ImageView) {
@@ -46,7 +41,9 @@ object Utils {
         view.clearFocus()
         val bitmap = createBitmapSafely(
             view.width,
-            view.height, Bitmap.Config.ARGB_8888, 1
+            view.height,
+            Bitmap.Config.ARGB_8888,
+            1,
         )
         if (bitmap != null) {
             synchronized(sCanvas) {
@@ -63,7 +60,7 @@ object Utils {
         width: Int,
         height: Int,
         config: Bitmap.Config,
-        retryCount: Int
+        retryCount: Int,
     ): Bitmap? {
         try {
             return Bitmap.createBitmap(width, height, config)
@@ -75,6 +72,5 @@ object Utils {
             }
             return null
         }
-
     }
 }

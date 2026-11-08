@@ -61,7 +61,6 @@ import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 
 class App : Application() {
-
     private lateinit var oldConfig: Configuration
 
     override fun onCreate() {
@@ -78,10 +77,11 @@ class App : Application() {
             LogUtils.init(this@App)
             LogUtils.d("App", "onCreate")
             LogUtils.logDeviceInfo()
-            //预下载Cronet so
+            // 预下载Cronet so
             Cronet.preDownload()
             createNotificationChannels()
-            LiveEventBus.config()
+            LiveEventBus
+                .config()
                 .lifecycleObserverAlwaysActive(true)
                 .autoClear(false)
                 .enableLogger(BuildConfig.DEBUG || AppConfig.recordLog)
@@ -91,9 +91,9 @@ class App : Application() {
             URL.setURLStreamHandlerFactory(ObsoleteUrlFactory(okHttpClient))
             launch { installGmsTlsProvider(appCtx) }
             initRhino()
-            //初始化封面
+            // 初始化封面
             BookCover.toString()
-            //清除过期数据
+            // 清除过期数据
             appDb.cacheDao.clearDeadline(System.currentTimeMillis())
             if (getPrefBoolean(PreferKey.autoClearExpired, true)) {
                 val clearTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1)
@@ -102,7 +102,7 @@ class App : Application() {
             RuleBigDataHelp.clearInvalid()
             BookHelp.clearInvalidCache()
             Backup.clearCache()
-            //初始化简繁转换引擎
+            // 初始化简繁转换引擎
             when (AppConfig.chineseConverterType) {
                 1 -> {
                     ChineseUtils.fixT2sDict()
@@ -111,9 +111,9 @@ class App : Application() {
 
                 2 -> ChineseUtils.preLoad(true, TransType.SIMPLE_TO_TRADITIONAL)
             }
-            //调整排序序号
+            // 调整排序序号
             SourceHelp.adjustSortNumber()
-            //同步阅读记录
+            // 同步阅读记录
             if (AppConfig.syncBookProgress) {
                 AppWebDav.downloadAllBookProgress()
             }
@@ -150,10 +150,11 @@ class App : Application() {
             if ((appInfo.flags and ApplicationInfo.FLAG_SYSTEM) == 0) {
                 return
             }
-            val gms = context.createPackageContext(
-                gmsPackageName,
-                CONTEXT_INCLUDE_CODE or CONTEXT_IGNORE_SECURITY
-            )
+            val gms =
+                context.createPackageContext(
+                    gmsPackageName,
+                    CONTEXT_INCLUDE_CODE or CONTEXT_IGNORE_SECURITY,
+                )
             gms.classLoader
                 .loadClass("com.google.android.gms.common.security.ProviderInstallerImpl")
                 .getMethod("insertProvider", Context::class.java)
@@ -168,46 +169,49 @@ class App : Application() {
      */
     private fun createNotificationChannels() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
-        val downloadChannel = NotificationChannel(
-            channelIdDownload,
-            getString(R.string.action_download),
-            NotificationManager.IMPORTANCE_DEFAULT
-        ).apply {
-            enableLights(false)
-            enableVibration(false)
-            setSound(null, null)
-            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-        }
+        val downloadChannel =
+            NotificationChannel(
+                channelIdDownload,
+                getString(R.string.action_download),
+                NotificationManager.IMPORTANCE_DEFAULT,
+            ).apply {
+                enableLights(false)
+                enableVibration(false)
+                setSound(null, null)
+                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            }
 
-        val readAloudChannel = NotificationChannel(
-            channelIdReadAloud,
-            getString(R.string.read_aloud),
-            NotificationManager.IMPORTANCE_DEFAULT
-        ).apply {
-            enableLights(false)
-            enableVibration(false)
-            setSound(null, null)
-            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-        }
+        val readAloudChannel =
+            NotificationChannel(
+                channelIdReadAloud,
+                getString(R.string.read_aloud),
+                NotificationManager.IMPORTANCE_DEFAULT,
+            ).apply {
+                enableLights(false)
+                enableVibration(false)
+                setSound(null, null)
+                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            }
 
-        val webChannel = NotificationChannel(
-            channelIdWeb,
-            getString(R.string.web_service),
-            NotificationManager.IMPORTANCE_DEFAULT
-        ).apply {
-            enableLights(false)
-            enableVibration(false)
-            setSound(null, null)
-            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-        }
+        val webChannel =
+            NotificationChannel(
+                channelIdWeb,
+                getString(R.string.web_service),
+                NotificationManager.IMPORTANCE_DEFAULT,
+            ).apply {
+                enableLights(false)
+                enableVibration(false)
+                setSound(null, null)
+                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            }
 
-        //向notification manager 提交channel
+        // 向notification manager 提交channel
         notificationManager.createNotificationChannels(
             listOf(
                 downloadChannel,
                 readAloudChannel,
-                webChannel
-            )
+                webChannel,
+            ),
         )
     }
 
@@ -224,13 +228,19 @@ class App : Application() {
     }
 
     class EventLogger : DefaultLogger() {
-
-        override fun log(level: Level, msg: String) {
+        override fun log(
+            level: Level,
+            msg: String,
+        ) {
             super.log(level, msg)
             LogUtils.d(TAG, msg)
         }
 
-        override fun log(level: Level, msg: String, th: Throwable?) {
+        override fun log(
+            level: Level,
+            msg: String,
+            th: Throwable?,
+        ) {
             super.log(level, msg, th)
             LogUtils.d(TAG, "$msg\n${th?.stackTraceToString()}")
         }
@@ -247,5 +257,4 @@ class App : Application() {
             }
         }
     }
-
 }

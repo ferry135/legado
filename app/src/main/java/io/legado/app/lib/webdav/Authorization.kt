@@ -9,24 +9,20 @@ import java.nio.charset.StandardCharsets
 data class Authorization(
     val username: String,
     val password: String,
-    val charset: Charset = StandardCharsets.ISO_8859_1
+    val charset: Charset = StandardCharsets.ISO_8859_1,
 ) {
-
     var name = "Authorization"
         private set
 
     var data: String = Credentials.basic(username, password, charset)
         private set
 
-    override fun toString(): String {
-        return "$username:$password"
-    }
+    override fun toString(): String = "$username:$password"
 
     constructor(serverID: Long) : this(
         appDb.serverDao.get(serverID)?.getWebDavConfig()
-            ?: throw WebDavException("Unexpected WebDav Authorization")
+            ?: throw WebDavException("Unexpected WebDav Authorization"),
     )
 
     constructor(webDavConfig: WebDavConfig) : this(webDavConfig.username, webDavConfig.password)
-
 }

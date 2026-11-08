@@ -8,7 +8,6 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.AppLog
 import io.legado.app.help.DirectLinkUpload
 import io.legado.app.utils.*
-
 import java.io.File
 
 class HandleFileViewModel(application: Application) : BaseViewModel(application) {
@@ -19,7 +18,7 @@ class HandleFileViewModel(application: Application) : BaseViewModel(application)
         fileName: String,
         file: Any,
         contentType: String,
-        success: (url: String) -> Unit
+        success: (url: String) -> Unit,
     ) {
         execute {
             DirectLinkUpload.upLoad(fileName, file, contentType)
@@ -59,5 +58,4 @@ class HandleFileViewModel(application: Application) : BaseViewModel(application)
             success.invoke(it)
         }
     }
-
 }

@@ -8,12 +8,13 @@ import androidx.viewpager2.widget.ViewPager2
 import kotlin.math.abs
 
 @Suppress("unused")
-class ViewPager2Container @JvmOverloads constructor(
+class ViewPager2Container
+@JvmOverloads
+constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+    defStyleAttr: Int = 0,
 ) : RelativeLayout(context, attrs, defStyleAttr) {
-
     private var mViewPager2: ViewPager2? = null
     private var disallowParentInterceptDownEvent = true
     private var startX = 0
@@ -34,9 +35,13 @@ class ViewPager2Container @JvmOverloads constructor(
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        val doNotNeedIntercept = (!mViewPager2!!.isUserInputEnabled
-                || (mViewPager2?.adapter != null
-                && mViewPager2?.adapter!!.itemCount <= 1))
+        val doNotNeedIntercept = (
+            !mViewPager2!!.isUserInputEnabled ||
+                (
+                    mViewPager2?.adapter != null &&
+                        mViewPager2?.adapter!!.itemCount <= 1
+                    )
+            )
         if (doNotNeedIntercept) {
             return super.onInterceptTouchEvent(ev)
         }
@@ -57,14 +62,19 @@ class ViewPager2Container @JvmOverloads constructor(
                     onHorizontalActionMove(endX, disX, disY)
                 }
             }
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> parent.requestDisallowInterceptTouchEvent(
-                false
-            )
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL ->
+                parent.requestDisallowInterceptTouchEvent(
+                    false,
+                )
         }
         return super.onInterceptTouchEvent(ev)
     }
 
-    private fun onHorizontalActionMove(endX: Int, disX: Int, disY: Int) {
+    private fun onHorizontalActionMove(
+        endX: Int,
+        disX: Int,
+        disY: Int,
+    ) {
         if (mViewPager2?.adapter == null) {
             return
         }
@@ -75,8 +85,8 @@ class ViewPager2Container @JvmOverloads constructor(
                 parent.requestDisallowInterceptTouchEvent(false)
             } else {
                 parent.requestDisallowInterceptTouchEvent(
-                    currentItem != itemCount - 1
-                            || endX - startX >= 0
+                    currentItem != itemCount - 1 ||
+                        endX - startX >= 0,
                 )
             }
         } else if (disY > disX) {
@@ -84,7 +94,11 @@ class ViewPager2Container @JvmOverloads constructor(
         }
     }
 
-    private fun onVerticalActionMove(endY: Int, disX: Int, disY: Int) {
+    private fun onVerticalActionMove(
+        endY: Int,
+        disX: Int,
+        disY: Int,
+    ) {
         if (mViewPager2?.adapter == null) {
             return
         }
@@ -95,8 +109,8 @@ class ViewPager2Container @JvmOverloads constructor(
                 parent.requestDisallowInterceptTouchEvent(false)
             } else {
                 parent.requestDisallowInterceptTouchEvent(
-                    currentItem != itemCount - 1
-                            || endY - startY >= 0
+                    currentItem != itemCount - 1 ||
+                        endY - startY >= 0,
                 )
             }
         } else if (disX > disY) {

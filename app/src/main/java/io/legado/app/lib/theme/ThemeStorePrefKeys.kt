@@ -4,7 +4,6 @@ package io.legado.app.lib.theme
  * @author Aidan Follestad (afollestad), Karim Abou Zeid (kabouzeid)
  */
 object ThemeStorePrefKeys {
-
     const val CONFIG_PREFS_KEY_DEFAULT = "app_themes"
     const val IS_CONFIGURED_KEY = "is_configured"
     const val IS_CONFIGURED_VERSION_KEY = "is_configured_version"

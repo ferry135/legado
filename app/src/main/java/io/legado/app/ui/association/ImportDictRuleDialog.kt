@@ -21,7 +21,8 @@ import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.views.onClick
 
-class ImportDictRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_view),
+class ImportDictRuleDialog() :
+    BaseDialogFragment(R.layout.dialog_recycler_view),
     CodeDialog.Callback {
 
     constructor(source: String, finishOnDismiss: Boolean = false) : this() {
@@ -115,29 +116,26 @@ class ImportDictRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_view)
             binding.tvFooterLeft.text = getString(
                 R.string.select_cancel_count,
                 viewModel.selectCount,
-                viewModel.allSources.size
+                viewModel.allSources.size,
             )
         } else {
             binding.tvFooterLeft.text = getString(
                 R.string.select_all_count,
                 viewModel.selectCount,
-                viewModel.allSources.size
+                viewModel.allSources.size,
             )
         }
     }
 
-    inner class SourcesAdapter(context: Context) :
-        RecyclerAdapter<DictRule, ItemSourceImportBinding>(context) {
+    inner class SourcesAdapter(context: Context) : RecyclerAdapter<DictRule, ItemSourceImportBinding>(context) {
 
-        override fun getViewBinding(parent: ViewGroup): ItemSourceImportBinding {
-            return ItemSourceImportBinding.inflate(inflater, parent, false)
-        }
+        override fun getViewBinding(parent: ViewGroup): ItemSourceImportBinding = ItemSourceImportBinding.inflate(inflater, parent, false)
 
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemSourceImportBinding,
             item: DictRule,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             binding.apply {
                 cbSourceName.isChecked = viewModel.selectStatus[holder.layoutPosition]
@@ -172,13 +170,12 @@ class ImportDictRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_view)
                         CodeDialog(
                             GSON.toJson(source),
                             disableEdit = false,
-                            requestId = holder.layoutPosition.toString()
-                        )
+                            requestId = holder.layoutPosition.toString(),
+                        ),
                     )
                 }
             }
         }
-
     }
 
     override fun onCodeSave(code: String, requestId: String?) {

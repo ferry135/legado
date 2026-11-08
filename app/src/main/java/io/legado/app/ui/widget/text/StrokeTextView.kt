@@ -10,8 +10,7 @@ import io.legado.app.utils.dpToPx
 import io.legado.app.utils.getCompatColor
 
 @Suppress("unused")
-open class StrokeTextView(context: Context, attrs: AttributeSet?) :
-    AppCompatTextView(context, attrs) {
+open class StrokeTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(context, attrs) {
 
     private var radius = 1.dpToPx()
     private var softStroke = false
@@ -48,7 +47,7 @@ open class StrokeTextView(context: Context, attrs: AttributeSet?) :
                         .setDefaultColor(context.getCompatColor(R.color.secondaryText))
                         .setSelectedColor(context.getCompatColor(R.color.accent))
                         .setDisabledColor(context.getCompatColor(R.color.md_grey_500))
-                        .create()
+                        .create(),
                 )
             }
             isBottomBackground -> {
@@ -72,7 +71,7 @@ open class StrokeTextView(context: Context, attrs: AttributeSet?) :
                         .setDefaultColor(context.getPrimaryTextColor(isLight))
                         .setSelectedColor(context.accentColor)
                         .setDisabledColor(context.getCompatColor(R.color.md_grey_500))
-                        .create()
+                        .create(),
                 )
             }
             else -> {
@@ -89,7 +88,7 @@ open class StrokeTextView(context: Context, attrs: AttributeSet?) :
                         .setDefaultColor(ThemeStore.textColorSecondary(context))
                         .setSelectedColor(ThemeStore.accentColor(context))
                         .setDisabledColor(context.getCompatColor(R.color.md_grey_500))
-                        .create()
+                        .create(),
                 )
             }
         }

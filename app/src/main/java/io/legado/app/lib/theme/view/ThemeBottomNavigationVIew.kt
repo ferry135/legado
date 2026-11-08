@@ -1,8 +1,8 @@
 package io.legado.app.lib.theme.view
 
 import android.content.Context
-import android.content.res.Configuration
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
@@ -20,9 +20,10 @@ import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.text.BadgeView
 import io.legado.app.utils.ColorUtils
 
-class ThemeBottomNavigationVIew(context: Context, attrs: AttributeSet) :
-    BottomNavigationView(context, attrs) {
-
+class ThemeBottomNavigationVIew(
+    context: Context,
+    attrs: AttributeSet,
+) : BottomNavigationView(context, attrs) {
     private var lastUiMode = context.resources.configuration.uiMode
 
     init {
@@ -39,11 +40,11 @@ class ThemeBottomNavigationVIew(context: Context, attrs: AttributeSet) :
     fun upTheme() {
         val bgColor = context.bottomBackground
         setBackgroundColor(bgColor)
-        //与页面保持同层，无投影分层感
+        // 与页面保持同层，无投影分层感
         elevation = 0f
         val textIsDark = ColorUtils.isColorLight(bgColor)
-        //未选中态=次要字角色（on_surface_variant：亮 #60656D/暗 #B4B0AA），
-        //原 getSecondaryTextColor 夜间落 md_dark_primary_text 纯白，越过令牌
+        // 未选中态=次要字角色（on_surface_variant：亮 #60656D/暗 #B4B0AA），
+        // 原 getSecondaryTextColor 夜间落 md_dark_primary_text 纯白，越过令牌
         val textColor = context.getOnSurfaceVariant(textIsDark)
         // 选中态随主色调（M3 语义；上游原为强调色——M3 重构后主色调在全应用几乎无
         // 可见消费者，改主色无从体现）。主色与底栏明暗同侧时选中态会隐形（夜间
@@ -56,22 +57,26 @@ class ThemeBottomNavigationVIew(context: Context, attrs: AttributeSet) :
             } else {
                 primary
             }
-        val colorStateList = Selector.colorBuild()
-            .setDefaultColor(textColor)
-            .setSelectedColor(selectedColor).create()
+        val colorStateList =
+            Selector
+                .colorBuild()
+                .setDefaultColor(textColor)
+                .setSelectedColor(selectedColor)
+                .create()
         itemIconTintList = colorStateList
         itemTextColor = colorStateList
         // 胶囊指示条 12% 选中色
         if (!AppConfig.isEInkMode) {
-            itemActiveIndicatorColor = ColorStateList.valueOf(
-                ColorUtils.withAlpha(selectedColor, 0.12f)
-            )
+            itemActiveIndicatorColor =
+                ColorStateList.valueOf(
+                    ColorUtils.withAlpha(selectedColor, 0.12f),
+                )
         }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        //声明了 uiMode configChanges 的 Activity 不会被重建，深浅模式切换时在这里重新着色
+        // 声明了 uiMode configChanges 的 Activity 不会被重建，深浅模式切换时在这里重新着色
         if (newConfig.uiMode != lastUiMode) {
             lastUiMode = newConfig.uiMode
             upTheme()
@@ -79,13 +84,12 @@ class ThemeBottomNavigationVIew(context: Context, attrs: AttributeSet) :
     }
 
     fun addBadgeView(index: Int): BadgeView {
-        //获取底部菜单view
+        // 获取底部菜单view
         val menuView = getChildAt(0) as ViewGroup
-        //获取第index个itemView
+        // 获取第index个itemView
         val itemView = menuView.getChildAt(index) as ViewGroup
         val badgeBinding = ViewNavigationBadgeBinding.inflate(LayoutInflater.from(context))
         itemView.addView(badgeBinding.root)
         return badgeBinding.viewBadge
     }
-
 }

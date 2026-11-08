@@ -30,5 +30,4 @@ interface KeyboardAssistsDao {
 
     @Delete
     fun delete(vararg keyboardAssist: KeyboardAssist)
-
 }

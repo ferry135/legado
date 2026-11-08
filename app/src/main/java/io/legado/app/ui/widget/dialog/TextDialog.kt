@@ -23,11 +23,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-
 class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
-
     enum class Mode {
-        MD, HTML, TEXT
+        MD,
+        HTML,
+        TEXT,
     }
 
     constructor(
@@ -35,14 +35,15 @@ class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
         content: String?,
         mode: Mode = Mode.TEXT,
         time: Long = 0,
-        autoClose: Boolean = false
+        autoClose: Boolean = false,
     ) : this() {
-        arguments = Bundle().apply {
-            putString("title", title)
-            putString("content", IntentData.put(content))
-            putString("mode", mode.name)
-            putLong("time", time)
-        }
+        arguments =
+            Bundle().apply {
+                putString("title", title)
+                putString("content", IntentData.put(content))
+                putString("mode", mode.name)
+                putLong("time", time)
+            }
         isCancelable = false
         this.autoClose = autoClose
     }
@@ -56,7 +57,10 @@ class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, 0.9f)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         binding.toolBar.inflateMenu(R.menu.dialog_text)
         binding.toolBar.menu.applyTint(requireContext())
         binding.toolBar.setOnMenuItemClickListener {
@@ -69,21 +73,25 @@ class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
             binding.toolBar.title = it.getString("title")
             val content = IntentData.get(it.getString("content")) ?: ""
             when (it.getString("mode")) {
-                Mode.MD.name -> viewLifecycleOwner.lifecycleScope.launch {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        binding.textView.setTextClassifier(TextClassifier.NO_OP)
+                Mode.MD.name ->
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            binding.textView.setTextClassifier(TextClassifier.NO_OP)
+                        }
+                        val markwon: Markwon
+                        val markdown =
+                            withContext(IO) {
+                                markwon =
+                                    Markwon
+                                        .builder(requireContext())
+                                        .usePlugin(GlideImagesPlugin.create(requireContext()))
+                                        .usePlugin(HtmlPlugin.create())
+                                        .usePlugin(TablePlugin.create(requireContext()))
+                                        .build()
+                                markwon.toMarkdown(content)
+                            }
+                        markwon.setParsedMarkdown(binding.textView, markdown)
                     }
-                    val markwon: Markwon
-                    val markdown = withContext(IO) {
-                        markwon = Markwon.builder(requireContext())
-                            .usePlugin(GlideImagesPlugin.create(requireContext()))
-                            .usePlugin(HtmlPlugin.create())
-                            .usePlugin(TablePlugin.create(requireContext()))
-                            .build()
-                        markwon.toMarkdown(content)
-                    }
-                    markwon.setParsedMarkdown(binding.textView, markdown)
-                }
 
                 Mode.HTML.name -> binding.textView.setHtml(content)
                 else -> {
@@ -119,5 +127,4 @@ class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
             }
         }
     }
-
 }

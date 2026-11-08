@@ -33,7 +33,8 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapter_list),
+class ChapterListFragment :
+    VMBaseFragment<TocViewModel>(R.layout.fragment_chapter_list),
     ChapterListAdapter.Callback,
     TocViewModel.ChapterListCallBack {
     override val viewModel by activityViewModels<TocViewModel>()
@@ -42,7 +43,10 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
     private val adapter by lazy { ChapterListAdapter(requireContext(), this) }
     private var durChapterIndex = 0
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) = binding.run {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) = binding.run {
         viewModel.chapterListCallBack = this@ChapterListFragment
         val bbg = bottomBackground
         val btc = requireContext().getPrimaryTextColor(ColorUtils.isColorLight(bbg))
@@ -167,19 +171,17 @@ class ChapterListFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_chapt
     override val isLocalBook: Boolean
         get() = viewModel.bookData.value?.isLocal == true
 
-    override fun durChapterIndex(): Int {
-        return durChapterIndex
-    }
+    override fun durChapterIndex(): Int = durChapterIndex
 
     override fun openChapter(bookChapter: BookChapter) {
         activity?.run {
             setResult(
-                RESULT_OK, Intent()
+                RESULT_OK,
+                Intent()
                     .putExtra("index", bookChapter.index)
-                    .putExtra("chapterChanged", bookChapter.index != durChapterIndex)
+                    .putExtra("chapterChanged", bookChapter.index != durChapterIndex),
             )
             finish()
         }
     }
-
 }

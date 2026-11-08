@@ -11,7 +11,6 @@ import io.legado.app.utils.startActivity
 import splitties.init.appCtx
 
 class SharedReceiverActivity : AppCompatActivity() {
-
     private val receivingType = "text/plain"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,9 +27,9 @@ class SharedReceiverActivity : AppCompatActivity() {
                     dispose(it)
                 }
             }
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                    && intent.action == Intent.ACTION_PROCESS_TEXT
-                    && intent.type == receivingType -> {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                intent.action == Intent.ACTION_PROCESS_TEXT &&
+                intent.type == receivingType -> {
                 intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT)?.let {
                     dispose(it)
                 }
@@ -48,8 +47,9 @@ class SharedReceiverActivity : AppCompatActivity() {
         val urls = text.split("\\s".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val result = StringBuilder()
         for (url in urls) {
-            if (url.matches("http.+".toRegex()))
+            if (url.matches("http.+".toRegex())) {
                 result.append("\n").append(url.trim { it <= ' ' })
+            }
         }
         if (result.length > 1) {
             startActivity<MainActivity>()

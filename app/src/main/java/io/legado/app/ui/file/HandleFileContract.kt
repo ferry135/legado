@@ -13,12 +13,13 @@ import io.legado.app.utils.putJson
 import splitties.init.appCtx
 
 @Suppress("unused")
-class HandleFileContract :
-    ActivityResultContract<(HandleFileContract.HandleFileParam.() -> Unit)?, HandleFileContract.Result>() {
-
+class HandleFileContract : ActivityResultContract<(HandleFileContract.HandleFileParam.() -> Unit)?, HandleFileContract.Result>() {
     private var requestCode: Int = 0
 
-    override fun createIntent(context: Context, input: (HandleFileParam.() -> Unit)?): Intent {
+    override fun createIntent(
+        context: Context,
+        input: (HandleFileParam.() -> Unit)?,
+    ): Intent {
         val intent = Intent(context, HandleFileActivity::class.java)
         val handleFileParam = HandleFileParam()
         input?.let {
@@ -40,15 +41,21 @@ class HandleFileContract :
         return intent
     }
 
-    override fun parseResult(resultCode: Int, intent: Intent?): Result {
-        val uri = if (resultCode != RESULT_OK || intent?.data == null ||
-            RealPathUtil.getTreePath(intent.data!!)
-                ?.startsWith(appCtx.externalFiles.parent!!) == true
-        ) {
-            null
-        } else {
-            intent.data
-        }
+    override fun parseResult(
+        resultCode: Int,
+        intent: Intent?,
+    ): Result {
+        val uri =
+            if (resultCode != RESULT_OK ||
+                intent?.data == null ||
+                RealPathUtil
+                    .getTreePath(intent.data!!)
+                    ?.startsWith(appCtx.externalFiles.parent!!) == true
+            ) {
+                null
+            } else {
+                intent.data
+            }
         return Result(uri, requestCode, intent?.getStringExtra("value"))
     }
 
@@ -67,19 +74,18 @@ class HandleFileContract :
         var otherActions: ArrayList<SelectItem<Int>>? = null,
         var fileData: FileData? = null,
         var requestCode: Int = 0,
-        var value: String? = null
+        var value: String? = null,
     )
 
     data class Result(
         val uri: Uri?,
         val requestCode: Int,
-        val value: String?
+        val value: String?,
     )
 
     data class FileData(
         val name: String,
         val data: Any,
-        val type: String
+        val type: String,
     )
-
 }

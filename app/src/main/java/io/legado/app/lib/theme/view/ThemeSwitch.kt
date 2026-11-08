@@ -9,13 +9,13 @@ import io.legado.app.utils.applyTint
 /**
  * @author Aidan Follestad (afollestad)
  */
-class ThemeSwitch(context: Context, attrs: AttributeSet) : SwitchCompat(context, attrs) {
-
+class ThemeSwitch(
+    context: Context,
+    attrs: AttributeSet,
+) : SwitchCompat(context, attrs) {
     init {
         if (!isInEditMode) {
             applyTint(context.accentColor)
         }
-
     }
-
 }

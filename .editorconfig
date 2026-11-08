@@ -1,0 +1,16 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{kt,kts}]
+# 行宽检查交给 detekt MaxLineLength(带 baseline),ktlint 不能自动折行,开着会让 spotlessCheck 永远红
+ktlint_standard_max-line-length = disabled
+# 通配符 import 是项目既有风格,该规则不可自动修复(需展开通配符),保持现状
+ktlint_standard_no-wildcard-imports = disabled
+# 命名/包名风格与 ktlint 默认规范不符,属项目既有风格,不改存量
+ktlint_standard_property-naming = disabled
+ktlint_standard_package-name = disabled

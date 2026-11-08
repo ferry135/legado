@@ -17,11 +17,9 @@ import kotlin.time.Duration.Companion.minutes
  * 源验证
  */
 object SourceVerificationHelp {
-
     private val waitTime = 1.minutes.inWholeNanoseconds
 
-    private fun getVerificationResultKey(source: BaseSource) =
-        getVerificationResultKey(source.getKey())
+    private fun getVerificationResultKey(source: BaseSource) = getVerificationResultKey(source.getKey())
 
     private fun getVerificationResultKey(sourceKey: String) = "${sourceKey}_verificationResult"
 
@@ -35,7 +33,7 @@ object SourceVerificationHelp {
         url: String,
         title: String,
         useBrowser: Boolean,
-        refetchAfterSuccess: Boolean = true
+        refetchAfterSuccess: Boolean = true,
     ): String {
         source
             ?: throw NoStackTraceException("getVerificationResult parameter source cannot be null")
@@ -81,7 +79,7 @@ object SourceVerificationHelp {
         url: String,
         title: String,
         saveResult: Boolean? = false,
-        refetchAfterSuccess: Boolean? = true
+        refetchAfterSuccess: Boolean? = true,
     ) {
         source ?: throw NoStackTraceException("startBrowser parameter source cannot be null")
         require(url.length < 64 * 1024) { "startBrowser parameter url too long" }
@@ -97,20 +95,20 @@ object SourceVerificationHelp {
         }
     }
 
-
     fun checkResult(sourceKey: String) {
         getResult(sourceKey) ?: setResult(sourceKey, "")
         val thread = IntentData.get<Thread>(getVerificationResultKey(sourceKey))
         LockSupport.unpark(thread)
     }
 
-    fun setResult(sourceKey: String, result: String?) {
+    fun setResult(
+        sourceKey: String,
+        result: String?,
+    ) {
         CacheManager.putMemory(getVerificationResultKey(sourceKey), result ?: "")
     }
 
-    fun getResult(sourceKey: String): String? {
-        return CacheManager.get(getVerificationResultKey(sourceKey))
-    }
+    fun getResult(sourceKey: String): String? = CacheManager.get(getVerificationResultKey(sourceKey))
 
     fun clearResult(sourceKey: String) {
         CacheManager.delete(getVerificationResultKey(sourceKey))

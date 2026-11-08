@@ -22,14 +22,14 @@ import io.noties.markwon.html.HtmlPlugin
 import io.noties.markwon.image.glide.GlideImagesPlugin
 
 class UpdateDialog() : BaseDialogFragment(R.layout.dialog_update) {
-
     constructor(updateInfo: AppUpdate.UpdateInfo) : this() {
-        arguments = Bundle().apply {
-            putString("newVersion", updateInfo.tagName)
-            putString("updateBody", updateInfo.updateLog)
-            putString("url", updateInfo.downloadUrl)
-            putString("name", updateInfo.fileName)
-        }
+        arguments =
+            Bundle().apply {
+                putString("newVersion", updateInfo.tagName)
+                putString("updateBody", updateInfo.updateLog)
+                putString("url", updateInfo.downloadUrl)
+                putString("name", updateInfo.fileName)
+            }
     }
 
     val binding by viewBinding(DialogUpdateBinding::bind)
@@ -39,7 +39,10 @@ class UpdateDialog() : BaseDialogFragment(R.layout.dialog_update) {
         setLayout(0.9f, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         binding.toolBar.title = arguments?.getString("newVersion")
         val updateBody = arguments?.getString("updateBody")
         if (updateBody == null) {
@@ -48,7 +51,8 @@ class UpdateDialog() : BaseDialogFragment(R.layout.dialog_update) {
             return
         }
         binding.textView.post {
-            Markwon.builder(requireContext())
+            Markwon
+                .builder(requireContext())
                 .usePlugin(GlideImagesPlugin.create(requireContext()))
                 .usePlugin(HtmlPlugin.create())
                 .usePlugin(TablePlugin.create(requireContext()))
@@ -68,13 +72,15 @@ class UpdateDialog() : BaseDialogFragment(R.layout.dialog_update) {
         // 实测 5.6:1 / 暗 primary 18% 底 + 主色字），且跟随用户换肤
         val primary = primaryColor
         val isLightBg = ColorUtils.isColorLight(requireContext().backgroundColor)
-        binding.btnDownload.background = Selector.shapeBuild()
-            .setCornerRadius(10.dpToPx())
-            .setDefaultBgColor(ColorUtils.adjustAlpha(primary, if (isLightBg) 0.14f else 0.18f))
-            .setPressedBgColor(ColorUtils.adjustAlpha(primary, if (isLightBg) 0.24f else 0.28f))
-            .create()
+        binding.btnDownload.background =
+            Selector
+                .shapeBuild()
+                .setCornerRadius(10.dpToPx())
+                .setDefaultBgColor(ColorUtils.adjustAlpha(primary, if (isLightBg) 0.14f else 0.18f))
+                .setPressedBgColor(ColorUtils.adjustAlpha(primary, if (isLightBg) 0.24f else 0.28f))
+                .create()
         binding.btnDownload.setTextColor(
-            if (isLightBg) ColorUtils.shiftColor(primary, 0.6f) else primary
+            if (isLightBg) ColorUtils.shiftColor(primary, 0.6f) else primary,
         )
         binding.btnDownload.setOnClickListener { startDownload() }
     }
@@ -87,5 +93,4 @@ class UpdateDialog() : BaseDialogFragment(R.layout.dialog_update) {
             toastOnUi(R.string.download_start)
         }
     }
-
 }

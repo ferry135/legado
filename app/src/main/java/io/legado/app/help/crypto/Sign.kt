@@ -6,8 +6,9 @@ import cn.hutool.crypto.asymmetric.Sign as HutoolSign
 
 @Keep
 @Suppress("unused")
-class Sign(algorithm: String): HutoolSign(algorithm) {
-
+class Sign(
+    algorithm: String,
+) : HutoolSign(algorithm) {
     fun setPrivateKey(key: ByteArray): Sign {
         setPrivateKey(KeyUtil.generatePrivateKey(algorithm, key))
         return this
@@ -21,6 +22,4 @@ class Sign(algorithm: String): HutoolSign(algorithm) {
     }
 
     fun setPublicKey(key: String): Sign = setPublicKey(key.encodeToByteArray())
-
 }
-

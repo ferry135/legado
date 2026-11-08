@@ -30,22 +30,21 @@ import io.legado.app.utils.visible
 import kotlinx.coroutines.CoroutineScope
 import splitties.views.onLongClick
 
-class ExploreAdapter(context: Context, val callBack: CallBack) :
-    RecyclerAdapter<BookSourcePart, ItemFindBookBinding>(context) {
-
+class ExploreAdapter(
+    context: Context,
+    val callBack: CallBack,
+) : RecyclerAdapter<BookSourcePart, ItemFindBookBinding>(context) {
     private val recycler = arrayListOf<View>()
     private var exIndex = -1
     private var scrollTo = -1
 
-    override fun getViewBinding(parent: ViewGroup): ItemFindBookBinding {
-        return ItemFindBookBinding.inflate(inflater, parent, false)
-    }
+    override fun getViewBinding(parent: ViewGroup): ItemFindBookBinding = ItemFindBookBinding.inflate(inflater, parent, false)
 
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemFindBookBinding,
         item: BookSourcePart,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
         binding.run {
             if (holder.layoutPosition == itemCount - 1) {
@@ -63,43 +62,52 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
                 if (scrollTo >= 0) {
                     callBack.scrollTo(scrollTo)
                 }
-                Coroutine.async(callBack.scope) {
-                    item.exploreKinds()
-                }.onSuccess { kindList ->
-                    upKindList(flexbox, item.bookSourceUrl, kindList)
-                }.onFinally {
-                    rotateLoading.gone()
-                    if (scrollTo >= 0) {
-                        callBack.scrollTo(scrollTo)
-                        scrollTo = -1
+                Coroutine
+                    .async(callBack.scope) {
+                        item.exploreKinds()
+                    }.onSuccess { kindList ->
+                        upKindList(flexbox, item.bookSourceUrl, kindList)
+                    }.onFinally {
+                        rotateLoading.gone()
+                        if (scrollTo >= 0) {
+                            callBack.scrollTo(scrollTo)
+                            scrollTo = -1
+                        }
                     }
+            } else {
+                kotlin.runCatching {
+                    ivStatus.setImageResource(R.drawable.ic_arrow_right)
+                    rotateLoading.gone()
+                    recyclerFlexbox(flexbox)
+                    flexbox.gone()
                 }
-            } else kotlin.runCatching {
-                ivStatus.setImageResource(R.drawable.ic_arrow_right)
-                rotateLoading.gone()
-                recyclerFlexbox(flexbox)
-                flexbox.gone()
             }
         }
     }
 
-    private fun upKindList(flexbox: FlexboxLayout, sourceUrl: String, kinds: List<ExploreKind>) {
-        if (kinds.isNotEmpty()) kotlin.runCatching {
-            recyclerFlexbox(flexbox)
-            flexbox.visible()
-            kinds.forEach { kind ->
-                val tv = getFlexboxChild(flexbox)
-                flexbox.addView(tv)
-                tv.text = kind.title
-                kind.style().apply(tv)
-                if (kind.url.isNullOrBlank()) {
-                    tv.setOnClickListener(null)
-                } else {
-                    tv.setOnClickListener {
-                        if (kind.title.startsWith("ERROR:")) {
-                            it.activity?.showDialogFragment(TextDialog("ERROR", kind.url))
-                        } else {
-                            callBack.openExplore(sourceUrl, kind.title, kind.url)
+    private fun upKindList(
+        flexbox: FlexboxLayout,
+        sourceUrl: String,
+        kinds: List<ExploreKind>,
+    ) {
+        if (kinds.isNotEmpty()) {
+            kotlin.runCatching {
+                recyclerFlexbox(flexbox)
+                flexbox.visible()
+                kinds.forEach { kind ->
+                    val tv = getFlexboxChild(flexbox)
+                    flexbox.addView(tv)
+                    tv.text = kind.title
+                    kind.style().apply(tv)
+                    if (kind.url.isNullOrBlank()) {
+                        tv.setOnClickListener(null)
+                    } else {
+                        tv.setOnClickListener {
+                            if (kind.title.startsWith("ERROR:")) {
+                                it.activity?.showDialogFragment(TextDialog("ERROR", kind.url))
+                            } else {
+                                callBack.openExplore(sourceUrl, kind.title, kind.url)
+                            }
                         }
                     }
                 }
@@ -108,12 +116,10 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
     }
 
     @Synchronized
-    private fun getFlexboxChild(flexbox: FlexboxLayout): TextView {
-        return if (recycler.isEmpty()) {
-            ItemFilletTextBinding.inflate(inflater, flexbox, false).root
-        } else {
-            recycler.removeLastElement() as TextView
-        }
+    private fun getFlexboxChild(flexbox: FlexboxLayout): TextView = if (recycler.isEmpty()) {
+        ItemFilletTextBinding.inflate(inflater, flexbox, false).root
+    } else {
+        recycler.removeLastElement() as TextView
     }
 
     @Synchronized
@@ -122,7 +128,10 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
         flexbox.removeAllViews()
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemFindBookBinding) {
+    override fun registerListener(
+        holder: ItemViewHolder,
+        binding: ItemFindBookBinding,
+    ) {
         binding.apply {
             llTitle.setOnClickListener {
                 val position = holder.layoutPosition
@@ -141,18 +150,19 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    fun compressExplore(): Boolean {
-        return if (exIndex < 0) {
-            false
-        } else {
-            val oldExIndex = exIndex
-            exIndex = -1
-            notifyItemChanged(oldExIndex)
-            true
-        }
+    fun compressExplore(): Boolean = if (exIndex < 0) {
+        false
+    } else {
+        val oldExIndex = exIndex
+        exIndex = -1
+        notifyItemChanged(oldExIndex)
+        true
     }
 
-    private fun showMenu(view: View, position: Int): Boolean {
+    private fun showMenu(
+        view: View,
+        position: Int,
+    ): Boolean {
         val source = getItem(position) ?: return true
         val popupMenu = PopupMenu(context, view)
         popupMenu.inflate(R.menu.explore_item)
@@ -162,16 +172,19 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
                 R.id.menu_edit -> callBack.editSource(source.bookSourceUrl)
                 R.id.menu_top -> callBack.toTop(source)
                 R.id.menu_search -> callBack.searchBook(source)
-                R.id.menu_login -> context.startActivity<SourceLoginActivity> {
-                    putExtra("type", "bookSource")
-                    putExtra("key", source.bookSourceUrl)
-                }
+                R.id.menu_login ->
+                    context.startActivity<SourceLoginActivity> {
+                        putExtra("type", "bookSource")
+                        putExtra("key", source.bookSourceUrl)
+                    }
 
-                R.id.menu_refresh -> Coroutine.async(callBack.scope) {
-                    source.clearExploreKindsCache()
-                }.onSuccess {
-                    notifyItemChanged(position)
-                }
+                R.id.menu_refresh ->
+                    Coroutine
+                        .async(callBack.scope) {
+                            source.clearExploreKindsCache()
+                        }.onSuccess {
+                            notifyItemChanged(position)
+                        }
 
                 R.id.menu_del -> callBack.deleteSource(source)
             }
@@ -183,11 +196,21 @@ class ExploreAdapter(context: Context, val callBack: CallBack) :
 
     interface CallBack {
         val scope: CoroutineScope
+
         fun scrollTo(pos: Int)
-        fun openExplore(sourceUrl: String, title: String, exploreUrl: String?)
+
+        fun openExplore(
+            sourceUrl: String,
+            title: String,
+            exploreUrl: String?,
+        )
+
         fun editSource(sourceUrl: String)
+
         fun toTop(source: BookSourcePart)
+
         fun deleteSource(source: BookSourcePart)
+
         fun searchBook(bookSource: BookSourcePart)
     }
 }

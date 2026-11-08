@@ -19,18 +19,15 @@ class BooksAdapterList(
     context: Context,
     private val fragment: Fragment,
     private val callBack: CallBack,
-    private val lifecycle: Lifecycle
+    private val lifecycle: Lifecycle,
 ) : BaseBooksAdapter<ItemBookshelfListBinding>(context) {
-
-    override fun getViewBinding(parent: ViewGroup): ItemBookshelfListBinding {
-        return ItemBookshelfListBinding.inflate(inflater, parent, false)
-    }
+    override fun getViewBinding(parent: ViewGroup): ItemBookshelfListBinding = ItemBookshelfListBinding.inflate(inflater, parent, false)
 
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemBookshelfListBinding,
         item: Book,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) = binding.run {
         if (payloads.isEmpty()) {
             tvName.text = item.name
@@ -49,15 +46,16 @@ class BooksAdapterList(
                         "author" -> tvAuthor.text = item.author
                         "dur" -> tvRead.text = item.durChapterTitle
                         "last" -> upReadProgress(binding, item)
-                        "cover" -> ivCover.load(
-                            item.getDisplayCover(),
-                            item.name,
-                            item.author,
-                            false,
-                            item.origin,
-                            fragment,
-                            lifecycle
-                        )
+                        "cover" ->
+                            ivCover.load(
+                                item.getDisplayCover(),
+                                item.name,
+                                item.author,
+                                false,
+                                item.origin,
+                                fragment,
+                                lifecycle,
+                            )
 
                         "refresh" -> upRefresh(binding, item)
                         "lastUpdateTime" -> upLastUpdateTime(binding, item)
@@ -67,25 +65,33 @@ class BooksAdapterList(
         }
     }
 
-    private fun upReadProgress(binding: ItemBookshelfListBinding, item: Book) {
-        val progressText = buildString {
-            val percent = if (item.totalChapterNum > 0) {
-                ((item.durChapterIndex + 1) * 100 / item.totalChapterNum).coerceIn(0, 100)
-            } else {
-                0
+    private fun upReadProgress(
+        binding: ItemBookshelfListBinding,
+        item: Book,
+    ) {
+        val progressText =
+            buildString {
+                val percent =
+                    if (item.totalChapterNum > 0) {
+                        ((item.durChapterIndex + 1) * 100 / item.totalChapterNum).coerceIn(0, 100)
+                    } else {
+                        0
+                    }
+                if (percent > 0) {
+                    append(context.getString(R.string.read_percent, percent))
+                    append(" · ")
+                }
+                append(item.durChapterTime.toTimeAgo())
             }
-            if (percent > 0) {
-                append(context.getString(R.string.read_percent, percent))
-                append(" · ")
-            }
-            append(item.durChapterTime.toTimeAgo())
-        }
         if (binding.tvLast.text != progressText) {
             binding.tvLast.text = progressText
         }
     }
 
-    private fun upRefresh(binding: ItemBookshelfListBinding, item: Book) {
+    private fun upRefresh(
+        binding: ItemBookshelfListBinding,
+        item: Book,
+    ) {
         if (!item.isLocal && callBack.isUpdate(item.bookUrl)) {
             binding.bvUnread.invisible()
             binding.rlLoading.visible()
@@ -100,7 +106,10 @@ class BooksAdapterList(
         }
     }
 
-    private fun upLastUpdateTime(binding: ItemBookshelfListBinding, item: Book) {
+    private fun upLastUpdateTime(
+        binding: ItemBookshelfListBinding,
+        item: Book,
+    ) {
         if (AppConfig.showLastUpdateTime && !item.isLocal) {
             val time = item.latestChapterTime.toTimeAgo()
             if (binding.tvLastUpdateTime.text != time) {
@@ -111,7 +120,10 @@ class BooksAdapterList(
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemBookshelfListBinding) {
+    override fun registerListener(
+        holder: ItemViewHolder,
+        binding: ItemBookshelfListBinding,
+    ) {
         holder.itemView.apply {
             setOnClickListener {
                 getItem(holder.bindingAdapterPosition)?.let {

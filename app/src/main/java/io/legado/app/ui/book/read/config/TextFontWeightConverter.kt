@@ -11,10 +11,10 @@ import io.legado.app.ui.widget.text.StrokeTextView
 import io.legado.app.utils.checkByIndex
 import io.legado.app.utils.getIndexById
 
-
-class TextFontWeightConverter(context: Context, attrs: AttributeSet?) :
-    StrokeTextView(context, attrs) {
-
+class TextFontWeightConverter(
+    context: Context,
+    attrs: AttributeSet?,
+) : StrokeTextView(context, attrs) {
     // 13-read-style#06：当前段加粗表达状态，未选段 secondary 令牌；span 管线复用 BoldMutedSegments，仅保留区间映射
     private val segments = BoldMutedSegments(this, context.getString(R.string.font_weight_text))
     private var onChanged: (() -> Unit)? = null
@@ -31,16 +31,18 @@ class TextFontWeightConverter(context: Context, attrs: AttributeSet?) :
     // ReadStyleDialog.upView() 外部调用，保持 public
     @Suppress("MemberVisibilityCanBePrivate")
     fun upUi(type: Int) {
-        val boldRange = when (type) {
-            0 -> 0 to 1
-            1 -> 2 to 3
-            else -> 4 to 5
-        }
-        val mutedRanges = when (type) {
-            0 -> listOf(2 to 3, 4 to 5)
-            1 -> listOf(0 to 1, 4 to 5)
-            else -> listOf(0 to 1, 2 to 3)
-        }
+        val boldRange =
+            when (type) {
+                0 -> 0 to 1
+                1 -> 2 to 3
+                else -> 4 to 5
+            }
+        val mutedRanges =
+            when (type) {
+                0 -> listOf(2 to 3, 4 to 5)
+                1 -> listOf(0 to 1, 4 to 5)
+                else -> listOf(0 to 1, 2 to 3)
+            }
         segments.apply(boldRange, mutedRanges)
     }
 
@@ -58,9 +60,10 @@ class TextFontWeightConverter(context: Context, attrs: AttributeSet?) :
         binding.rgFontWeight.checkByIndex(ReadBookConfig.textBold.coerceIn(0, 2))
         // Context.alert 有 title/titleResource/init 三个重载，裸 lambda 会重载二义；
         // 显式命名空 title/message 锁定 CharSequence 重载（标题在卡片 customView 内，不加 alert 标题）
-        val dialog = context.alert(title = null, message = null) {
-            customView { binding.root }
-        }
+        val dialog =
+            context.alert(title = null, message = null) {
+                customView { binding.root }
+            }
         binding.rgFontWeight.setOnCheckedChangeListener { group, checkedId ->
             val index = group.getIndexById(checkedId)
             ReadBookConfig.textBold = index

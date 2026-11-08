@@ -49,10 +49,12 @@ fun Window.applyBottomSheetWindow(height: Int) {
 
 fun AlertDialog.applyTint(): AlertDialog {
     window?.setBackgroundDrawable(context.alertCardBackground)
-    val colorStateList = Selector.colorBuild()
-        .setDefaultColor(ThemeStore.accentColor(context))
-        .setPressedColor(ColorUtils.darkenColor(ThemeStore.accentColor(context)))
-        .create()
+    val colorStateList =
+        Selector
+            .colorBuild()
+            .setDefaultColor(ThemeStore.accentColor(context))
+            .setPressedColor(ColorUtils.darkenColor(ThemeStore.accentColor(context)))
+            .create()
     if (getButton(AlertDialog.BUTTON_NEGATIVE) != null) {
         getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(colorStateList)
     }
@@ -74,46 +76,70 @@ fun AlertDialog.requestInputMethod() {
     window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 }
 
-fun DialogFragment.setLayout(widthMix: Float, heightMix: Float) {
+fun DialogFragment.setLayout(
+    widthMix: Float,
+    heightMix: Float,
+) {
     dialog?.setLayout(widthMix, heightMix)
 }
 
-fun Dialog.setLayout(widthMix: Float, heightMix: Float) {
+fun Dialog.setLayout(
+    widthMix: Float,
+    heightMix: Float,
+) {
     val dm = context.windowManager.windowSize
     window?.setLayout(
         (dm.widthPixels * widthMix).toInt(),
-        (dm.heightPixels * heightMix).toInt()
+        (dm.heightPixels * heightMix).toInt(),
     )
 }
 
-fun DialogFragment.setLayout(width: Int, heightMix: Float) {
+fun DialogFragment.setLayout(
+    width: Int,
+    heightMix: Float,
+) {
     dialog?.setLayout(width, heightMix)
 }
 
-fun Dialog.setLayout(width: Int, heightMix: Float) {
+fun Dialog.setLayout(
+    width: Int,
+    heightMix: Float,
+) {
     val dm = context.windowManager.windowSize
     window?.setLayout(
         width,
-        (dm.heightPixels * heightMix).toInt()
+        (dm.heightPixels * heightMix).toInt(),
     )
 }
 
-fun DialogFragment.setLayout(widthMix: Float, height: Int) {
+fun DialogFragment.setLayout(
+    widthMix: Float,
+    height: Int,
+) {
     dialog?.setLayout(widthMix, height)
 }
 
-fun Dialog.setLayout(widthMix: Float, height: Int) {
+fun Dialog.setLayout(
+    widthMix: Float,
+    height: Int,
+) {
     val dm = context.windowManager.windowSize
     window?.setLayout(
         (dm.widthPixels * widthMix).toInt(),
-        height
+        height,
     )
 }
 
-fun DialogFragment.setLayout(width: Int, height: Int) {
+fun DialogFragment.setLayout(
+    width: Int,
+    height: Int,
+) {
     dialog?.setLayout(width, height)
 }
 
-fun Dialog.setLayout(width: Int, height: Int) {
+fun Dialog.setLayout(
+    width: Int,
+    height: Int,
+) {
     window?.setLayout(width, height)
 }

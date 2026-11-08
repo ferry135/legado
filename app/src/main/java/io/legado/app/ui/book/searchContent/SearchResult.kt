@@ -14,24 +14,26 @@ data class SearchResult(
     val chapterIndex: Int = 0,
     val pageIndex: Int = 0,
     val queryIndexInResult: Int = 0,
-    val queryIndexInChapter: Int = 0
+    val queryIndexInChapter: Int = 0,
 ) {
+    fun getHtmlCompat(
+        textColor: String,
+        accentColor: String,
+    ): Spanned = if (query.isNotBlank()) {
+        val queryIndexInSurrounding = resultText.indexOf(query)
+        val leftString = resultText.substring(0, queryIndexInSurrounding)
+        val rightString =
+            resultText.substring(queryIndexInSurrounding + query.length, resultText.length)
 
-    fun getHtmlCompat(textColor: String, accentColor: String): Spanned {
-        return if (query.isNotBlank()) {
-            val queryIndexInSurrounding = resultText.indexOf(query)
-            val leftString = resultText.substring(0, queryIndexInSurrounding)
-            val rightString =
-                resultText.substring(queryIndexInSurrounding + query.length, resultText.length)
-            
-            // 检查是否为墨水屏模式
-            val html = if (AppConfig.isEInkMode) {
+        // 检查是否为墨水屏模式
+        val html =
+            if (AppConfig.isEInkMode) {
                 // 墨水屏模式：使用下划线
                 buildString {
-                    append("<u>${chapterTitle}</u>")
+                    append("<u>$chapterTitle</u>")
                     append("<br>")
                     append(leftString)
-                    append("<u>${query}</u>")
+                    append("<u>$query</u>")
                     append(rightString)
                 }
             } else {
@@ -44,18 +46,16 @@ data class SearchResult(
                     append(rightString.colorTextForHtml(textColor))
                 }
             }
-            HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY)
-        } else {
-            val html = if (AppConfig.isEInkMode) {
+        HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY)
+    } else {
+        val html =
+            if (AppConfig.isEInkMode) {
                 resultText
             } else {
                 resultText.colorTextForHtml(textColor)
             }
-            HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY)
-        }
+        HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
 
-    private fun String.colorTextForHtml(textColor: String) =
-        "<font color=#${textColor}>$this</font>"
-
+    private fun String.colorTextForHtml(textColor: String) = "<font color=#$textColor>$this</font>"
 }

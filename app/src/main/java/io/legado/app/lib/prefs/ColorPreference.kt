@@ -16,7 +16,8 @@ import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.applyTint
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
-class ColorPreference(context: Context, attrs: AttributeSet) : Preference(context, attrs),
+class ColorPreference(context: Context, attrs: AttributeSet) :
+    Preference(context, attrs),
     ColorPickerDialogListener {
 
     var onSaveColor: ((color: Int) -> Boolean)? = null
@@ -118,8 +119,11 @@ class ColorPreference(context: Context, attrs: AttributeSet) : Preference(contex
 
     override fun onBindView(holder: PreferenceViewHolder) {
         val v = bindView<ColorPanelView>(
-            holder, widgetLayoutResource,
-            R.id.cpv_preference_preview_color_panel, 30, 30
+            holder,
+            widgetLayoutResource,
+            R.id.cpv_preference_preview_color_panel,
+            30,
+            30,
         )
         if (v is ColorPanelView) {
             v.color = mColor
@@ -136,12 +140,10 @@ class ColorPreference(context: Context, attrs: AttributeSet) : Preference(contex
         }
     }
 
-    override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
-        return a.getInteger(index, Color.BLACK)
-    }
+    override fun onGetDefaultValue(a: TypedArray, index: Int): Any = a.getInteger(index, Color.BLACK)
 
     override fun onColorSelected(dialogId: Int, @ColorInt color: Int) {
-        //返回值为true时说明已经处理过,不再处理
+        // 返回值为true时说明已经处理过,不再处理
         if (onSaveColor?.invoke(color) == true) {
             return
         }
@@ -169,9 +171,7 @@ class ColorPreference(context: Context, attrs: AttributeSet) : Preference(contex
      *
      * @return An array of color ints
      */
-    fun getPresets(): IntArray? {
-        return presets
-    }
+    fun getPresets(): IntArray? = presets
 
     /**
      * Set the colors shown in the [ColorPickerDialog].
@@ -198,15 +198,12 @@ class ColorPreference(context: Context, attrs: AttributeSet) : Preference(contex
      *
      * @return The tag
      */
-    fun getFragmentTag(): String {
-        return "color_$key"
-    }
+    fun getFragmentTag(): String = "color_$key"
 
     interface OnShowDialogListener {
 
         fun onShowColorPickerDialog(title: String, currentColor: Int)
     }
-
 
     internal class ColorPickerDialogCompat : ColorPickerDialog() {
 
@@ -216,11 +213,8 @@ class ColorPreference(context: Context, attrs: AttributeSet) : Preference(contex
             alertDialog?.applyTint()
         }
 
-
         companion object {
-            fun newBuilder(): Builder {
-                return Builder()
-            }
+            fun newBuilder(): Builder = Builder()
 
             private const val ARG_ID = "id"
             private const val ARG_TYPE = "dialogType"
@@ -437,8 +431,6 @@ class ColorPreference(context: Context, attrs: AttributeSet) : Preference(contex
                 dialog.arguments = args
                 return dialog
             }
-
         }
-
     }
 }

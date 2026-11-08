@@ -31,19 +31,18 @@ import kotlin.coroutines.coroutineContext
  * 获取目录
  */
 object BookChapterList {
-
     suspend fun analyzeChapterList(
         bookSource: BookSource,
         book: Book,
         baseUrl: String,
         redirectUrl: String,
-        body: String?
+        body: String?,
     ): List<BookChapter> {
         body ?: throw NoStackTraceException(
-            appCtx.getString(R.string.error_get_web_content, baseUrl)
+            appCtx.getString(R.string.error_get_web_content, baseUrl),
         )
         val chapterList = ArrayList<BookChapter>()
-        Debug.log(bookSource.bookSourceUrl, "≡获取成功:${baseUrl}")
+        Debug.log(bookSource.bookSourceUrl, "≡获取成功:$baseUrl")
         Debug.log(bookSource.bookSourceUrl, body, state = 30)
         val tocRule = bookSource.getTocRule()
         val nextUrlList = arrayListOf(redirectUrl)
@@ -58,8 +57,14 @@ object BookChapterList {
         }
         var chapterData =
             analyzeChapterList(
-                book, baseUrl, redirectUrl, body,
-                tocRule, listRule, bookSource, log = true
+                book,
+                baseUrl,
+                redirectUrl,
+                body,
+                tocRule,
+                listRule,
+                bookSource,
+                log = true,
             )
         chapterList.addAll(chapterData.first)
         when (chapterData.second.size) {
@@ -68,18 +73,25 @@ object BookChapterList {
                 var nextUrl = chapterData.second[0]
                 while (nextUrl.isNotEmpty() && !nextUrlList.contains(nextUrl)) {
                     nextUrlList.add(nextUrl)
-                    val analyzeUrl = AnalyzeUrl(
-                        mUrl = nextUrl,
-                        source = bookSource,
-                        ruleData = book,
-                        coroutineContext = coroutineContext
-                    )
-                    val res = analyzeUrl.getStrResponseAwait() //控制并发访问
-                    res.body?.let { nextBody ->
-                        chapterData = analyzeChapterList(
-                            book, nextUrl, nextUrl,
-                            nextBody, tocRule, listRule, bookSource
+                    val analyzeUrl =
+                        AnalyzeUrl(
+                            mUrl = nextUrl,
+                            source = bookSource,
+                            ruleData = book,
+                            coroutineContext = coroutineContext,
                         )
+                    val res = analyzeUrl.getStrResponseAwait() // 控制并发访问
+                    res.body?.let { nextBody ->
+                        chapterData =
+                            analyzeChapterList(
+                                book,
+                                nextUrl,
+                                nextUrl,
+                                nextBody,
+                                tocRule,
+                                listRule,
+                                bookSource,
+                            )
                         nextUrl = chapterData.second.firstOrNull() ?: ""
                         chapterList.addAll(chapterData.first)
                     }
@@ -90,23 +102,30 @@ object BookChapterList {
             else -> {
                 Debug.log(
                     bookSource.bookSourceUrl,
-                    "◇并发解析目录,总页数:${chapterData.second.size}"
+                    "◇并发解析目录,总页数:${chapterData.second.size}",
                 )
                 flow {
                     for (urlStr in chapterData.second) {
                         emit(urlStr)
                     }
                 }.mapAsync(AppConfig.threadCount) { urlStr ->
-                    val analyzeUrl = AnalyzeUrl(
-                        mUrl = urlStr,
-                        source = bookSource,
-                        ruleData = book,
-                        coroutineContext = coroutineContext
-                    )
-                    val res = analyzeUrl.getStrResponseAwait() //控制并发访问
+                    val analyzeUrl =
+                        AnalyzeUrl(
+                            mUrl = urlStr,
+                            source = bookSource,
+                            ruleData = book,
+                            coroutineContext = coroutineContext,
+                        )
+                    val res = analyzeUrl.getStrResponseAwait() // 控制并发访问
                     analyzeChapterList(
-                        book, urlStr, res.url,
-                        res.body!!, tocRule, listRule, bookSource, false
+                        book,
+                        urlStr,
+                        res.url,
+                        res.body!!,
+                        tocRule,
+                        listRule,
+                        bookSource,
+                        false,
                     ).first
                 }.collect {
                     chapterList.addAll(it)
@@ -120,7 +139,7 @@ object BookChapterList {
             chapterList.reverse()
         }
         coroutineContext.ensureActive()
-        //去重
+        // 去重
         val lh = LinkedHashSet(chapterList)
         val list = ArrayList(lh)
         if (!book.getReverseToc()) {
@@ -140,19 +159,22 @@ object BookChapterList {
                     bindings["index"] = index + 1
                     bindings["chapter"] = bookChapter
                     bindings["title"] = bookChapter.title
-                    RhinoScriptEngine.runCatching {
-                        eval(formatJs, bindings)?.toString()?.let {
-                            bookChapter.title = it
+                    RhinoScriptEngine
+                        .runCatching {
+                            eval(formatJs, bindings)?.toString()?.let {
+                                bookChapter.title = it
+                            }
+                        }.onFailure {
+                            Debug.log(book.origin, "格式化标题出错, ${it.localizedMessage}")
                         }
-                    }.onFailure {
-                        Debug.log(book.origin, "格式化标题出错, ${it.localizedMessage}")
-                    }
                 }
             }
         }
         val replaceRules = ContentProcessor.get(book).getTitleReplaceRules()
-        book.durChapterTitle = list.getOrElse(book.durChapterIndex) { list.last() }
-            .getDisplayTitle(replaceRules, book.getUseReplaceRule())
+        book.durChapterTitle =
+            list
+                .getOrElse(book.durChapterIndex) { list.last() }
+                .getDisplayTitle(replaceRules, book.getUseReplaceRule())
         if (book.totalChapterNum < list.size) {
             book.lastCheckCount = list.size - book.totalChapterNum
             book.latestChapterTime = System.currentTimeMillis()
@@ -160,7 +182,8 @@ object BookChapterList {
         book.lastCheckTime = System.currentTimeMillis()
         book.totalChapterNum = list.size
         book.latestChapterTitle =
-            list.getOrElse(book.simulatedTotalChapterNum() - 1) { list.last() }
+            list
+                .getOrElse(book.simulatedTotalChapterNum() - 1) { list.last() }
                 .getDisplayTitle(replaceRules, book.getUseReplaceRule())
         coroutineContext.ensureActive()
         getWordCount(list, book)
@@ -176,18 +199,18 @@ object BookChapterList {
         listRule: String,
         bookSource: BookSource,
         getNextUrl: Boolean = true,
-        log: Boolean = false
+        log: Boolean = false,
     ): Pair<List<BookChapter>, List<String>> {
         val analyzeRule = AnalyzeRule(book, bookSource)
         analyzeRule.setContent(body).setBaseUrl(baseUrl)
         analyzeRule.setRedirectUrl(redirectUrl)
         analyzeRule.setCoroutineContext(coroutineContext)
-        //获取目录列表
+        // 获取目录列表
         val chapterList = arrayListOf<BookChapter>()
         Debug.log(bookSource.bookSourceUrl, "┌获取目录列表", log)
         val elements = analyzeRule.getElements(listRule)
         Debug.log(bookSource.bookSourceUrl, "└列表大小:${elements.size}", log)
-        //获取下一页链接
+        // 获取下一页链接
         val nextUrlList = arrayListOf<String>()
         val nextTocRule = tocRule.nextTocUrl
         if (getNextUrl && !nextTocRule.isNullOrEmpty()) {
@@ -202,7 +225,7 @@ object BookChapterList {
             Debug.log(
                 bookSource.bookSourceUrl,
                 "└" + TextUtils.join("，\n", nextUrlList),
-                log
+                log,
             )
         }
         coroutineContext.ensureActive()
@@ -232,13 +255,13 @@ object BookChapterList {
                         bookChapter.url = bookChapter.title + index
                         Debug.log(
                             bookSource.bookSourceUrl,
-                            "⇒一级目录${index}未获取到url,使用标题替代"
+                            "⇒一级目录${index}未获取到url,使用标题替代",
                         )
                     } else {
                         bookChapter.url = baseUrl
                         Debug.log(
                             bookSource.bookSourceUrl,
-                            "⇒目录${index}未获取到url,使用baseUrl替代"
+                            "⇒目录${index}未获取到url,使用baseUrl替代",
                         )
                     }
                 }
@@ -269,7 +292,10 @@ object BookChapterList {
         return Pair(chapterList, nextUrlList)
     }
 
-    private fun getWordCount(list: ArrayList<BookChapter>, book: Book) {
+    private fun getWordCount(
+        list: ArrayList<BookChapter>,
+        book: Book,
+    ) {
         if (!AppConfig.tocCountWords) {
             return
         }
@@ -284,5 +310,4 @@ object BookChapterList {
             }
         }
     }
-
 }

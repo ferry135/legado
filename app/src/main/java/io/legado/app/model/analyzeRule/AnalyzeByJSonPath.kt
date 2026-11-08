@@ -5,19 +5,16 @@ import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.ReadContext
 import io.legado.app.utils.printOnDebug
 
-
 @Suppress("RegExpRedundantEscape")
 @Keep
-class AnalyzeByJSonPath(json: Any) {
-
+class AnalyzeByJSonPath(
+    json: Any,
+) {
     companion object {
-
-        fun parse(json: Any): ReadContext {
-            return when (json) {
-                is ReadContext -> json
-                is String -> JsonPath.parse(json) //JsonPath.parse<String>(json)
-                else -> JsonPath.parse(json) //JsonPath.parse<Any>(json)
-            }
+        fun parse(json: Any): ReadContext = when (json) {
+            is ReadContext -> json
+            is String -> JsonPath.parse(json) // JsonPath.parse<String>(json)
+            else -> JsonPath.parse(json) // JsonPath.parse<Any>(json)
         }
     }
 
@@ -31,23 +28,23 @@ class AnalyzeByJSonPath(json: Any) {
     fun getString(rule: String): String? {
         if (rule.isEmpty()) return null
         var result: String
-        val ruleAnalyzes = RuleAnalyzer(rule, true) //设置平衡组为代码平衡
+        val ruleAnalyzes = RuleAnalyzer(rule, true) // 设置平衡组为代码平衡
         val rules = ruleAnalyzes.splitRule("&&", "||")
 
         if (rules.size == 1) {
+            ruleAnalyzes.reSetPos() // 将pos重置为0，复用解析器
 
-            ruleAnalyzes.reSetPos() //将pos重置为0，复用解析器
+            result = ruleAnalyzes.innerRule("{$.") { getString(it) } // 替换所有{$.rule...}
 
-            result = ruleAnalyzes.innerRule("{$.") { getString(it) } //替换所有{$.rule...}
-
-            if (result.isEmpty()) { //st为空，表明无成功替换的内嵌规则
+            if (result.isEmpty()) { // st为空，表明无成功替换的内嵌规则
                 try {
                     val ob = ctx.read<Any>(rule)
-                    result = if (ob is List<*>) {
-                        ob.joinToString("\n")
-                    } else {
-                        ob.toString()
-                    }
+                    result =
+                        if (ob is List<*>) {
+                            ob.joinToString("\n")
+                        } else {
+                            ob.toString()
+                        }
                 } catch (e: Exception) {
                     e.printOnDebug()
                 }
@@ -71,13 +68,13 @@ class AnalyzeByJSonPath(json: Any) {
     internal fun getStringList(rule: String): List<String> {
         val result = ArrayList<String>()
         if (rule.isEmpty()) return result
-        val ruleAnalyzes = RuleAnalyzer(rule, true) //设置平衡组为代码平衡
+        val ruleAnalyzes = RuleAnalyzer(rule, true) // 设置平衡组为代码平衡
         val rules = ruleAnalyzes.splitRule("&&", "||", "%%")
 
         if (rules.size == 1) {
-            ruleAnalyzes.reSetPos() //将pos重置为0，复用解析器
-            val st = ruleAnalyzes.innerRule("{$.") { getString(it) } //替换所有{$.rule...}
-            if (st.isEmpty()) { //st为空，表明无成功替换的内嵌规则
+            ruleAnalyzes.reSetPos() // 将pos重置为0，复用解析器
+            val st = ruleAnalyzes.innerRule("{$.") { getString(it) } // 替换所有{$.rule...}
+            if (st.isEmpty()) { // st为空，表明无成功替换的内嵌规则
                 try {
                     val obj = ctx.read<Any>(rule)
                     if (obj is List<*>) {
@@ -122,14 +119,12 @@ class AnalyzeByJSonPath(json: Any) {
         }
     }
 
-    internal fun getObject(rule: String): Any {
-        return ctx.read(rule)
-    }
+    internal fun getObject(rule: String): Any = ctx.read(rule)
 
     internal fun getList(rule: String): ArrayList<Any>? {
         val result = ArrayList<Any>()
         if (rule.isEmpty()) return result
-        val ruleAnalyzes = RuleAnalyzer(rule, true) //设置平衡组为代码平衡
+        val ruleAnalyzes = RuleAnalyzer(rule, true) // 设置平衡组为代码平衡
         val rules = ruleAnalyzes.splitRule("&&", "||", "%%")
         if (rules.size == 1) {
             ctx.let {
@@ -168,5 +163,4 @@ class AnalyzeByJSonPath(json: Any) {
         }
         return result
     }
-
 }

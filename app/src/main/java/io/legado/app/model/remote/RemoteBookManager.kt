@@ -4,7 +4,6 @@ import android.net.Uri
 import io.legado.app.data.entities.Book
 
 abstract class RemoteBookManager {
-
     /**
      * 获取书籍列表
      */
@@ -34,5 +33,4 @@ abstract class RemoteBookManager {
      */
     @Throws(Exception::class)
     abstract suspend fun delete(remoteBookUrl: String)
-
 }

@@ -14,47 +14,60 @@ import io.legado.app.utils.externalCache
 import okhttp3.MediaType.Companion.toMediaType
 import splitties.init.appCtx
 
-class OnLineImportViewModel(app: Application) : BaseAssociationViewModel(app) {
-
-    fun getText(url: String, success: (text: String) -> Unit) {
+class OnLineImportViewModel(
+    app: Application,
+) : BaseAssociationViewModel(app) {
+    fun getText(
+        url: String,
+        success: (text: String) -> Unit,
+    ) {
         execute {
-            okHttpClient.newCallResponseBody {
-                if (url.endsWith("#requestWithoutUA")) {
-                    url(url.substringBeforeLast("#requestWithoutUA"))
-                    header(AppConst.UA_NAME, "null")
-                } else {
-                    url(url)
-                }
-            }.decompressed().text("utf-8")
+            okHttpClient
+                .newCallResponseBody {
+                    if (url.endsWith("#requestWithoutUA")) {
+                        url(url.substringBeforeLast("#requestWithoutUA"))
+                        header(AppConst.UA_NAME, "null")
+                    } else {
+                        url(url)
+                    }
+                }.decompressed()
+                .text("utf-8")
         }.onSuccess {
             success.invoke(it)
         }.onError {
             errorLive.postValue(
-                it.localizedMessage ?: context.getString(R.string.unknown_error)
+                it.localizedMessage ?: context.getString(R.string.unknown_error),
             )
         }
     }
 
-    fun getBytes(url: String, success: (bytes: ByteArray) -> Unit) {
+    fun getBytes(
+        url: String,
+        success: (bytes: ByteArray) -> Unit,
+    ) {
         execute {
-            okHttpClient.newCallResponseBody {
-                if (url.endsWith("#requestWithoutUA")) {
-                    url(url.substringBeforeLast("#requestWithoutUA"))
-                    header(AppConst.UA_NAME, "null")
-                } else {
-                    url(url)
-                }
-            }.bytes()
+            okHttpClient
+                .newCallResponseBody {
+                    if (url.endsWith("#requestWithoutUA")) {
+                        url(url.substringBeforeLast("#requestWithoutUA"))
+                        header(AppConst.UA_NAME, "null")
+                    } else {
+                        url(url)
+                    }
+                }.bytes()
         }.onSuccess {
             success.invoke(it)
         }.onError {
             errorLive.postValue(
-                it.localizedMessage ?: context.getString(R.string.unknown_error)
+                it.localizedMessage ?: context.getString(R.string.unknown_error),
             )
         }
     }
 
-    fun importReadConfig(bytes: ByteArray, finally: (title: String, msg: String) -> Unit) {
+    fun importReadConfig(
+        bytes: ByteArray,
+        finally: (title: String, msg: String) -> Unit,
+    ) {
         execute {
             val config = ReadBookConfig.import(bytes)
             ReadBookConfig.configList.forEachIndexed { index, c ->
@@ -70,33 +83,39 @@ class OnLineImportViewModel(app: Application) : BaseAssociationViewModel(app) {
         }.onError {
             finally.invoke(
                 context.getString(R.string.error),
-                it.localizedMessage ?: context.getString(R.string.unknown_error)
+                it.localizedMessage ?: context.getString(R.string.unknown_error),
             )
         }
     }
 
-    fun determineType(url: String, finally: (title: String, msg: String) -> Unit) {
+    fun determineType(
+        url: String,
+        finally: (title: String, msg: String) -> Unit,
+    ) {
         execute {
-            val rs = okHttpClient.newCallResponseBody {
-                if (url.endsWith("#requestWithoutUA")) {
-                    url(url.substringBeforeLast("#requestWithoutUA"))
-                    header(AppConst.UA_NAME, "null")
-                } else {
-                    url(url)
+            val rs =
+                okHttpClient.newCallResponseBody {
+                    if (url.endsWith("#requestWithoutUA")) {
+                        url(url.substringBeforeLast("#requestWithoutUA"))
+                        header(AppConst.UA_NAME, "null")
+                    } else {
+                        url(url)
+                    }
                 }
-            }
             when (rs.contentType()) {
                 "application/zip".toMediaType(),
-                "application/octet-stream".toMediaType() -> {
+                "application/octet-stream".toMediaType(),
+                -> {
                     importReadConfig(rs.bytes(), finally)
                 }
                 else -> {
                     val inputStream = rs.byteStream()
-                    val file = FileUtils.createFileIfNotExist(
-                        appCtx.externalCache,
-                        "download",
-                        "scheme_import_cache.json"
-                    )
+                    val file =
+                        FileUtils.createFileIfNotExist(
+                            appCtx.externalCache,
+                            "download",
+                            "scheme_import_cache.json",
+                        )
                     file.outputStream().use { out ->
                         inputStream.use {
                             it.copyTo(out)
@@ -107,5 +126,4 @@ class OnLineImportViewModel(app: Application) : BaseAssociationViewModel(app) {
             }
         }
     }
-
 }

@@ -11,11 +11,11 @@ import org.mozilla.javascript.DefiningClassLoader
 import java.net.URLClassLoader
 
 class AndroidJsTest {
-
     @Test
     fun testPackages() {
         @Language("js")
-        val js = """
+        val js =
+            """
             var accessKeyId = '1111';
             var accessKeySecret = '2222';
             var timestamp = '3333';
@@ -39,13 +39,14 @@ class AndroidJsTest {
             var signStr = sign('GET&' + percentEncode('/') + '&' + percentEncode(query), accessKeySecret);
             var queryStringWithSign = "Signature=" + signStr + "&" + query;
             queryStringWithSign
-        """.trimIndent()
+            """.trimIndent()
         RhinoScriptEngine.eval(js)
         @Language("js")
-        val js1 = """
+        val js1 =
+            """
             var returnData = new Packages.io.legado.app.api.ReturnData()
             returnData.getErrorMsg()
-        """.trimIndent()
+            """.trimIndent()
         val result1 = RhinoScriptEngine.eval(js1)
         Assert.assertEquals(result1, "未知错误,请联系开发者!")
     }
@@ -57,12 +58,13 @@ class AndroidJsTest {
         JarClassLoader.getSystemClassLoader()
         DexClassLoader.getSystemClassLoader()
         @Language("js")
-        val js = """
+        val js =
+            """
             var ji = new JavaImporter(Packages.org.mozilla.javascript.DefiningClassLoader)
             with(ji) {
               let x = DefiningClassLoader.getSystemClassLoader()
             }
-        """.trimIndent()
+            """.trimIndent()
         RhinoScriptEngine.eval(js)
     }
 
@@ -80,5 +82,4 @@ class AndroidJsTest {
         val result1 = RhinoScriptEngine.eval(jsMap1, bindings)
         Assert.assertEquals("3242532321", result1)
     }
-
 }

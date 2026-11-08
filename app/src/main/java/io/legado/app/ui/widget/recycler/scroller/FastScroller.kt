@@ -33,7 +33,6 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-
 @Suppress("SameParameterValue")
 class FastScroller : LinearLayout {
     @ColorInt
@@ -95,7 +94,7 @@ class FastScroller : LinearLayout {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int = 0) : super(
         context,
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         layout(context, attrs)
         layoutParams = generateLayoutParams(attrs)
@@ -115,25 +114,26 @@ class FastScroller : LinearLayout {
         when (viewGroup) {
             is ConstraintLayout -> {
                 val constraintSet = ConstraintSet()
+
                 @IdRes val layoutId = id
                 constraintSet.clone(viewGroup)
                 constraintSet.connect(
                     layoutId,
                     ConstraintSet.TOP,
                     recyclerViewId,
-                    ConstraintSet.TOP
+                    ConstraintSet.TOP,
                 )
                 constraintSet.connect(
                     layoutId,
                     ConstraintSet.BOTTOM,
                     recyclerViewId,
-                    ConstraintSet.BOTTOM
+                    ConstraintSet.BOTTOM,
                 )
                 constraintSet.connect(
                     layoutId,
                     ConstraintSet.END,
                     recyclerViewId,
-                    ConstraintSet.END
+                    ConstraintSet.END,
                 )
                 constraintSet.applyTo(viewGroup)
                 val layoutParams = layoutParams as ConstraintLayout.LayoutParams
@@ -384,7 +384,7 @@ class FastScroller : LinearLayout {
         val bubbleY = getValueInRange(
             0,
             mViewHeight - mBubbleHeight - mHandleHeight / 2,
-            (y - mBubbleHeight).toInt()
+            (y - mBubbleHeight).toInt(),
         )
         val handleY =
             getValueInRange(0, mViewHeight - mHandleHeight, (y - mHandleHeight / 2).toInt())
@@ -412,9 +412,7 @@ class FastScroller : LinearLayout {
         return false
     }
 
-    private fun isViewVisible(view: View?): Boolean {
-        return view != null && view.visibility == View.VISIBLE
-    }
+    private fun isViewVisible(view: View?): Boolean = view != null && view.visibility == View.VISIBLE
 
     private fun cancelAnimation(animator: ViewPropertyAnimator?) {
         animator?.cancel()
@@ -504,8 +502,11 @@ class FastScroller : LinearLayout {
         mTrackView = findViewById(R.id.fastscroll_track)
         mScrollbar = findViewById(R.id.fastscroll_scrollbar)
         @ColorInt var bubbleColor = ColorUtils.adjustAlpha(context.accentColor, 0.8f)
+
         @ColorInt var handleColor = context.accentColor
+
         @ColorInt var trackColor = context.getCompatColor(R.color.transparent30)
+
         @ColorInt var textColor =
             if (ColorUtils.isColorLight(bubbleColor)) Color.BLACK else Color.WHITE
         var fadeScrollbar = true
@@ -545,5 +546,4 @@ class FastScroller : LinearLayout {
         private const val sScrollbarHideDelay = 1000
         private const val sTrackSnapRange = 5
     }
-
 }

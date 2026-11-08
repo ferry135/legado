@@ -20,12 +20,9 @@ data class DictRule(
     @ColumnInfo(defaultValue = "1")
     var enabled: Boolean = true,
     @ColumnInfo(defaultValue = "0")
-    var sortNumber: Int = 0
+    var sortNumber: Int = 0,
 ) {
-
-    override fun hashCode(): Int {
-        return name.hashCode()
-    }
+    override fun hashCode(): Int = name.hashCode()
 
     override fun equals(other: Any?): Boolean {
         if (other is DictRule) {
@@ -46,5 +43,4 @@ data class DictRule(
         val analyzeRule = AnalyzeRule().setCoroutineContext(coroutineContext)
         return analyzeRule.getString(showRule, mContent = body)
     }
-
 }

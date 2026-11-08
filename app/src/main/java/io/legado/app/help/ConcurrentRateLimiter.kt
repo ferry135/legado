@@ -5,8 +5,9 @@ import io.legado.app.exception.ConcurrentException
 import io.legado.app.model.analyzeRule.AnalyzeUrl.ConcurrentRecord
 import kotlinx.coroutines.delay
 
-class ConcurrentRateLimiter(val source: BaseSource?) {
-
+class ConcurrentRateLimiter(
+    val source: BaseSource?,
+) {
     companion object {
         private val concurrentRecordMap = hashMapOf<String, ConcurrentRecord>()
     }
@@ -33,48 +34,49 @@ class ConcurrentRateLimiter(val source: BaseSource?) {
                 }
             }
         }
-        val waitTime: Int = synchronized(fetchRecord!!) {
-            try {
-                if (!fetchRecord.isConcurrent) {
-                    //并发控制非 次数/毫秒
-                    if (fetchRecord.frequency > 0) {
-                        //已经有访问线程,直接等待
-                        return@synchronized concurrentRate.toInt()
-                    }
-                    //没有线程访问,判断还剩多少时间可以访问
-                    val nextTime = fetchRecord.time + concurrentRate.toInt()
-                    if (System.currentTimeMillis() >= nextTime) {
-                        fetchRecord.time = System.currentTimeMillis()
-                        fetchRecord.frequency = 1
-                        return@synchronized 0
-                    }
-                    return@synchronized (nextTime - System.currentTimeMillis()).toInt()
-                } else {
-                    //并发控制为 次数/毫秒
-                    val sj = concurrentRate.substring(rateIndex + 1)
-                    val nextTime = fetchRecord.time + sj.toInt()
-                    if (System.currentTimeMillis() >= nextTime) {
-                        //已经过了限制时间,重置开始时间
-                        fetchRecord.time = System.currentTimeMillis()
-                        fetchRecord.frequency = 1
-                        return@synchronized 0
-                    }
-                    val cs = concurrentRate.substring(0, rateIndex)
-                    if (fetchRecord.frequency > cs.toInt()) {
+        val waitTime: Int =
+            synchronized(fetchRecord!!) {
+                try {
+                    if (!fetchRecord.isConcurrent) {
+                        // 并发控制非 次数/毫秒
+                        if (fetchRecord.frequency > 0) {
+                            // 已经有访问线程,直接等待
+                            return@synchronized concurrentRate.toInt()
+                        }
+                        // 没有线程访问,判断还剩多少时间可以访问
+                        val nextTime = fetchRecord.time + concurrentRate.toInt()
+                        if (System.currentTimeMillis() >= nextTime) {
+                            fetchRecord.time = System.currentTimeMillis()
+                            fetchRecord.frequency = 1
+                            return@synchronized 0
+                        }
                         return@synchronized (nextTime - System.currentTimeMillis()).toInt()
                     } else {
-                        fetchRecord.frequency += 1
-                        return@synchronized 0
+                        // 并发控制为 次数/毫秒
+                        val sj = concurrentRate.substring(rateIndex + 1)
+                        val nextTime = fetchRecord.time + sj.toInt()
+                        if (System.currentTimeMillis() >= nextTime) {
+                            // 已经过了限制时间,重置开始时间
+                            fetchRecord.time = System.currentTimeMillis()
+                            fetchRecord.frequency = 1
+                            return@synchronized 0
+                        }
+                        val cs = concurrentRate.substring(0, rateIndex)
+                        if (fetchRecord.frequency > cs.toInt()) {
+                            return@synchronized (nextTime - System.currentTimeMillis()).toInt()
+                        } else {
+                            fetchRecord.frequency += 1
+                            return@synchronized 0
+                        }
                     }
+                } catch (_: Exception) {
+                    return@synchronized 0
                 }
-            } catch (_: Exception) {
-                return@synchronized 0
             }
-        }
         if (waitTime > 0) {
             throw ConcurrentException(
                 "根据并发率还需等待${waitTime}毫秒才可以访问",
-                waitTime = waitTime
+                waitTime = waitTime,
             )
         }
         return fetchRecord
@@ -131,5 +133,4 @@ class ConcurrentRateLimiter(val source: BaseSource?) {
             fetchEnd(concurrentRecord)
         }
     }
-
 }

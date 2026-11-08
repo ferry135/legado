@@ -14,52 +14,58 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.gone
 import io.legado.app.utils.visible
 
-
-class SearchAdapter(context: Context, val callBack: CallBack) :
-    DiffRecyclerAdapter<SearchBook, ItemSearchBinding>(context) {
-
+class SearchAdapter(
+    context: Context,
+    val callBack: CallBack,
+) : DiffRecyclerAdapter<SearchBook, ItemSearchBinding>(context) {
     override val keepScrollPosition = true
 
     override val diffItemCallback: DiffUtil.ItemCallback<SearchBook>
-        get() = object : DiffUtil.ItemCallback<SearchBook>() {
-
-            override fun areItemsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
-                return when {
+        get() =
+            object : DiffUtil.ItemCallback<SearchBook>() {
+                override fun areItemsTheSame(
+                    oldItem: SearchBook,
+                    newItem: SearchBook,
+                ): Boolean = when {
                     oldItem.name != newItem.name -> false
                     oldItem.author != newItem.author -> false
                     else -> true
                 }
+
+                override fun areContentsTheSame(
+                    oldItem: SearchBook,
+                    newItem: SearchBook,
+                ): Boolean = false
+
+                override fun getChangePayload(
+                    oldItem: SearchBook,
+                    newItem: SearchBook,
+                ): Any {
+                    val payload = Bundle()
+                    payload.putInt("origins", newItem.origins.size)
+                    if (oldItem.coverUrl != newItem.coverUrl) {
+                        payload.putString("cover", newItem.coverUrl)
+                    }
+                    if (oldItem.kind != newItem.kind) {
+                        payload.putString("kind", newItem.kind)
+                    }
+                    if (oldItem.latestChapterTitle != newItem.latestChapterTitle) {
+                        payload.putString("last", newItem.latestChapterTitle)
+                    }
+                    if (oldItem.intro != newItem.intro) {
+                        payload.putString("intro", newItem.intro)
+                    }
+                    return payload
+                }
             }
 
-            override fun areContentsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
-                return false
-            }
-
-            override fun getChangePayload(oldItem: SearchBook, newItem: SearchBook): Any {
-                val payload = Bundle()
-                payload.putInt("origins", newItem.origins.size)
-                if (oldItem.coverUrl != newItem.coverUrl)
-                    payload.putString("cover", newItem.coverUrl)
-                if (oldItem.kind != newItem.kind)
-                    payload.putString("kind", newItem.kind)
-                if (oldItem.latestChapterTitle != newItem.latestChapterTitle)
-                    payload.putString("last", newItem.latestChapterTitle)
-                if (oldItem.intro != newItem.intro)
-                    payload.putString("intro", newItem.intro)
-                return payload
-            }
-
-        }
-
-    override fun getViewBinding(parent: ViewGroup): ItemSearchBinding {
-        return ItemSearchBinding.inflate(inflater, parent, false)
-    }
+    override fun getViewBinding(parent: ViewGroup): ItemSearchBinding = ItemSearchBinding.inflate(inflater, parent, false)
 
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemSearchBinding,
         item: SearchBook,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
         if (payloads.isEmpty()) {
             bind(binding, item)
@@ -71,7 +77,10 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemSearchBinding) {
+    override fun registerListener(
+        holder: ItemViewHolder,
+        binding: ItemSearchBinding,
+    ) {
         binding.root.setOnClickListener {
             getItem(holder.bindingAdapterPosition)?.let {
                 callBack.showBookInfo(it.name, it.author, it.bookUrl)
@@ -79,7 +88,10 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    private fun bind(binding: ItemSearchBinding, searchBook: SearchBook) {
+    private fun bind(
+        binding: ItemSearchBinding,
+        searchBook: SearchBook,
+    ) {
         binding.run {
             tvName.text = searchBook.name
             tvAuthor.text = context.getString(R.string.author_show, searchBook.author)
@@ -94,12 +106,16 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
                 searchBook.name,
                 searchBook.author,
                 AppConfig.loadCoverOnlyWifi,
-                searchBook.origin
+                searchBook.origin,
             )
         }
     }
 
-    private fun bindChange(binding: ItemSearchBinding, searchBook: SearchBook, bundle: Bundle) {
+    private fun bindChange(
+        binding: ItemSearchBinding,
+        searchBook: SearchBook,
+        bundle: Bundle,
+    ) {
         binding.run {
             bundle.keySet().forEach {
                 when (it) {
@@ -107,21 +123,26 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
                     "last" -> upLasted(binding, searchBook.latestChapterTitle)
                     "intro" -> tvIntroduce.text = searchBook.trimIntro(context)
                     "kind" -> upKind(binding, searchBook.getKindList())
-                    "isInBookshelf" -> ivInBookshelf.isVisible =
-                        callBack.isInBookshelf(searchBook.name, searchBook.author)
-                    "cover" -> ivCover.load(
-                        searchBook.coverUrl,
-                        searchBook.name,
-                        searchBook.author,
-                        false,
-                        searchBook.origin
-                    )
+                    "isInBookshelf" ->
+                        ivInBookshelf.isVisible =
+                            callBack.isInBookshelf(searchBook.name, searchBook.author)
+                    "cover" ->
+                        ivCover.load(
+                            searchBook.coverUrl,
+                            searchBook.name,
+                            searchBook.author,
+                            false,
+                            searchBook.origin,
+                        )
                 }
             }
         }
     }
 
-    private fun upLasted(binding: ItemSearchBinding, latestChapterTitle: String?) {
+    private fun upLasted(
+        binding: ItemSearchBinding,
+        latestChapterTitle: String?,
+    ) {
         binding.run {
             if (latestChapterTitle.isNullOrEmpty()) {
                 tvLasted.gone()
@@ -133,7 +154,10 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    private fun upKind(binding: ItemSearchBinding, kinds: List<String>) = binding.run {
+    private fun upKind(
+        binding: ItemSearchBinding,
+        kinds: List<String>,
+    ) = binding.run {
         if (kinds.isEmpty()) {
             llKind.gone()
         } else {
@@ -143,15 +167,21 @@ class SearchAdapter(context: Context, val callBack: CallBack) :
     }
 
     interface CallBack {
-
         /**
          * 是否已经加入书架
          */
-        fun isInBookshelf(name: String, author: String): Boolean
+        fun isInBookshelf(
+            name: String,
+            author: String,
+        ): Boolean
 
         /**
          * 显示书籍详情
          */
-        fun showBookInfo(name: String, author: String, bookUrl: String)
+        fun showBookInfo(
+            name: String,
+            author: String,
+            bookUrl: String,
+        )
     }
 }

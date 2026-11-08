@@ -20,8 +20,9 @@ import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isJsonArray
 import io.legado.app.utils.isJsonObject
 
-class ImportDictRuleViewModel(app: Application) : BaseViewModel(app) {
-
+class ImportDictRuleViewModel(
+    app: Application,
+) : BaseViewModel(app) {
     val errorLiveData = MutableLiveData<String>()
     val successLiveData = MutableLiveData<Int>()
 
@@ -82,9 +83,10 @@ class ImportDictRuleViewModel(app: Application) : BaseViewModel(app) {
                     allSources.add(it)
                 }
             }
-            text.isJsonArray() -> GSON.fromJsonArray<DictRule>(text).getOrThrow().let { items ->
-                allSources.addAll(items)
-            }
+            text.isJsonArray() ->
+                GSON.fromJsonArray<DictRule>(text).getOrThrow().let { items ->
+                    allSources.addAll(items)
+                }
             text.isAbsUrl() -> {
                 importSourceUrl(text)
             }
@@ -93,16 +95,19 @@ class ImportDictRuleViewModel(app: Application) : BaseViewModel(app) {
     }
 
     private suspend fun importSourceUrl(url: String) {
-        okHttpClient.newCallResponseBody {
-            if (url.endsWith("#requestWithoutUA")) {
-                url(url.substringBeforeLast("#requestWithoutUA"))
-                header(AppConst.UA_NAME, "null")
-            } else {
-                url(url)
+        okHttpClient
+            .newCallResponseBody {
+                if (url.endsWith("#requestWithoutUA")) {
+                    url(url.substringBeforeLast("#requestWithoutUA"))
+                    header(AppConst.UA_NAME, "null")
+                } else {
+                    url(url)
+                }
+            }.decompressed()
+            .text()
+            .let {
+                importSourceAwait(it)
             }
-        }.decompressed().text().let {
-            importSourceAwait(it)
-        }
     }
 
     private fun comparisonSource() {
@@ -115,5 +120,4 @@ class ImportDictRuleViewModel(app: Application) : BaseViewModel(app) {
             successLiveData.postValue(allSources.size)
         }
     }
-
 }

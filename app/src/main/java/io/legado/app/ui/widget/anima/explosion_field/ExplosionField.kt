@@ -11,11 +11,12 @@ object ExplosionField {
         val rootView = activity.findViewById<View>(Window.ID_ANDROID_CONTENT) as ViewGroup
         val explosionField = ExplosionView(activity)
         rootView.addView(
-            explosionField, ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
-            )
+            explosionField,
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+            ),
         )
         return explosionField
     }
-
 }

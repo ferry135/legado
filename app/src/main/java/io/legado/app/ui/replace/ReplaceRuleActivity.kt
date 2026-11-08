@@ -11,8 +11,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
@@ -64,7 +62,8 @@ import kotlinx.coroutines.launch
 /**
  * 替换规则管理
  */
-class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRuleViewModel>(),
+class ReplaceRuleActivity :
+    VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRuleViewModel>(),
     SearchView.OnQueryTextListener,
     PopupMenu.OnMenuItemClickListener,
     SelectActionBar.CallBack,
@@ -80,46 +79,51 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     private var groupMenu: SubMenu? = null
     private var replaceRuleFlowJob: Job? = null
     private var dataInit = false
-    private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
-        it ?: return@registerForActivityResult
-        showDialogFragment(
-            ImportReplaceRuleDialog(it)
-        )
-    }
+    private val qrCodeResult =
+        registerForActivityResult(QrCodeResult()) {
+            it ?: return@registerForActivityResult
+            showDialogFragment(
+                ImportReplaceRuleDialog(it),
+            )
+        }
     private val editActivity =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == RESULT_OK) {
                 setResult(RESULT_OK)
             }
         }
-    private val importDoc = registerForActivityResult(HandleFileContract()) {
-        kotlin.runCatching {
-            it.uri?.readText(this)?.let {
-                showDialogFragment(
-                    ImportReplaceRuleDialog(it)
-                )
-            }
-        }.onFailure {
-            toastOnUi("readTextError:${it.localizedMessage}")
+    private val importDoc =
+        registerForActivityResult(HandleFileContract()) {
+            kotlin
+                .runCatching {
+                    it.uri?.readText(this)?.let {
+                        showDialogFragment(
+                            ImportReplaceRuleDialog(it),
+                        )
+                    }
+                }.onFailure {
+                    toastOnUi("readTextError:${it.localizedMessage}")
+                }
         }
-    }
-    private val exportResult = registerForActivityResult(HandleFileContract()) {
-        it.uri?.let { uri ->
-            alert(R.string.export_success) {
-                if (uri.toString().isAbsUrl()) {
-                    setMessage(DirectLinkUpload.getSummary())
-                }
-                val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                    editView.hint = getString(R.string.path)
-                    editView.setText(uri.toString())
-                }
-                customView { alertBinding.root }
-                okButton {
-                    sendToClip(uri.toString())
+    private val exportResult =
+        registerForActivityResult(HandleFileContract()) {
+            it.uri?.let { uri ->
+                alert(R.string.export_success) {
+                    if (uri.toString().isAbsUrl()) {
+                        setMessage(DirectLinkUpload.getSummary())
+                    }
+                    val alertBinding =
+                        DialogEditTextBinding.inflate(layoutInflater).apply {
+                            editView.hint = getString(R.string.path)
+                            editView.setText(uri.toString())
+                        }
+                    customView { alertBinding.root }
+                    okButton {
+                        sendToClip(uri.toString())
+                    }
                 }
             }
         }
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -206,35 +210,37 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     private fun observeReplaceRuleData(searchKey: String? = null) {
         dataInit = false
         replaceRuleFlowJob?.cancel()
-        replaceRuleFlowJob = launchCollectWithLifecycle {
-            when {
-                searchKey.isNullOrEmpty() -> {
-                    appDb.replaceRuleDao.flowAll()
-                }
+        replaceRuleFlowJob =
+            launchCollectWithLifecycle {
+                when {
+                    searchKey.isNullOrEmpty() -> {
+                        appDb.replaceRuleDao.flowAll()
+                    }
 
-                searchKey == getString(R.string.no_group) -> {
-                    appDb.replaceRuleDao.flowNoGroup()
-                }
+                    searchKey == getString(R.string.no_group) -> {
+                        appDb.replaceRuleDao.flowNoGroup()
+                    }
 
-                searchKey.startsWith("group:") -> {
-                    val key = searchKey.substringAfter("group:")
-                    appDb.replaceRuleDao.flowGroupSearch("%$key%")
-                }
-                else -> {
-                    appDb.replaceRuleDao.flowSearch("%$searchKey%")
-                }
-            }.catch {
-                AppLog.put("替换规则管理界面更新数据出错", it)
-            }.flowOn(IO).conflate().collect {
-                if (dataInit) {
-                    setResult(Activity.RESULT_OK)
-                }
-                adapter.setItems(it, adapter.diffItemCallBack)
-                dataInit = true
-                delay(100)
+                    searchKey.startsWith("group:") -> {
+                        val key = searchKey.substringAfter("group:")
+                        appDb.replaceRuleDao.flowGroupSearch("%$key%")
+                    }
+                    else -> {
+                        appDb.replaceRuleDao.flowSearch("%$searchKey%")
+                    }
+                }.catch {
+                    AppLog.put("替换规则管理界面更新数据出错", it)
+                }.flowOn(IO)
+                    .conflate()
+                    .collect {
+                        if (dataInit) {
+                            setResult(Activity.RESULT_OK)
+                        }
+                        adapter.setItems(it, adapter.diffItemCallBack)
+                        dataInit = true
+                        delay(100)
+                    }
             }
-
-        }
     }
 
     private fun observeGroupData() {
@@ -244,7 +250,6 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                 groups.addAll(it)
                 upGroupMenu()
             }
-
         }
     }
 
@@ -255,18 +260,20 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             R.id.menu_group_manage -> showDialogFragment<GroupManageDialog>()
             R.id.menu_del_selection -> viewModel.delSelection(adapter.selection)
             R.id.menu_import_onLine -> showImportDialog()
-            R.id.menu_import_local -> importDoc.launch {
-                mode = HandleFileContract.FILE
-                allowExtensions = arrayOf("txt", "json")
-            }
+            R.id.menu_import_local ->
+                importDoc.launch {
+                    mode = HandleFileContract.FILE
+                    allowExtensions = arrayOf("txt", "json")
+                }
             R.id.menu_import_qr -> qrCodeResult.launch()
             R.id.menu_help -> showHelp("replaceRuleHelp")
             R.id.menu_group_null -> {
                 searchView.setQuery(getString(R.string.no_group), true)
             }
-            else -> if (item.groupId == R.id.replace_group) {
-                searchView.setQuery("group:${item.title}", true)
-            }
+            else ->
+                if (item.groupId == R.id.replace_group) {
+                    searchView.setQuery("group:${item.title}", true)
+                }
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -277,14 +284,16 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
             R.id.menu_disable_selection -> viewModel.disableSelection(adapter.selection)
             R.id.menu_top_sel -> viewModel.topSelect(adapter.selection)
             R.id.menu_bottom_sel -> viewModel.bottomSelect(adapter.selection)
-            R.id.menu_export_selection -> exportResult.launch {
-                mode = HandleFileContract.EXPORT
-                fileData = HandleFileContract.FileData(
-                    "exportReplaceRule.json",
-                    GSON.toJson(adapter.selection).toByteArray(),
-                    "application/json"
-                )
-            }
+            R.id.menu_export_selection ->
+                exportResult.launch {
+                    mode = HandleFileContract.EXPORT
+                    fileData =
+                        HandleFileContract.FileData(
+                            "exportReplaceRule.json",
+                            GSON.toJson(adapter.selection).toByteArray(),
+                            "application/json",
+                        )
+                }
         }
         return false
     }
@@ -299,19 +308,21 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     @SuppressLint("InflateParams")
     private fun showImportDialog() {
         val aCache = ACache.get(cacheDir = false)
-        val cacheUrls: MutableList<String> = aCache
-            .getAsString(importRecordKey)
-            ?.splitNotBlank(",")
-            ?.toMutableList() ?: mutableListOf()
+        val cacheUrls: MutableList<String> =
+            aCache
+                .getAsString(importRecordKey)
+                ?.splitNotBlank(",")
+                ?.toMutableList() ?: mutableListOf()
         alert(titleResource = R.string.import_on_line) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = "url"
-                editView.setFilterValues(cacheUrls)
-                editView.delCallBack = {
-                    cacheUrls.remove(it)
-                    aCache.put(importRecordKey, cacheUrls.joinToString(","))
+            val alertBinding =
+                DialogEditTextBinding.inflate(layoutInflater).apply {
+                    editView.hint = "url"
+                    editView.setFilterValues(cacheUrls)
+                    editView.delCallBack = {
+                        cacheUrls.remove(it)
+                        aCache.put(importRecordKey, cacheUrls.joinToString(","))
+                    }
                 }
-            }
             customView { alertBinding.root }
             okButton {
                 val text = alertBinding.editView.text?.toString()
@@ -321,7 +332,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
                         aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
                     showDialogFragment(
-                        ImportReplaceRuleDialog(it)
+                        ImportReplaceRuleDialog(it),
                     )
                 }
             }
@@ -334,9 +345,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
         return false
     }
 
-    override fun onQueryTextSubmit(query: String?): Boolean {
-        return false
-    }
+    override fun onQueryTextSubmit(query: String?): Boolean = false
 
     override fun onDestroy() {
         super.onDestroy()
@@ -346,7 +355,7 @@ class ReplaceRuleActivity : VMBaseActivity<ActivityReplaceRuleBinding, ReplaceRu
     override fun upCountView() {
         binding.selectActionBar.upCountView(
             adapter.selection.size,
-            adapter.itemCount
+            adapter.itemCount,
         )
     }
 

@@ -8,8 +8,6 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -36,15 +34,14 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 import splitties.views.onClick
 
 /**
  * 书源选择
  */
-class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker),
+class SourcePickerDialog :
+    BaseDialogFragment(R.layout.dialog_source_picker),
     Toolbar.OnMenuItemClickListener {
-
     private val binding by viewBinding(DialogSourcePickerBinding::bind)
     private val searchView: SearchView by lazy {
         binding.toolBar.findViewById(R.id.search_view)
@@ -62,7 +59,10 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker),
         setLayout(1f, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         initView()
         initData()
         initMenu()
@@ -88,7 +88,7 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker),
                 requireContext().getCompatColor(R.color.on_primary_soft)
             } else {
                 requireContext().accentColor
-            }
+            },
         )
         binding.tvFooterLeft.onClick {
             showChangeSourceDelayPicker()
@@ -101,33 +101,34 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker),
         searchView.applyTint(primaryTextColor)
         searchView.isSubmitButtonEnabled = true
         searchView.queryHint = getString(R.string.search_book_source)
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
+        searchView.setOnQueryTextListener(
+            object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean = false
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                initData(newText)
-                return false
-            }
-        })
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    initData(newText)
+                    return false
+                }
+            },
+        )
     }
 
     private fun initData(searchKey: String? = null) {
         sourceFlowJob?.cancel()
-        sourceFlowJob = launchCollectWithLifecycle {
-            when {
-                searchKey.isNullOrEmpty() -> appDb.bookSourceDao.flowEnabled()
-                else -> appDb.bookSourceDao.flowSearchEnabled(searchKey)
-            }.catch {
-                AppLog.put("书源选择界面获取书源数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).collect {
-                adapter.setItems(it)
-                // 空态（搜索无命中/无启用书源）：tv_msg 布局占位启用
-                binding.tvMsg.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
+        sourceFlowJob =
+            launchCollectWithLifecycle {
+                when {
+                    searchKey.isNullOrEmpty() -> appDb.bookSourceDao.flowEnabled()
+                    else -> appDb.bookSourceDao.flowSearchEnabled(searchKey)
+                }.catch {
+                    AppLog.put("书源选择界面获取书源数据失败\n${it.localizedMessage}", it)
+                }.flowOn(IO)
+                    .collect {
+                        adapter.setItems(it)
+                        // 空态（搜索无命中/无启用书源）：tv_msg 布局占位启用
+                        binding.tvMsg.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
+                    }
             }
-
-        }
     }
 
     private fun initMenu() {
@@ -158,36 +159,37 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker),
 
     private fun upChangeSourceDelayText() {
         binding.tvFooterLeft.text = getString(R.string.change_source_delay) + " · " +
-                AppConfig.batchChangeSourceDelay + " " + getString(R.string.seconds)
+            AppConfig.batchChangeSourceDelay + " " + getString(R.string.seconds)
     }
 
-    inner class SourceAdapter(context: Context) :
-        RecyclerAdapter<BookSourcePart, ItemBookSourceBinding>(context) {
-
-        override fun getViewBinding(parent: ViewGroup): ItemBookSourceBinding {
-            return ItemBookSourceBinding.inflate(inflater, parent, false).apply {
-                // [NEED-DECISION]①：本弹窗「点行即换」单选语义，勾选框无功能 → 只留文字（15sp 不变）
-                cbBookSource.buttonDrawable = null
-                // 本弹窗未接线的控件 → gone（swt/编辑/更多/探索点/调试行/宿主行）
-                swtEnabled.visibility = View.GONE
-                ivEdit.visibility = View.GONE
-                ivMenuMore.visibility = View.GONE
-                ivExplore.visibility = View.GONE
-                ivDebugText.visibility = View.GONE
-                tvHostText.visibility = View.GONE
-            }
+    inner class SourceAdapter(
+        context: Context,
+    ) : RecyclerAdapter<BookSourcePart, ItemBookSourceBinding>(context) {
+        override fun getViewBinding(parent: ViewGroup): ItemBookSourceBinding = ItemBookSourceBinding.inflate(inflater, parent, false).apply {
+            // [NEED-DECISION]①：本弹窗「点行即换」单选语义，勾选框无功能 → 只留文字（15sp 不变）
+            cbBookSource.buttonDrawable = null
+            // 本弹窗未接线的控件 → gone（swt/编辑/更多/探索点/调试行/宿主行）
+            swtEnabled.visibility = View.GONE
+            ivEdit.visibility = View.GONE
+            ivMenuMore.visibility = View.GONE
+            ivExplore.visibility = View.GONE
+            ivDebugText.visibility = View.GONE
+            tvHostText.visibility = View.GONE
         }
 
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemBookSourceBinding,
             item: BookSourcePart,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             binding.cbBookSource.text = item.getDisPlayNameGroup()
         }
 
-        override fun registerListener(holder: ItemViewHolder, binding: ItemBookSourceBinding) {
+        override fun registerListener(
+            holder: ItemViewHolder,
+            binding: ItemBookSourceBinding,
+        ) {
             binding.root.onClick {
                 getItemByLayoutPosition(holder.layoutPosition)?.let {
                     it.getBookSource()?.let { source ->
@@ -197,7 +199,6 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker),
                 }
             }
         }
-
     }
 
     private val callback: Callback?
@@ -208,5 +209,4 @@ class SourcePickerDialog : BaseDialogFragment(R.layout.dialog_source_picker),
     interface Callback {
         fun sourceOnClick(source: BookSource)
     }
-
 }

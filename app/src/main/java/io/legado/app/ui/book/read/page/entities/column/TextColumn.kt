@@ -19,7 +19,6 @@ data class TextColumn(
     override var end: Float,
     val charData: String,
 ) : BaseColumn {
-
     override var textLine: TextLine = emptyTextLine
 
     var selected: Boolean = false
@@ -42,17 +41,22 @@ data class TextColumn(
             field = value
         }
 
-    override fun draw(view: ContentTextView, canvas: Canvas) {
-        val textPaint = if (textLine.isTitle) {
-            ChapterProvider.titlePaint
-        } else {
-            ChapterProvider.contentPaint
-        }
-        val textColor = if (textLine.isReadAloud || isSearchResult) {
-            ThemeStore.accentColor
-        } else {
-            ReadBookConfig.textColor
-        }
+    override fun draw(
+        view: ContentTextView,
+        canvas: Canvas,
+    ) {
+        val textPaint =
+            if (textLine.isTitle) {
+                ChapterProvider.titlePaint
+            } else {
+                ChapterProvider.contentPaint
+            }
+        val textColor =
+            if (textLine.isReadAloud || isSearchResult) {
+                ThemeStore.accentColor
+            } else {
+                ReadBookConfig.textColor
+            }
         if (textPaint.color != textColor) {
             textPaint.color = textColor
         }
@@ -68,5 +72,4 @@ data class TextColumn(
             canvas.drawRect(start, 0f, end, textLine.height, view.selectedPaint)
         }
     }
-
 }

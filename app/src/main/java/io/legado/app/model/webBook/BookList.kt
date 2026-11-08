@@ -30,7 +30,6 @@ import kotlin.coroutines.coroutineContext
  * 获取书籍列表
  */
 object BookList {
-
     @Throws(Exception::class)
     suspend fun analyzeBookList(
         bookSource: BookSource,
@@ -41,13 +40,13 @@ object BookList {
         isSearch: Boolean = true,
         isRedirect: Boolean = false,
         filter: ((name: String, author: String) -> Boolean)? = null,
-        shouldBreak: ((size: Int) -> Boolean)? = null
+        shouldBreak: ((size: Int) -> Boolean)? = null,
     ): ArrayList<SearchBook> {
         body ?: throw NoStackTraceException(
             appCtx.getString(
                 R.string.error_get_web_content,
-                analyzeUrl.ruleUrl
-            )
+                analyzeUrl.ruleUrl,
+            ),
         )
         val bookList = ArrayList<SearchBook>()
         Debug.log(bookSource.bookSourceUrl, "≡获取成功:${analyzeUrl.ruleUrl}")
@@ -59,33 +58,36 @@ object BookList {
         if (!isSearch) {
             checkExploreJson(bookSource)
         }
-        if (isSearch) bookSource.bookUrlPattern?.let {
-            coroutineContext.ensureActive()
-            if (baseUrl.matches(it.toRegex())) {
-                Debug.log(bookSource.bookSourceUrl, "≡链接为详情页")
-                getInfoItem(
-                    bookSource,
-                    analyzeRule,
-                    analyzeUrl,
-                    body,
-                    baseUrl,
-                    ruleData.getVariable(),
-                    isRedirect,
-                    filter
-                )?.let { searchBook ->
-                    searchBook.infoHtml = body
-                    bookList.add(searchBook)
+        if (isSearch) {
+            bookSource.bookUrlPattern?.let {
+                coroutineContext.ensureActive()
+                if (baseUrl.matches(it.toRegex())) {
+                    Debug.log(bookSource.bookSourceUrl, "≡链接为详情页")
+                    getInfoItem(
+                        bookSource,
+                        analyzeRule,
+                        analyzeUrl,
+                        body,
+                        baseUrl,
+                        ruleData.getVariable(),
+                        isRedirect,
+                        filter,
+                    )?.let { searchBook ->
+                        searchBook.infoHtml = body
+                        bookList.add(searchBook)
+                    }
+                    return bookList
                 }
-                return bookList
             }
         }
         val collections: List<Any>
         var reverse = false
-        val bookListRule: BookListRule = when {
-            isSearch -> bookSource.getSearchRule()
-            bookSource.getExploreRule().bookList.isNullOrBlank() -> bookSource.getSearchRule()
-            else -> bookSource.getExploreRule()
-        }
+        val bookListRule: BookListRule =
+            when {
+                isSearch -> bookSource.getSearchRule()
+                bookSource.getExploreRule().bookList.isNullOrBlank() -> bookSource.getSearchRule()
+                else -> bookSource.getExploreRule()
+            }
         var ruleList: String = bookListRule.bookList ?: ""
         if (ruleList.startsWith("-")) {
             reverse = true
@@ -100,8 +102,14 @@ object BookList {
         if (collections.isEmpty() && bookSource.bookUrlPattern.isNullOrEmpty()) {
             Debug.log(bookSource.bookSourceUrl, "└列表为空,按详情页解析")
             getInfoItem(
-                bookSource, analyzeRule, analyzeUrl, body, baseUrl, ruleData.getVariable(),
-                isRedirect, filter
+                bookSource,
+                analyzeRule,
+                analyzeUrl,
+                body,
+                baseUrl,
+                ruleData.getVariable(),
+                isRedirect,
+                filter,
             )?.let { searchBook ->
                 searchBook.infoHtml = body
                 bookList.add(searchBook)
@@ -118,7 +126,11 @@ object BookList {
             Debug.log(bookSource.bookSourceUrl, "└列表大小:${collections.size}")
             for ((index, item) in collections.withIndex()) {
                 getSearchItem(
-                    bookSource, analyzeRule, item, baseUrl, ruleData.getVariable(),
+                    bookSource,
+                    analyzeRule,
+                    item,
+                    baseUrl,
+                    ruleData.getVariable(),
                     index == 0,
                     filter,
                     ruleName = ruleName,
@@ -128,7 +140,7 @@ object BookList {
                     ruleIntro = ruleIntro,
                     ruleKind = ruleKind,
                     ruleLastChapter = ruleLastChapter,
-                    ruleWordCount = ruleWordCount
+                    ruleWordCount = ruleWordCount,
                 )?.let { searchBook ->
                     if (baseUrl == searchBook.bookUrl) {
                         searchBook.infoHtml = body
@@ -159,14 +171,15 @@ object BookList {
         baseUrl: String,
         variable: String?,
         isRedirect: Boolean,
-        filter: ((name: String, author: String) -> Boolean)?
+        filter: ((name: String, author: String) -> Boolean)?,
     ): SearchBook? {
         val book = Book(variable = variable)
-        book.bookUrl = if (isRedirect) {
-            baseUrl
-        } else {
-            NetworkUtils.getAbsoluteURL(analyzeUrl.url, analyzeUrl.ruleUrl)
-        }
+        book.bookUrl =
+            if (isRedirect) {
+                baseUrl
+            } else {
+                NetworkUtils.getAbsoluteURL(analyzeUrl.url, analyzeUrl.ruleUrl)
+            }
         book.origin = bookSource.bookSourceUrl
         book.originName = bookSource.bookSourceName
         book.originOrder = bookSource.customOrder
@@ -179,7 +192,7 @@ object BookList {
             bookSource,
             baseUrl,
             baseUrl,
-            false
+            false,
         )
         if (filter?.invoke(book.name, book.author) == false) {
             return null
@@ -206,7 +219,7 @@ object BookList {
         ruleCoverUrl: List<AnalyzeRule.SourceRule>,
         ruleWordCount: List<AnalyzeRule.SourceRule>,
         ruleIntro: List<AnalyzeRule.SourceRule>,
-        ruleLastChapter: List<AnalyzeRule.SourceRule>
+        ruleLastChapter: List<AnalyzeRule.SourceRule>,
     ): SearchBook? {
         val searchBook = SearchBook(variable = variable)
         searchBook.type = bookSource.getBookType()
@@ -304,5 +317,4 @@ object BookList {
             Debug.log("≡发现地址规则 JSON 格式不规范，请改为规范格式")
         }
     }
-
 }

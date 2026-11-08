@@ -13,7 +13,6 @@ import splitties.init.appCtx
 @Suppress("ConstPropertyName")
 object LocalConfig : SharedPreferences
 by appCtx.getSharedPreferences("local", Context.MODE_PRIVATE) {
-
     private const val versionCodeKey = "appVersionCode"
 
     /**
@@ -87,7 +86,7 @@ by appCtx.getSharedPreferences("local", Context.MODE_PRIVATE) {
     private fun isLastVersion(
         lastVersion: Int,
         versionKey: String,
-        firstOpenKey: String? = null
+        firstOpenKey: String? = null,
     ): Boolean {
         var version = getInt(versionKey, 0)
         if (version == 0 && firstOpenKey != null) {
@@ -119,5 +118,4 @@ by appCtx.getSharedPreferences("local", Context.MODE_PRIVATE) {
         set(value) {
             putBoolean("appCrash", value)
         }
-
 }

@@ -20,7 +20,8 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 /**
  * 发现列表
  */
-class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreShowViewModel>(),
+class ExploreShowActivity :
+    VMBaseActivity<ActivityExploreShowBinding, ExploreShowViewModel>(),
     ExploreShowAdapter.CallBack {
     override val binding by viewBinding(ActivityExploreShowBinding::inflate)
     override val viewModel by viewModels<ExploreShowViewModel>()
@@ -54,14 +55,20 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
                 scrollToBottom(true)
             }
         }
-        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if (!recyclerView.canScrollVertically(1)) {
-                    scrollToBottom()
+        binding.recyclerView.addOnScrollListener(
+            object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(
+                    recyclerView: RecyclerView,
+                    dx: Int,
+                    dy: Int,
+                ) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    if (!recyclerView.canScrollVertically(1)) {
+                        scrollToBottom()
+                    }
                 }
-            }
-        })
+            },
+        )
     }
 
     private fun scrollToBottom(forceLoad: Boolean = false) {
@@ -82,9 +89,10 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
         }
     }
 
-    override fun isInBookshelf(name: String, author: String): Boolean {
-        return viewModel.isInBookShelf(name, author)
-    }
+    override fun isInBookshelf(
+        name: String,
+        author: String,
+    ): Boolean = viewModel.isInBookShelf(name, author)
 
     override fun showBookInfo(book: Book) {
         startActivity<BookInfoActivity> {

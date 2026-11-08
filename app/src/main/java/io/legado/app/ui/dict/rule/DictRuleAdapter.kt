@@ -16,11 +16,11 @@ import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.utils.ColorUtils
 
-
-class DictRuleAdapter(context: Context, var callBack: CallBack) :
-    RecyclerAdapter<DictRule, ItemDictRuleBinding>(context),
+class DictRuleAdapter(
+    context: Context,
+    var callBack: CallBack,
+) : RecyclerAdapter<DictRule, ItemDictRuleBinding>(context),
     ItemTouchCallback.Callback {
-
     private val selected = linkedSetOf<DictRule>()
 
     // 内置规则名集合（defaultData/dictRules.json），用于 tv_badge_builtin 显隐（设计稿05字典规则）
@@ -45,36 +45,43 @@ class DictRuleAdapter(context: Context, var callBack: CallBack) :
             }
         }
 
-    val diffItemCallBack = object : DiffUtil.ItemCallback<DictRule>() {
+    val diffItemCallBack =
+        object : DiffUtil.ItemCallback<DictRule>() {
+            override fun areItemsTheSame(
+                oldItem: DictRule,
+                newItem: DictRule,
+            ): Boolean = oldItem.name == newItem.name
 
-        override fun areItemsTheSame(oldItem: DictRule, newItem: DictRule): Boolean {
-            return oldItem.name == newItem.name
-        }
+            override fun areContentsTheSame(
+                oldItem: DictRule,
+                newItem: DictRule,
+            ): Boolean {
+                if (oldItem.name != newItem.name) {
+                    return false
+                }
+                if (oldItem.enabled != newItem.enabled) {
+                    return false
+                }
+                return true
+            }
 
-        override fun areContentsTheSame(oldItem: DictRule, newItem: DictRule): Boolean {
-            if (oldItem.name != newItem.name) {
-                return false
+            override fun getChangePayload(
+                oldItem: DictRule,
+                newItem: DictRule,
+            ): Any? {
+                val payload = Bundle()
+                if (oldItem.name != newItem.name) {
+                    payload.putBoolean("upName", true)
+                }
+                if (oldItem.enabled != newItem.enabled) {
+                    payload.putBoolean("enabled", newItem.enabled)
+                }
+                if (payload.isEmpty) {
+                    return null
+                }
+                return payload
             }
-            if (oldItem.enabled != newItem.enabled) {
-                return false
-            }
-            return true
         }
-
-        override fun getChangePayload(oldItem: DictRule, newItem: DictRule): Any? {
-            val payload = Bundle()
-            if (oldItem.name != newItem.name) {
-                payload.putBoolean("upName", true)
-            }
-            if (oldItem.enabled != newItem.enabled) {
-                payload.putBoolean("enabled", newItem.enabled)
-            }
-            if (payload.isEmpty) {
-                return null
-            }
-            return payload
-        }
-    }
 
     fun selectAll() {
         getItems().forEach {
@@ -96,9 +103,7 @@ class DictRuleAdapter(context: Context, var callBack: CallBack) :
         callBack.upCountView()
     }
 
-    override fun getViewBinding(parent: ViewGroup): ItemDictRuleBinding {
-        return ItemDictRuleBinding.inflate(inflater, parent, false)
-    }
+    override fun getViewBinding(parent: ViewGroup): ItemDictRuleBinding = ItemDictRuleBinding.inflate(inflater, parent, false)
 
     override fun onCurrentListChanged() {
         callBack.upCountView()
@@ -108,7 +113,7 @@ class DictRuleAdapter(context: Context, var callBack: CallBack) :
         holder: ItemViewHolder,
         binding: ItemDictRuleBinding,
         item: DictRule,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
         binding.run {
             if (payloads.isEmpty()) {
@@ -133,7 +138,10 @@ class DictRuleAdapter(context: Context, var callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemDictRuleBinding) {
+    override fun registerListener(
+        holder: ItemViewHolder,
+        binding: ItemDictRuleBinding,
+    ) {
         binding.apply {
             swtEnabled.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (buttonView.isPressed) {
@@ -166,7 +174,10 @@ class DictRuleAdapter(context: Context, var callBack: CallBack) :
         }
     }
 
-    override fun swap(srcPosition: Int, targetPosition: Int): Boolean {
+    override fun swap(
+        srcPosition: Int,
+        targetPosition: Int,
+    ): Boolean {
         val srcItem = getItem(srcPosition)
         val targetItem = getItem(targetPosition)
         if (srcItem != null && targetItem != null) {
@@ -186,7 +197,10 @@ class DictRuleAdapter(context: Context, var callBack: CallBack) :
 
     private val movedItems = linkedSetOf<DictRule>()
 
-    override fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+    override fun onClearView(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+    ) {
         if (movedItems.isNotEmpty()) {
             callBack.update(*movedItems.toTypedArray())
             movedItems.clear()
@@ -195,15 +209,14 @@ class DictRuleAdapter(context: Context, var callBack: CallBack) :
 
     val dragSelectCallback: DragSelectTouchHelper.Callback =
         object : DragSelectTouchHelper.AdvanceCallback<DictRule>(Mode.ToggleAndReverse) {
-            override fun currentSelectedId(): MutableSet<DictRule> {
-                return selected
-            }
+            override fun currentSelectedId(): MutableSet<DictRule> = selected
 
-            override fun getItemId(position: Int): DictRule {
-                return getItem(position)!!
-            }
+            override fun getItemId(position: Int): DictRule = getItem(position)!!
 
-            override fun updateSelectState(position: Int, isSelected: Boolean): Boolean {
+            override fun updateSelectState(
+                position: Int,
+                isSelected: Boolean,
+            ): Boolean {
                 getItem(position)?.let {
                     if (isSelected) {
                         selected.add(it)
@@ -220,9 +233,13 @@ class DictRuleAdapter(context: Context, var callBack: CallBack) :
 
     interface CallBack {
         fun update(vararg rule: DictRule)
+
         fun delete(rule: DictRule)
+
         fun edit(rule: DictRule)
+
         fun upOrder()
+
         fun upCountView()
     }
 }

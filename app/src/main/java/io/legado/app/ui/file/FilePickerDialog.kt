@@ -41,8 +41,8 @@ import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.io.File
 
-
-class FilePickerDialog : BaseDialogFragment(R.layout.dialog_file_chooser),
+class FilePickerDialog :
+    BaseDialogFragment(R.layout.dialog_file_chooser),
     Toolbar.OnMenuItemClickListener {
 
     companion object {
@@ -200,8 +200,7 @@ class FilePickerDialog : BaseDialogFragment(R.layout.dialog_file_chooser),
     }
 
     @SuppressLint("SetTextI18n")
-    inner class PathAdapter :
-        RecyclerAdapter<File, ItemPathPickerBinding>(requireContext()) {
+    inner class PathAdapter : RecyclerAdapter<File, ItemPathPickerBinding>(requireContext()) {
 
         private val arrowIcon = ConvertUtils.toDrawable(FilePickerIcon.getArrow())
 
@@ -219,10 +218,8 @@ class FilePickerDialog : BaseDialogFragment(R.layout.dialog_file_chooser),
             }
         }
 
-        override fun getViewBinding(parent: ViewGroup): ItemPathPickerBinding {
-            return ItemPathPickerBinding.inflate(inflater, parent, false).apply {
-                imageView.setImageDrawable(arrowIcon)
-            }
+        override fun getViewBinding(parent: ViewGroup): ItemPathPickerBinding = ItemPathPickerBinding.inflate(inflater, parent, false).apply {
+            imageView.setImageDrawable(arrowIcon)
         }
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemPathPickerBinding) {
@@ -237,18 +234,17 @@ class FilePickerDialog : BaseDialogFragment(R.layout.dialog_file_chooser),
             holder: ItemViewHolder,
             binding: ItemPathPickerBinding,
             item: File,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             binding.textView.text = item.name
             // 当前段 = 末段（layoutPosition==itemCount-1，itemCount 含 headerView 偏移）：
             // on_surface + 加粗，历史段 on_surface_variant（稿 .cseg.cur）
             val isCurrent = holder.layoutPosition == itemCount - 1
             binding.textView.setTextColor(
-                getCompatColor(if (isCurrent) R.color.on_surface else R.color.on_surface_variant)
+                getCompatColor(if (isCurrent) R.color.on_surface else R.color.on_surface_variant),
             )
             binding.textView.typeface = if (isCurrent) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
         }
-
     }
 
     inner class FileAdapter : RecyclerAdapter<File, ItemFilePickerBinding>(requireContext()) {
@@ -259,12 +255,14 @@ class FilePickerDialog : BaseDialogFragment(R.layout.dialog_file_chooser),
         private val upIcon = ConvertUtils.toDrawable(FilePickerIcon.getUpDir())!!
         private val folderIcon = ConvertUtils.toDrawable(FilePickerIcon.getFolder())!!
         private val fileIcon = ConvertUtils.toDrawable(FilePickerIcon.getFile())!!
+
         // 选中态（稿 §05 重绘）：弃 shape_radius_1dp 描边框，改 8dp 圆角 accent 12% 软底
         // （运行时着色随换肤，DECISIONS §8 疗法）；尾部对勾在 convert 按 selectFile 切换
         private val selectDrawable = GradientDrawable().apply {
             cornerRadius = 8.dpToPx().toFloat()
             setColor(ColorUtils.withAlpha(context.accentColor, 0.12f))
         }
+
         // 稿面 .frow.sel .fname{font-weight:650}（审查 #3）：选中行文件名加粗；未选还原
         // sans-serif-medium 基准（XML android:fontFamily，程序化 setTypeface 后需显式还原，
         // 不能用 Typeface.DEFAULT 回退——会丢 52dp 行规格的 medium 字重）
@@ -272,11 +270,9 @@ class FilePickerDialog : BaseDialogFragment(R.layout.dialog_file_chooser),
         private val mediumBoldTypeface = Typeface.create("sans-serif-medium", Typeface.BOLD)
         var selectFile: File? = null
 
-        override fun getViewBinding(parent: ViewGroup): ItemFilePickerBinding {
-            return ItemFilePickerBinding.inflate(inflater, parent, false).apply {
-                // 对勾运行时 primaryColor 着色（DECISIONS §8，XML 不固化 primary，同 FontAdapter）
-                ivCheck.setColorFilter(context.primaryColor)
-            }
+        override fun getViewBinding(parent: ViewGroup): ItemFilePickerBinding = ItemFilePickerBinding.inflate(inflater, parent, false).apply {
+            // 对勾运行时 primaryColor 着色（DECISIONS §8，XML 不固化 primary，同 FontAdapter）
+            ivCheck.setColorFilter(context.primaryColor)
         }
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemFilePickerBinding) {
@@ -308,7 +304,7 @@ class FilePickerDialog : BaseDialogFragment(R.layout.dialog_file_chooser),
             holder: ItemViewHolder,
             binding: ItemFilePickerBinding,
             item: File,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             if (payloads.isEmpty()) {
                 if (item == viewModel.lastDir) {
@@ -348,7 +344,6 @@ class FilePickerDialog : BaseDialogFragment(R.layout.dialog_file_chooser),
                 binding.textView.typeface = mediumTypeface
             }
         }
-
     }
 
     interface CallBack {

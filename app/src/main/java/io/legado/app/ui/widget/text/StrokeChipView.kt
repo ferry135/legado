@@ -12,11 +12,12 @@ import io.legado.app.R
  * 统一 activity_book_info_edit 三按钮（选择封面/更换封面/刷新封面）的单一实现，
  * 文本经 android:text 注入，点击监听直接设置在本 View 上。
  */
-class StrokeChipView @JvmOverloads constructor(
+class StrokeChipView
+@JvmOverloads
+constructor(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet? = null,
 ) : FrameLayout(context, attrs) {
-
     init {
         setBackgroundResource(R.drawable.bg_chip)
         View.inflate(context, R.layout.view_stroke_chip, this)
@@ -25,5 +26,4 @@ class StrokeChipView @JvmOverloads constructor(
             recycle()
         }
     }
-
 }

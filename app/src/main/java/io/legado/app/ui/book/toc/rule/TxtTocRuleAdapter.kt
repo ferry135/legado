@@ -18,63 +18,70 @@ import io.legado.app.ui.widget.recycler.DragSelectTouchHelper
 import io.legado.app.ui.widget.recycler.ItemTouchCallback
 import io.legado.app.utils.ColorUtils
 
-class TxtTocRuleAdapter(context: Context, private val callBack: CallBack) :
-    RecyclerAdapter<TxtTocRule, ItemTxtTocRuleBinding>(context),
+class TxtTocRuleAdapter(
+    context: Context,
+    private val callBack: CallBack,
+) : RecyclerAdapter<TxtTocRule, ItemTxtTocRuleBinding>(context),
     ItemTouchCallback.Callback {
-
     private val selected = linkedSetOf<TxtTocRule>()
 
     val selection: List<TxtTocRule>
-        get() = getItems().filter {
-            selected.contains(it)
+        get() =
+            getItems().filter {
+                selected.contains(it)
+            }
+
+    val diffItemCallBack =
+        object : DiffUtil.ItemCallback<TxtTocRule>() {
+            override fun areItemsTheSame(
+                oldItem: TxtTocRule,
+                newItem: TxtTocRule,
+            ): Boolean = oldItem.id == newItem.id
+
+            override fun areContentsTheSame(
+                oldItem: TxtTocRule,
+                newItem: TxtTocRule,
+            ): Boolean {
+                if (oldItem.name != newItem.name) {
+                    return false
+                }
+                if (oldItem.enable != newItem.enable) {
+                    return false
+                }
+                if (oldItem.example != newItem.example) {
+                    return false
+                }
+                return true
+            }
+
+            override fun getChangePayload(
+                oldItem: TxtTocRule,
+                newItem: TxtTocRule,
+            ): Any? {
+                val payload = Bundle()
+                if (oldItem.name != newItem.name) {
+                    payload.putBoolean("upName", true)
+                }
+                if (oldItem.enable != newItem.enable) {
+                    payload.putBoolean("enabled", newItem.enable)
+                }
+                if (oldItem.example != newItem.example) {
+                    payload.putBoolean("upExample", true)
+                }
+                if (payload.isEmpty) {
+                    return null
+                }
+                return payload
+            }
         }
 
-    val diffItemCallBack = object : DiffUtil.ItemCallback<TxtTocRule>() {
-
-        override fun areItemsTheSame(oldItem: TxtTocRule, newItem: TxtTocRule): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: TxtTocRule, newItem: TxtTocRule): Boolean {
-            if (oldItem.name != newItem.name) {
-                return false
-            }
-            if (oldItem.enable != newItem.enable) {
-                return false
-            }
-            if (oldItem.example != newItem.example) {
-                return false
-            }
-            return true
-        }
-
-        override fun getChangePayload(oldItem: TxtTocRule, newItem: TxtTocRule): Any? {
-            val payload = Bundle()
-            if (oldItem.name != newItem.name) {
-                payload.putBoolean("upName", true)
-            }
-            if (oldItem.enable != newItem.enable) {
-                payload.putBoolean("enabled", newItem.enable)
-            }
-            if (oldItem.example != newItem.example) {
-                payload.putBoolean("upExample", true)
-            }
-            if (payload.isEmpty) {
-                return null
-            }
-            return payload
-        }
-    }
-
-    override fun getViewBinding(parent: ViewGroup): ItemTxtTocRuleBinding {
-        return ItemTxtTocRuleBinding.inflate(inflater, parent, false)
-    }
+    override fun getViewBinding(parent: ViewGroup): ItemTxtTocRuleBinding = ItemTxtTocRuleBinding.inflate(inflater, parent, false)
 
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemTxtTocRuleBinding,
         item: TxtTocRule,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
         binding.run {
             if (payloads.isEmpty()) {
@@ -99,7 +106,10 @@ class TxtTocRuleAdapter(context: Context, private val callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemTxtTocRuleBinding) {
+    override fun registerListener(
+        holder: ItemViewHolder,
+        binding: ItemTxtTocRuleBinding,
+    ) {
         binding.cbSource.setOnCheckedChangeListener { buttonView, isChecked ->
             getItem(holder.layoutPosition)?.let {
                 if (buttonView.isPressed) {
@@ -134,7 +144,10 @@ class TxtTocRuleAdapter(context: Context, private val callBack: CallBack) :
         callBack.upCountView()
     }
 
-    private fun showMenu(view: View, position: Int) {
+    private fun showMenu(
+        view: View,
+        position: Int,
+    ) {
         val source = getItem(position) ?: return
         val popupMenu = PopupMenu(context, view)
         popupMenu.inflate(R.menu.txt_toc_rule_item)
@@ -142,7 +155,7 @@ class TxtTocRuleAdapter(context: Context, private val callBack: CallBack) :
             when (menuItem.itemId) {
                 R.id.menu_top -> callBack.toTop(source)
                 R.id.menu_bottom -> callBack.toBottom(source)
-                R.id.menu_del ->  {
+                R.id.menu_del -> {
                     callBack.del(source)
                     selected.remove(source)
                 }
@@ -172,7 +185,10 @@ class TxtTocRuleAdapter(context: Context, private val callBack: CallBack) :
         callBack.upCountView()
     }
 
-    override fun swap(srcPosition: Int, targetPosition: Int): Boolean {
+    override fun swap(
+        srcPosition: Int,
+        targetPosition: Int,
+    ): Boolean {
         val srcItem = getItem(srcPosition)
         val targetItem = getItem(targetPosition)
         if (srcItem != null && targetItem != null) {
@@ -192,7 +208,10 @@ class TxtTocRuleAdapter(context: Context, private val callBack: CallBack) :
 
     private val movedItems = hashSetOf<TxtTocRule>()
 
-    override fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+    override fun onClearView(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+    ) {
         if (movedItems.isNotEmpty()) {
             callBack.update(*movedItems.toTypedArray())
             movedItems.clear()
@@ -201,15 +220,14 @@ class TxtTocRuleAdapter(context: Context, private val callBack: CallBack) :
 
     val dragSelectCallback: DragSelectTouchHelper.Callback =
         object : DragSelectTouchHelper.AdvanceCallback<TxtTocRule>(Mode.ToggleAndReverse) {
-            override fun currentSelectedId(): MutableSet<TxtTocRule> {
-                return selected
-            }
+            override fun currentSelectedId(): MutableSet<TxtTocRule> = selected
 
-            override fun getItemId(position: Int): TxtTocRule {
-                return getItem(position)!!
-            }
+            override fun getItemId(position: Int): TxtTocRule = getItem(position)!!
 
-            override fun updateSelectState(position: Int, isSelected: Boolean): Boolean {
+            override fun updateSelectState(
+                position: Int,
+                isSelected: Boolean,
+            ): Boolean {
                 getItem(position)?.let {
                     if (isSelected) {
                         selected.add(it)
@@ -226,12 +244,17 @@ class TxtTocRuleAdapter(context: Context, private val callBack: CallBack) :
 
     interface CallBack {
         fun del(source: TxtTocRule)
+
         fun edit(source: TxtTocRule)
+
         fun update(vararg source: TxtTocRule)
+
         fun toTop(source: TxtTocRule)
+
         fun toBottom(source: TxtTocRule)
+
         fun upOrder()
+
         fun upCountView()
     }
-
 }

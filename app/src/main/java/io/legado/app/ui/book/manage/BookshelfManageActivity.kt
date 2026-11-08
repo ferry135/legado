@@ -10,7 +10,6 @@ import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -72,7 +71,6 @@ class BookshelfManageActivity :
     BookAdapter.CallBack,
     SourcePickerDialog.Callback,
     GroupSelectDialog.CallBack {
-
     override val binding by viewBinding(ActivityArrangeBookBinding::inflate)
     override val viewModel by viewModels<BookshelfManageViewModel>()
     override val groupList: ArrayList<BookGroup> = arrayListOf()
@@ -87,31 +85,34 @@ class BookshelfManageActivity :
     }
     private var books: List<Book>? = null
     private val waitDialog by lazy { WaitDialog(this) }
-    private val exportDir = registerForActivityResult(HandleFileContract()) {
-        it.uri?.let { uri ->
-            alert(R.string.export_success) {
-                if (uri.toString().isAbsUrl()) {
-                    setMessage(DirectLinkUpload.getSummary())
-                }
-                val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                    editView.hint = getString(R.string.path)
-                    editView.setText(uri.toString())
-                }
-                customView { alertBinding.root }
-                okButton {
-                    sendToClip(uri.toString())
+    private val exportDir =
+        registerForActivityResult(HandleFileContract()) {
+            it.uri?.let { uri ->
+                alert(R.string.export_success) {
+                    if (uri.toString().isAbsUrl()) {
+                        setMessage(DirectLinkUpload.getSummary())
+                    }
+                    val alertBinding =
+                        DialogEditTextBinding.inflate(layoutInflater).apply {
+                            editView.hint = getString(R.string.path)
+                            editView.setText(uri.toString())
+                        }
+                    customView { alertBinding.root }
+                    okButton {
+                        sendToClip(uri.toString())
+                    }
                 }
             }
         }
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         viewModel.groupId = intent.getLongExtra("groupId", -1)
         lifecycleScope.launch {
-            viewModel.groupName = withContext(IO) {
-                appDb.bookGroupDao.getByID(viewModel.groupId)?.groupName
-                    ?: getString(R.string.no_group)
-            }
+            viewModel.groupName =
+                withContext(IO) {
+                    appDb.bookGroupDao.getByID(viewModel.groupId)?.groupName
+                        ?: getString(R.string.no_group)
+                }
             upTitle()
         }
         initSearchView()
@@ -181,17 +182,16 @@ class BookshelfManageActivity :
     private fun initSearchView() {
         searchView.applyTint(primaryTextColor)
         searchView.isSubmitButtonEnabled = true
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
+        searchView.setOnQueryTextListener(
+            object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean = false
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                upBookData()
-                return false
-            }
-
-        })
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    upBookData()
+                    return false
+                }
+            },
+        )
     }
 
     private fun initRecyclerView() {
@@ -222,54 +222,65 @@ class BookshelfManageActivity :
     @SuppressLint("NotifyDataSetChanged")
     private fun initGroupData() {
         launchCollectWithLifecycle {
-            appDb.bookGroupDao.flowAll().catch {
-                AppLog.put("书架管理界面获取分组数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).conflate().collect {
-                groupList.clear()
-                groupList.addAll(it)
-                adapter.notifyDataSetChanged()
-                upMenu()
-            }
-
+            appDb.bookGroupDao
+                .flowAll()
+                .catch {
+                    AppLog.put("书架管理界面获取分组数据失败\n${it.localizedMessage}", it)
+                }.flowOn(IO)
+                .conflate()
+                .collect {
+                    groupList.clear()
+                    groupList.addAll(it)
+                    adapter.notifyDataSetChanged()
+                    upMenu()
+                }
         }
     }
 
     private fun upBookDataByGroupId() {
         booksFlowJob?.cancel()
-        booksFlowJob = launchCollectWithLifecycle {
-            val bookSort = AppConfig.getBookSortByGroupId(viewModel.groupId)
-            appDb.bookDao.flowByGroup(viewModel.groupId).map { list ->
-                when (bookSort) {
-                    1 -> list.sortedByDescending {
-                        it.latestChapterTime
-                    }
+        booksFlowJob =
+            launchCollectWithLifecycle {
+                val bookSort = AppConfig.getBookSortByGroupId(viewModel.groupId)
+                appDb.bookDao
+                    .flowByGroup(viewModel.groupId)
+                    .map { list ->
+                        when (bookSort) {
+                            1 ->
+                                list.sortedByDescending {
+                                    it.latestChapterTime
+                                }
 
-                    2 -> list.sortedWith { o1, o2 ->
-                        o1.name.cnCompare(o2.name)
-                    }
+                            2 ->
+                                list.sortedWith { o1, o2 ->
+                                    o1.name.cnCompare(o2.name)
+                                }
 
-                    3 -> list.sortedBy {
-                        it.order
-                    }
+                            3 ->
+                                list.sortedBy {
+                                    it.order
+                                }
 
-                    4 -> list.sortedByDescending {
-                        max(it.latestChapterTime, it.durChapterTime)
-                    }
+                            4 ->
+                                list.sortedByDescending {
+                                    max(it.latestChapterTime, it.durChapterTime)
+                                }
 
-                    else -> list.sortedByDescending {
-                        it.durChapterTime
+                            else ->
+                                list.sortedByDescending {
+                                    it.durChapterTime
+                                }
+                        }
+                    }.catch {
+                        AppLog.put("书架管理界面获取书籍列表失败\n${it.localizedMessage}", it)
+                    }.flowOn(IO)
+                    .conflate()
+                    .collect {
+                        books = it
+                        upBookData()
+                        itemTouchCallback.isCanDrag = bookSort == 3
                     }
-                }
-            }.catch {
-                AppLog.put("书架管理界面获取书籍列表失败\n${it.localizedMessage}", it)
-            }.flowOn(IO)
-                .conflate().collect {
-                    books = it
-                    upBookData()
-                    itemTouchCallback.isCanDrag = bookSort == 3
-                }
-
-        }
+            }
     }
 
     private fun upBookData() {
@@ -278,11 +289,12 @@ class BookshelfManageActivity :
             if (searchKey.isNullOrEmpty()) {
                 adapter.setItems(books)
             } else {
-                books.filter {
-                    it.contains(searchKey.toString())
-                }.let {
-                    adapter.setItems(it)
-                }
+                books
+                    .filter {
+                        it.contains(searchKey.toString())
+                    }.let {
+                        adapter.setItems(it)
+                    }
             }
         }
     }
@@ -295,24 +307,27 @@ class BookshelfManageActivity :
                 adapter.notifyItemRangeChanged(0, adapter.itemCount)
             }
 
-            R.id.menu_export_all_use_book_source -> viewModel.saveAllUseBookSourceToFile { file ->
-                exportDir.launch {
-                    mode = HandleFileContract.EXPORT
-                    fileData = HandleFileContract.FileData(
-                        "bookSource.json",
-                        file,
-                        "application/json"
-                    )
+            R.id.menu_export_all_use_book_source ->
+                viewModel.saveAllUseBookSourceToFile { file ->
+                    exportDir.launch {
+                        mode = HandleFileContract.EXPORT
+                        fileData =
+                            HandleFileContract.FileData(
+                                "bookSource.json",
+                                file,
+                                "application/json",
+                            )
+                    }
                 }
-            }
 
-            else -> if (item.groupId == R.id.menu_group) {
-                viewModel.groupName = item.title.toString()
-                upTitle()
-                viewModel.groupId =
-                    appDb.bookGroupDao.getByName(item.title.toString())?.groupId ?: 0
-                upBookDataByGroupId()
-            }
+            else ->
+                if (item.groupId == R.id.menu_group) {
+                    viewModel.groupName = item.title.toString()
+                    upTitle()
+                    viewModel.groupId =
+                        appDb.bookGroupDao.getByName(item.title.toString())?.groupId ?: 0
+                    upBookDataByGroupId()
+                }
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -345,14 +360,16 @@ class BookshelfManageActivity :
 
     private fun alertDelSelection() {
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
-            val checkBox = CheckBox(this@BookshelfManageActivity).apply {
-                setText(R.string.delete_book_file)
-                isChecked = LocalConfig.deleteBookOriginal
-            }
-            val view = LinearLayout(this@BookshelfManageActivity).apply {
-                setPadding(16.dpToPx(), 0, 16.dpToPx(), 0)
-                addView(checkBox)
-            }
+            val checkBox =
+                CheckBox(this@BookshelfManageActivity).apply {
+                    setText(R.string.delete_book_file)
+                    isChecked = LocalConfig.deleteBookOriginal
+                }
+            val view =
+                LinearLayout(this@BookshelfManageActivity).apply {
+                    setPadding(16.dpToPx(), 0, 16.dpToPx(), 0)
+                    addView(checkBox)
+                }
             customView { view }
             okButton {
                 LocalConfig.deleteBookOriginal = checkBox.isChecked
@@ -362,20 +379,28 @@ class BookshelfManageActivity :
         }
     }
 
-    override fun selectGroup(requestCode: Int, groupId: Long) {
+    override fun selectGroup(
+        requestCode: Int,
+        groupId: Long,
+    ) {
         showDialogFragment(
-            GroupSelectDialog(groupId, requestCode)
+            GroupSelectDialog(groupId, requestCode),
         )
     }
 
-    override fun upGroup(requestCode: Int, groupId: Long) {
+    override fun upGroup(
+        requestCode: Int,
+        groupId: Long,
+    ) {
         when (requestCode) {
-            groupRequestCode -> adapter.selection.let { books ->
-                val array = Array(books.size) {
-                    books[it].copy(group = groupId)
+            groupRequestCode ->
+                adapter.selection.let { books ->
+                    val array =
+                        Array(books.size) {
+                            books[it].copy(group = groupId)
+                        }
+                    viewModel.updateBook(*array)
                 }
-                viewModel.updateBook(*array)
-            }
 
             adapter.groupRequestCode -> {
                 adapter.actionItem?.let {
@@ -383,13 +408,15 @@ class BookshelfManageActivity :
                 }
             }
 
-            addToGroupRequestCode -> adapter.selection.let { books ->
-                val array = Array(books.size) { index ->
-                    val book = books[index]
-                    book.copy(group = book.group or groupId)
+            addToGroupRequestCode ->
+                adapter.selection.let { books ->
+                    val array =
+                        Array(books.size) { index ->
+                            val book = books[index]
+                            book.copy(group = book.group or groupId)
+                        }
+                    viewModel.updateBook(*array)
                 }
-                viewModel.updateBook(*array)
-            }
         }
     }
 
@@ -405,14 +432,16 @@ class BookshelfManageActivity :
         alert(titleResource = R.string.draw, messageResource = R.string.sure_del) {
             var checkBox: CheckBox? = null
             if (book.isLocal) {
-                checkBox = CheckBox(this@BookshelfManageActivity).apply {
-                    setText(R.string.delete_book_file)
-                    isChecked = LocalConfig.deleteBookOriginal
-                }
-                val view = LinearLayout(this@BookshelfManageActivity).apply {
-                    setPadding(16.dpToPx(), 0, 16.dpToPx(), 0)
-                    addView(checkBox)
-                }
+                checkBox =
+                    CheckBox(this@BookshelfManageActivity).apply {
+                        setText(R.string.delete_book_file)
+                        isChecked = LocalConfig.deleteBookOriginal
+                    }
+                val view =
+                    LinearLayout(this@BookshelfManageActivity).apply {
+                        setPadding(16.dpToPx(), 0, 16.dpToPx(), 0)
+                        addView(checkBox)
+                    }
                 customView { view }
             }
             okButton {
@@ -435,5 +464,4 @@ class BookshelfManageActivity :
         viewModel.changeSource(adapter.selection, source)
         viewModel.batchChangeSourceState.value = true
     }
-
 }

@@ -26,12 +26,12 @@ import io.legado.app.utils.visible
 import splitties.views.onClick
 
 class ImportTxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_view) {
-
     constructor(source: String, finishOnDismiss: Boolean = false) : this() {
-        arguments = Bundle().apply {
-            putString("source", source)
-            putBoolean("finishOnDismiss", finishOnDismiss)
-        }
+        arguments =
+            Bundle().apply {
+                putString("source", source)
+                putBoolean("finishOnDismiss", finishOnDismiss)
+            }
     }
 
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
@@ -51,7 +51,10 @@ class ImportTxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vie
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         binding.toolBar.setTitle(R.string.import_txt_toc_rule)
         binding.rotateLoading.visible()
         // generic-list-dialogs 稿 §05/§06 #2：壳 tv_msg 默认已改中性消息层令牌，本页 tv_msg 仅用于
@@ -115,32 +118,32 @@ class ImportTxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vie
 
     private fun upSelectText() {
         if (viewModel.isSelectAll) {
-            binding.tvFooterLeft.text = getString(
-                R.string.select_cancel_count,
-                viewModel.selectCount,
-                viewModel.allSources.size
-            )
+            binding.tvFooterLeft.text =
+                getString(
+                    R.string.select_cancel_count,
+                    viewModel.selectCount,
+                    viewModel.allSources.size,
+                )
         } else {
-            binding.tvFooterLeft.text = getString(
-                R.string.select_all_count,
-                viewModel.selectCount,
-                viewModel.allSources.size
-            )
+            binding.tvFooterLeft.text =
+                getString(
+                    R.string.select_all_count,
+                    viewModel.selectCount,
+                    viewModel.allSources.size,
+                )
         }
     }
 
-    inner class SourcesAdapter(context: Context) :
-        RecyclerAdapter<TxtTocRule, ItemSourceImportBinding>(context) {
-
-        override fun getViewBinding(parent: ViewGroup): ItemSourceImportBinding {
-            return ItemSourceImportBinding.inflate(inflater, parent, false)
-        }
+    inner class SourcesAdapter(
+        context: Context,
+    ) : RecyclerAdapter<TxtTocRule, ItemSourceImportBinding>(context) {
+        override fun getViewBinding(parent: ViewGroup): ItemSourceImportBinding = ItemSourceImportBinding.inflate(inflater, parent, false)
 
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemSourceImportBinding,
             item: TxtTocRule,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             binding.apply {
                 cbSourceName.isChecked = viewModel.selectStatus[holder.layoutPosition]
@@ -149,15 +152,19 @@ class ImportTxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vie
                 cbSourceName.contentDescription = item.name
                 tvSourceName.text = item.name
                 val localSource = viewModel.checkSources[holder.layoutPosition]
-                tvSourceState.text = when {
-                    localSource == null -> "新增"
-                    item != localSource -> "更新"
-                    else -> "已有"
-                }
+                tvSourceState.text =
+                    when {
+                        localSource == null -> "新增"
+                        item != localSource -> "更新"
+                        else -> "已有"
+                    }
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder, binding: ItemSourceImportBinding) {
+        override fun registerListener(
+            holder: ItemViewHolder,
+            binding: ItemSourceImportBinding,
+        ) {
             binding.apply {
                 cbSourceName.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (buttonView.isPressed) {
@@ -176,12 +183,11 @@ class ImportTxtTocRuleDialog() : BaseDialogFragment(R.layout.dialog_recycler_vie
                         CodeDialog(
                             GSON.toJson(source),
                             disableEdit = false,
-                            requestId = holder.layoutPosition.toString()
-                        )
+                            requestId = holder.layoutPosition.toString(),
+                        ),
                     )
                 }
             }
         }
-
     }
 }

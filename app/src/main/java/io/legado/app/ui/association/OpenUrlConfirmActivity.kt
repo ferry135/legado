@@ -7,9 +7,7 @@ import io.legado.app.databinding.ActivityTranslucenceBinding
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-class OpenUrlConfirmActivity :
-    BaseActivity<ActivityTranslucenceBinding>() {
-
+class OpenUrlConfirmActivity : BaseActivity<ActivityTranslucenceBinding>() {
     override val binding by viewBinding(ActivityTranslucenceBinding::inflate)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -21,5 +19,4 @@ class OpenUrlConfirmActivity :
             showDialogFragment(OpenUrlConfirmDialog(it, mimeType, sourceOrigin, sourceName, sourceType))
         } ?: finish()
     }
-
 }

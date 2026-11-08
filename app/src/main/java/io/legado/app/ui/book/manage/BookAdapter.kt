@@ -34,9 +34,7 @@ class BookAdapter(context: Context, val callBack: CallBack) :
             }
         }
 
-    override fun getViewBinding(parent: ViewGroup): ItemArrangeBookBinding {
-        return ItemArrangeBookBinding.inflate(inflater, parent, false)
-    }
+    override fun getViewBinding(parent: ViewGroup): ItemArrangeBookBinding = ItemArrangeBookBinding.inflate(inflater, parent, false)
 
     override fun onCurrentListChanged() {
         callBack.upSelectCount()
@@ -46,7 +44,7 @@ class BookAdapter(context: Context, val callBack: CallBack) :
         holder: ItemViewHolder,
         binding: ItemArrangeBookBinding,
         item: Book,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
         binding.apply {
             root.setBackgroundColor(context.backgroundColor)
@@ -204,13 +202,9 @@ class BookAdapter(context: Context, val callBack: CallBack) :
 
     val dragSelectCallback: DragSelectTouchHelper.Callback =
         object : DragSelectTouchHelper.AdvanceCallback<Book>(Mode.ToggleAndReverse) {
-            override fun currentSelectedId(): MutableSet<Book> {
-                return selectedBooks
-            }
+            override fun currentSelectedId(): MutableSet<Book> = selectedBooks
 
-            override fun getItemId(position: Int): Book {
-                return getItem(position)!!
-            }
+            override fun getItemId(position: Int): Book = getItem(position)!!
 
             override fun updateSelectState(position: Int, isSelected: Boolean): Boolean {
                 getItem(position)?.let {

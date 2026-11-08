@@ -87,69 +87,74 @@ class BookInfoActivity :
     ChangeBookSourceDialog.CallBack,
     ChangeCoverDialog.CallBack,
     VariableDialog.Callback {
-
-    private val tocActivityResult = registerForActivityResult(TocActivityResult()) {
-        it?.let {
-            viewModel.getBook(false)?.let { book ->
-                lifecycleScope.launch {
-                    withContext(IO) {
-                        book.durChapterIndex = it.first
-                        book.durChapterPos = it.second
-                        chapterChanged = it.third
-                        appDb.bookDao.update(book)
+    private val tocActivityResult =
+        registerForActivityResult(TocActivityResult()) {
+            it?.let {
+                viewModel.getBook(false)?.let { book ->
+                    lifecycleScope.launch {
+                        withContext(IO) {
+                            book.durChapterIndex = it.first
+                            book.durChapterPos = it.second
+                            chapterChanged = it.third
+                            appDb.bookDao.update(book)
+                        }
+                        startReadActivity(book)
                     }
-                    startReadActivity(book)
+                }
+            } ?: let {
+                if (!viewModel.inBookshelf) {
+                    viewModel.delBook()
                 }
             }
-        } ?: let {
-            if (!viewModel.inBookshelf) {
-                viewModel.delBook()
+        }
+    private val localBookTreeSelect =
+        registerForActivityResult(HandleFileContract()) {
+            it.uri?.let { treeUri ->
+                AppConfig.defaultBookTreeUri = treeUri.toString()
             }
         }
-    }
-    private val localBookTreeSelect = registerForActivityResult(HandleFileContract()) {
-        it.uri?.let { treeUri ->
-            AppConfig.defaultBookTreeUri = treeUri.toString()
-        }
-    }
-    private val readBookResult = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-        viewModel.upBook(intent)
-        when (it.resultCode) {
-            RESULT_OK -> {
-                viewModel.inBookshelf = true
-                upTvBookshelf()
-            }
+    private val readBookResult =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult(),
+        ) {
+            viewModel.upBook(intent)
+            when (it.resultCode) {
+                RESULT_OK -> {
+                    viewModel.inBookshelf = true
+                    upTvBookshelf()
+                }
 
-            RESULT_DELETED -> {
-                setResult(RESULT_OK)
-                finish()
-            }
-        }
-    }
-    private val infoEditResult = registerForActivityResult(
-        StartActivityContract(BookInfoEditActivity::class.java)
-    ) {
-        if (it.resultCode == RESULT_OK) {
-            viewModel.upEditBook()
-        }
-    }
-    private val editSourceResult = registerForActivityResult(
-        StartActivityContract(BookSourceEditActivity::class.java)
-    ) {
-        if (it.resultCode == RESULT_CANCELED) {
-            return@registerForActivityResult
-        }
-        book?.let { book ->
-            lifecycleScope.launch {
-                viewModel.bookSource = withContext(IO) {
-                    appDb.bookSourceDao.getBookSource(book.origin)
+                RESULT_DELETED -> {
+                    setResult(RESULT_OK)
+                    finish()
                 }
-                viewModel.refreshBook(book)
             }
         }
-    }
+    private val infoEditResult =
+        registerForActivityResult(
+            StartActivityContract(BookInfoEditActivity::class.java),
+        ) {
+            if (it.resultCode == RESULT_OK) {
+                viewModel.upEditBook()
+            }
+        }
+    private val editSourceResult =
+        registerForActivityResult(
+            StartActivityContract(BookSourceEditActivity::class.java),
+        ) {
+            if (it.resultCode == RESULT_CANCELED) {
+                return@registerForActivityResult
+            }
+            book?.let { book ->
+                lifecycleScope.launch {
+                    viewModel.bookSource =
+                        withContext(IO) {
+                            appDb.bookSourceDao.getBookSource(book.origin)
+                        }
+                    viewModel.refreshBook(book)
+                }
+            }
+        }
     private var chapterChanged = false
     private val waitDialog by lazy { WaitDialog(this) }
     private var editMenuItem: MenuItem? = null
@@ -184,7 +189,10 @@ class BookInfoActivity :
         return super.onCompatCreateOptionsMenu(menu)
     }
 
-    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+    override fun onMenuOpened(
+        featureId: Int,
+        menu: Menu,
+    ): Boolean {
         menu.findItem(R.id.menu_can_update)?.isChecked =
             viewModel.bookData.value?.canUpdate ?: true
         menu.findItem(R.id.menu_split_long_chapter)?.isChecked =
@@ -228,23 +236,26 @@ class BookInfoActivity :
                 refreshBook()
             }
 
-            R.id.menu_login -> viewModel.bookSource?.let {
-                startActivity<SourceLoginActivity> {
-                    putExtra("type", "bookSource")
-                    putExtra("key", it.bookSourceUrl)
+            R.id.menu_login ->
+                viewModel.bookSource?.let {
+                    startActivity<SourceLoginActivity> {
+                        putExtra("type", "bookSource")
+                        putExtra("key", it.bookSourceUrl)
+                    }
                 }
-            }
 
             R.id.menu_top -> viewModel.topBook()
             R.id.menu_set_source_variable -> setSourceVariable()
             R.id.menu_set_book_variable -> setBookVariable()
-            R.id.menu_copy_book_url -> viewModel.getBook()?.bookUrl?.let {
-                sendToClip(it)
-            }
+            R.id.menu_copy_book_url ->
+                viewModel.getBook()?.bookUrl?.let {
+                    sendToClip(it)
+                }
 
-            R.id.menu_copy_toc_url -> viewModel.getBook()?.tocUrl?.let {
-                sendToClip(it)
-            }
+            R.id.menu_copy_toc_url ->
+                viewModel.getBook()?.tocUrl?.let {
+                    sendToClip(it)
+                }
 
             R.id.menu_can_update -> {
                 viewModel.getBook()?.let {
@@ -290,9 +301,10 @@ class BookInfoActivity :
     override fun observeLiveBus() {
         viewModel.actionLive.observe(this) {
             when (it) {
-                "selectBooksDir" -> localBookTreeSelect.launch {
-                    title = getString(R.string.select_book_folder)
-                }
+                "selectBooksDir" ->
+                    localBookTreeSelect.launch {
+                        title = getString(R.string.select_book_folder)
+                    }
             }
         }
     }
@@ -326,7 +338,7 @@ class BookInfoActivity :
                 bookWebDav
                     ?.upload(book)
                     ?: throw NoStackTraceException("未配置webDav")
-                //更新书籍最后更新时间,使之比远程书籍的时间新
+                // 更新书籍最后更新时间,使之比远程书籍的时间新
                 book.lastCheckTime = System.currentTimeMillis()
                 viewModel.saveBook(book)
             } catch (e: Exception) {
@@ -374,23 +386,28 @@ class BookInfoActivity :
     private fun showCover(book: Book) {
         binding.ivCover.load(book.getDisplayCover(), book.name, book.author, false, book.origin) {
             if (!AppConfig.isEInkMode) {
-                BookCover.loadBlur(this, book.getDisplayCover(), false, book.origin)
+                BookCover
+                    .loadBlur(this, book.getDisplayCover(), false, book.origin)
                     .into(binding.bgBook)
             }
         }
     }
 
-    private fun upLoading(isLoading: Boolean, chapterList: List<BookChapter>? = null) {
+    private fun upLoading(
+        isLoading: Boolean,
+        chapterList: List<BookChapter>? = null,
+    ) {
         when {
             isLoading -> {
                 binding.tvToc.text = getString(R.string.toc_s, getString(R.string.loading))
             }
 
             chapterList.isNullOrEmpty() -> {
-                binding.tvToc.text = getString(
-                    R.string.toc_s,
-                    getString(R.string.error_load_toc)
-                )
+                binding.tvToc.text =
+                    getString(
+                        R.string.toc_s,
+                        getString(R.string.error_load_toc),
+                    )
             }
 
             else -> {
@@ -414,11 +431,12 @@ class BookInfoActivity :
     private fun upGroup(groupId: Long) {
         viewModel.loadGroup(groupId) {
             if (it.isNullOrEmpty()) {
-                binding.tvGroup.text = if (book?.isLocal == true) {
-                    getString(R.string.group_s, getString(R.string.local_no_group))
-                } else {
-                    getString(R.string.group_s, getString(R.string.no_group))
-                }
+                binding.tvGroup.text =
+                    if (book?.isLocal == true) {
+                        getString(R.string.group_s, getString(R.string.local_no_group))
+                    } else {
+                        getString(R.string.group_s, getString(R.string.no_group))
+                    }
             } else {
                 binding.tvGroup.text = getString(R.string.group_s, it)
             }
@@ -429,7 +447,7 @@ class BookInfoActivity :
         ivCover.setOnClickListener {
             viewModel.getBook()?.let {
                 showDialogFragment(
-                    ChangeCoverDialog(it.name, it.author)
+                    ChangeCoverDialog(it.name, it.author),
                 )
             }
         }
@@ -502,7 +520,7 @@ class BookInfoActivity :
         tvChangeGroup.setOnClickListener {
             viewModel.getBook()?.let {
                 showDialogFragment(
-                    GroupSelectDialog(it.group)
+                    GroupSelectDialog(it.group),
                 )
             }
         }
@@ -541,8 +559,8 @@ class BookInfoActivity :
                     getString(R.string.set_source_variable),
                     source.getKey(),
                     variable,
-                    comment
-                )
+                    comment,
+                ),
             )
         }
     }
@@ -556,27 +574,32 @@ class BookInfoActivity :
             }
             val book = viewModel.getBook() ?: return@launch
             val variable = withContext(IO) { book.getCustomVariable() }
-            val comment = source.getDisplayVariableComment(
-                """书籍变量可在js中通过book.getVariable("custom")获取"""
-            )
+            val comment =
+                source.getDisplayVariableComment(
+                    """书籍变量可在js中通过book.getVariable("custom")获取""",
+                )
             showDialogFragment(
                 VariableDialog(
                     getString(R.string.set_book_variable),
                     book.bookUrl,
                     variable,
-                    comment
-                )
+                    comment,
+                ),
             )
         }
     }
 
-    override fun setVariable(key: String, variable: String?) {
+    override fun setVariable(
+        key: String,
+        variable: String?,
+    ) {
         when (key) {
             viewModel.bookSource?.getKey() -> viewModel.bookSource?.setVariable(variable)
-            viewModel.bookData.value?.bookUrl -> viewModel.bookData.value?.let {
-                it.putCustomVariable(variable)
-                viewModel.saveBook(it)
-            }
+            viewModel.bookData.value?.bookUrl ->
+                viewModel.bookData.value?.let {
+                    it.putCustomVariable(variable)
+                    viewModel.saveBook(it)
+                }
         }
     }
 
@@ -586,18 +609,20 @@ class BookInfoActivity :
             if (LocalConfig.bookInfoDeleteAlert) {
                 alert(
                     titleResource = R.string.draw,
-                    messageResource = R.string.sure_del
+                    messageResource = R.string.sure_del,
                 ) {
                     var checkBox: CheckBox? = null
                     if (it.isLocal) {
-                        checkBox = CheckBox(this@BookInfoActivity).apply {
-                            setText(R.string.delete_book_file)
-                            isChecked = LocalConfig.deleteBookOriginal
-                        }
-                        val view = LinearLayout(this@BookInfoActivity).apply {
-                            setPadding(16.dpToPx(), 0, 16.dpToPx(), 0)
-                            addView(checkBox)
-                        }
+                        checkBox =
+                            CheckBox(this@BookInfoActivity).apply {
+                                setText(R.string.delete_book_file)
+                                isChecked = LocalConfig.deleteBookOriginal
+                            }
+                        val view =
+                            LinearLayout(this@BookInfoActivity).apply {
+                                setPadding(16.dpToPx(), 0, 16.dpToPx(), 0)
+                                addView(checkBox)
+                            }
                         customView { view }
                     }
                     yesButton {
@@ -636,15 +661,15 @@ class BookInfoActivity :
         }
         selector(
             R.string.download_and_import_file,
-            webFiles
+            webFiles,
         ) { _, webFile, _ ->
             if (webFile.isSupported) {
-                /* import */
+                // import
                 viewModel.importOrDownloadWebFile<Book>(webFile) {
                     onClick?.invoke(it)
                 }
             } else if (webFile.isSupportDecompress) {
-                /* 解压筛选后再选择导入项 */
+                // 解压筛选后再选择导入项
                 viewModel.importOrDownloadWebFile<Uri>(webFile) { uri ->
                     viewModel.getArchiveFilesName(uri) { fileNames ->
                         if (fileNames.size == 1) {
@@ -659,10 +684,10 @@ class BookInfoActivity :
             } else {
                 alert(
                     title = getString(R.string.draw),
-                    message = getString(R.string.file_not_supported, webFile.name)
+                    message = getString(R.string.file_not_supported, webFile.name),
                 ) {
                     neutralButton(R.string.open_fun) {
-                        /* download only */
+                        // download only
                         viewModel.importOrDownloadWebFile<Uri>(webFile) {
                             openFileUri(it, "*/*")
                         }
@@ -684,7 +709,7 @@ class BookInfoActivity :
         }
         selector(
             R.string.import_select_book,
-            fileNames
+            fileNames,
         ) { _, name, _ ->
             viewModel.importArchiveBook(archiveFileUri, name) {
                 success?.invoke(it)
@@ -709,29 +734,37 @@ class BookInfoActivity :
 
     private fun startReadActivity(book: Book) {
         when {
-            book.isAudio -> readBookResult.launch(
-                Intent(this, AudioPlayActivity::class.java)
-                    .putExtra("bookUrl", book.bookUrl)
-                    .putExtra("inBookshelf", viewModel.inBookshelf)
-            )
-
-            else -> readBookResult.launch(
-                Intent(
-                    this,
-                    if (!book.isLocal && book.isImage && AppConfig.showMangaUi) ReadMangaActivity::class.java
-                    else ReadBookActivity::class.java
+            book.isAudio ->
+                readBookResult.launch(
+                    Intent(this, AudioPlayActivity::class.java)
+                        .putExtra("bookUrl", book.bookUrl)
+                        .putExtra("inBookshelf", viewModel.inBookshelf),
                 )
-                    .putExtra("bookUrl", book.bookUrl)
-                    .putExtra("inBookshelf", viewModel.inBookshelf)
-                    .putExtra("chapterChanged", chapterChanged)
-            )
+
+            else ->
+                readBookResult.launch(
+                    Intent(
+                        this,
+                        if (!book.isLocal && book.isImage && AppConfig.showMangaUi) {
+                            ReadMangaActivity::class.java
+                        } else {
+                            ReadBookActivity::class.java
+                        },
+                    ).putExtra("bookUrl", book.bookUrl)
+                        .putExtra("inBookshelf", viewModel.inBookshelf)
+                        .putExtra("chapterChanged", chapterChanged),
+                )
         }
     }
 
     override val oldBook: Book?
         get() = viewModel.bookData.value
 
-    override fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
+    override fun changeTo(
+        source: BookSource,
+        book: Book,
+        toc: List<BookChapter>,
+    ) {
         viewModel.changeTo(source, book, toc)
     }
 
@@ -745,7 +778,10 @@ class BookInfoActivity :
         }
     }
 
-    override fun upGroup(requestCode: Int, groupId: Long) {
+    override fun upGroup(
+        requestCode: Int,
+        groupId: Long,
+    ) {
         upGroup(groupId)
         viewModel.getBook()?.let { book ->
             book.group = groupId
@@ -770,5 +806,4 @@ class BookInfoActivity :
             waitDialog.dismiss()
         }
     }
-
 }

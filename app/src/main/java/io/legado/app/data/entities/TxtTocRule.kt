@@ -3,7 +3,6 @@ package io.legado.app.data.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-
 @Entity(tableName = "txtTocRules")
 data class TxtTocRule(
     @PrimaryKey
@@ -12,12 +11,9 @@ data class TxtTocRule(
     var rule: String = "",
     var example: String? = null,
     var serialNumber: Int = -1,
-    var enable: Boolean = true
+    var enable: Boolean = true,
 ) {
-
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
+    override fun hashCode(): Int = id.hashCode()
 
     override fun equals(other: Any?): Boolean {
         if (other is TxtTocRule) {
@@ -25,5 +21,4 @@ data class TxtTocRule(
         }
         return false
     }
-
 }

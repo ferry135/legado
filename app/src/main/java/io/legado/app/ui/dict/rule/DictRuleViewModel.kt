@@ -8,9 +8,9 @@ import io.legado.app.data.entities.DictRule
 import io.legado.app.help.DefaultData
 import io.legado.app.utils.toastOnUi
 
-class DictRuleViewModel(application: Application) : BaseViewModel(application) {
-
-
+class DictRuleViewModel(
+    application: Application,
+) : BaseViewModel(application) {
     fun update(vararg dictRule: DictRule) {
         execute {
             appDb.dictRuleDao.update(*dictRule)
@@ -60,5 +60,4 @@ class DictRuleViewModel(application: Application) : BaseViewModel(application) {
             DefaultData.importDefaultDictRules()
         }
     }
-
 }

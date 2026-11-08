@@ -43,7 +43,6 @@ class TextChapterLayout(
     private val book: Book,
     private val bookContent: BookContent,
 ) {
-
     @Volatile
     private var listener: LayoutProgressListener? = textChapter
 
@@ -94,24 +93,25 @@ class TextChapterLayout(
 
     var channel = Channel<TextPage>(Channel.UNLIMITED)
 
-
     init {
-        job = Coroutine.async(
-            scope,
-            start = CoroutineStart.LAZY,
-            executeContext = IO
-        ) {
-            launch {
-                val bookSource = book.getBookSource() ?: return@launch
-                BookHelp.saveImages(bookSource, book, bookChapter, bookContent.toString())
-            }
-            getTextChapter(book, bookChapter, displayTitle, bookContent)
-        }.onError {
-            exception = it
-            onException(it)
-        }.onFinally {
-            isCompleted = true
-        }
+        job =
+            Coroutine
+                .async(
+                    scope,
+                    start = CoroutineStart.LAZY,
+                    executeContext = IO,
+                ) {
+                    launch {
+                        val bookSource = book.getBookSource() ?: return@launch
+                        BookHelp.saveImages(bookSource, book, bookChapter, bookContent.toString())
+                    }
+                    getTextChapter(book, bookChapter, displayTitle, bookContent)
+                }.onError {
+                    exception = it
+                    onException(it)
+                }.onFinally {
+                    isCompleted = true
+                }
         job.start()
     }
 
@@ -200,7 +200,7 @@ class TextChapterLayout(
         val isTextImageStyle = imageStyle.equals(Book.imgStyleText, true)
 
         if (titleMode != 2 || bookChapter.isVolume || contents.isEmpty()) {
-            //标题非隐藏
+            // 标题非隐藏
             displayTitle.splitNotBlank("\n").forEach { text ->
                 setTypeText(
                     book,
@@ -211,7 +211,7 @@ class TextChapterLayout(
                     imageStyle,
                     isTitle = true,
                     emptyContent = contents.isEmpty(),
-                    isVolumeTitle = bookChapter.isVolume
+                    isVolumeTitle = bookChapter.isVolume,
                 )
                 pendingTextPage.lines.last().isParagraphEnd = true
                 stringBuilder.append("\n")
@@ -229,7 +229,7 @@ class TextChapterLayout(
         contents.forEach { content ->
             coroutineContext.ensureActive()
             if (isTextImageStyle) {
-                //图片样式为文字嵌入类型
+                // 图片样式为文字嵌入类型
                 var text = content.replace(ChapterProvider.srcReplaceChar, "▣")
                 val srcList = LinkedList<String>()
                 sb.setLength(0)
@@ -249,7 +249,7 @@ class TextChapterLayout(
                     contentPaintTextHeight,
                     contentPaintFontMetrics,
                     imageStyle,
-                    srcList = srcList
+                    srcList = srcList,
                 )
             } else {
                 if (isSingleImageStyle && isSetTypedImage) {
@@ -270,14 +270,14 @@ class TextChapterLayout(
                                 contentPaintTextHeight,
                                 contentPaintFontMetrics,
                                 imageStyle,
-                                isFirstLine = start == 0
+                                isFirstLine = start == 0,
                             )
                         }
                         setTypeImage(
                             book,
                             matcher.group(1)!!,
                             contentPaintTextHeight,
-                            imageStyle
+                            imageStyle,
                         )
                         isSetTypedImage = true
                         start = matcher.end()
@@ -297,7 +297,7 @@ class TextChapterLayout(
                             contentPaintTextHeight,
                             contentPaintFontMetrics,
                             imageStyle,
-                            isFirstLine = start == 0
+                            isFirstLine = start == 0,
                         )
                     }
                 }
@@ -374,14 +374,15 @@ class TextChapterLayout(
             textLine.lineTop = durY + paddingTop
             durY += height
             textLine.lineBottom = durY + paddingTop
-            val (start, end) = if (visibleWidth > width) {
-                val adjustWidth = (visibleWidth - width) / 2f
-                Pair(adjustWidth, adjustWidth + width)
-            } else {
-                Pair(0f, width.toFloat())
-            }
+            val (start, end) =
+                if (visibleWidth > width) {
+                    val adjustWidth = (visibleWidth - width) / 2f
+                    Pair(adjustWidth, adjustWidth + width)
+                } else {
+                    Pair(0f, width.toFloat())
+                }
             textLine.addColumn(
-                ImageColumn(start = absStartX + start, end = absStartX + end, src = src)
+                ImageColumn(start = absStartX + start, end = absStartX + end, src = src),
             )
             calcTextLinePosition(textPages, textLine, stringBuilder.length)
             stringBuilder.append(" ") // 确保翻页时索引计算正确
@@ -405,52 +406,54 @@ class TextChapterLayout(
         isFirstLine: Boolean = true,
         emptyContent: Boolean = false,
         isVolumeTitle: Boolean = false,
-        srcList: LinkedList<String>? = null
+        srcList: LinkedList<String>? = null,
     ) {
         val widthsArray = allocateFloatArray(text.length)
         textPaint.getTextWidthsCompat(text, widthsArray)
-        val layout = if (useZhLayout) {
-            val (words, widths) = measureTextSplit(text, widthsArray)
-            val indentSize = if (isFirstLine) paragraphIndent.length else 0
-            ZhLayout(text, textPaint, visibleWidth, words, widths, indentSize)
-        } else {
-            StaticLayout(text, textPaint, visibleWidth, Layout.Alignment.ALIGN_NORMAL, 0f, 0f, true)
-        }
-        durY = when {
-            //标题y轴居中
-            emptyContent && textPages.isEmpty() -> {
-                val textPage = pendingTextPage
-                if (textPage.lineSize == 0) {
-                    val ty = (visibleHeight - layout.lineCount * textHeight) / 2
-                    if (ty > titleTopSpacing) ty else titleTopSpacing.toFloat()
-                } else {
-                    var textLayoutHeight = layout.lineCount * textHeight
-                    val fistLine = textPage.getLine(0)
-                    if (fistLine.lineTop < textLayoutHeight + titleTopSpacing) {
-                        textLayoutHeight = fistLine.lineTop - titleTopSpacing
-                    }
-                    textPage.lines.forEach {
-                        it.lineTop -= textLayoutHeight
-                        it.lineBase -= textLayoutHeight
-                        it.lineBottom -= textLayoutHeight
-                    }
-                    durY - textLayoutHeight
-                }
+        val layout =
+            if (useZhLayout) {
+                val (words, widths) = measureTextSplit(text, widthsArray)
+                val indentSize = if (isFirstLine) paragraphIndent.length else 0
+                ZhLayout(text, textPaint, visibleWidth, words, widths, indentSize)
+            } else {
+                StaticLayout(text, textPaint, visibleWidth, Layout.Alignment.ALIGN_NORMAL, 0f, 0f, true)
             }
-
-            isTitle && textPages.isEmpty() && pendingTextPage.lines.isEmpty() -> {
-                when (imageStyle?.uppercase()) {
-                    Book.imgStyleSingle -> {
+        durY =
+            when {
+                // 标题y轴居中
+                emptyContent && textPages.isEmpty() -> {
+                    val textPage = pendingTextPage
+                    if (textPage.lineSize == 0) {
                         val ty = (visibleHeight - layout.lineCount * textHeight) / 2
                         if (ty > titleTopSpacing) ty else titleTopSpacing.toFloat()
+                    } else {
+                        var textLayoutHeight = layout.lineCount * textHeight
+                        val fistLine = textPage.getLine(0)
+                        if (fistLine.lineTop < textLayoutHeight + titleTopSpacing) {
+                            textLayoutHeight = fistLine.lineTop - titleTopSpacing
+                        }
+                        textPage.lines.forEach {
+                            it.lineTop -= textLayoutHeight
+                            it.lineBase -= textLayoutHeight
+                            it.lineBottom -= textLayoutHeight
+                        }
+                        durY - textLayoutHeight
                     }
-
-                    else -> durY + titleTopSpacing
                 }
-            }
 
-            else -> durY
-        }
+                isTitle && textPages.isEmpty() && pendingTextPage.lines.isEmpty() -> {
+                    when (imageStyle?.uppercase()) {
+                        Book.imgStyleSingle -> {
+                            val ty = (visibleHeight - layout.lineCount * textHeight) / 2
+                            if (ty > titleTopSpacing) ty else titleTopSpacing.toFloat()
+                        }
+
+                        else -> durY + titleTopSpacing
+                    }
+                }
+
+                else -> durY
+            }
         for (lineIndex in 0 until layout.lineCount) {
             val textLine = TextLine(isTitle = isTitle)
             prepareNextPageIfNeed(durY + textHeight)
@@ -462,48 +465,82 @@ class TextChapterLayout(
             textLine.text = lineText
             when {
                 lineIndex == 0 && layout.lineCount > 1 && !isTitle && isFirstLine -> {
-                    //多行的第一行 非标题
+                    // 多行的第一行 非标题
                     addCharsToLineFirst(
-                        book, absStartX, textLine, words, textPaint,
-                        desiredWidth, widths, srcList
+                        book,
+                        absStartX,
+                        textLine,
+                        words,
+                        textPaint,
+                        desiredWidth,
+                        widths,
+                        srcList,
                     )
                 }
 
                 lineIndex == layout.lineCount - 1 -> {
-                    //最后一行、单行
-                    //标题x轴居中
-                    val startX = if (
-                        isTitle &&
-                        (isMiddleTitle || emptyContent || isVolumeTitle
-                                || imageStyle?.uppercase() == Book.imgStyleSingle)
-                    ) {
-                        (visibleWidth - desiredWidth) / 2
-                    } else {
-                        0f
-                    }
+                    // 最后一行、单行
+                    // 标题x轴居中
+                    val startX =
+                        if (
+                            isTitle &&
+                            (
+                                isMiddleTitle ||
+                                    emptyContent ||
+                                    isVolumeTitle ||
+                                    imageStyle?.uppercase() == Book.imgStyleSingle
+                                )
+                        ) {
+                            (visibleWidth - desiredWidth) / 2
+                        } else {
+                            0f
+                        }
                     addCharsToLineNatural(
-                        book, absStartX, textLine, words,
-                        startX, !isTitle && lineIndex == 0, widths, srcList
+                        book,
+                        absStartX,
+                        textLine,
+                        words,
+                        startX,
+                        !isTitle && lineIndex == 0,
+                        widths,
+                        srcList,
                     )
                 }
 
                 else -> {
                     if (
                         isTitle &&
-                        (isMiddleTitle || emptyContent || isVolumeTitle
-                                || imageStyle?.uppercase() == Book.imgStyleSingle)
+                        (
+                            isMiddleTitle ||
+                                emptyContent ||
+                                isVolumeTitle ||
+                                imageStyle?.uppercase() == Book.imgStyleSingle
+                            )
                     ) {
-                        //标题居中
+                        // 标题居中
                         val startX = (visibleWidth - desiredWidth) / 2
                         addCharsToLineNatural(
-                            book, absStartX, textLine, words,
-                            startX, false, widths, srcList
+                            book,
+                            absStartX,
+                            textLine,
+                            words,
+                            startX,
+                            false,
+                            widths,
+                            srcList,
                         )
                     } else {
-                        //中间行
+                        // 中间行
                         addCharsToLineMiddle(
-                            book, absStartX, textLine, words, textPaint,
-                            desiredWidth, 0f, widths, srcList
+                            book,
+                            absStartX,
+                            textLine,
+                            words,
+                            textPaint,
+                            desiredWidth,
+                            0f,
+                            widths,
+                            srcList,
                         )
                     }
                 }
@@ -527,20 +564,24 @@ class TextChapterLayout(
     private fun calcTextLinePosition(
         textPages: ArrayList<TextPage>,
         textLine: TextLine,
-        sbLength: Int
+        sbLength: Int,
     ) {
-        val lastLine = pendingTextPage.lines.lastOrNull { it.paragraphNum > 0 }
-            ?: textPages.lastOrNull()?.lines?.lastOrNull { it.paragraphNum > 0 }
-        val paragraphNum = when {
-            lastLine == null -> 1
-            lastLine.isParagraphEnd -> lastLine.paragraphNum + 1
-            else -> lastLine.paragraphNum
-        }
+        val lastLine =
+            pendingTextPage.lines.lastOrNull { it.paragraphNum > 0 }
+                ?: textPages.lastOrNull()?.lines?.lastOrNull { it.paragraphNum > 0 }
+        val paragraphNum =
+            when {
+                lastLine == null -> 1
+                lastLine.isParagraphEnd -> lastLine.paragraphNum + 1
+                else -> lastLine.paragraphNum
+            }
         textLine.paragraphNum = paragraphNum
         textLine.chapterPosition =
-            (textPages.lastOrNull()?.lines?.lastOrNull()?.run {
-                chapterPosition + charSize + if (isParagraphEnd) 1 else 0
-            } ?: 0) + sbLength
+            (
+                textPages.lastOrNull()?.lines?.lastOrNull()?.run {
+                    chapterPosition + charSize + if (isParagraphEnd) 1 else 0
+                } ?: 0
+                ) + sbLength
         textLine.pagePosition = sbLength
     }
 
@@ -556,13 +597,19 @@ class TextChapterLayout(
         /**自然排版长度**/
         desiredWidth: Float,
         textWidths: List<Float>,
-        srcList: LinkedList<String>?
+        srcList: LinkedList<String>?,
     ) {
         var x = 0f
         if (!textFullJustify) {
             addCharsToLineNatural(
-                book, absStartX, textLine, words,
-                x, true, textWidths, srcList
+                book,
+                absStartX,
+                textLine,
+                words,
+                x,
+                true,
+                textWidths,
+                srcList,
             )
             return
         }
@@ -573,8 +620,8 @@ class TextChapterLayout(
                 TextColumn(
                     charData = ChapterProvider.indentChar,
                     start = absStartX + x,
-                    end = absStartX + x1
-                )
+                    end = absStartX + x1,
+                ),
             )
             x = x1
             textLine.indentWidth = x
@@ -584,8 +631,15 @@ class TextChapterLayout(
             val text1 = words.subList(bodyIndent.length, words.size)
             val textWidths1 = textWidths.subList(bodyIndent.length, textWidths.size)
             addCharsToLineMiddle(
-                book, absStartX, textLine, text1, textPaint,
-                desiredWidth, x, textWidths1, srcList
+                book,
+                absStartX,
+                textLine,
+                text1,
+                textPaint,
+                desiredWidth,
+                x,
+                textWidths1,
+                srcList,
             )
         }
     }
@@ -604,12 +658,18 @@ class TextChapterLayout(
         /**起始x坐标**/
         startX: Float,
         textWidths: List<Float>,
-        srcList: LinkedList<String>?
+        srcList: LinkedList<String>?,
     ) {
         if (!textFullJustify) {
             addCharsToLineNatural(
-                book, absStartX, textLine, words,
-                startX, false, textWidths, srcList
+                book,
+                absStartX,
+                textLine,
+                words,
+                startX,
+                false,
+                textWidths,
+                srcList,
             )
             return
         }
@@ -623,14 +683,21 @@ class TextChapterLayout(
             for (index in words.indices) {
                 val char = words[index]
                 val cw = textWidths[index]
-                val x1 = if (char == " ") {
-                    if (index != words.lastIndex) (x + cw + d) else (x + cw)
-                } else {
-                    (x + cw)
-                }
+                val x1 =
+                    if (char == " ") {
+                        if (index != words.lastIndex) (x + cw + d) else (x + cw)
+                    } else {
+                        (x + cw)
+                    }
                 addCharToLine(
-                    book, absStartX, textLine, char,
-                    x, x1, index + 1 == words.size, srcList
+                    book,
+                    absStartX,
+                    textLine,
+                    char,
+                    x,
+                    x1,
+                    index + 1 == words.size,
+                    srcList,
                 )
                 x = x1
             }
@@ -645,8 +712,14 @@ class TextChapterLayout(
                 val cw = textWidths[index]
                 val x1 = if (index != words.lastIndex) (x + cw + d) else (x + cw)
                 addCharToLine(
-                    book, absStartX, textLine, char,
-                    x, x1, index + 1 == words.size, srcList
+                    book,
+                    absStartX,
+                    textLine,
+                    char,
+                    x,
+                    x1,
+                    index + 1 == words.size,
+                    srcList,
                 )
                 x = x1
             }
@@ -665,7 +738,7 @@ class TextChapterLayout(
         startX: Float,
         hasIndent: Boolean,
         textWidths: List<Float>,
-        srcList: LinkedList<String>?
+        srcList: LinkedList<String>?,
     ) {
         val indentLength = paragraphIndent.length
         var x = startX
@@ -694,18 +767,19 @@ class TextChapterLayout(
         xStart: Float,
         xEnd: Float,
         isLineEnd: Boolean,
-        srcList: LinkedList<String>?
+        srcList: LinkedList<String>?,
     ) {
-        val column = when {
-            srcList != null && char == ChapterProvider.srcReplaceChar -> {
-                val src = srcList.removeFirst()
-                ImageProvider.cacheImage(book, src, ReadBook.bookSource)
-                ImageColumn(
-                    start = absStartX + xStart,
-                    end = absStartX + xEnd,
-                    src = src
-                )
-            }
+        val column =
+            when {
+                srcList != null && char == ChapterProvider.srcReplaceChar -> {
+                    val src = srcList.removeFirst()
+                    ImageProvider.cacheImage(book, src, ReadBook.bookSource)
+                    ImageColumn(
+                        start = absStartX + xStart,
+                        end = absStartX + xEnd,
+                        src = src,
+                    )
+                }
 
 //            isLineEnd && char == ChapterProvider.reviewChar -> {
 //                ReviewColumn(
@@ -715,33 +789,38 @@ class TextChapterLayout(
 //                )
 //            }
 
-            else -> {
-                TextColumn(
-                    start = absStartX + xStart,
-                    end = absStartX + xEnd,
-                    charData = char
-                )
+                else -> {
+                    TextColumn(
+                        start = absStartX + xStart,
+                        end = absStartX + xEnd,
+                        charData = char,
+                    )
+                }
             }
-        }
         textLine.addColumn(column)
     }
 
     /**
      * 超出边界处理
      */
-    private fun exceed(absStartX: Int, textLine: TextLine, words: List<String>) {
+    private fun exceed(
+        absStartX: Int,
+        textLine: TextLine,
+        words: List<String>,
+    ) {
         var size = words.size
         if (size < 2) return
         val visibleEnd = absStartX + visibleWidth
         val columns = textLine.columns
         var offset = 0
-        val endColumn = if (words.last() == " ") {
-            size--
-            offset++
-            columns[columns.lastIndex - 1]
-        } else {
-            columns.last()
-        }
+        val endColumn =
+            if (words.last() == " ") {
+                size--
+                offset++
+                columns[columns.lastIndex - 1]
+            } else {
+                columns.last()
+            }
         val endX = endColumn.end.roundToInt()
         if (endX > visibleEnd) {
             textLine.exceed = true
@@ -764,18 +843,18 @@ class TextChapterLayout(
                 textPage.height = durY
             }
             if (doublePage && absStartX < viewWidth / 2) {
-                //当前页面左列结束
+                // 当前页面左列结束
                 textPage.leftLineSize = textPage.lineSize
                 absStartX = viewWidth / 2 + paddingLeft
             } else {
-                //当前页面结束,设置各种值
+                // 当前页面结束,设置各种值
                 if (textPage.leftLineSize == 0) {
                     textPage.leftLineSize = textPage.lineSize
                 }
                 textPage.text = stringBuilder.toString()
                 coroutineContext.ensureActive()
                 onPageCompleted()
-                //新建页面
+                // 新建页面
                 pendingTextPage = TextPage()
                 stringBuilder.clear()
                 absStartX = paddingLeft
@@ -794,7 +873,7 @@ class TextChapterLayout(
     private fun measureTextSplit(
         text: String,
         widthsArray: FloatArray,
-        start: Int = 0
+        start: Int = 0,
     ): Pair<ArrayList<String>, ArrayList<Float>> {
         val length = text.length
         var clusterCount = 0
@@ -819,5 +898,4 @@ class TextChapterLayout(
         val code = char.code
         return code == 8203 || code == 8204 || code == 8205 || code == 8288
     }
-
 }

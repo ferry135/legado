@@ -14,5 +14,4 @@ interface Bindings : MutableMap<String, Any?> {
     override fun putAll(from: Map<out String, *>)
 
     override fun remove(key: String): Any?
-
 }

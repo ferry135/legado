@@ -30,14 +30,14 @@ import io.legado.app.utils.list
 import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.toastOnUi
-import io.legado.app.utils.visible
 import io.legado.app.utils.viewbindingdelegate.viewBinding
+import io.legado.app.utils.visible
 import kotlinx.coroutines.isActive
 import java.io.FileFilter
 
-class CrashLogsDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
+class CrashLogsDialog :
+    BaseDialogFragment(R.layout.dialog_recycler_view),
     Toolbar.OnMenuItemClickListener {
-
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
     private val viewModel by viewModels<CrashViewModel>()
     private val adapter by lazy { LogAdapter() }
@@ -47,7 +47,10 @@ class CrashLogsDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         setLayout(0.9f, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         binding.toolBar.setTitle(R.string.crash_log)
         binding.toolBar.inflateMenu(R.menu.crash_log)
         binding.toolBar.setOnMenuItemClickListener(this)
@@ -80,18 +83,17 @@ class CrashLogsDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                 showDialogFragment(TextDialog(fileDoc.name, it))
             }
         }
-
     }
 
     // 12-missed-2 #s05：条目 = 文件名主行 + 「来源 · 大小」副行 + 右箭头（item_crash_log.xml）；
     // 来源按 FileDoc.isContentScheme 区分（外部缓存为文件路径，备份目录为 SAF content Uri）
     inner class LogAdapter : RecyclerAdapter<FileDoc, ItemCrashLogBinding>(requireContext()) {
+        override fun getViewBinding(parent: ViewGroup): ItemCrashLogBinding = ItemCrashLogBinding.inflate(inflater, parent, false)
 
-        override fun getViewBinding(parent: ViewGroup): ItemCrashLogBinding {
-            return ItemCrashLogBinding.inflate(inflater, parent, false)
-        }
-
-        override fun registerListener(holder: ItemViewHolder, binding: ItemCrashLogBinding) {
+        override fun registerListener(
+            holder: ItemViewHolder,
+            binding: ItemCrashLogBinding,
+        ) {
             binding.root.setOnClickListener {
                 getItemByLayoutPosition(holder.layoutPosition)?.let { item ->
                     showLogFile(item)
@@ -103,22 +105,23 @@ class CrashLogsDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
             holder: ItemViewHolder,
             binding: ItemCrashLogBinding,
             item: FileDoc,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             binding.tvName.text = item.name
             val kb = (item.size + 1023) / 1024
-            val sourceRes = if (item.isContentScheme) {
-                R.string.crash_source_backup
-            } else {
-                R.string.crash_source_external
-            }
-            binding.tvSub.text = "${context.getString(sourceRes)} · ${kb} KB"
+            val sourceRes =
+                if (item.isContentScheme) {
+                    R.string.crash_source_backup
+                } else {
+                    R.string.crash_source_external
+                }
+            binding.tvSub.text = "${context.getString(sourceRes)} · $kb KB"
         }
-
     }
 
-    class CrashViewModel(application: Application) : BaseViewModel(application) {
-
+    class CrashViewModel(
+        application: Application,
+    ) : BaseViewModel(application) {
         val logLiveData = MutableLiveData<List<FileDoc>>()
 
         fun initData() {
@@ -133,7 +136,8 @@ class CrashLogsDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                 val backupPath = AppConfig.backupPath
                 if (!backupPath.isNullOrEmpty()) {
                     val uri = Uri.parse(backupPath)
-                    FileDoc.fromUri(uri, true)
+                    FileDoc
+                        .fromUri(uri, true)
                         .find("crash")
                         ?.list {
                             !it.isDir
@@ -147,7 +151,10 @@ class CrashLogsDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
             }
         }
 
-        fun readFile(fileDoc: FileDoc, success: (String) -> Unit) {
+        fun readFile(
+            fileDoc: FileDoc,
+            success: (String) -> Unit,
+        ) {
             execute {
                 String(fileDoc.readBytes())
             }.onSuccess {
@@ -167,7 +174,8 @@ class CrashLogsDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                 val backupPath = AppConfig.backupPath
                 if (!backupPath.isNullOrEmpty()) {
                     val uri = Uri.parse(backupPath)
-                    FileDoc.fromUri(uri, true)
+                    FileDoc
+                        .fromUri(uri, true)
                         .find("crash")
                         ?.delete()
                 }
@@ -177,7 +185,5 @@ class CrashLogsDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                 initData()
             }
         }
-
     }
-
 }

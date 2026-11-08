@@ -37,6 +37,10 @@ jobs:
           java-version: 17
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
+      - name: Spotless Check
+        run: |
+          chmod +x gradlew
+          ./gradlew spotlessCheck --build-cache --parallel --daemon --warning-mode all
       - name: Run Lint
         run: |
           chmod +x gradlew

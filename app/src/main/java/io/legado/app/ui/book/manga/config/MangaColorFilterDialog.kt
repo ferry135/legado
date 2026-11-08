@@ -28,7 +28,10 @@ class MangaColorFilterDialog : BaseDialogFragment(R.layout.dialog_manga_color_fi
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         initData()
         initView()
     }
@@ -81,5 +84,4 @@ class MangaColorFilterDialog : BaseDialogFragment(R.layout.dialog_manga_color_fi
     interface Callback {
         fun updateColorFilter(config: MangaColorFilterConfig)
     }
-
 }

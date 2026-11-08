@@ -8,38 +8,41 @@ import io.legado.app.base.adapter.ItemViewHolder
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ItemCoverBinding
 
-
-class CoverAdapter(context: Context, val callBack: CallBack) :
-    DiffRecyclerAdapter<SearchBook, ItemCoverBinding>(context) {
-
+class CoverAdapter(
+    context: Context,
+    val callBack: CallBack,
+) : DiffRecyclerAdapter<SearchBook, ItemCoverBinding>(context) {
     override val diffItemCallback: DiffUtil.ItemCallback<SearchBook>
-        get() = object : DiffUtil.ItemCallback<SearchBook>() {
-            override fun areItemsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
-                return oldItem.bookUrl == newItem.bookUrl
+        get() =
+            object : DiffUtil.ItemCallback<SearchBook>() {
+                override fun areItemsTheSame(
+                    oldItem: SearchBook,
+                    newItem: SearchBook,
+                ): Boolean = oldItem.bookUrl == newItem.bookUrl
+
+                override fun areContentsTheSame(
+                    oldItem: SearchBook,
+                    newItem: SearchBook,
+                ): Boolean = oldItem.originName == newItem.originName &&
+                    oldItem.coverUrl == newItem.coverUrl
             }
 
-            override fun areContentsTheSame(oldItem: SearchBook, newItem: SearchBook): Boolean {
-                return oldItem.originName == newItem.originName
-                        && oldItem.coverUrl == newItem.coverUrl
-            }
-
-        }
-
-    override fun getViewBinding(parent: ViewGroup): ItemCoverBinding {
-        return ItemCoverBinding.inflate(inflater, parent, false)
-    }
+    override fun getViewBinding(parent: ViewGroup): ItemCoverBinding = ItemCoverBinding.inflate(inflater, parent, false)
 
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemCoverBinding,
         item: SearchBook,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) = binding.run {
         ivCover.load(item.coverUrl, item.name, item.author, false, item.origin)
         tvSource.text = item.originName
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemCoverBinding) {
+    override fun registerListener(
+        holder: ItemViewHolder,
+        binding: ItemCoverBinding,
+    ) {
         holder.itemView.apply {
             setOnClickListener {
                 getItem(holder.bindingAdapterPosition)?.let {

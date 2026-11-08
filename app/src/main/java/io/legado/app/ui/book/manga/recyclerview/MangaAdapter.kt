@@ -32,10 +32,10 @@ import io.legado.app.ui.book.manga.entities.MangaPage
 import io.legado.app.ui.book.manga.entities.ReaderLoading
 import io.legado.app.utils.dpToPx
 
-
-class MangaAdapter(private val context: Context) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>(), PreloadModelProvider<Any> {
-
+class MangaAdapter(
+    private val context: Context,
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
+    PreloadModelProvider<Any> {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var mConfig: MangaColorFilterConfig
     private var mTransformation: BitmapTransformation? = null
@@ -48,27 +48,36 @@ class MangaAdapter(private val context: Context) :
 
     var isHorizontal = false
 
-    private val mDiffCallback: DiffUtil.ItemCallback<Any> = object : DiffUtil.ItemCallback<Any>() {
-        override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
-            return if (oldItem is ReaderLoading && newItem is ReaderLoading) {
+    private val mDiffCallback: DiffUtil.ItemCallback<Any> =
+        object : DiffUtil.ItemCallback<Any>() {
+            override fun areItemsTheSame(
+                oldItem: Any,
+                newItem: Any,
+            ): Boolean = if (oldItem is ReaderLoading && newItem is ReaderLoading) {
                 newItem.mMessage == oldItem.mMessage
             } else if (oldItem is MangaPage && newItem is MangaPage) {
                 oldItem.mImageUrl == newItem.mImageUrl
-            } else false
-        }
+            } else {
+                false
+            }
 
-        override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
-            return if (oldItem is ReaderLoading && newItem is ReaderLoading) {
+            override fun areContentsTheSame(
+                oldItem: Any,
+                newItem: Any,
+            ): Boolean = if (oldItem is ReaderLoading && newItem is ReaderLoading) {
                 oldItem == newItem
             } else if (oldItem is MangaPage && newItem is MangaPage) {
                 oldItem == newItem
-            } else false
+            } else {
+                false
+            }
         }
-    }
 
     private val mDiffer = AsyncListDiffer(this, mDiffCallback)
 
-    fun getItem(@IntRange(from = 0) position: Int) = mDiffer.currentList.getOrNull(position)
+    fun getItem(
+        @IntRange(from = 0) position: Int,
+    ) = mDiffer.currentList.getOrNull(position)
 
     fun getItems() = mDiffer.currentList
 
@@ -76,28 +85,34 @@ class MangaAdapter(private val context: Context) :
 
     fun isNotEmpty() = !isEmpty()
 
-    //全部替换数据
-    fun submitList(contents: List<Any>, runnable: Runnable? = null) {
+    // 全部替换数据
+    fun submitList(
+        contents: List<Any>,
+        runnable: Runnable? = null,
+    ) {
         mDiffer.submitList(contents, runnable)
     }
 
-    inner class PageViewHolder(binding: ItemBookMangaPageBinding) :
-        MangaVH<ItemBookMangaPageBinding>(binding, context) {
-
+    inner class PageViewHolder(
+        binding: ItemBookMangaPageBinding,
+    ) : MangaVH<ItemBookMangaPageBinding>(binding, context) {
         init {
             initComponent(
                 binding.loading,
                 binding.image,
                 binding.progress,
                 binding.retry,
-                binding.flProgress
+                binding.flProgress,
             )
             binding.retry.setOnClickListener {
                 val item = mDiffer.currentList[layoutPosition]
                 if (item is MangaPage) {
                     val isLastImage = item.imageCount > 0 && item.index == item.imageCount - 1
                     loadImageWithRetry(
-                        item.mImageUrl, isHorizontal, isLastImage, mTransformation
+                        item.mImageUrl,
+                        isHorizontal,
+                        isLastImage,
+                        mTransformation,
                     )
                 }
             }
@@ -112,65 +127,82 @@ class MangaAdapter(private val context: Context) :
         fun setImageColorFilter() {
             require(
                 mConfig.r in 0..255 &&
-                        mConfig.g in 0..255 &&
-                        mConfig.b in 0..255 &&
-                        mConfig.a in 0..255
+                    mConfig.g in 0..255 &&
+                    mConfig.b in 0..255 &&
+                    mConfig.a in 0..255,
             ) {
                 "ARGB values must be between 0-255"
             }
-            val matrix = floatArrayOf(
-                (255 - mConfig.r) / 255f, 0f, 0f, 0f, 0f,
-                0f, (255 - mConfig.g) / 255f, 0f, 0f, 0f,
-                0f, 0f, (255 - mConfig.b) / 255f, 0f, 0f,
-                0f, 0f, 0f, (255 - mConfig.a) / 255f, 0f
-            )
+            val matrix =
+                floatArrayOf(
+                    (255 - mConfig.r) / 255f,
+                    0f,
+                    0f,
+                    0f,
+                    0f,
+                    0f,
+                    (255 - mConfig.g) / 255f,
+                    0f,
+                    0f,
+                    0f,
+                    0f,
+                    0f,
+                    (255 - mConfig.b) / 255f,
+                    0f,
+                    0f,
+                    0f,
+                    0f,
+                    0f,
+                    (255 - mConfig.a) / 255f,
+                    0f,
+                )
             binding.image.colorFilter = ColorMatrixColorFilter(ColorMatrix(matrix))
         }
     }
 
-    inner class PageMoreViewHolder(val binding: ItemBookMangaEdgeBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class PageMoreViewHolder(
+        val binding: ItemBookMangaEdgeBinding,
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun onBind(item: ReaderLoading) {
             val message = item.mMessage
             binding.text.text = message
             itemView.updateLayoutParams {
-                height = if (item.isVolume) {
-                    MATCH_PARENT
-                } else {
-                    96.dpToPx()
-                }
+                height =
+                    if (item.isVolume) {
+                        MATCH_PARENT
+                    } else {
+                        96.dpToPx()
+                    }
             }
         }
     }
 
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when {
-            viewType >= TYPE_FOOTER_VIEW -> {
-                ItemViewHolder(footerItems.get(viewType).invoke(parent))
-            }
-
-            viewType == LOADING_VIEW -> {
-                PageMoreViewHolder(ItemBookMangaEdgeBinding.inflate(inflater, parent, false))
-            }
-
-            viewType == CONTENT_VIEW -> {
-                PageViewHolder(ItemBookMangaPageBinding.inflate(inflater, parent, false))
-            }
-
-            else -> error("Unknown view type!")
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): RecyclerView.ViewHolder = when {
+        viewType >= TYPE_FOOTER_VIEW -> {
+            ItemViewHolder(footerItems.get(viewType).invoke(parent))
         }
+
+        viewType == LOADING_VIEW -> {
+            PageMoreViewHolder(ItemBookMangaEdgeBinding.inflate(inflater, parent, false))
+        }
+
+        viewType == CONTENT_VIEW -> {
+            PageViewHolder(ItemBookMangaPageBinding.inflate(inflater, parent, false))
+        }
+
+        else -> error("Unknown view type!")
     }
 
     override fun getItemCount(): Int = getActualItemCount() + getFooterCount()
 
-    override fun getItemViewType(position: Int): Int {
-        return when {
-            isFooter(position) -> TYPE_FOOTER_VIEW + position - getActualItemCount()
-            getItem(position) is MangaPage -> CONTENT_VIEW
-            getItem(position) is ReaderLoading -> LOADING_VIEW
-            else -> error("Unknown view type!")
-        }
+    override fun getItemViewType(position: Int): Int = when {
+        isFooter(position) -> TYPE_FOOTER_VIEW + position - getActualItemCount()
+        getItem(position) is MangaPage -> CONTENT_VIEW
+        getItem(position) is ReaderLoading -> LOADING_VIEW
+        else -> error("Unknown view type!")
     }
 
     fun getFooterCount() = footerItems.size
@@ -192,13 +224,15 @@ class MangaAdapter(private val context: Context) :
         }
     }
 
-    override fun onBindViewHolder(vh: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        vh: RecyclerView.ViewHolder,
+        position: Int,
+    ) {
         when (vh) {
             is PageViewHolder -> vh.onBind(getItem(position) as MangaPage)
             is PageMoreViewHolder -> vh.onBind(getItem(position) as ReaderLoading)
         }
     }
-
 
     private val footerItems: SparseArray<(parent: ViewGroup) -> ViewBinding> by lazy { SparseArray() }
 
@@ -250,7 +284,10 @@ class MangaAdapter(private val context: Context) :
         notifyItemRangeChanged(0, itemCount)
     }
 
-    fun enableMangaEInk(enable: Boolean, value: Int) {
+    fun enableMangaEInk(
+        enable: Boolean,
+        value: Int,
+    ) {
         if (enable) {
             currentMangaEInkThreshold = value
             mTransformation = EpaperTransformation(currentMangaEInkThreshold)
@@ -268,13 +305,14 @@ class MangaAdapter(private val context: Context) :
         }
     }
 
-    //开启灰色图片
+    // 开启灰色图片
     fun enableGray(enable: Boolean) {
-        mTransformation = if (enable) {
-            GrayscaleTransformation()
-        } else {
-            null
-        }
+        mTransformation =
+            if (enable) {
+                GrayscaleTransformation()
+            } else {
+                null
+            }
         notifyItemRangeChanged(0, itemCount)
     }
 }

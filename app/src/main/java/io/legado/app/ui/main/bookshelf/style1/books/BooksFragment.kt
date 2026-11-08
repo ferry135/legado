@@ -48,9 +48,9 @@ import kotlin.math.max
 /**
  * 书架界面
  */
-class BooksFragment() : BaseFragment(R.layout.fragment_books),
+class BooksFragment() :
+    BaseFragment(R.layout.fragment_books),
     BaseBooksAdapter.CallBack {
-
     constructor(position: Int, group: BookGroup) : this() {
         val bundle = Bundle()
         bundle.putInt("position", position)
@@ -80,7 +80,10 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
     private var upLastUpdateTimeJob: Job? = null
     private var enableRefresh = true
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         arguments?.let {
             position = it.getInt("position", 0)
             groupId = it.getLong("groupId", -1)
@@ -112,23 +115,32 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         }
         booksAdapter.stateRestorationPolicy = StateRestorationPolicy.PREVENT_WHEN_EMPTY
         binding.rvBookshelf.adapter = booksAdapter
-        booksAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                val layoutManager = binding.rvBookshelf.layoutManager
-                if (positionStart == 0 && itemCount == 1 && layoutManager is LinearLayoutManager) {
-                    val scrollTo = layoutManager.findFirstVisibleItemPosition() - itemCount
-                    binding.rvBookshelf.scrollToPosition(max(0, scrollTo))
+        booksAdapter.registerAdapterDataObserver(
+            object : RecyclerView.AdapterDataObserver() {
+                override fun onItemRangeInserted(
+                    positionStart: Int,
+                    itemCount: Int,
+                ) {
+                    val layoutManager = binding.rvBookshelf.layoutManager
+                    if (positionStart == 0 && itemCount == 1 && layoutManager is LinearLayoutManager) {
+                        val scrollTo = layoutManager.findFirstVisibleItemPosition() - itemCount
+                        binding.rvBookshelf.scrollToPosition(max(0, scrollTo))
+                    }
                 }
-            }
 
-            override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
-                val layoutManager = binding.rvBookshelf.layoutManager
-                if (toPosition == 0 && itemCount == 1 && layoutManager is LinearLayoutManager) {
-                    val scrollTo = layoutManager.findFirstVisibleItemPosition() - itemCount
-                    binding.rvBookshelf.scrollToPosition(max(0, scrollTo))
+                override fun onItemRangeMoved(
+                    fromPosition: Int,
+                    toPosition: Int,
+                    itemCount: Int,
+                ) {
+                    val layoutManager = binding.rvBookshelf.layoutManager
+                    if (toPosition == 0 && itemCount == 1 && layoutManager is LinearLayoutManager) {
+                        val scrollTo = layoutManager.findFirstVisibleItemPosition() - itemCount
+                        binding.rvBookshelf.scrollToPosition(max(0, scrollTo))
+                    }
                 }
-            }
-        })
+            },
+        )
         startLastUpdateTimeJob()
     }
 
@@ -161,41 +173,49 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
      */
     private fun upRecyclerData() {
         booksFlowJob?.cancel()
-        booksFlowJob = viewLifecycleOwner.lifecycleScope.launch {
-            appDb.bookDao.flowByGroup(groupId).map { list ->
-                //排序
-                when (bookSort) {
-                    1 -> list.sortedByDescending { it.latestChapterTime }
-                    2 -> list.sortedWith { o1, o2 ->
-                        o1.name.cnCompare(o2.name)
-                    }
+        booksFlowJob =
+            viewLifecycleOwner.lifecycleScope.launch {
+                appDb.bookDao
+                    .flowByGroup(groupId)
+                    .map { list ->
+                        // 排序
+                        when (bookSort) {
+                            1 -> list.sortedByDescending { it.latestChapterTime }
+                            2 ->
+                                list.sortedWith { o1, o2 ->
+                                    o1.name.cnCompare(o2.name)
+                                }
 
-                    3 -> list.sortedBy { it.order }
+                            3 -> list.sortedBy { it.order }
 
-                    // 综合排序 issue #3192
-                    4 -> list.sortedByDescending {
-                        max(it.latestChapterTime, it.durChapterTime)
-                    }
-                    // 按作者排序
-                    5 -> list.sortedWith { o1, o2 ->
-                        o1.author.cnCompare(o2.author)
-                    }
+                            // 综合排序 issue #3192
+                            4 ->
+                                list.sortedByDescending {
+                                    max(it.latestChapterTime, it.durChapterTime)
+                                }
+                            // 按作者排序
+                            5 ->
+                                list.sortedWith { o1, o2 ->
+                                    o1.author.cnCompare(o2.author)
+                                }
 
-                    else -> list.sortedByDescending { it.durChapterTime }
-                }
-            }.flowWithLifecycleAndDatabaseChangeFirst(
-                viewLifecycleOwner.lifecycle,
-                Lifecycle.State.RESUMED,
-                AppDatabase.BOOK_TABLE_NAME
-            ).catch {
-                AppLog.put("书架更新出错", it)
-            }.conflate().flowOn(Dispatchers.Default).collect { list ->
-                binding.tvEmptyMsg.isGone = list.isNotEmpty()
-                binding.refreshLayout.isEnabled = enableRefresh && list.isNotEmpty()
-                booksAdapter.setItems(list)
-                delay(100)
+                            else -> list.sortedByDescending { it.durChapterTime }
+                        }
+                    }.flowWithLifecycleAndDatabaseChangeFirst(
+                        viewLifecycleOwner.lifecycle,
+                        Lifecycle.State.RESUMED,
+                        AppDatabase.BOOK_TABLE_NAME,
+                    ).catch {
+                        AppLog.put("书架更新出错", it)
+                    }.conflate()
+                    .flowOn(Dispatchers.Default)
+                    .collect { list ->
+                        binding.tvEmptyMsg.isGone = list.isNotEmpty()
+                        binding.refreshLayout.isEnabled = enableRefresh && list.isNotEmpty()
+                        booksAdapter.setItems(list)
+                        delay(100)
+                    }
             }
-        }
     }
 
     private fun startLastUpdateTimeJob() {
@@ -203,19 +223,18 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         if (!AppConfig.showLastUpdateTime || bookshelfLayout != 0) {
             return
         }
-        upLastUpdateTimeJob = lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                while (isActive) {
-                    booksAdapter.upLastUpdateTime()
-                    delay(30 * 1000)
+        upLastUpdateTimeJob =
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                    while (isActive) {
+                        booksAdapter.upLastUpdateTime()
+                        delay(30 * 1000)
+                    }
                 }
             }
-        }
     }
 
-    fun getBooks(): List<Book> {
-        return booksAdapter.getItems()
-    }
+    fun getBooks(): List<Book> = booksAdapter.getItems()
 
     fun gotoTop() {
         if (AppConfig.isEInkMode) {
@@ -225,9 +244,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         }
     }
 
-    fun getBooksCount(): Int {
-        return booksAdapter.itemCount
-    }
+    fun getBooksCount(): Int = booksAdapter.itemCount
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -249,9 +266,7 @@ class BooksFragment() : BaseFragment(R.layout.fragment_books),
         }
     }
 
-    override fun isUpdate(bookUrl: String): Boolean {
-        return activityViewModel.isUpdate(bookUrl)
-    }
+    override fun isUpdate(bookUrl: String): Boolean = activityViewModel.isUpdate(bookUrl)
 
     @SuppressLint("NotifyDataSetChanged")
     override fun observeLiveBus() {

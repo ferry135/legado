@@ -38,9 +38,7 @@ import kotlinx.coroutines.withContext
 import splitties.init.appCtx
 import splitties.views.onClick
 
-
 class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
-
     private val binding by viewBinding(DialogLoginBinding::bind)
     private val viewModel by activityViewModels<SourceLoginViewModel>()
 
@@ -49,51 +47,60 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         val source = viewModel.source ?: return
         binding.toolBar.title = getString(R.string.login_source, source.getTag())
         val loginInfo = source.getLoginInfoMap()
         val loginUi = source.loginUi()
         loginUi?.forEachIndexed { index, rowUi ->
             when (rowUi.type) {
-                RowUi.Type.text -> ItemSourceEditBinding.inflate(
-                    layoutInflater,
-                    binding.root,
-                    false
-                ).let {
-                    binding.flexbox.addView(it.root)
-                    it.root.id = index + 1000
-                    it.textInputLayout.hint = rowUi.name
-                    it.editText.setText(loginInfo?.get(rowUi.name))
-                }
+                RowUi.Type.text ->
+                    ItemSourceEditBinding
+                        .inflate(
+                            layoutInflater,
+                            binding.root,
+                            false,
+                        ).let {
+                            binding.flexbox.addView(it.root)
+                            it.root.id = index + 1000
+                            it.textInputLayout.hint = rowUi.name
+                            it.editText.setText(loginInfo?.get(rowUi.name))
+                        }
 
-                RowUi.Type.password -> ItemSourceEditBinding.inflate(
-                    layoutInflater,
-                    binding.root,
-                    false
-                ).let {
-                    binding.flexbox.addView(it.root)
-                    it.root.id = index + 1000
-                    it.textInputLayout.hint = rowUi.name
-                    it.editText.inputType =
-                        InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
-                    it.editText.setText(loginInfo?.get(rowUi.name))
-                }
+                RowUi.Type.password ->
+                    ItemSourceEditBinding
+                        .inflate(
+                            layoutInflater,
+                            binding.root,
+                            false,
+                        ).let {
+                            binding.flexbox.addView(it.root)
+                            it.root.id = index + 1000
+                            it.textInputLayout.hint = rowUi.name
+                            it.editText.inputType =
+                                InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
+                            it.editText.setText(loginInfo?.get(rowUi.name))
+                        }
 
-                RowUi.Type.button -> ItemFilletTextBinding.inflate(
-                    layoutInflater,
-                    binding.root,
-                    false
-                ).let {
-                    binding.flexbox.addView(it.root)
-                    rowUi.style().apply(it.root)
-                    it.root.id = index + 1000
-                    it.textView.text = rowUi.name
-                    it.textView.setPadding(16.dpToPx())
-                    it.root.onClick {
-                        handleButtonClick(source, rowUi, loginUi)
-                    }
-                }
+                RowUi.Type.button ->
+                    ItemFilletTextBinding
+                        .inflate(
+                            layoutInflater,
+                            binding.root,
+                            false,
+                        ).let {
+                            binding.flexbox.addView(it.root)
+                            rowUi.style().apply(it.root)
+                            it.root.id = index + 1000
+                            it.textView.text = rowUi.name
+                            it.textView.setPadding(16.dpToPx())
+                            it.root.onClick {
+                                handleButtonClick(source, rowUi, loginUi)
+                            }
+                        }
             }
         }
         binding.toolBar.inflateMenu(R.menu.source_login)
@@ -105,15 +112,16 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                     login(source, loginData)
                 }
 
-                R.id.menu_show_login_header -> alert {
-                    setTitle(R.string.login_header)
-                    source.getLoginHeader()?.let { loginHeader ->
-                        setMessage(loginHeader)
-                        positiveButton(R.string.copy_text) {
-                            appCtx.sendToClip(loginHeader)
+                R.id.menu_show_login_header ->
+                    alert {
+                        setTitle(R.string.login_header)
+                        source.getLoginHeader()?.let { loginHeader ->
+                            setMessage(loginHeader)
+                            positiveButton(R.string.copy_text) {
+                                appCtx.sendToClip(loginHeader)
+                            }
                         }
                     }
-                }
 
                 R.id.menu_del_login_header -> source.removeLoginHeader()
                 R.id.menu_log -> showDialogFragment<AppLogDialog>()
@@ -122,7 +130,11 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         }
     }
 
-    private fun handleButtonClick(source: BaseSource, rowUi: RowUi, loginUi: List<RowUi>) {
+    private fun handleButtonClick(
+        source: BaseSource,
+        rowUi: RowUi,
+        loginUi: List<RowUi>,
+    ) {
         lifecycleScope.launch(IO) {
             if (rowUi.action.isAbsUrl()) {
                 context?.openUrl(rowUi.action!!)
@@ -130,16 +142,17 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                 // JavaScript
                 val buttonFunctionJS = rowUi.action!!
                 val loginJS = source.getLoginJs() ?: return@launch
-                kotlin.runCatching {
-                    runScriptWithContext {
-                        source.evalJS("$loginJS\n$buttonFunctionJS") {
-                            put("result", getLoginData(loginUi))
+                kotlin
+                    .runCatching {
+                        runScriptWithContext {
+                            source.evalJS("$loginJS\n$buttonFunctionJS") {
+                                put("result", getLoginData(loginUi))
+                            }
                         }
+                    }.onFailure { e ->
+                        ensureActive()
+                        AppLog.put("LoginUI Button ${rowUi.name} JavaScript error", e)
                     }
-                }.onFailure { e ->
-                    ensureActive()
-                    AppLog.put("LoginUI Button ${rowUi.name} JavaScript error", e)
-                }
             }
         }
     }
@@ -159,7 +172,10 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         return loginData
     }
 
-    private fun login(source: BaseSource, loginData: HashMap<String, String>) {
+    private fun login(
+        source: BaseSource,
+        loginData: HashMap<String, String>,
+    ) {
         lifecycleScope.launch(IO) {
             if (loginData.isEmpty()) {
                 source.removeLoginInfo()
@@ -188,5 +204,4 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
         super.onDismiss(dialog)
         activity?.finish()
     }
-
 }

@@ -16,8 +16,9 @@ import io.legado.app.ui.widget.TitleBar
 import io.legado.app.utils.applyTint
 
 @Suppress("MemberVisibilityCanBePrivate")
-abstract class BaseFragment(@LayoutRes layoutID: Int) : Fragment(layoutID) {
-
+abstract class BaseFragment(
+    @LayoutRes layoutID: Int,
+) : Fragment(layoutID) {
     var supportToolbar: Toolbar? = null
         private set
 
@@ -25,14 +26,20 @@ abstract class BaseFragment(@LayoutRes layoutID: Int) : Fragment(layoutID) {
         @SuppressLint("RestrictedApi")
         get() = SupportMenuInflater(requireContext())
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         onMultiWindowModeChanged()
         observeLiveBus()
         onFragmentCreated(view, savedInstanceState)
     }
 
-    abstract fun onFragmentCreated(view: View, savedInstanceState: Bundle?)
+    abstract fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    )
 
     override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean) {
         super.onMultiWindowModeChanged(isInMultiWindowMode)
@@ -46,7 +53,8 @@ abstract class BaseFragment(@LayoutRes layoutID: Int) : Fragment(layoutID) {
 
     private fun onMultiWindowModeChanged() {
         (activity as? BaseActivity<*>)?.let {
-            view?.findViewById<TitleBar>(R.id.title_bar)
+            view
+                ?.findViewById<TitleBar>(R.id.title_bar)
                 ?.onMultiWindowModeChanged(it.isInMultiWindow, it.fullScreen)
         }
     }
@@ -74,5 +82,4 @@ abstract class BaseFragment(@LayoutRes layoutID: Int) : Fragment(layoutID) {
 
     open fun onCompatOptionsItemSelected(item: MenuItem) {
     }
-
 }

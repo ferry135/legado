@@ -29,7 +29,6 @@ import java.io.FileOutputStream
 import kotlin.math.min
 
 object ImageProvider {
-
     private val errorBitmap: Bitmap by lazy {
         BitmapFactory.decodeResource(appCtx.resources, R.drawable.image_loading_error)
     }
@@ -50,40 +49,43 @@ object ImageProvider {
     val bitmapLruCache = BitmapLruCache()
 
     class BitmapLruCache : LruCache<String, Bitmap>(cacheSize) {
-
         private var removeCount = 0
+
         /** 正在绘制的 bitmap，绘制期间不回收 */
         private val pinned = HashSet<Bitmap>()
+
         /** 淘汰时仍被绘制持有，等待 unpin 后再回收 */
         private val pendingRecycle = HashSet<Bitmap>()
 
         val count get() = putCount() + createCount() - evictionCount() - removeCount
 
-        override fun sizeOf(key: String, value: Bitmap): Int {
-            return value.byteCount
-        }
+        override fun sizeOf(
+            key: String,
+            value: Bitmap,
+        ): Int = value.byteCount
 
         override fun entryRemoved(
             evicted: Boolean,
             key: String,
             oldValue: Bitmap,
-            newValue: Bitmap?
+            newValue: Bitmap?,
         ) {
             if (!evicted) {
                 synchronized(this) {
                     removeCount++
                 }
             }
-            //错误图片不能释放,占位用,防止一直重复获取图片
+            // 错误图片不能释放,占位用,防止一直重复获取图片
             if (oldValue != errorBitmap) {
-                val recycleNow = synchronized(this) {
-                    if (oldValue in pinned) {
-                        pendingRecycle.add(oldValue)
-                        false
-                    } else {
-                        true
+                val recycleNow =
+                    synchronized(this) {
+                        if (oldValue in pinned) {
+                            pendingRecycle.add(oldValue)
+                            false
+                        } else {
+                            true
+                        }
                     }
-                }
                 if (recycleNow) {
                     oldValue.recycle()
                 }
@@ -114,28 +116,27 @@ object ImageProvider {
         }
 
         fun unpin(bitmap: Bitmap) {
-            val recycle = synchronized(this) {
-                pinned.remove(bitmap) && pendingRecycle.remove(bitmap)
-            }
+            val recycle =
+                synchronized(this) {
+                    pinned.remove(bitmap) && pendingRecycle.remove(bitmap)
+                }
             if (recycle) {
                 bitmap.recycle()
             }
         }
-
     }
 
-    fun put(key: String, bitmap: Bitmap) {
+    fun put(
+        key: String,
+        bitmap: Bitmap,
+    ) {
         ensureLruCacheSize(bitmap)
         bitmapLruCache.put(key, bitmap)
     }
 
-    fun get(key: String): Bitmap? {
-        return bitmapLruCache[key]
-    }
+    fun get(key: String): Bitmap? = bitmapLruCache[key]
 
-    fun remove(key: String): Bitmap? {
-        return bitmapLruCache.remove(key)
-    }
+    fun remove(key: String): Bitmap? = bitmapLruCache.remove(key)
 
     private fun getNotRecycled(key: String): Bitmap? {
         val bitmap = bitmapLruCache[key] ?: return null
@@ -150,13 +151,14 @@ object ImageProvider {
         val lruMaxSize = bitmapLruCache.maxSize()
         val lruSize = bitmapLruCache.size()
         val byteCount = bitmap.byteCount
-        val size = if (byteCount > lruMaxSize) {
-            min(256 * M, (byteCount * 1.3).toInt())
-        } else if (lruSize + byteCount > lruMaxSize && bitmapLruCache.count < 5) {
-            min(256 * M, (lruSize + byteCount * 1.3).toInt())
-        } else {
-            lruMaxSize
-        }
+        val size =
+            if (byteCount > lruMaxSize) {
+                min(256 * M, (byteCount * 1.3).toInt())
+            } else if (lruSize + byteCount > lruMaxSize && bitmapLruCache.count < 5) {
+                min(256 * M, (lruSize + byteCount * 1.3).toInt())
+            } else {
+                lruMaxSize
+            }
         if (size > lruMaxSize) {
             bitmapLruCache.resize(size)
         }
@@ -168,20 +170,21 @@ object ImageProvider {
     suspend fun cacheImage(
         book: Book,
         src: String,
-        bookSource: BookSource?
+        bookSource: BookSource?,
     ): File {
         return withContext(IO) {
             val vFile = BookHelp.getImage(book, src)
             if (!BookHelp.isImageExist(book, src)) {
-                val inputStream = when {
-                    book.isEpub -> EpubFile.getImage(book, src)
-                    book.isPdf -> PdfFile.getImage(book, src)
-                    book.isMobi -> MobiFile.getImage(book, src)
-                    else -> {
-                        BookHelp.saveImage(bookSource, book, src)
-                        null
+                val inputStream =
+                    when {
+                        book.isEpub -> EpubFile.getImage(book, src)
+                        book.isPdf -> PdfFile.getImage(book, src)
+                        book.isMobi -> MobiFile.getImage(book, src)
+                        else -> {
+                            BookHelp.saveImage(bookSource, book, src)
+                            null
+                        }
                     }
-                }
                 inputStream?.use { input ->
                     val newFile = FileUtils.createFileIfNotExist(vFile.absolutePath)
                     FileOutputStream(newFile).use { output ->
@@ -199,7 +202,7 @@ object ImageProvider {
     suspend fun getImageSize(
         book: Book,
         src: String,
-        bookSource: BookSource?
+        bookSource: BookSource?,
     ): Size {
         val file = cacheImage(book, src, bookSource)
         val op = BitmapFactory.Options()
@@ -207,11 +210,11 @@ object ImageProvider {
         op.inJustDecodeBounds = true
         BitmapFactory.decodeFile(file.absolutePath, op)
         if (op.outWidth < 1 && op.outHeight < 1) {
-            //svg size
+            // svg size
             val size = SvgUtils.getSize(file.absolutePath)
             if (size != null) return size
             putDebug("ImageProvider: $src Unsupported image type")
-            //file.delete() 重复下载
+            // file.delete() 重复下载
             return Size(errorBitmap.width, errorBitmap.height)
         }
         return Size(op.outWidth, op.outHeight)
@@ -224,29 +227,31 @@ object ImageProvider {
         book: Book,
         src: String,
         width: Int,
-        height: Int? = null
+        height: Int? = null,
     ): Bitmap {
-        //src为空白时 可能被净化替换掉了 或者规则失效
+        // src为空白时 可能被净化替换掉了 或者规则失效
         if (book.getUseReplaceRule() && src.isBlank()) {
             book.setUseReplaceRule(false)
             appCtx.toastOnUi(R.string.error_image_url_empty)
         }
         val vFile = BookHelp.getImage(book, src)
         if (!vFile.exists()) return errorBitmap
-        //epub文件提供图片链接是相对链接，同时阅读多个epub文件，缓存命中错误
-        //bitmapLruCache的key同一改成缓存文件的路径
+        // epub文件提供图片链接是相对链接，同时阅读多个epub文件，缓存命中错误
+        // bitmapLruCache的key同一改成缓存文件的路径
         val cacheBitmap = getNotRecycled(vFile.absolutePath)
         if (cacheBitmap != null) return cacheBitmap
-        return kotlin.runCatching {
-            val bitmap = BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)
-                ?: SvgUtils.createBitmap(vFile.absolutePath, width, height)
-                ?: throw NoStackTraceException(appCtx.getString(R.string.error_decode_bitmap))
-            put(vFile.absolutePath, bitmap)
-            bitmap
-        }.onFailure {
-            //错误图片占位,防止重复获取
-            put(vFile.absolutePath, errorBitmap)
-        }.getOrDefault(errorBitmap)
+        return kotlin
+            .runCatching {
+                val bitmap =
+                    BitmapUtils.decodeBitmap(vFile.absolutePath, width, height)
+                        ?: SvgUtils.createBitmap(vFile.absolutePath, width, height)
+                        ?: throw NoStackTraceException(appCtx.getString(R.string.error_decode_bitmap))
+                put(vFile.absolutePath, bitmap)
+                bitmap
+            }.onFailure {
+                // 错误图片占位,防止重复获取
+                put(vFile.absolutePath, errorBitmap)
+            }.getOrDefault(errorBitmap)
     }
 
     /**
@@ -257,7 +262,7 @@ object ImageProvider {
         book: Book,
         src: String,
         width: Int,
-        height: Int? = null
+        height: Int? = null,
     ): Bitmap {
         val vFile = BookHelp.getImage(book, src)
         if (!vFile.exists()) return errorBitmap
@@ -274,5 +279,4 @@ object ImageProvider {
     fun clear() {
         bitmapLruCache.evictAll()
     }
-
 }

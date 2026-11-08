@@ -27,5 +27,4 @@ class RhinoContext(factory: ContextFactory) : Context(factory) {
             throw RhinoRecursionError()
         }
     }
-
 }

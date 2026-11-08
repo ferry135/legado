@@ -10,8 +10,6 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,16 +37,16 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.showDialogFragment
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.launch
 
-class GroupSelectDialog() : BaseDialogFragment(R.layout.dialog_book_group_picker),
+class GroupSelectDialog() :
+    BaseDialogFragment(R.layout.dialog_book_group_picker),
     Toolbar.OnMenuItemClickListener {
-
     constructor(groupId: Long, requestCode: Int = -1) : this() {
-        arguments = Bundle().apply {
-            putLong("groupId", groupId)
-            putInt("requestCode", requestCode)
-        }
+        arguments =
+            Bundle().apply {
+                putLong("groupId", groupId)
+                putInt("requestCode", requestCode)
+            }
     }
 
     private val binding by viewBinding(DialogBookGroupPickerBinding::bind)
@@ -63,7 +61,10 @@ class GroupSelectDialog() : BaseDialogFragment(R.layout.dialog_book_group_picker
         setLayout(0.9f, 0.9f)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         arguments?.let {
             groupId = it.getLong("groupId")
             requestCode = it.getInt("requestCode", -1)
@@ -79,22 +80,26 @@ class GroupSelectDialog() : BaseDialogFragment(R.layout.dialog_book_group_picker
         binding.toolBar.setOnMenuItemClickListener(this)
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         // 分割线 1dp outline_variant，左缩进 10dp 对齐文本起点（稿 .vd margin-left:10px）
-        binding.recyclerView.addItemDecoration(VerticalDivider(requireContext()).apply {
-            ContextCompat.getDrawable(requireContext(), R.drawable.ic_divider)?.let {
-                setDrawable(InsetDrawable(it, 10.dpToPx(), 0, 0, 0))
-            }
-        })
+        binding.recyclerView.addItemDecoration(
+            VerticalDivider(requireContext()).apply {
+                ContextCompat.getDrawable(requireContext(), R.drawable.ic_divider)?.let {
+                    setDrawable(InsetDrawable(it, 10.dpToPx(), 0, 0, 0))
+                }
+            },
+        )
         binding.recyclerView.adapter = adapter
         // 拖拽浮起态（稿 .lift）：12dp 圆角 + surface_container + 8dp 抬升（公共 LiftItemTouchCallback）；
         // 拖拽中顶部提示行切换为「松手保存顺序」（12-missed-2 #s01 拖拽态小字）
         val itemTouchCallback =
             object : LiftItemTouchCallback(
-                adapter, cornerRadiusDp = 12,
-                bgColorRes = R.color.surface_container, liftZDp = 8
+                adapter,
+                cornerRadiusDp = 12,
+                bgColorRes = R.color.surface_container,
+                liftZDp = 8,
             ) {
                 override fun onSelectedChanged(
                     viewHolder: RecyclerView.ViewHolder?,
-                    actionState: Int
+                    actionState: Int,
                 ) {
                     super.onSelectedChanged(viewHolder, actionState)
                     if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
@@ -104,7 +109,7 @@ class GroupSelectDialog() : BaseDialogFragment(R.layout.dialog_book_group_picker
 
                 override fun clearView(
                     recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder
+                    viewHolder: RecyclerView.ViewHolder,
                 ) {
                     super.clearView(recyclerView, viewHolder)
                     binding.tvHint.setText(R.string.group_picker_hint)
@@ -127,7 +132,7 @@ class GroupSelectDialog() : BaseDialogFragment(R.layout.dialog_book_group_picker
                 requireContext().getCompatColor(R.color.on_primary_soft)
             } else {
                 requireContext().accentColor
-            }
+            },
         )
         binding.tvOk.setOnClickListener {
             callBack?.upGroup(requestCode, groupId)
@@ -142,13 +147,12 @@ class GroupSelectDialog() : BaseDialogFragment(R.layout.dialog_book_group_picker
                 adapter.setItems(it)
                 binding.llEmpty.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
             }
-
         }
     }
 
     private fun showGroupEdit() {
         showDialogFragment(
-            GroupEditDialog()
+            GroupEditDialog(),
         )
     }
 
@@ -165,21 +169,19 @@ class GroupSelectDialog() : BaseDialogFragment(R.layout.dialog_book_group_picker
         return true
     }
 
-    private inner class GroupAdapter(context: Context) :
-        RecyclerAdapter<BookGroup, ItemGroupSelectBinding>(context),
+    private inner class GroupAdapter(
+        context: Context,
+    ) : RecyclerAdapter<BookGroup, ItemGroupSelectBinding>(context),
         ItemTouchCallback.Callback {
-
         private var isMoved: Boolean = false
 
-        override fun getViewBinding(parent: ViewGroup): ItemGroupSelectBinding {
-            return ItemGroupSelectBinding.inflate(inflater, parent, false)
-        }
+        override fun getViewBinding(parent: ViewGroup): ItemGroupSelectBinding = ItemGroupSelectBinding.inflate(inflater, parent, false)
 
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemGroupSelectBinding,
             item: BookGroup,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             binding.run {
                 root.setBackgroundColor(context.backgroundColor)
@@ -189,28 +191,33 @@ class GroupSelectDialog() : BaseDialogFragment(R.layout.dialog_book_group_picker
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder, binding: ItemGroupSelectBinding) {
+        override fun registerListener(
+            holder: ItemViewHolder,
+            binding: ItemGroupSelectBinding,
+        ) {
             // 复选框视觉（稿 .cb）：22dp、6dp 圆角、2dp 描边 on_surface_variant，
             // 选中实底主色——运行时取色，布局不硬编码 primary；白勾由 iv_check 叠层显示
-            binding.cbGroup.background = Selector.shapeBuild()
-                .setCornerRadius(6.dpToPx())
-                .setStrokeWidth(2.dpToPx())
-                .setDefaultBgColor(Color.TRANSPARENT)
-                .setDefaultStrokeColor(
-                    ContextCompat.getColor(context, R.color.on_surface_variant)
-                )
-                .setCheckedBgColor(context.primaryColor)
-                .setCheckedStrokeColor(context.primaryColor)
-                .create()
+            binding.cbGroup.background =
+                Selector
+                    .shapeBuild()
+                    .setCornerRadius(6.dpToPx())
+                    .setStrokeWidth(2.dpToPx())
+                    .setDefaultBgColor(Color.TRANSPARENT)
+                    .setDefaultStrokeColor(
+                        ContextCompat.getColor(context, R.color.on_surface_variant),
+                    ).setCheckedBgColor(context.primaryColor)
+                    .setCheckedStrokeColor(context.primaryColor)
+                    .create()
             // 勾选热区扩到整行（原仅复选框 isPressed 响应）：点击翻转掩码，编辑按钮独立热区
             binding.root.setOnClickListener {
                 getItem(holder.layoutPosition)?.let {
                     val checked = (groupId and it.groupId) > 0
-                    groupId = if (checked) {
-                        groupId - it.groupId
-                    } else {
-                        groupId + it.groupId
-                    }
+                    groupId =
+                        if (checked) {
+                            groupId - it.groupId
+                        } else {
+                            groupId + it.groupId
+                        }
                     binding.cbGroup.isChecked = !checked
                     binding.ivCheck.visibility = if (!checked) View.VISIBLE else View.GONE
                     updateSelectedCount()
@@ -218,18 +225,24 @@ class GroupSelectDialog() : BaseDialogFragment(R.layout.dialog_book_group_picker
             }
             binding.tvEdit.setOnClickListener {
                 showDialogFragment(
-                    GroupEditDialog(getItem(holder.layoutPosition))
+                    GroupEditDialog(getItem(holder.layoutPosition)),
                 )
             }
         }
 
-        override fun swap(srcPosition: Int, targetPosition: Int): Boolean {
+        override fun swap(
+            srcPosition: Int,
+            targetPosition: Int,
+        ): Boolean {
             swapItem(srcPosition, targetPosition)
             isMoved = true
             return true
         }
 
-        override fun onClearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        override fun onClearView(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+        ) {
             if (isMoved) {
                 for ((index, item) in getItems().withIndex()) {
                     item.order = index + 1
@@ -241,6 +254,9 @@ class GroupSelectDialog() : BaseDialogFragment(R.layout.dialog_book_group_picker
     }
 
     interface CallBack {
-        fun upGroup(requestCode: Int, groupId: Long)
+        fun upGroup(
+            requestCode: Int,
+            groupId: Long,
+        )
     }
 }

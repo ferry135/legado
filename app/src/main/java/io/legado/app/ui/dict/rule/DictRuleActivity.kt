@@ -6,8 +6,6 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.legado.app.R
@@ -47,49 +45,54 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewModel>(),
+class DictRuleActivity :
+    VMBaseActivity<ActivityDictRuleBinding, DictRuleViewModel>(),
     PopupMenu.OnMenuItemClickListener,
     SelectActionBar.CallBack,
     DictRuleAdapter.CallBack {
-
     override val viewModel by viewModels<DictRuleViewModel>()
     override val binding by viewBinding(ActivityDictRuleBinding::inflate)
     private val importRecordKey = "dictRuleUrls"
     private val adapter by lazy { DictRuleAdapter(this, this) }
-    private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
-        it ?: return@registerForActivityResult
-        showDialogFragment(
-            ImportDictRuleDialog(it)
-        )
-    }
-    private val importDoc = registerForActivityResult(HandleFileContract()) {
-        kotlin.runCatching {
-            it.uri?.readText(this)?.let {
-                showDialogFragment(
-                    ImportDictRuleDialog(it)
-                )
-            }
-        }.onFailure {
-            toastOnUi("readTextError:${it.localizedMessage}")
+    private val qrCodeResult =
+        registerForActivityResult(QrCodeResult()) {
+            it ?: return@registerForActivityResult
+            showDialogFragment(
+                ImportDictRuleDialog(it),
+            )
         }
-    }
-    private val exportResult = registerForActivityResult(HandleFileContract()) {
-        it.uri?.let { uri ->
-            alert(R.string.export_success) {
-                if (uri.toString().isAbsUrl()) {
-                    setMessage(DirectLinkUpload.getSummary())
+    private val importDoc =
+        registerForActivityResult(HandleFileContract()) {
+            kotlin
+                .runCatching {
+                    it.uri?.readText(this)?.let {
+                        showDialogFragment(
+                            ImportDictRuleDialog(it),
+                        )
+                    }
+                }.onFailure {
+                    toastOnUi("readTextError:${it.localizedMessage}")
                 }
-                val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                    editView.hint = getString(R.string.path)
-                    editView.setText(uri.toString())
-                }
-                customView { alertBinding.root }
-                okButton {
-                    sendToClip(uri.toString())
+        }
+    private val exportResult =
+        registerForActivityResult(HandleFileContract()) {
+            it.uri?.let { uri ->
+                alert(R.string.export_success) {
+                    if (uri.toString().isAbsUrl()) {
+                        setMessage(DirectLinkUpload.getSummary())
+                    }
+                    val alertBinding =
+                        DialogEditTextBinding.inflate(layoutInflater).apply {
+                            editView.hint = getString(R.string.path)
+                            editView.setText(uri.toString())
+                        }
+                    customView { alertBinding.root }
+                    okButton {
+                        sendToClip(uri.toString())
+                    }
                 }
             }
         }
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initRecyclerView()
@@ -128,29 +131,31 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
 
     private fun observeDictRuleData() {
         launchCollectWithLifecycle {
-            appDb.dictRuleDao.flowAll()
+            appDb.dictRuleDao
+                .flowAll()
                 .map { rules ->
                     // 在 IO 期预计算内置规则名，避免适配器首次绑定在主线程读取 assets
-                    rules to runCatching { DefaultData.dictRules.map { it.name }.toSet() }
-                        .getOrDefault(emptySet())
-                }
-                .catch {
+                    rules to
+                        runCatching { DefaultData.dictRules.map { it.name }.toSet() }
+                            .getOrDefault(emptySet())
+                }.catch {
                     AppLog.put("字典规则获取数据失败\n${it.localizedMessage}", it)
-                }.flowOn(IO).collect { (rules, builtinNames) ->
+                }.flowOn(IO)
+                .collect { (rules, builtinNames) ->
                     adapter.setBuiltinNames(builtinNames)
                     adapter.setItems(rules, adapter.diffItemCallBack)
                 }
-
         }
     }
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_add -> showDialogFragment<DictRuleEditDialog>()
-            R.id.menu_import_local -> importDoc.launch {
-                mode = HandleFileContract.FILE
-                allowExtensions = arrayOf("txt", "json")
-            }
+            R.id.menu_import_local ->
+                importDoc.launch {
+                    mode = HandleFileContract.FILE
+                    allowExtensions = arrayOf("txt", "json")
+                }
 
             R.id.menu_import_onLine -> showImportDialog()
             R.id.menu_import_qr -> qrCodeResult.launch()
@@ -170,14 +175,16 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
                 viewModel.disableSelection(*adapter.selection.toTypedArray())
             }
 
-            R.id.menu_export_selection -> exportResult.launch {
-                mode = HandleFileContract.EXPORT
-                fileData = HandleFileContract.FileData(
-                    "exportDictRule.json",
-                    GSON.toJson(adapter.selection).toByteArray(),
-                    "application/json"
-                )
-            }
+            R.id.menu_export_selection ->
+                exportResult.launch {
+                    mode = HandleFileContract.EXPORT
+                    fileData =
+                        HandleFileContract.FileData(
+                            "exportDictRule.json",
+                            GSON.toJson(adapter.selection).toByteArray(),
+                            "application/json",
+                        )
+                }
         }
         return true
     }
@@ -223,26 +230,28 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
     override fun upCountView() {
         binding.selectActionBar.upCountView(
             adapter.selection.size,
-            adapter.itemCount
+            adapter.itemCount,
         )
     }
 
     @SuppressLint("InflateParams")
     private fun showImportDialog() {
         val aCache = ACache.get(cacheDir = false)
-        val cacheUrls: MutableList<String> = aCache
-            .getAsString(importRecordKey)
-            ?.splitNotBlank(",")
-            ?.toMutableList() ?: mutableListOf()
+        val cacheUrls: MutableList<String> =
+            aCache
+                .getAsString(importRecordKey)
+                ?.splitNotBlank(",")
+                ?.toMutableList() ?: mutableListOf()
         alert(titleResource = R.string.import_on_line) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = "url"
-                editView.setFilterValues(cacheUrls)
-                editView.delCallBack = {
-                    cacheUrls.remove(it)
-                    aCache.put(importRecordKey, cacheUrls.joinToString(","))
+            val alertBinding =
+                DialogEditTextBinding.inflate(layoutInflater).apply {
+                    editView.hint = "url"
+                    editView.setFilterValues(cacheUrls)
+                    editView.delCallBack = {
+                        cacheUrls.remove(it)
+                        aCache.put(importRecordKey, cacheUrls.joinToString(","))
+                    }
                 }
-            }
             customView { alertBinding.root }
             okButton {
                 val text = alertBinding.editView.text?.toString()
@@ -252,7 +261,7 @@ class DictRuleActivity : VMBaseActivity<ActivityDictRuleBinding, DictRuleViewMod
                         aCache.put(importRecordKey, cacheUrls.joinToString(","))
                     }
                     showDialogFragment(
-                        ImportDictRuleDialog(it)
+                        ImportDictRuleDialog(it),
                     )
                 }
             }

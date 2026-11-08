@@ -1,10 +1,12 @@
 package io.legado.app.model.analyzeRule
 
 interface RuleDataInterface {
-
     val variableMap: HashMap<String, String>
 
-    fun putVariable(key: String, value: String?): Boolean {
+    fun putVariable(
+        key: String,
+        value: String?,
+    ): Boolean {
         val keyExist = variableMap.contains(key)
         return when {
             value == null -> {
@@ -27,12 +29,12 @@ interface RuleDataInterface {
         }
     }
 
-    fun putBigVariable(key: String, value: String?)
+    fun putBigVariable(
+        key: String,
+        value: String?,
+    )
 
-    fun getVariable(key: String): String {
-        return variableMap[key] ?: getBigVariable(key) ?: ""
-    }
+    fun getVariable(key: String): String = variableMap[key] ?: getBigVariable(key) ?: ""
 
     fun getBigVariable(key: String): String?
-
 }

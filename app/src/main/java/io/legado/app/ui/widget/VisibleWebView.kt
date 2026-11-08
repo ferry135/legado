@@ -7,11 +7,9 @@ import android.webkit.WebView
 
 class VisibleWebView(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet? = null,
 ) : WebView(context, attrs) {
-
     override fun onWindowVisibilityChanged(visibility: Int) {
         super.onWindowVisibilityChanged(View.VISIBLE)
     }
-
 }

@@ -8,8 +8,9 @@ import io.legado.app.utils.contains
 import io.legado.app.utils.inputStream
 import io.legado.app.utils.readText
 
-abstract class BaseAssociationViewModel(application: Application) : BaseViewModel(application) {
-
+abstract class BaseAssociationViewModel(
+    application: Application,
+) : BaseViewModel(application) {
     val successLive = MutableLiveData<Pair<String, String>>()
     val errorLive = MutableLiveData<String>()
 
@@ -22,7 +23,7 @@ abstract class BaseAssociationViewModel(application: Application) : BaseViewMode
     }
 
     private fun importJson(json: String) {
-        //暂时根据文件内容判断属于什么
+        // 暂时根据文件内容判断属于什么
         when {
             json.contains("pattern") ->
                 successLive.postValue(Pair("replaceRule", json))
@@ -37,5 +38,4 @@ abstract class BaseAssociationViewModel(application: Application) : BaseViewMode
             else -> errorLive.postValue("格式不对")
         }
     }
-
 }

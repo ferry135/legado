@@ -7,8 +7,9 @@ import splitties.init.appCtx
 import java.io.File
 import java.io.IOException
 
-
-class AssetsWeb(rootPath: String) {
+class AssetsWeb(
+    rootPath: String,
+) {
     private val assetManager: AssetManager = appCtx.assets
     private var rootPath = "web"
 
@@ -26,15 +27,15 @@ class AssetsWeb(rootPath: String) {
         return NanoHTTPD.newChunkedResponse(
             NanoHTTPD.Response.Status.OK,
             getMimeType(path1),
-            inputStream
+            inputStream,
         )
     }
 
     private fun getMimeType(path: String): String {
         val suffix = path.substring(path.lastIndexOf("."))
         return when {
-            suffix.equals(".html", ignoreCase = true)
-                    || suffix.equals(".htm", ignoreCase = true) -> "text/html"
+            suffix.equals(".html", ignoreCase = true) ||
+                suffix.equals(".htm", ignoreCase = true) -> "text/html"
             suffix.equals(".js", ignoreCase = true) -> "text/javascript"
             suffix.equals(".css", ignoreCase = true) -> "text/css"
             suffix.equals(".ico", ignoreCase = true) -> "image/x-icon"

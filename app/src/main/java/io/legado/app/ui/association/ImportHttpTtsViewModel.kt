@@ -17,8 +17,9 @@ import io.legado.app.utils.isAbsUrl
 import io.legado.app.utils.isJsonArray
 import io.legado.app.utils.isJsonObject
 
-class ImportHttpTtsViewModel(app: Application) : BaseViewModel(app) {
-
+class ImportHttpTtsViewModel(
+    app: Application,
+) : BaseViewModel(app) {
     val errorLiveData = MutableLiveData<String>()
     val successLiveData = MutableLiveData<Int>()
 
@@ -79,9 +80,10 @@ class ImportHttpTtsViewModel(app: Application) : BaseViewModel(app) {
                     allSources.add(it)
                 }
             }
-            text.isJsonArray() -> HttpTTS.fromJsonArray(text).getOrThrow().let { items ->
-                allSources.addAll(items)
-            }
+            text.isJsonArray() ->
+                HttpTTS.fromJsonArray(text).getOrThrow().let { items ->
+                    allSources.addAll(items)
+                }
             text.isAbsUrl() -> {
                 importSourceUrl(text)
             }
@@ -90,16 +92,19 @@ class ImportHttpTtsViewModel(app: Application) : BaseViewModel(app) {
     }
 
     private suspend fun importSourceUrl(url: String) {
-        okHttpClient.newCallResponseBody {
-            if (url.endsWith("#requestWithoutUA")) {
-                url(url.substringBeforeLast("#requestWithoutUA"))
-                header(AppConst.UA_NAME, "null")
-            } else {
-                url(url)
+        okHttpClient
+            .newCallResponseBody {
+                if (url.endsWith("#requestWithoutUA")) {
+                    url(url.substringBeforeLast("#requestWithoutUA"))
+                    header(AppConst.UA_NAME, "null")
+                } else {
+                    url(url)
+                }
+            }.decompressed()
+            .text()
+            .let {
+                importSourceAwait(it)
             }
-        }.decompressed().text().let {
-            importSourceAwait(it)
-        }
     }
 
     private fun comparisonSource() {
@@ -112,5 +117,4 @@ class ImportHttpTtsViewModel(app: Application) : BaseViewModel(app) {
             successLiveData.postValue(allSources.size)
         }
     }
-
 }

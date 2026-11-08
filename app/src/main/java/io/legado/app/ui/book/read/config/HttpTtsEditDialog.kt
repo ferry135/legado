@@ -27,13 +27,14 @@ import io.legado.app.utils.startActivity
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-class HttpTtsEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit, true),
+class HttpTtsEditDialog() :
+    BaseDialogFragment(R.layout.dialog_http_tts_edit, true),
     Toolbar.OnMenuItemClickListener {
-
     constructor(id: Long) : this() {
-        arguments = Bundle().apply {
-            putLong("id", id)
-        }
+        arguments =
+            Bundle().apply {
+                putLong("id", id)
+            }
     }
 
     private val binding by viewBinding(DialogHttpTtsEditBinding::bind)
@@ -46,7 +47,10 @@ class HttpTtsEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit, tr
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, 0.9f)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         // 12-missed-1 #19：工具栏透明置于 bg_dialog_card 卡底上，标题/图标走 on_surface
         // （原主色实底按 isColorLight 取字，默认主色 #FF6B2C 判暗→白字仅 2.84:1，
         // 明暗主题均不达标；卡片圆角由 bg_dialog_card + clipToOutline 保证）
@@ -93,52 +97,54 @@ class HttpTtsEditDialog() : BaseDialogFragment(R.layout.dialog_http_tts_edit, tr
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.menu_save -> viewModel.save(dataFromView()) {
-                toastOnUi("保存成功")
-            }
-            R.id.menu_login -> dataFromView().let { httpTts ->
-                if (httpTts.loginUrl.isNullOrBlank()) {
-                    toastOnUi("登录url不能为空")
-                } else {
-                    viewModel.save(httpTts) {
-                        startActivity<SourceLoginActivity> {
-                            putExtra("type", "httpTts")
-                            putExtra("key", httpTts.id.toString())
+            R.id.menu_save ->
+                viewModel.save(dataFromView()) {
+                    toastOnUi("保存成功")
+                }
+            R.id.menu_login ->
+                dataFromView().let { httpTts ->
+                    if (httpTts.loginUrl.isNullOrBlank()) {
+                        toastOnUi("登录url不能为空")
+                    } else {
+                        viewModel.save(httpTts) {
+                            startActivity<SourceLoginActivity> {
+                                putExtra("type", "httpTts")
+                                putExtra("key", httpTts.id.toString())
+                            }
                         }
                     }
                 }
-            }
-            R.id.menu_show_login_header -> alert {
-                setTitle(R.string.login_header)
-                dataFromView().getLoginHeader()?.let { loginHeader ->
-                    setMessage(loginHeader)
+            R.id.menu_show_login_header ->
+                alert {
+                    setTitle(R.string.login_header)
+                    dataFromView().getLoginHeader()?.let { loginHeader ->
+                        setMessage(loginHeader)
+                    }
                 }
-            }
             R.id.menu_del_login_header -> dataFromView().removeLoginHeader()
-            R.id.menu_copy_source -> dataFromView().let {
-                context?.sendToClip(GSON.toJson(it))
-            }
-            R.id.menu_paste_source -> viewModel.importFromClip {
-                initView(it)
-            }
+            R.id.menu_copy_source ->
+                dataFromView().let {
+                    context?.sendToClip(GSON.toJson(it))
+                }
+            R.id.menu_paste_source ->
+                viewModel.importFromClip {
+                    initView(it)
+                }
             R.id.menu_log -> showDialogFragment<AppLogDialog>()
             R.id.menu_help -> showHelp("httpTTSHelp")
         }
         return true
     }
 
-    private fun dataFromView(): HttpTTS {
-        return HttpTTS(
-            id = viewModel.id ?: System.currentTimeMillis(),
-            name = binding.tvName.text.toString(),
-            url = binding.tvUrl.text.toString(),
-            contentType = binding.tvContentType.text?.toString(),
-            concurrentRate = binding.tvConcurrentRate.text?.toString(),
-            loginUrl = binding.tvLoginUrl.text?.toString(),
-            loginUi = binding.tvLoginUi.text?.toString(),
-            loginCheckJs = binding.tvLoginCheckJs.text?.toString(),
-            header = binding.tvHeaders.text?.toString()
-        )
-    }
-
+    private fun dataFromView(): HttpTTS = HttpTTS(
+        id = viewModel.id ?: System.currentTimeMillis(),
+        name = binding.tvName.text.toString(),
+        url = binding.tvUrl.text.toString(),
+        contentType = binding.tvContentType.text?.toString(),
+        concurrentRate = binding.tvConcurrentRate.text?.toString(),
+        loginUrl = binding.tvLoginUrl.text?.toString(),
+        loginUi = binding.tvLoginUi.text?.toString(),
+        loginCheckJs = binding.tvLoginCheckJs.text?.toString(),
+        header = binding.tvHeaders.text?.toString(),
+    )
 }

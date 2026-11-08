@@ -30,12 +30,11 @@ class ClassNameMatcher(classNames: List<String>) {
 
     private fun comparePrefix(className: String, prefix: String): Int {
         val len = min(className.length, prefix.length)
-        for (i in 0 ..< len) {
+        for (i in 0..<len) {
             val c1 = className[i]
             val c2 = prefix[i]
             if (c1 != c2) return c2 - c1
         }
         return prefix.length - className.length
     }
-
 }

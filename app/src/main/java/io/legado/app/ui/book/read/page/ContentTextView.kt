@@ -34,7 +34,10 @@ import kotlin.math.min
 /**
  * 阅读内容视图
  */
-class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
+class ContentTextView(
+    context: Context,
+    attrs: AttributeSet?,
+) : View(context, attrs) {
     var selectAble = AppConfig.textSelectAble
     val selectedPaint by lazy {
         Paint().apply {
@@ -53,7 +56,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     var reverseStartCursor = false
     var reverseEndCursor = false
 
-    //滚动参数
+    // 滚动参数
     private val pageFactory get() = callBack.pageFactory
     private val pageDelegate get() = callBack.pageDelegate
     private var pageOffset = 0
@@ -61,7 +64,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     private var isScroll = false
     private val renderRunnable by lazy { Runnable { preRenderPage() } }
 
-    //绘制图片的paint
+    // 绘制图片的paint
     val imagePaint by lazy {
         Paint().apply {
             isAntiAlias = AppConfig.useAntiAlias
@@ -85,7 +88,12 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         }
     }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+    override fun onSizeChanged(
+        w: Int,
+        h: Int,
+        oldw: Int,
+        oldh: Int,
+    ) {
         super.onSizeChanged(w, h, oldw, oldh)
         if (!isMainView) return
         ChapterProvider.upViewSize(w, h)
@@ -110,7 +118,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         var relativeOffset = relativeOffset(0)
         textPage.draw(this, canvas, relativeOffset)
         if (!callBack.isScroll) return
-        //滚动翻页
+        // 滚动翻页
         if (!pageFactory.hasNext()) return
         val textPage1 = relativePage(1)
         relativeOffset += textPage.height
@@ -143,9 +151,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         if (!pageFactory.hasPrev() && pageOffset > 0) {
             pageOffset = 0
             pageDelegate?.abortAnim()
-        } else if (!pageFactory.hasNext()
-            && pageOffset < 0
-            && pageOffset + textPage.height < ChapterProvider.visibleHeight
+        } else if (!pageFactory.hasNext() &&
+            pageOffset < 0 &&
+            pageOffset + textPage.height < ChapterProvider.visibleHeight
         ) {
             val offset = (ChapterProvider.visibleHeight - textPage.height).toInt()
             pageOffset = min(0, offset)
@@ -186,8 +194,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             if (hasNext() && nextPage.render(view) && callBack.isScroll) {
                 invalidate = true
             }
-            if (hasNextPlus() && nextPlusPage.render(view) && callBack.isScroll
-                && relativeOffset(2) < ChapterProvider.visibleHeight
+            if (hasNextPlus() &&
+                nextPlusPage.render(view) &&
+                callBack.isScroll &&
+                relativeOffset(2) < ChapterProvider.visibleHeight
             ) {
                 invalidate = true
             }
@@ -230,7 +240,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
      * @return true:已处理, false:未处理
      */
     @Suppress("UNUSED_ANONYMOUS_PARAMETER")
-    fun click(x: Float, y: Float): Boolean {
+    fun click(
+        x: Float,
+        y: Float,
+    ): Boolean {
         var handled = false
         touch(x, y) { _, textPos, textPage, textLine, column ->
             when (column) {
@@ -244,10 +257,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                     handled = true
                 }
 
-                is ImageColumn -> if (AppConfig.previewImageByClick) {
-                    activity?.showDialogFragment(PhotoDialog(column.src))
-                    handled = true
-                }
+                is ImageColumn ->
+                    if (AppConfig.previewImageByClick) {
+                        activity?.showDialogFragment(PhotoDialog(column.src))
+                        handled = true
+                    }
             }
         }
         return handled
@@ -272,7 +286,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     /**
      * 开始选择符移动
      */
-    fun selectStartMove(x: Float, y: Float) {
+    fun selectStartMove(
+        x: Float,
+        y: Float,
+    ) {
         touchRough(x, y) { _, textPos, _, _, _ ->
             if (selectStart.compare(textPos) == 0) {
                 return@touchRough
@@ -296,7 +313,10 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
     /**
      * 结束选择符移动
      */
-    fun selectEndMove(x: Float, y: Float) {
+    fun selectEndMove(
+        x: Float,
+        y: Float,
+    ) {
         touchRough(x, y) { _, textPos, _, _, _ ->
             if (textPos.compare(selectEnd) == 0) {
                 return@touchRough
@@ -329,15 +349,15 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             textPos: TextPos,
             textPage: TextPage,
             textLine: TextLine,
-            column: BaseColumn
-        ) -> Unit
+            column: BaseColumn,
+        ) -> Unit,
     ) {
         if (!visibleRect.contains(x, y)) return
         var relativeOffset: Float
         for (relativePos in 0..2) {
             relativeOffset = relativeOffset(relativePos)
             if (relativePos > 0) {
-                //滚动翻页
+                // 滚动翻页
                 if (!callBack.isScroll) return
                 if (relativeOffset >= ChapterProvider.visibleHeight) return
             }
@@ -349,7 +369,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             touched.invoke(
                                 relativeOffset,
                                 TextPos(relativePos, lineIndex, charIndex),
-                                textPage, textLine, textColumn
+                                textPage,
+                                textLine,
+                                textColumn,
                             )
                             return
                         }
@@ -373,14 +395,14 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             textPos: TextPos,
             textPage: TextPage,
             textLine: TextLine,
-            column: BaseColumn
-        ) -> Unit
+            column: BaseColumn,
+        ) -> Unit,
     ) {
         var relativeOffset: Float
         for (relativePos in 0..2) {
             relativeOffset = relativeOffset(relativePos)
             if (relativePos > 0) {
-                //滚动翻页
+                // 滚动翻页
                 if (!callBack.isScroll) return
                 if (relativeOffset >= ChapterProvider.visibleHeight) return
             }
@@ -404,7 +426,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                             touched.invoke(
                                 relativeOffset,
                                 TextPos(relativePos, lineIndex, charIndex),
-                                textPage, textLine, textColumn
+                                textPage,
+                                textLine,
+                                textColumn,
                             )
                             return
                         }
@@ -415,7 +439,9 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                     touched.invoke(
                         relativeOffset,
                         TextPos(relativePos, lineIndex, charIndex),
-                        textPage, textLine, textColumn
+                        textPage,
+                        textLine,
+                        textColumn,
                     )
                     return
                 }
@@ -429,7 +455,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         for (relativePos in 0..2) {
             relativeOffset = relativeOffset(relativePos)
             if (relativePos > 0) {
-                //滚动翻页
+                // 滚动翻页
                 if (!callBack.isScroll) break
                 if (relativeOffset >= ChapterProvider.visibleHeight) break
             }
@@ -438,10 +464,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             for (i in lines.indices) {
                 val textLine = lines[i]
                 if (textLine.isVisible(relativeOffset)) {
-                    val visibleLine = textLine.copy().apply {
-                        lineTop += relativeOffset
-                        lineBottom += relativeOffset
-                    }
+                    val visibleLine =
+                        textLine.copy().apply {
+                            lineTop += relativeOffset
+                            lineBottom += relativeOffset
+                        }
                     visiblePage.addLine(visibleLine)
                 }
             }
@@ -454,7 +481,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         for (relativePos in 0..2) {
             relativeOffset = relativeOffset(relativePos)
             if (relativePos > 0) {
-                //滚动翻页
+                // 滚动翻页
                 if (!callBack.isScroll) break
                 if (relativeOffset >= ChapterProvider.visibleHeight) break
             }
@@ -463,10 +490,11 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
             for (i in lines.indices) {
                 val textLine = lines[i]
                 if (textLine.isVisible(relativeOffset)) {
-                    val visibleLine = textLine.copy().apply {
-                        lineTop += relativeOffset
-                        lineBottom += relativeOffset
-                    }
+                    val visibleLine =
+                        textLine.copy().apply {
+                            lineTop += relativeOffset
+                            lineBottom += relativeOffset
+                        }
                     return visibleLine
                 }
             }
@@ -490,7 +518,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         upSelectedStart(
             if (charIndex < textLine.columns.size) textColumn.start else textColumn.end,
             textLine.lineBottom + relativeOffset(relativePagePos),
-            textLine.lineTop + relativeOffset(relativePagePos)
+            textLine.lineTop + relativeOffset(relativePagePos),
         )
         upSelectChars()
     }
@@ -514,7 +542,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val textColumn = textLine.getColumn(charIndex)
         upSelectedEnd(
             if (charIndex > -1) textColumn.end else textColumn.start,
-            textLine.lineBottom + relativeOffset(relativePage)
+            textLine.lineBottom + relativeOffset(relativePage),
         )
         upSelectChars()
     }
@@ -541,7 +569,8 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                         val compareEnd = textPos.compare(selectEnd)
                         column.selected = compareStart >= 0 && compareEnd <= 0
                         column.isSearchResult =
-                            column.selected && callBack.isSelectingSearchResult
+                            column.selected &&
+                            callBack.isSelectingSearchResult
                         if (column.isSearchResult) {
                             textPage.searchResult.add(column)
                         }
@@ -552,13 +581,20 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         postInvalidate()
     }
 
-    private fun upSelectedStart(x: Float, y: Float, top: Float) {
+    private fun upSelectedStart(
+        x: Float,
+        y: Float,
+        top: Float,
+    ) {
         callBack.run {
             upSelectedStart(x, y + headerHeight, top + headerHeight)
         }
     }
 
-    private fun upSelectedEnd(x: Float, y: Float) {
+    private fun upSelectedEnd(
+        x: Float,
+        y: Float,
+    ) {
         callBack.run {
             upSelectedEnd(x, y + headerHeight)
         }
@@ -605,23 +641,25 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                     val compareEnd = textPos.compare(selectEnd)
                     if (column is TextColumn) {
                         when {
-                            compareStart == -1 -> if (
-                                selectStart.columnIndex == textLine.columns.size
-                                && charIndex == textLine.columns.lastIndex
-                            ) {
-                                builder.append("\n")
-                            }
+                            compareStart == -1 ->
+                                if (
+                                    selectStart.columnIndex == textLine.columns.size &&
+                                    charIndex == textLine.columns.lastIndex
+                                ) {
+                                    builder.append("\n")
+                                }
 
-                            compareEnd == 1 -> if (selectEnd.columnIndex == -1 && charIndex == 0) {
-                                builder.append("\n")
-                            }
+                            compareEnd == 1 ->
+                                if (selectEnd.columnIndex == -1 && charIndex == 0) {
+                                    builder.append("\n")
+                                }
 
                             compareStart >= 0 && compareEnd <= 0 -> {
                                 builder.append(column.charData)
                                 if (
-                                    textLine.isParagraphEnd
-                                    && charIndex == textLine.columns.lastIndex
-                                    && compareEnd != 0
+                                    textLine.isParagraphEnd &&
+                                    charIndex == textLine.columns.lastIndex &&
+                                    compareEnd != 0
                                 ) {
                                     builder.append("\n")
                                 }
@@ -641,7 +679,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
                 return book.createBookMark().apply {
                     chapterIndex = page.chapterIndex
                     chapterPos = chapter.getReadLength(page.index) +
-                            page.getPosByLineColumn(selectStart.lineIndex, selectStart.columnIndex)
+                        page.getPosByLineColumn(selectStart.lineIndex, selectStart.columnIndex)
                     chapterName = chapter.title
                     bookText = getSelectedText()
                 }
@@ -650,20 +688,16 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         return null
     }
 
-    private fun relativeOffset(relativePos: Int): Float {
-        return when (relativePos) {
-            0 -> pageOffset.toFloat()
-            1 -> pageOffset + textPage.height
-            else -> pageOffset + textPage.height + pageFactory.nextPage.height
-        }
+    private fun relativeOffset(relativePos: Int): Float = when (relativePos) {
+        0 -> pageOffset.toFloat()
+        1 -> pageOffset + textPage.height
+        else -> pageOffset + textPage.height + pageFactory.nextPage.height
     }
 
-    fun relativePage(relativePos: Int): TextPage {
-        return when (relativePos) {
-            0 -> textPage
-            1 -> pageFactory.nextPage
-            else -> pageFactory.nextPlusPage
-        }
+    fun relativePage(relativePos: Int): TextPage = when (relativePos) {
+        0 -> textPage
+        1 -> pageFactory.nextPage
+        else -> pageFactory.nextPlusPage
     }
 
     fun setAutoPager(autoPager: AutoPager?) {
@@ -674,9 +708,7 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         isScroll = value
     }
 
-    override fun canScrollVertically(direction: Int): Boolean {
-        return callBack.isScroll && pageFactory.hasNext()
-    }
+    override fun canScrollVertically(direction: Int): Boolean = callBack.isScroll && pageFactory.hasNext()
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
@@ -708,10 +740,26 @@ class ContentTextView(context: Context, attrs: AttributeSet?) : View(context, at
         val pageDelegate: PageDelegate?
         val isScroll: Boolean
         var isSelectingSearchResult: Boolean
-        fun upSelectedStart(x: Float, y: Float, top: Float)
-        fun upSelectedEnd(x: Float, y: Float)
-        fun onImageLongPress(x: Float, y: Float, src: String)
+
+        fun upSelectedStart(
+            x: Float,
+            y: Float,
+            top: Float,
+        )
+
+        fun upSelectedEnd(
+            x: Float,
+            y: Float,
+        )
+
+        fun onImageLongPress(
+            x: Float,
+            y: Float,
+            src: String,
+        )
+
         fun onCancelSelect()
+
         fun onLongScreenshotTouchEvent(event: MotionEvent): Boolean
     }
 }

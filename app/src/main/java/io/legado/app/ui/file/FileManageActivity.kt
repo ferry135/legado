@@ -30,7 +30,6 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.io.File
 
 class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageViewModel>() {
-
     override val binding by viewBinding(ActivityFileManageBinding::inflate)
     override val viewModel by viewModels<FileManageViewModel>()
     private val dirParent = ".."
@@ -71,25 +70,26 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
         searchView.applyTint(primaryTextColor)
         searchView.queryHint = getString(R.string.screen) + " • " + getString(R.string.file_manage)
         searchView.isSubmitButtonEnabled = true
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
+        searchView.setOnQueryTextListener(
+            object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean = false
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                updateFiles()
-                return false
-            }
-        })
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    updateFiles()
+                    return false
+                }
+            },
+        )
     }
 
     private fun updateFiles() {
         if (searchView.query.isNotEmpty()) {
-            currentFiles.filter {
-                it.name == dirParent || it.name.contains(searchView.query)
-            }.let {
-                fileAdapter.setItems(it)
-            }
+            currentFiles
+                .filter {
+                    it.name == dirParent || it.name.contains(searchView.query)
+                }.let {
+                    fileAdapter.setItems(it)
+                }
         } else {
             fileAdapter.setItems(currentFiles)
         }
@@ -111,9 +111,7 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
     }
 
     @SuppressLint("SetTextI18n")
-    inner class PathAdapter :
-        RecyclerAdapter<File, ItemPathPickerBinding>(this@FileManageActivity) {
-
+    inner class PathAdapter : RecyclerAdapter<File, ItemPathPickerBinding>(this@FileManageActivity) {
         private val arrowIcon = ConvertUtils.toDrawable(FilePickerIcon.getArrow())
 
         init {
@@ -130,13 +128,14 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
             }
         }
 
-        override fun getViewBinding(parent: ViewGroup): ItemPathPickerBinding {
-            return ItemPathPickerBinding.inflate(inflater, parent, false).apply {
-                imageView.setImageDrawable(arrowIcon)
-            }
+        override fun getViewBinding(parent: ViewGroup): ItemPathPickerBinding = ItemPathPickerBinding.inflate(inflater, parent, false).apply {
+            imageView.setImageDrawable(arrowIcon)
         }
 
-        override fun registerListener(holder: ItemViewHolder, binding: ItemPathPickerBinding) {
+        override fun registerListener(
+            holder: ItemViewHolder,
+            binding: ItemPathPickerBinding,
+        ) {
             binding.root.setOnClickListener {
                 viewModel.subDocs = viewModel.subDocs.subList(0, holder.layoutPosition)
                 setItems(viewModel.subDocs)
@@ -148,11 +147,10 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
             holder: ItemViewHolder,
             binding: ItemPathPickerBinding,
             item: File,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             binding.textView.text = item.name
         }
-
     }
 
     inner class FileAdapter : RecyclerAdapter<File, ItemFileBinding>(this@FileManageActivity) {
@@ -160,11 +158,12 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
         private val folderIcon = ConvertUtils.toDrawable(FilePickerIcon.getFolder())!!
         private val fileIcon = ConvertUtils.toDrawable(FilePickerIcon.getFile())!!
 
-        override fun getViewBinding(parent: ViewGroup): ItemFileBinding {
-            return ItemFileBinding.inflate(inflater, parent, false)
-        }
+        override fun getViewBinding(parent: ViewGroup): ItemFileBinding = ItemFileBinding.inflate(inflater, parent, false)
 
-        override fun registerListener(holder: ItemViewHolder, binding: ItemFileBinding) {
+        override fun registerListener(
+            holder: ItemViewHolder,
+            binding: ItemFileBinding,
+        ) {
             binding.root.setOnClickListener {
                 val item = getItemByLayoutPosition(holder.layoutPosition)
                 item?.let {
@@ -179,8 +178,8 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
                             FileProvider.getUriForFile(
                                 this@FileManageActivity,
                                 AppConst.authority,
-                                item
-                            )
+                                item,
+                            ),
                         )
                     }
                 }
@@ -201,7 +200,7 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
             holder: ItemViewHolder,
             binding: ItemFileBinding,
             item: File,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             if (item == viewModel.lastDir) {
                 binding.imageView.setImageDrawable(upIcon)
@@ -215,7 +214,10 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
             }
         }
 
-        private fun showFileMenu(view: View, file: File) {
+        private fun showFileMenu(
+            view: View,
+            file: File,
+        ) {
             val popupMenu = PopupMenu(context, view)
             popupMenu.inflate(R.menu.file_long_click)
             popupMenu.setOnMenuItemClickListener {
@@ -226,7 +228,5 @@ class FileManageActivity : VMBaseActivity<ActivityFileManageBinding, FileManageV
             }
             popupMenu.show()
         }
-
     }
-
 }

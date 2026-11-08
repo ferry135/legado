@@ -16,20 +16,17 @@ import kotlinx.coroutines.flow.map
 
 @Dao
 interface BookDao {
-
-    fun flowByGroup(groupId: Long): Flow<List<Book>> {
-        return when (groupId) {
-            BookGroup.IdRoot -> flowRoot()
-            BookGroup.IdAll -> flowAll()
-            BookGroup.IdLocal -> flowLocal()
-            BookGroup.IdAudio -> flowAudio()
-            BookGroup.IdNetNone -> flowNetNoGroup()
-            BookGroup.IdLocalNone -> flowLocalNoGroup()
-            BookGroup.IdError -> flowUpdateError()
-            else -> flowByUserGroup(groupId)
-        }.map { list ->
-            list.filterNot { it.isNotShelf }
-        }
+    fun flowByGroup(groupId: Long): Flow<List<Book>> = when (groupId) {
+        BookGroup.IdRoot -> flowRoot()
+        BookGroup.IdAll -> flowAll()
+        BookGroup.IdLocal -> flowLocal()
+        BookGroup.IdAudio -> flowAudio()
+        BookGroup.IdNetNone -> flowNetNoGroup()
+        BookGroup.IdLocalNone -> flowLocalNoGroup()
+        BookGroup.IdError -> flowUpdateError()
+        else -> flowByUserGroup(groupId)
+    }.map { list ->
+        list.filterNot { it.isNotShelf }
     }
 
     @Query(
@@ -38,7 +35,7 @@ interface BookDao {
         and type & ${BookType.local} = 0
         and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0
         and (select show from book_groups where groupId = ${BookGroup.IdNetNone}) != 1
-        """
+        """,
     )
     fun flowRoot(): Flow<List<Book>>
 
@@ -55,7 +52,7 @@ interface BookDao {
         """
         select * from books where type & ${BookType.audio} = 0 and type & ${BookType.local} = 0
         and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0
-        """
+        """,
     )
     fun flowNetNoGroup(): Flow<List<Book>>
 
@@ -63,7 +60,7 @@ interface BookDao {
         """
         select * from books where type & ${BookType.local} > 0
         and ((SELECT sum(groupId) FROM book_groups where groupId > 0) & `group`) = 0
-        """
+        """,
     )
     fun flowLocalNoGroup(): Flow<List<Book>>
 
@@ -89,15 +86,23 @@ interface BookDao {
     fun getBook(bookUrl: String): Book?
 
     @Query("SELECT * FROM books WHERE name = :name and author = :author")
-    fun getBook(name: String, author: String): Book?
+    fun getBook(
+        name: String,
+        author: String,
+    ): Book?
 
-    @Query("""select distinct bs.* from books, book_sources bs 
+    @Query(
+        """select distinct bs.* from books, book_sources bs 
         where origin == bookSourceUrl and origin not like '${BookType.localTag}%' 
-        and origin not like '${BookType.webDavTag}%'""")
+        and origin not like '${BookType.webDavTag}%'""",
+    )
     fun getAllUseBookSource(): List<BookSource>
 
     @Query("SELECT * FROM books WHERE name = :name and origin = :origin")
-    fun getBookByOrigin(name: String, origin: String): Book?
+    fun getBookByOrigin(
+        name: String,
+        origin: String,
+    ): Book?
 
     @get:Query("select count(bookUrl) from books where (SELECT sum(groupId) FROM book_groups)")
     val noGroupSize: Int
@@ -133,11 +138,14 @@ interface BookDao {
     fun has(bookUrl: String): Boolean
 
     @Query("select exists(select 1 from books where name = :name and author = :author)")
-    fun has(name: String, author: String): Boolean
+    fun has(
+        name: String,
+        author: String,
+    ): Boolean
 
     @Query(
         """select exists(select 1 from books where type & ${BookType.local} > 0 
-        and (originName = :fileName or (origin != '${BookType.localTag}' and origin like '%' || :fileName)))"""
+        and (originName = :fileName or (origin != '${BookType.localTag}' and origin like '%' || :fileName)))""",
     )
     fun hasFile(fileName: String): Boolean
 
@@ -151,10 +159,16 @@ interface BookDao {
     fun delete(vararg book: Book)
 
     @Query("update books set durChapterPos = :pos where bookUrl = :bookUrl")
-    fun upProgress(bookUrl: String, pos: Int)
+    fun upProgress(
+        bookUrl: String,
+        pos: Int,
+    )
 
     @Query("update books set `group` = :newGroupId where `group` = :oldGroupId")
-    fun upGroup(oldGroupId: Long, newGroupId: Long)
+    fun upGroup(
+        oldGroupId: Long,
+        newGroupId: Long,
+    )
 
     @Query("update books set `group` = `group` - :group where `group` & :group > 0")
     fun removeGroup(group: Long)

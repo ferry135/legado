@@ -80,6 +80,5 @@ class ItemAnimation private constructor() {
         const val RIGHT_SLIDE_IN: Int = 0x00000005
 
         fun create() = ItemAnimation()
-
     }
 }

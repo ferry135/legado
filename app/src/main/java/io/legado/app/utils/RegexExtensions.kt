@@ -19,36 +19,43 @@ private val handler by lazy { buildMainHandler() }
 /**
  * 带有超时检测的正则替换
  */
-fun CharSequence.replace(regex: Regex, replacement: String, timeout: Long): String {
+fun CharSequence.replace(
+    regex: Regex,
+    replacement: String,
+    timeout: Long,
+): String {
     val charSequence = this@replace
     val isJs = replacement.startsWith("@js:")
     val replacement1 = if (isJs) replacement.substring(4) else replacement
     return runBlocking {
         suspendCancellableCoroutine { block ->
-            val coroutine = Coroutine.async(executeContext = IO) {
-                try {
-                    val pattern = regex.toPattern()
-                    val matcher = pattern.matcher(charSequence)
-                    val stringBuffer = StringBuffer()
-                    while (matcher.find()) {
-                        if (isJs) {
-                            val jsResult = RhinoScriptEngine.run {
-                                val bindings = ScriptBindings()
-                                bindings["result"] = matcher.group()
-                                eval(replacement1, bindings)
-                            }.toString()
-                            val quotedResult = Matcher.quoteReplacement(jsResult)
-                            matcher.appendReplacement(stringBuffer, quotedResult)
-                        } else {
-                            matcher.appendReplacement(stringBuffer, replacement1)
+            val coroutine =
+                Coroutine.async(executeContext = IO) {
+                    try {
+                        val pattern = regex.toPattern()
+                        val matcher = pattern.matcher(charSequence)
+                        val stringBuffer = StringBuffer()
+                        while (matcher.find()) {
+                            if (isJs) {
+                                val jsResult =
+                                    RhinoScriptEngine
+                                        .run {
+                                            val bindings = ScriptBindings()
+                                            bindings["result"] = matcher.group()
+                                            eval(replacement1, bindings)
+                                        }.toString()
+                                val quotedResult = Matcher.quoteReplacement(jsResult)
+                                matcher.appendReplacement(stringBuffer, quotedResult)
+                            } else {
+                                matcher.appendReplacement(stringBuffer, replacement1)
+                            }
                         }
+                        matcher.appendTail(stringBuffer)
+                        block.resume(stringBuffer.toString())
+                    } catch (e: Exception) {
+                        block.resumeWithException(e)
                     }
-                    matcher.appendTail(stringBuffer)
-                    block.resume(stringBuffer.toString())
-                } catch (e: Exception) {
-                    block.resumeWithException(e)
                 }
-            }
             handler.postDelayed(timeout) {
                 if (coroutine.isActive) {
                     val timeoutMsg =
@@ -67,4 +74,3 @@ fun CharSequence.replace(regex: Regex, replacement: String, timeout: Long): Stri
         }
     }
 }
-

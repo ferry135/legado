@@ -5,9 +5,13 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.BookGroup
 
-class GroupViewModel(application: Application) : BaseViewModel(application) {
-
-    fun upGroup(vararg bookGroup: BookGroup, finally: (() -> Unit)? = null) {
+class GroupViewModel(
+    application: Application,
+) : BaseViewModel(application) {
+    fun upGroup(
+        vararg bookGroup: BookGroup,
+        finally: (() -> Unit)? = null,
+    ) {
         execute {
             appDb.bookGroupDao.update(*bookGroup)
         }.onFinally {
@@ -20,18 +24,19 @@ class GroupViewModel(application: Application) : BaseViewModel(application) {
         bookSort: Int,
         enableRefresh: Boolean,
         cover: String?,
-        finally: () -> Unit
+        finally: () -> Unit,
     ) {
         execute {
             val groupId = appDb.bookGroupDao.getUnusedId()
-            val bookGroup = BookGroup(
-                groupId = groupId,
-                groupName = groupName,
-                cover = cover,
-                bookSort = bookSort,
-                enableRefresh = enableRefresh,
-                order = appDb.bookGroupDao.maxOrder.plus(1)
-            )
+            val bookGroup =
+                BookGroup(
+                    groupId = groupId,
+                    groupName = groupName,
+                    cover = cover,
+                    bookSort = bookSort,
+                    enableRefresh = enableRefresh,
+                    order = appDb.bookGroupDao.maxOrder.plus(1),
+                )
             appDb.bookGroupDao.getByID(groupId) ?: appDb.bookDao.removeGroup(groupId)
             appDb.bookGroupDao.insert(bookGroup)
         }.onFinally {
@@ -39,7 +44,10 @@ class GroupViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun delGroup(bookGroup: BookGroup, finally: () -> Unit) {
+    fun delGroup(
+        bookGroup: BookGroup,
+        finally: () -> Unit,
+    ) {
         execute {
             appDb.bookGroupDao.delete(bookGroup)
             appDb.bookDao.removeGroup(bookGroup.groupId)
@@ -47,6 +55,4 @@ class GroupViewModel(application: Application) : BaseViewModel(application) {
             finally()
         }
     }
-
-
 }

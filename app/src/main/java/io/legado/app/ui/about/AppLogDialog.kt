@@ -23,7 +23,8 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 import splitties.views.onClick
 import java.util.*
 
-class AppLogDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
+class AppLogDialog :
+    BaseDialogFragment(R.layout.dialog_recycler_view),
     Toolbar.OnMenuItemClickListener {
 
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
@@ -57,18 +58,15 @@ class AppLogDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         return true
     }
 
-    inner class LogAdapter(context: Context) :
-        RecyclerAdapter<Triple<Long, String, Throwable?>, ItemAppLogBinding>(context) {
+    inner class LogAdapter(context: Context) : RecyclerAdapter<Triple<Long, String, Throwable?>, ItemAppLogBinding>(context) {
 
-        override fun getViewBinding(parent: ViewGroup): ItemAppLogBinding {
-            return ItemAppLogBinding.inflate(inflater, parent, false)
-        }
+        override fun getViewBinding(parent: ViewGroup): ItemAppLogBinding = ItemAppLogBinding.inflate(inflater, parent, false)
 
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemAppLogBinding,
             item: Triple<Long, String, Throwable?>,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             binding.textTime.text = LogUtils.logTimeFormat.format(Date(item.first))
             binding.textMessage.text = item.second
@@ -91,7 +89,5 @@ class AppLogDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                 }
             }
         }
-
     }
-
 }

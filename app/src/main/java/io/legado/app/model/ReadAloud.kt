@@ -47,7 +47,7 @@ object ReadAloud {
         context: Context,
         play: Boolean = true,
         pageIndex: Int = ReadBook.durPageIndex,
-        startPos: Int = 0
+        startPos: Int = 0,
     ) {
         val intent = Intent(context, aloudClass)
         intent.action = IntentAction.play
@@ -67,13 +67,14 @@ object ReadAloud {
     fun playByEventBus(
         play: Boolean = true,
         pageIndex: Int = ReadBook.durPageIndex,
-        startPos: Int = 0
+        startPos: Int = 0,
     ) {
-        val bundle = Bundle().apply {
-            putBoolean("play", play)
-            putInt("pageIndex", pageIndex)
-            putInt("startPos", startPos)
-        }
+        val bundle =
+            Bundle().apply {
+                putBoolean("play", play)
+                putInt("pageIndex", pageIndex)
+                putInt("startPos", startPos)
+            }
         postEvent(EventBus.READ_ALOUD_PLAY, bundle)
     }
 
@@ -125,7 +126,10 @@ object ReadAloud {
         }
     }
 
-    fun setTimer(context: Context, minute: Int) {
+    fun setTimer(
+        context: Context,
+        minute: Int,
+    ) {
         if (BaseReadAloudService.isRun) {
             val intent = Intent(context, aloudClass)
             intent.action = IntentAction.setTimer
@@ -133,5 +137,4 @@ object ReadAloud {
             context.startForegroundServiceCompat(intent)
         }
     }
-
 }

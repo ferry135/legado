@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
 import io.legado.app.constant.AppLog
@@ -25,32 +23,35 @@ import kotlinx.coroutines.launch
 /**
  * 所有书签
  */
-class AllBookmarkActivity : VMBaseActivity<ActivityAllBookmarkBinding, AllBookmarkViewModel>(),
+class AllBookmarkActivity :
+    VMBaseActivity<ActivityAllBookmarkBinding, AllBookmarkViewModel>(),
     BookmarkAdapter.Callback {
-
     override val viewModel by viewModels<AllBookmarkViewModel>()
     override val binding by viewBinding(ActivityAllBookmarkBinding::inflate)
     private val adapter by lazy {
         BookmarkAdapter(this, this)
     }
-    private val exportDir = registerForActivityResult(HandleFileContract()) {
-        it.uri?.let { uri ->
-            when (it.requestCode) {
-                1 -> viewModel.exportBookmark(uri)
-                2 -> viewModel.exportBookmarkMd(uri)
+    private val exportDir =
+        registerForActivityResult(HandleFileContract()) {
+            it.uri?.let { uri ->
+                when (it.requestCode) {
+                    1 -> viewModel.exportBookmark(uri)
+                    2 -> viewModel.exportBookmarkMd(uri)
+                }
             }
         }
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
         launchCollectWithLifecycle {
-            appDb.bookmarkDao.flowAll().catch {
-                AppLog.put("所有书签界面获取数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).collect {
-                adapter.setItems(it)
-            }
-
+            appDb.bookmarkDao
+                .flowAll()
+                .catch {
+                    AppLog.put("所有书签界面获取数据失败\n${it.localizedMessage}", it)
+                }.flowOn(IO)
+                .collect {
+                    adapter.setItems(it)
+                }
         }
     }
 
@@ -67,19 +68,23 @@ class AllBookmarkActivity : VMBaseActivity<ActivityAllBookmarkBinding, AllBookma
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_export -> exportDir.launch {
-                requestCode = 1
-            }
+            R.id.menu_export ->
+                exportDir.launch {
+                    requestCode = 1
+                }
 
-            R.id.menu_export_md -> exportDir.launch {
-                requestCode = 2
-            }
+            R.id.menu_export_md ->
+                exportDir.launch {
+                    requestCode = 2
+                }
         }
         return super.onCompatOptionsItemSelected(item)
     }
 
-    override fun onItemClick(bookmark: Bookmark, position: Int) {
+    override fun onItemClick(
+        bookmark: Bookmark,
+        position: Int,
+    ) {
         showDialogFragment(BookmarkDialog(bookmark, position))
     }
-
 }

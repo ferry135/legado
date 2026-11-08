@@ -22,12 +22,12 @@ import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
 
 class BookmarkDialog() : BaseDialogFragment(R.layout.dialog_bookmark, true) {
-
     constructor(bookmark: Bookmark, editPos: Int = -1) : this() {
-        arguments = Bundle().apply {
-            putInt("editPos", editPos)
-            putParcelable("bookmark", bookmark)
-        }
+        arguments =
+            Bundle().apply {
+                putInt("editPos", editPos)
+                putParcelable("bookmark", bookmark)
+            }
     }
 
     private val binding by viewBinding(DialogBookmarkBinding::bind)
@@ -37,11 +37,15 @@ class BookmarkDialog() : BaseDialogFragment(R.layout.dialog_bookmark, true) {
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
-        val arguments = arguments ?: let {
-            dismiss()
-            return
-        }
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
+        val arguments =
+            arguments ?: let {
+                dismiss()
+                return
+            }
 
         @Suppress("DEPRECATION")
         val bookmark = arguments.getParcelable<Bookmark>("bookmark")
@@ -55,13 +59,15 @@ class BookmarkDialog() : BaseDialogFragment(R.layout.dialog_bookmark, true) {
         binding.tvFooterLeft.setTextColor(getCompatColor(R.color.error))
         // field 卡聚焦描边运行时注入：?attr/colorAccent 在主题中固化为 design_orange，
         // 不随 ThemeStore 换肤（MASTER.md §1.2）；默认/聚焦同 surface_container_high 底，仅聚焦叠 1.5dp 主色描边
-        val fieldBackground = Selector.shapeBuild()
-            .setCornerRadius(10.dpToPx())
-            .setStrokeWidth(1.5f.dpToPx().roundToInt())
-            .setDefaultBgColor(getCompatColor(R.color.surface_container_high))
-            .setFocusedBgColor(getCompatColor(R.color.surface_container_high))
-            .setFocusedStrokeColor(requireContext().accentColor)
-            .create()
+        val fieldBackground =
+            Selector
+                .shapeBuild()
+                .setCornerRadius(10.dpToPx())
+                .setStrokeWidth(1.5f.dpToPx().roundToInt())
+                .setDefaultBgColor(getCompatColor(R.color.surface_container_high))
+                .setFocusedBgColor(getCompatColor(R.color.surface_container_high))
+                .setFocusedStrokeColor(requireContext().accentColor)
+                .create()
         binding.vwBookText.background = fieldBackground
         binding.vwNote.background = fieldBackground
         binding.run {
@@ -91,5 +97,4 @@ class BookmarkDialog() : BaseDialogFragment(R.layout.dialog_bookmark, true) {
             }
         }
     }
-
 }

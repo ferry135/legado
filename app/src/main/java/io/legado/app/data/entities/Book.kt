@@ -33,7 +33,7 @@ import kotlin.math.max
 @TypeConverters(Book.Converters::class)
 @Entity(
     tableName = "books",
-    indices = [Index(value = ["name", "author"], unique = true)]
+    indices = [Index(value = ["name", "author"], unique = true)],
 )
 data class Book(
     // 详情页Url(本地书源存储完整文件路径)
@@ -46,7 +46,7 @@ data class Book(
     // 书源URL(默认BookType.local)
     @ColumnInfo(defaultValue = BookType.localTag)
     var origin: String = BookType.localTag,
-    //书源名称 or 本地书籍文件名
+    // 书源名称 or 本地书籍文件名
     @ColumnInfo(defaultValue = "")
     var originName: String = "",
     // 书籍名称(书源获取)
@@ -100,7 +100,7 @@ data class Book(
     // 最近一次阅读书籍的时间(打开正文的时间)
     @ColumnInfo(defaultValue = "0")
     var durChapterTime: Long = System.currentTimeMillis(),
-    //字数
+    // 字数
     override var wordCount: String? = null,
     // 刷新书架时更新书籍信息
     @ColumnInfo(defaultValue = "1")
@@ -108,17 +108,18 @@ data class Book(
     // 手动排序
     @ColumnInfo(defaultValue = "0")
     var order: Int = 0,
-    //书源排序
+    // 书源排序
     @ColumnInfo(defaultValue = "0")
     var originOrder: Int = 0,
     // 自定义书籍变量信息(用于书源规则检索书籍信息)
     override var variable: String? = null,
-    //阅读设置
+    // 阅读设置
     var readConfig: ReadConfig? = null,
-    //同步时间
+    // 同步时间
     @ColumnInfo(defaultValue = "0")
-    var syncTime: Long = 0L
-) : Parcelable, BaseBook {
+    var syncTime: Long = 0L,
+) : Parcelable,
+    BaseBook {
 
     override fun equals(other: Any?): Boolean {
         if (other is Book) {
@@ -127,9 +128,7 @@ data class Book(
         return false
     }
 
-    override fun hashCode(): Int {
-        return bookUrl.hashCode()
-    }
+    override fun hashCode(): Int = bookUrl.hashCode()
 
     @delegate:Transient
     @delegate:Ignore
@@ -166,15 +165,13 @@ data class Book(
 
     fun getDisplayIntro() = if (customIntro.isNullOrEmpty()) intro else customIntro
 
-    //自定义简介有自动更新的需求时，可通过更新intro再调用upCustomIntro()完成
+    // 自定义简介有自动更新的需求时，可通过更新intro再调用upCustomIntro()完成
     @Suppress("unused")
     fun upCustomIntro() {
         customIntro = intro
     }
 
-    fun fileCharset(): Charset {
-        return charset(charset ?: "UTF-8")
-    }
+    fun fileCharset(): Charset = charset(charset ?: "UTF-8")
 
     @IgnoredOnParcel
     val config: ReadConfig
@@ -189,9 +186,7 @@ data class Book(
         config.reverseToc = reverseToc
     }
 
-    fun getReverseToc(): Boolean {
-        return config.reverseToc
-    }
+    fun getReverseToc(): Boolean = config.reverseToc
 
     fun setUseReplaceRule(useReplaceRule: Boolean) {
         config.useReplaceRule = useReplaceRule
@@ -202,7 +197,7 @@ data class Book(
         if (useReplaceRule != null) {
             return useReplaceRule
         }
-        //图片类书源 epub本地 默认关闭净化
+        // 图片类书源 epub本地 默认关闭净化
         if (isImage || isEpub) {
             return false
         }
@@ -213,9 +208,7 @@ data class Book(
         config.reSegment = reSegment
     }
 
-    fun getReSegment(): Boolean {
-        return config.reSegment
-    }
+    fun getReSegment(): Boolean = config.reSegment
 
     fun setPageAnim(pageAnim: Int?) {
         config.pageAnim = pageAnim
@@ -234,34 +227,26 @@ data class Book(
         config.imageStyle = imageStyle
     }
 
-    fun getImageStyle(): String? {
-        return config.imageStyle
-    }
+    fun getImageStyle(): String? = config.imageStyle
 
     fun setTtsEngine(ttsEngine: String?) {
         config.ttsEngine = ttsEngine
     }
 
-    fun getTtsEngine(): String? {
-        return config.ttsEngine
-    }
+    fun getTtsEngine(): String? = config.ttsEngine
 
     fun setSplitLongChapter(limitLongContent: Boolean) {
         config.splitLongChapter = limitLongContent
     }
 
-    fun getSplitLongChapter(): Boolean {
-        return config.splitLongChapter
-    }
+    fun getSplitLongChapter(): Boolean = config.splitLongChapter
 
     // readSimulating 的 setter 和 getter
     fun setReadSimulating(readSimulating: Boolean) {
         config.readSimulating = readSimulating
     }
 
-    fun getReadSimulating(): Boolean {
-        return config.readSimulating
-    }
+    fun getReadSimulating(): Boolean = config.readSimulating
 
     // startDate 的 setter 和 getter
     fun setStartDate(startDate: LocalDate?) {
@@ -290,13 +275,9 @@ data class Book(
         config.dailyChapters = dailyChapters
     }
 
-    fun getDailyChapters(): Int {
-        return config.dailyChapters
-    }
+    fun getDailyChapters(): Int = config.dailyChapters
 
-    fun getDelTag(tag: Long): Boolean {
-        return config.delTag and tag == tag
-    }
+    fun getDelTag(tag: Long): Boolean = config.delTag and tag == tag
 
     fun addDelTag(tag: Long) {
         config.delTag = config.delTag and tag
@@ -310,7 +291,7 @@ data class Book(
         folderName?.let {
             return it
         }
-        //防止书名过长,只取9位
+        // 防止书名过长,只取9位
         folderName = getFolderNameNoCache()
         return folderName!!
     }
@@ -329,7 +310,7 @@ data class Book(
         intro = intro,
         tocUrl = tocUrl,
         originOrder = originOrder,
-        variable = variable
+        variable = variable,
     ).apply {
         this.infoHtml = this@Book.infoHtml
         this.tocHtml = this@Book.tocHtml
@@ -343,7 +324,7 @@ data class Book(
             .getDurChapter(durChapterIndex, durChapterTitle, toc, totalChapterNum)
         newBook.durChapterTitle = toc[newBook.durChapterIndex].getDisplayTitle(
             ContentProcessor.get(newBook.name, newBook.origin).getTitleReplaceRules(),
-            getUseReplaceRule()
+            getUseReplaceRule(),
         )
         newBook.durChapterPos = durChapterPos
         newBook.durChapterTime = durChapterTime
@@ -357,12 +338,10 @@ data class Book(
         return newBook
     }
 
-    fun createBookMark(): Bookmark {
-        return Bookmark(
-            bookName = name,
-            bookAuthor = author,
-        )
-    }
+    fun createBookMark(): Bookmark = Bookmark(
+        bookName = name,
+        bookAuthor = author,
+    )
 
     fun save() {
         if (appDb.bookDao.has(bookUrl)) {
@@ -414,14 +393,18 @@ data class Book(
         var pageAnim: Int? = null,
         var reSegment: Boolean = false,
         var imageStyle: String? = null,
-        var useReplaceRule: Boolean? = null,// 正文使用净化替换规则
-        var delTag: Long = 0L,//去除标签
+        // 正文使用净化替换规则
+        var useReplaceRule: Boolean? = null,
+        // 去除标签
+        var delTag: Long = 0L,
         var ttsEngine: String? = null,
         var splitLongChapter: Boolean = true,
         var readSimulating: Boolean = false,
         var startDate: LocalDate? = null,
-        var startChapter: Int? = null,     // 用户设置的起始章节
-        var dailyChapters: Int = 3    // 用户设置的每日更新章节数
+        // 用户设置的起始章节
+        var startChapter: Int? = null,
+        // 用户设置的每日更新章节数
+        var dailyChapters: Int = 3,
     ) : Parcelable
 
     class Converters {

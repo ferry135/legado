@@ -25,7 +25,6 @@ import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
 import io.legado.app.utils.*
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-
 class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
     private val callBack: CallBack? get() = activity as? CallBack
     private val binding by viewBinding(DialogReadAloudBinding::bind)
@@ -133,7 +132,7 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
                 ReadAloud.setTimer(requireContext(), times[index])
             }
         }
-        //设置保存的默认值
+        // 设置保存的默认值
         seekTtsSpeechRate.progress = AppConfig.ttsSpeechRate
         seekTtsSpeechRate.setOnSeekBarChangeListener(object : SeekBarChangeListener {
 
@@ -181,7 +180,7 @@ class ReadAloudDialog : BaseDialogFragment(R.layout.dialog_read_aloud) {
         val accentColor = ThemeStore.accentColor(requireContext())
         binding.ivPlayPause.backgroundTintList = ColorStateList.valueOf(accentColor)
         binding.ivPlayPause.setColorFilter(
-            if (ColorUtils.isColorLight(accentColor)) Color.BLACK else Color.WHITE
+            if (ColorUtils.isColorLight(accentColor)) Color.BLACK else Color.WHITE,
         )
     }
 

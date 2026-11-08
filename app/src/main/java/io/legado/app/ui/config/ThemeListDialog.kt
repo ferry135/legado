@@ -31,7 +31,8 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 // 预览块装饰纹理/描边的 ink 基色（稿面 rgba(32,36,43)；随预览明度派生，非主题令牌，明暗预览通用）
 private val PREVIEW_INK: Int = 0xFF20242B.toInt()
 
-class ThemeListDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
+class ThemeListDialog :
+    BaseDialogFragment(R.layout.dialog_recycler_view),
     Toolbar.OnMenuItemClickListener {
 
     private val binding by viewBinding(DialogRecyclerViewBinding::bind)
@@ -97,18 +98,15 @@ class ThemeListDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
         requireContext().share(json, "主题分享")
     }
 
-    inner class Adapter(context: Context) :
-        RecyclerAdapter<ThemeConfig.Config, ItemThemeConfigBinding>(context) {
+    inner class Adapter(context: Context) : RecyclerAdapter<ThemeConfig.Config, ItemThemeConfigBinding>(context) {
 
-        override fun getViewBinding(parent: ViewGroup): ItemThemeConfigBinding {
-            return ItemThemeConfigBinding.inflate(inflater, parent, false)
-        }
+        override fun getViewBinding(parent: ViewGroup): ItemThemeConfigBinding = ItemThemeConfigBinding.inflate(inflater, parent, false)
 
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemThemeConfigBinding,
             item: ThemeConfig.Config,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             binding.apply {
                 tvName.text = item.themeName
@@ -125,14 +123,14 @@ class ThemeListDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                     val prevLight = ColorUtils.isColorLight(configBg)
                     val tx = ColorUtils.adjustAlpha(
                         if (prevLight) PREVIEW_INK else Color.WHITE,
-                        if (prevLight) 0.36f else 0.40f
+                        if (prevLight) 0.36f else 0.40f,
                     )
                     vPrevAcc.background = roundBg(accent, 1.5f)
                     vPrevTx1.background = roundBg(tx, 1.5f)
                     vPrevTx2.background = roundBg(tx, 1.5f)
                     val stroke = ColorUtils.adjustAlpha(
                         if (prevLight) PREVIEW_INK else Color.WHITE,
-                        0.25f
+                        0.25f,
                     )
                     flPreview.background = GradientDrawable().apply {
                         setColor(Color.TRANSPARENT)
@@ -145,7 +143,7 @@ class ThemeListDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                 // 元信息：白天/夜间 + 主色 hex（复用 day/night/theme/primary 既有 string）
                 ivNight.visibility = if (item.isNightTheme) View.VISIBLE else View.GONE
                 val prefix = getString(
-                    if (item.isNightTheme) R.string.night else R.string.day
+                    if (item.isNightTheme) R.string.night else R.string.day,
                 ) + getString(R.string.theme)
                 tvMeta.text = "$prefix · ${getString(R.string.primary)} ${item.primaryColor}"
                 // 使用中：ThemeStore 当前四色与 config 四色全等（applyConfig 写入键同口径），
@@ -154,7 +152,8 @@ class ThemeListDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                 tvInUse.visibility = if (inUse) View.VISIBLE else View.GONE
                 val bgLight = ColorUtils.isColorLight(context.backgroundColor)
                 val press = ColorUtils.adjustAlpha(
-                    if (bgLight) PREVIEW_INK else Color.WHITE, 0.10f
+                    if (bgLight) PREVIEW_INK else Color.WHITE,
+                    0.10f,
                 )
                 val sel = if (bgLight) {
                     ColorUtils.adjustAlpha(context.primaryColor, 0.08f)
@@ -164,27 +163,24 @@ class ThemeListDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                 root.background = RippleDrawable(
                     ColorStateList.valueOf(press),
                     ColorDrawable(if (inUse) sel else Color.TRANSPARENT),
-                    null
+                    null,
                 )
             }
         }
 
-        private fun isInUse(item: ThemeConfig.Config): Boolean {
-            return try {
-                context.primaryColor == Color.parseColor(item.primaryColor) &&
-                        context.accentColor == Color.parseColor(item.accentColor) &&
-                        context.backgroundColor == Color.parseColor(item.backgroundColor) &&
-                        context.bottomBackground == Color.parseColor(item.bottomBackground)
-            } catch (_: Exception) {
-                false
-            }
+        private fun isInUse(item: ThemeConfig.Config): Boolean = try {
+            context.primaryColor == Color.parseColor(item.primaryColor) &&
+                context.accentColor == Color.parseColor(item.accentColor) &&
+                context.backgroundColor == Color.parseColor(item.backgroundColor) &&
+                context.bottomBackground == Color.parseColor(item.bottomBackground)
+        } catch (_: Exception) {
+            false
         }
 
-        private fun roundBg(color: Int, radiusDp: Float): GradientDrawable =
-            GradientDrawable().apply {
-                setColor(color)
-                cornerRadius = radiusDp.dpToPx()
-            }
+        private fun roundBg(color: Int, radiusDp: Float): GradientDrawable = GradientDrawable().apply {
+            setColor(color)
+            cornerRadius = radiusDp.dpToPx()
+        }
 
         override fun registerListener(holder: ItemViewHolder, binding: ItemThemeConfigBinding) {
             binding.apply {
@@ -199,6 +195,5 @@ class ThemeListDialog : BaseDialogFragment(R.layout.dialog_recycler_view),
                 }
             }
         }
-
     }
 }

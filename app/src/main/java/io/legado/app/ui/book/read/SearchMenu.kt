@@ -26,10 +26,12 @@ import io.legado.app.utils.visible
 /**
  * 搜索界面菜单
  */
-class SearchMenu @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null
+class SearchMenu
+@JvmOverloads
+constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
 ) : FrameLayout(context, attrs) {
-
     private val callBack: CallBack get() = activity as CallBack
     private val binding = ViewSearchMenuBinding.inflate(LayoutInflater.from(context), this, true)
 
@@ -38,8 +40,11 @@ class SearchMenu @JvmOverloads constructor(
     private val bgColor: Int = context.bottomBackground
     private val textColor: Int = context.getPrimaryTextColor(ColorUtils.isColorLight(bgColor))
     private val bottomBackgroundList: ColorStateList =
-        Selector.colorBuild().setDefaultColor(bgColor)
-            .setPressedColor(ColorUtils.darkenColor(bgColor)).create()
+        Selector
+            .colorBuild()
+            .setDefaultColor(bgColor)
+            .setPressedColor(ColorUtils.darkenColor(bgColor))
+            .create()
     private var onMenuOutEnd: (() -> Unit)? = null
     private var isMenuOutAnimating = false
 
@@ -87,7 +92,6 @@ class SearchMenu @JvmOverloads constructor(
         applyNavigationBarPadding()
     }
 
-
     fun runMenuIn() {
         this.visible()
         binding.llBottomMenu.visible()
@@ -115,22 +119,23 @@ class SearchMenu @JvmOverloads constructor(
 
     fun updateSearchResultIndex(updateIndex: Int) {
         lastSearchResultIndex = currentSearchResultIndex
-        currentSearchResultIndex = when {
-            updateIndex < 0 -> 0
-            updateIndex >= searchResultList.size -> searchResultList.size - 1
-            else -> updateIndex
-        }
+        currentSearchResultIndex =
+            when {
+                updateIndex < 0 -> 0
+                updateIndex >= searchResultList.size -> searchResultList.size - 1
+                else -> updateIndex
+            }
     }
 
     private fun bindEvent() = binding.run {
-        //搜索结果
+        // 搜索结果
         llSearchResults.setOnClickListener {
             runMenuOut {
                 callBack.openSearchActivity(selectedSearchResult?.query)
             }
         }
 
-        //主菜单
+        // 主菜单
         llMainMenu.setOnClickListener {
             runMenuOut {
                 callBack.cancelSelect()
@@ -139,7 +144,7 @@ class SearchMenu @JvmOverloads constructor(
             }
         }
 
-        //退出
+        // 退出
         llSearchExit.setOnClickListener {
             runMenuOut {
                 callBack.exitSearchMenu()
@@ -150,7 +155,7 @@ class SearchMenu @JvmOverloads constructor(
             updateSearchResultIndex(currentSearchResultIndex - 1)
             callBack.navigateToSearch(
                 searchResultList[currentSearchResultIndex],
-                currentSearchResultIndex
+                currentSearchResultIndex,
             )
         }
 
@@ -158,7 +163,7 @@ class SearchMenu @JvmOverloads constructor(
             updateSearchResultIndex(currentSearchResultIndex - 1)
             callBack.navigateToSearch(
                 searchResultList[currentSearchResultIndex],
-                currentSearchResultIndex
+                currentSearchResultIndex,
             )
         }
 
@@ -166,7 +171,7 @@ class SearchMenu @JvmOverloads constructor(
             updateSearchResultIndex(currentSearchResultIndex + 1)
             callBack.navigateToSearch(
                 searchResultList[currentSearchResultIndex],
-                currentSearchResultIndex
+                currentSearchResultIndex,
             )
         }
 
@@ -174,61 +179,76 @@ class SearchMenu @JvmOverloads constructor(
             updateSearchResultIndex(currentSearchResultIndex + 1)
             callBack.navigateToSearch(
                 searchResultList[currentSearchResultIndex],
-                currentSearchResultIndex
+                currentSearchResultIndex,
             )
         }
     }
 
     private fun initAnimation() {
-        //显示菜单
-        menuBottomIn.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation) {
-                callBack.upSystemUiVisibility()
-                binding.fabLeft.visible(hasSearchResult)
-                binding.fabRight.visible(hasSearchResult)
-            }
+        // 显示菜单
+        menuBottomIn.setAnimationListener(
+            object : Animation.AnimationListener {
+                override fun onAnimationStart(animation: Animation) {
+                    callBack.upSystemUiVisibility()
+                    binding.fabLeft.visible(hasSearchResult)
+                    binding.fabRight.visible(hasSearchResult)
+                }
 
-            @SuppressLint("RtlHardcoded")
-            override fun onAnimationEnd(animation: Animation) {
-                binding.vwMenuBg.setOnClickListener { runMenuOut() }
-                callBack.upSystemUiVisibility()
-            }
+                @SuppressLint("RtlHardcoded")
+                override fun onAnimationEnd(animation: Animation) {
+                    binding.vwMenuBg.setOnClickListener { runMenuOut() }
+                    callBack.upSystemUiVisibility()
+                }
 
-            override fun onAnimationRepeat(animation: Animation) = Unit
-        })
+                override fun onAnimationRepeat(animation: Animation) = Unit
+            },
+        )
 
-        //隐藏菜单
-        menuBottomOut.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation) {
-                isMenuOutAnimating = true
-                binding.vwMenuBg.setOnClickListener(null)
-            }
+        // 隐藏菜单
+        menuBottomOut.setAnimationListener(
+            object : Animation.AnimationListener {
+                override fun onAnimationStart(animation: Animation) {
+                    isMenuOutAnimating = true
+                    binding.vwMenuBg.setOnClickListener(null)
+                }
 
-            override fun onAnimationEnd(animation: Animation) {
-                isMenuOutAnimating = false
-                binding.llBottomMenu.invisible()
-                binding.vwMenuBg.invisible()
-                binding.vwMenuBg.setOnClickListener { runMenuOut() }
+                override fun onAnimationEnd(animation: Animation) {
+                    isMenuOutAnimating = false
+                    binding.llBottomMenu.invisible()
+                    binding.vwMenuBg.invisible()
+                    binding.vwMenuBg.setOnClickListener { runMenuOut() }
 
-                onMenuOutEnd?.invoke()
-                callBack.upSystemUiVisibility()
-            }
+                    onMenuOutEnd?.invoke()
+                    callBack.upSystemUiVisibility()
+                }
 
-            override fun onAnimationRepeat(animation: Animation) = Unit
-        })
+                override fun onAnimationRepeat(animation: Animation) = Unit
+            },
+        )
     }
 
     interface CallBack {
         var isShowingSearchResult: Boolean
+
         fun openSearchActivity(searchWord: String?)
+
         fun showSearchSetting()
+
         fun upSystemUiVisibility()
+
         fun exitSearchMenu()
+
         fun showMenuBar()
-        fun navigateToSearch(searchResult: SearchResult, index: Int)
+
+        fun navigateToSearch(
+            searchResult: SearchResult,
+            index: Int,
+        )
+
         fun onMenuShow()
+
         fun onMenuHide()
+
         fun cancelSelect()
     }
-
 }

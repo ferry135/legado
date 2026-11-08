@@ -44,7 +44,6 @@ class BackstageWebView(
     private val javaScript: String? = null,
     private val delayTime: Long = 0,
 ) {
-
     private val mHandler = Handler(Looper.getMainLooper())
     private var callback: Callback? = null
     private var mWebView: WebView? = null
@@ -56,18 +55,20 @@ class BackstageWebView(
                     destroy()
                 }
             }
-            callback = object : Callback() {
-                override fun onResult(response: StrResponse) {
-                    if (!block.isCompleted) {
-                        block.resume(response)
+            callback =
+                object : Callback() {
+                    override fun onResult(response: StrResponse) {
+                        if (!block.isCompleted) {
+                            block.resume(response)
+                        }
+                    }
+
+                    override fun onError(error: Throwable) {
+                        if (!block.isCompleted) {
+                            block.resumeWithException(error)
+                        }
                     }
                 }
-
-                override fun onError(error: Throwable) {
-                    if (!block.isCompleted)
-                        block.resumeWithException(error)
-                }
-            }
             runOnUI {
                 try {
                     load()
@@ -78,9 +79,7 @@ class BackstageWebView(
         }
     }
 
-    private fun getEncoding(): String {
-        return encode ?: "utf-8"
-    }
+    private fun getEncoding(): String = encode ?: "utf-8"
 
     @Throws(AndroidRuntimeException::class)
     private fun load() {
@@ -88,17 +87,19 @@ class BackstageWebView(
         mWebView = webView
         try {
             when {
-                !html.isNullOrEmpty() -> if (url.isNullOrEmpty()) {
-                    webView.loadData(html, "text/html", getEncoding())
-                } else {
-                    webView.loadDataWithBaseURL(url, html, "text/html", getEncoding(), url)
-                }
+                !html.isNullOrEmpty() ->
+                    if (url.isNullOrEmpty()) {
+                        webView.loadData(html, "text/html", getEncoding())
+                    } else {
+                        webView.loadDataWithBaseURL(url, html, "text/html", getEncoding(), url)
+                    }
 
-                else -> if (headerMap == null) {
-                    webView.loadUrl(url!!)
-                } else {
-                    webView.loadUrl(url!!, headerMap)
-                }
+                else ->
+                    if (headerMap == null) {
+                        webView.loadUrl(url!!)
+                    } else {
+                        webView.loadUrl(url!!, headerMap)
+                    }
             }
         } catch (e: Exception) {
             callback?.onError(e)
@@ -146,23 +147,26 @@ class BackstageWebView(
     }
 
     private inner class HtmlWebViewClient : WebViewClient() {
-
         private var runnable: EvalJsRunnable? = null
         private var isRedirect = false
 
         override fun shouldOverrideUrlLoading(
             view: WebView,
-            request: WebResourceRequest
+            request: WebResourceRequest,
         ): Boolean {
-            isRedirect = isRedirect || if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                request.isRedirect
-            } else {
-                request.url.toString() != view.url
-            }
+            isRedirect = isRedirect ||
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    request.isRedirect
+                } else {
+                    request.url.toString() != view.url
+                }
             return super.shouldOverrideUrlLoading(view, request)
         }
 
-        override fun onPageFinished(view: WebView, url: String) {
+        override fun onPageFinished(
+            view: WebView,
+            url: String,
+        ) {
             setCookie(url)
             if (runnable == null) {
                 runnable = EvalJsRunnable(view, url, getJs())
@@ -175,7 +179,7 @@ class BackstageWebView(
         override fun onReceivedSslError(
             view: WebView?,
             handler: SslErrorHandler?,
-            error: SslError?
+            error: SslError?,
         ) {
             handler?.proceed()
         }
@@ -183,10 +187,11 @@ class BackstageWebView(
         private inner class EvalJsRunnable(
             webView: WebView,
             private val url: String,
-            private val mJavaScript: String
+            private val mJavaScript: String,
         ) : Runnable {
             var retry = 0
             private val mWebView: WeakReference<WebView> = WeakReference(webView)
+
             override fun run() {
                 mWebView.get()?.evaluateJavascript(mJavaScript) {
                     handleResult(it)
@@ -195,8 +200,10 @@ class BackstageWebView(
 
             private fun handleResult(result: String) = Coroutine.async {
                 if (result.isNotEmpty() && result != "null") {
-                    val content = StringEscapeUtils.unescapeJson(result)
-                        .replace(quoteRegex, "")
+                    val content =
+                        StringEscapeUtils
+                            .unescapeJson(result)
+                            .replace(quoteRegex, "")
                     try {
                         val response = buildStrResponse(content)
                         callback?.onResult(response)
@@ -224,30 +231,32 @@ class BackstageWebView(
                     return StrResponse(url, content)
                 }
                 val originUrl = this@BackstageWebView.url ?: url
-                val originResponse = Response.Builder()
-                    .code(302)
-                    .request(Request.Builder().url(originUrl).build())
-                    .protocol(Protocol.HTTP_1_1)
-                    .message("Found")
-                    .build()
-                val response = Response.Builder()
-                    .code(200)
-                    .request(Request.Builder().url(url).build())
-                    .protocol(Protocol.HTTP_1_1)
-                    .message("OK")
-                    .priorResponse(originResponse)
-                    .build()
+                val originResponse =
+                    Response
+                        .Builder()
+                        .code(302)
+                        .request(Request.Builder().url(originUrl).build())
+                        .protocol(Protocol.HTTP_1_1)
+                        .message("Found")
+                        .build()
+                val response =
+                    Response
+                        .Builder()
+                        .code(200)
+                        .request(Request.Builder().url(url).build())
+                        .protocol(Protocol.HTTP_1_1)
+                        .message("OK")
+                        .priorResponse(originResponse)
+                        .build()
                 return StrResponse(response, content)
             }
         }
-
     }
 
     private inner class SnifferWebClient : WebViewClient() {
-
         override fun shouldOverrideUrlLoading(
             view: WebView,
-            request: WebResourceRequest
+            request: WebResourceRequest,
         ): Boolean {
             if (shouldOverrideUrlLoading(request.url.toString())) {
                 return true
@@ -256,7 +265,10 @@ class BackstageWebView(
         }
 
         @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION", "KotlinRedundantDiagnosticSuppress")
-        override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+        override fun shouldOverrideUrlLoading(
+            view: WebView,
+            url: String,
+        ): Boolean {
             if (shouldOverrideUrlLoading(url)) {
                 return true
             }
@@ -279,7 +291,10 @@ class BackstageWebView(
             return false
         }
 
-        override fun onLoadResource(view: WebView, resUrl: String) {
+        override fun onLoadResource(
+            view: WebView,
+            resUrl: String,
+        ) {
             sourceRegex?.let {
                 if (resUrl.matches(it.toRegex())) {
                     try {
@@ -293,7 +308,10 @@ class BackstageWebView(
             }
         }
 
-        override fun onPageFinished(webView: WebView, url: String) {
+        override fun onPageFinished(
+            webView: WebView,
+            url: String,
+        ) {
             setCookie(url)
             if (!javaScript.isNullOrEmpty()) {
                 val runnable = LoadJsRunnable(webView, javaScript)
@@ -305,21 +323,21 @@ class BackstageWebView(
         override fun onReceivedSslError(
             view: WebView?,
             handler: SslErrorHandler?,
-            error: SslError?
+            error: SslError?,
         ) {
             handler?.proceed()
         }
 
         private inner class LoadJsRunnable(
             webView: WebView,
-            private val mJavaScript: String?
+            private val mJavaScript: String?,
         ) : Runnable {
             private val mWebView: WeakReference<WebView> = WeakReference(webView)
+
             override fun run() {
-                mWebView.get()?.loadUrl("javascript:${mJavaScript}")
+                mWebView.get()?.loadUrl("javascript:$mJavaScript")
             }
         }
-
     }
 
     companion object {
@@ -329,6 +347,7 @@ class BackstageWebView(
 
     abstract class Callback {
         abstract fun onResult(response: StrResponse)
+
         abstract fun onError(error: Throwable)
     }
 }

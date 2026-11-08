@@ -9,7 +9,6 @@ import io.legado.app.help.crypto.Sign
 import io.legado.app.help.crypto.SymmetricCryptoAndroid
 import io.legado.app.utils.MD5Utils
 
-
 /**
  * js加解密扩展类, 在js中通过java变量调用
  * 添加方法，请更新文档/legado/app/src/main/assets/help/JsHelp.md
@@ -17,16 +16,11 @@ import io.legado.app.utils.MD5Utils
 @Suppress("unused")
 interface JsEncodeUtils {
 
-    fun md5Encode(str: String): String {
-        return MD5Utils.md5Encode(str)
-    }
+    fun md5Encode(str: String): String = MD5Utils.md5Encode(str)
 
-    fun md5Encode16(str: String): String {
-        return MD5Utils.md5Encode16(str)
-    }
+    fun md5Encode16(str: String): String = MD5Utils.md5Encode16(str)
 
-
-    //******************对称加密解密************************//
+    // ******************对称加密解密************************//
 
     /**
      * 在js中这样使用
@@ -42,7 +36,7 @@ interface JsEncodeUtils {
     fun createSymmetricCrypto(
         transformation: String,
         key: ByteArray?,
-        iv: ByteArray?
+        iv: ByteArray?,
     ): SymmetricCrypto {
         val symmetricCrypto = SymmetricCryptoAndroid(transformation, key)
         return if (iv != null && iv.isNotEmpty()) symmetricCrypto.setIv(iv) else symmetricCrypto
@@ -50,45 +44,38 @@ interface JsEncodeUtils {
 
     fun createSymmetricCrypto(
         transformation: String,
-        key: ByteArray
-    ): SymmetricCrypto {
-        return createSymmetricCrypto(transformation, key, null)
-    }
-
-    fun createSymmetricCrypto(
-        transformation: String,
-        key: String
-    ): SymmetricCrypto {
-        return createSymmetricCrypto(transformation, key, null)
-    }
+        key: ByteArray,
+    ): SymmetricCrypto = createSymmetricCrypto(transformation, key, null)
 
     fun createSymmetricCrypto(
         transformation: String,
         key: String,
-        iv: String?
-    ): SymmetricCrypto {
-        return createSymmetricCrypto(
-            transformation, key.encodeToByteArray(), iv?.encodeToByteArray()
-        )
-    }
-    //******************非对称加密解密************************//
+    ): SymmetricCrypto = createSymmetricCrypto(transformation, key, null)
+
+    fun createSymmetricCrypto(
+        transformation: String,
+        key: String,
+        iv: String?,
+    ): SymmetricCrypto = createSymmetricCrypto(
+        transformation,
+        key.encodeToByteArray(),
+        iv?.encodeToByteArray(),
+    )
+    // ******************非对称加密解密************************//
 
     /* keys都为null时使用随机密钥 */
     fun createAsymmetricCrypto(
-        transformation: String
-    ): AsymmetricCrypto {
-        return AsymmetricCrypto(transformation)
-    }
+        transformation: String,
+    ): AsymmetricCrypto = AsymmetricCrypto(transformation)
 
-    //******************签名************************//
+    // ******************签名************************//
     fun createSign(
-        algorithm: String
-    ): Sign {
-        return Sign(algorithm)
-    }
-    //******************对称加密解密old************************//
+        algorithm: String,
+    ): Sign = Sign(algorithm)
+    // ******************对称加密解密old************************//
 
-    /////AES
+    // ///AES
+
     /**
      * AES 解码为 ByteArray
      * @param str 传入的AES加密的数据
@@ -98,13 +85,14 @@ interface JsEncodeUtils {
      */
     @Deprecated(
         "过于繁琐弃用",
-        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decrypt(str)")
+        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decrypt(str)"),
     )
     fun aesDecodeToByteArray(
-        str: String, key: String, transformation: String, iv: String
-    ): ByteArray? {
-        return createSymmetricCrypto(transformation, key, iv).decrypt(str)
-    }
+        str: String,
+        key: String,
+        transformation: String,
+        iv: String,
+    ): ByteArray? = createSymmetricCrypto(transformation, key, iv).decrypt(str)
 
     /**
      * AES 解码为 String
@@ -115,13 +103,14 @@ interface JsEncodeUtils {
      */
     @Deprecated(
         "过于繁琐弃用",
-        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decryptStr(str)")
+        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decryptStr(str)"),
     )
     fun aesDecodeToString(
-        str: String, key: String, transformation: String, iv: String
-    ): String? {
-        return createSymmetricCrypto(transformation, key, iv).decryptStr(str)
-    }
+        str: String,
+        key: String,
+        transformation: String,
+        iv: String,
+    ): String? = createSymmetricCrypto(transformation, key, iv).decryptStr(str)
 
     /**
      * AES解码为String，算法参数经过Base64加密
@@ -135,21 +124,19 @@ interface JsEncodeUtils {
      */
     @Deprecated(
         "过于繁琐弃用",
-        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decryptStr(data)")
+        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decryptStr(data)"),
     )
     fun aesDecodeArgsBase64Str(
         data: String,
         key: String,
         mode: String,
         padding: String,
-        iv: String
-    ): String? {
-        return createSymmetricCrypto(
-            "AES/${mode}/${padding}",
-            Base64.decode(key, Base64.NO_WRAP),
-            Base64.decode(iv, Base64.NO_WRAP)
-        ).decryptStr(data)
-    }
+        iv: String,
+    ): String? = createSymmetricCrypto(
+        "AES/$mode/$padding",
+        Base64.decode(key, Base64.NO_WRAP),
+        Base64.decode(iv, Base64.NO_WRAP),
+    ).decryptStr(data)
 
     /**
      * 已经base64的AES 解码为 ByteArray
@@ -160,13 +147,14 @@ interface JsEncodeUtils {
      */
     @Deprecated(
         "过于繁琐弃用",
-        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decrypt(str)")
+        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decrypt(str)"),
     )
     fun aesBase64DecodeToByteArray(
-        str: String, key: String, transformation: String, iv: String
-    ): ByteArray? {
-        return createSymmetricCrypto(transformation, key, iv).decrypt(str)
-    }
+        str: String,
+        key: String,
+        transformation: String,
+        iv: String,
+    ): ByteArray? = createSymmetricCrypto(transformation, key, iv).decrypt(str)
 
     /**
      * 已经base64的AES 解码为 String
@@ -177,13 +165,14 @@ interface JsEncodeUtils {
      */
     @Deprecated(
         "过于繁琐弃用",
-        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decryptStr(str)")
+        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decryptStr(str)"),
     )
     fun aesBase64DecodeToString(
-        str: String, key: String, transformation: String, iv: String
-    ): String? {
-        return createSymmetricCrypto(transformation, key, iv).decryptStr(str)
-    }
+        str: String,
+        key: String,
+        transformation: String,
+        iv: String,
+    ): String? = createSymmetricCrypto(transformation, key, iv).decryptStr(str)
 
     /**
      * 加密aes为ByteArray
@@ -194,13 +183,14 @@ interface JsEncodeUtils {
      */
     @Deprecated(
         "过于繁琐弃用",
-        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decrypt(data)")
+        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decrypt(data)"),
     )
     fun aesEncodeToByteArray(
-        data: String, key: String, transformation: String, iv: String
-    ): ByteArray? {
-        return createSymmetricCrypto(transformation, key, iv).encrypt(data)
-    }
+        data: String,
+        key: String,
+        transformation: String,
+        iv: String,
+    ): ByteArray? = createSymmetricCrypto(transformation, key, iv).encrypt(data)
 
     /**
      * 加密aes为String
@@ -211,13 +201,14 @@ interface JsEncodeUtils {
      */
     @Deprecated(
         "过于繁琐弃用",
-        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decryptStr(data)")
+        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decryptStr(data)"),
     )
     fun aesEncodeToString(
-        data: String, key: String, transformation: String, iv: String
-    ): String? {
-        return createSymmetricCrypto(transformation, key, iv).decryptStr(data)
-    }
+        data: String,
+        key: String,
+        transformation: String,
+        iv: String,
+    ): String? = createSymmetricCrypto(transformation, key, iv).decryptStr(data)
 
     /**
      * 加密aes后Base64化的ByteArray
@@ -228,13 +219,14 @@ interface JsEncodeUtils {
      */
     @Deprecated(
         "过于繁琐弃用",
-        ReplaceWith("createSymmetricCrypto(transformation, key, iv).encryptBase64(data).toByteArray()")
+        ReplaceWith("createSymmetricCrypto(transformation, key, iv).encryptBase64(data).toByteArray()"),
     )
     fun aesEncodeToBase64ByteArray(
-        data: String, key: String, transformation: String, iv: String
-    ): ByteArray? {
-        return createSymmetricCrypto(transformation, key, iv).encryptBase64(data).toByteArray()
-    }
+        data: String,
+        key: String,
+        transformation: String,
+        iv: String,
+    ): ByteArray? = createSymmetricCrypto(transformation, key, iv).encryptBase64(data).toByteArray()
 
     /**
      * 加密aes后Base64化的String
@@ -245,14 +237,14 @@ interface JsEncodeUtils {
      */
     @Deprecated(
         "过于繁琐弃用",
-        ReplaceWith("createSymmetricCrypto(transformation, key, iv).encryptBase64(data)")
+        ReplaceWith("createSymmetricCrypto(transformation, key, iv).encryptBase64(data)"),
     )
     fun aesEncodeToBase64String(
-        data: String, key: String, transformation: String, iv: String
-    ): String? {
-        return createSymmetricCrypto(transformation, key, iv).encryptBase64(data)
-    }
-
+        data: String,
+        key: String,
+        transformation: String,
+        iv: String,
+    ): String? = createSymmetricCrypto(transformation, key, iv).encryptBase64(data)
 
     /**
      * AES加密并转为Base64，算法参数经过Base64加密
@@ -266,60 +258,63 @@ interface JsEncodeUtils {
      */
     @Deprecated(
         "过于繁琐弃用",
-        ReplaceWith("createSymmetricCrypto(transformation, key, iv).encryptBase64(data)")
+        ReplaceWith("createSymmetricCrypto(transformation, key, iv).encryptBase64(data)"),
     )
     fun aesEncodeArgsBase64Str(
         data: String,
         key: String,
         mode: String,
         padding: String,
-        iv: String
-    ): String? {
-        return createSymmetricCrypto("AES/${mode}/${padding}", key, iv).encryptBase64(data)
-    }
+        iv: String,
+    ): String? = createSymmetricCrypto("AES/$mode/$padding", key, iv).encryptBase64(data)
 
-    /////DES
+    // ///DES
     @Deprecated(
         "过于繁琐弃用",
-        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decryptStr(data)")
+        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decryptStr(data)"),
     )
     fun desDecodeToString(
-        data: String, key: String, transformation: String, iv: String
-    ): String? {
-        return createSymmetricCrypto(transformation, key, iv).decryptStr(data)
-    }
+        data: String,
+        key: String,
+        transformation: String,
+        iv: String,
+    ): String? = createSymmetricCrypto(transformation, key, iv).decryptStr(data)
 
     @Deprecated(
         "过于繁琐弃用",
-        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decryptStr(data)")
+        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decryptStr(data)"),
     )
     fun desBase64DecodeToString(
-        data: String, key: String, transformation: String, iv: String
-    ): String? {
-        return createSymmetricCrypto(transformation, key, iv).decryptStr(data)
-    }
+        data: String,
+        key: String,
+        transformation: String,
+        iv: String,
+    ): String? = createSymmetricCrypto(transformation, key, iv).decryptStr(data)
 
     @Deprecated(
         "过于繁琐弃用",
-        ReplaceWith("createSymmetricCrypto(transformation, key, iv).encrypt(data)")
+        ReplaceWith("createSymmetricCrypto(transformation, key, iv).encrypt(data)"),
     )
     fun desEncodeToString(
-        data: String, key: String, transformation: String, iv: String
-    ): String? {
-        return String(createSymmetricCrypto(transformation, key, iv).encrypt(data))
-    }
+        data: String,
+        key: String,
+        transformation: String,
+        iv: String,
+    ): String? = String(createSymmetricCrypto(transformation, key, iv).encrypt(data))
 
     @Deprecated(
         "过于繁琐弃用",
-        ReplaceWith("createSymmetricCrypto(transformation, key, iv).encryptBase64(data)")
+        ReplaceWith("createSymmetricCrypto(transformation, key, iv).encryptBase64(data)"),
     )
     fun desEncodeToBase64String(
-        data: String, key: String, transformation: String, iv: String
-    ): String? {
-        return createSymmetricCrypto(transformation, key, iv).encryptBase64(data)
-    }
+        data: String,
+        key: String,
+        transformation: String,
+        iv: String,
+    ): String? = createSymmetricCrypto(transformation, key, iv).encryptBase64(data)
 
-    //////3DES
+    // ////3DES
+
     /**
      * 3DES解密
      *
@@ -332,17 +327,15 @@ interface JsEncodeUtils {
      */
     @Deprecated(
         "过于繁琐弃用",
-        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decryptStr(data)")
+        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decryptStr(data)"),
     )
     fun tripleDESDecodeStr(
         data: String,
         key: String,
         mode: String,
         padding: String,
-        iv: String
-    ): String? {
-        return createSymmetricCrypto("DESede/${mode}/${padding}", key, iv).decryptStr(data)
-    }
+        iv: String,
+    ): String? = createSymmetricCrypto("DESede/$mode/$padding", key, iv).decryptStr(data)
 
     /**
      * 3DES解密，算法参数经过Base64加密
@@ -356,22 +349,19 @@ interface JsEncodeUtils {
      */
     @Deprecated(
         "过于繁琐弃用",
-        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decryptStr(data)")
+        ReplaceWith("createSymmetricCrypto(transformation, key, iv).decryptStr(data)"),
     )
     fun tripleDESDecodeArgsBase64Str(
         data: String,
         key: String,
         mode: String,
         padding: String,
-        iv: String
-    ): String? {
-        return createSymmetricCrypto(
-            "DESede/${mode}/${padding}",
-            Base64.decode(key, Base64.NO_WRAP),
-            iv.encodeToByteArray()
-        ).decryptStr(data)
-    }
-
+        iv: String,
+    ): String? = createSymmetricCrypto(
+        "DESede/$mode/$padding",
+        Base64.decode(key, Base64.NO_WRAP),
+        iv.encodeToByteArray(),
+    ).decryptStr(data)
 
     /**
      * 3DES加密并转为Base64
@@ -385,18 +375,16 @@ interface JsEncodeUtils {
      */
     @Deprecated(
         "过于繁琐弃用",
-        ReplaceWith("createSymmetricCrypto(transformation, key, iv).encryptBase64(data)")
+        ReplaceWith("createSymmetricCrypto(transformation, key, iv).encryptBase64(data)"),
     )
     fun tripleDESEncodeBase64Str(
         data: String,
         key: String,
         mode: String,
         padding: String,
-        iv: String
-    ): String? {
-        return createSymmetricCrypto("DESede/${mode}/${padding}", key, iv)
-            .encryptBase64(data)
-    }
+        iv: String,
+    ): String? = createSymmetricCrypto("DESede/$mode/$padding", key, iv)
+        .encryptBase64(data)
 
     /**
      * 3DES加密并转为Base64，算法参数经过Base64加密
@@ -410,23 +398,21 @@ interface JsEncodeUtils {
      */
     @Deprecated(
         "过于繁琐弃用",
-        ReplaceWith("createSymmetricCrypto(transformation, key, iv).encryptBase64(data)")
+        ReplaceWith("createSymmetricCrypto(transformation, key, iv).encryptBase64(data)"),
     )
     fun tripleDESEncodeArgsBase64Str(
         data: String,
         key: String,
         mode: String,
         padding: String,
-        iv: String
-    ): String? {
-        return createSymmetricCrypto(
-            "DESede/${mode}/${padding}",
-            Base64.decode(key, Base64.NO_WRAP),
-            iv.encodeToByteArray()
-        ).encryptBase64(data)
-    }
+        iv: String,
+    ): String? = createSymmetricCrypto(
+        "DESede/$mode/$padding",
+        Base64.decode(key, Base64.NO_WRAP),
+        iv.encodeToByteArray(),
+    ).encryptBase64(data)
 
-//******************消息摘要/散列消息鉴别码************************//
+// ******************消息摘要/散列消息鉴别码************************//
 
     /**
      * 生成摘要，并转为16进制字符串
@@ -438,9 +424,7 @@ interface JsEncodeUtils {
     fun digestHex(
         data: String,
         algorithm: String,
-    ): String {
-        return DigestUtil.digester(algorithm).digestHex(data)
-    }
+    ): String = DigestUtil.digester(algorithm).digestHex(data)
 
     /**
      * 生成摘要，并转为Base64字符串
@@ -452,9 +436,7 @@ interface JsEncodeUtils {
     fun digestBase64Str(
         data: String,
         algorithm: String,
-    ): String {
-        return Base64.encodeToString(DigestUtil.digester(algorithm).digest(data), Base64.NO_WRAP)
-    }
+    ): String = Base64.encodeToString(DigestUtil.digester(algorithm).digest(data), Base64.NO_WRAP)
 
     /**
      * 生成散列消息鉴别码，并转为16进制字符串
@@ -468,10 +450,8 @@ interface JsEncodeUtils {
     fun HMacHex(
         data: String,
         algorithm: String,
-        key: String
-    ): String {
-        return HMac(algorithm, key.toByteArray()).digestHex(data)
-    }
+        key: String,
+    ): String = HMac(algorithm, key.toByteArray()).digestHex(data)
 
     /**
      * 生成散列消息鉴别码，并转为Base64字符串
@@ -485,13 +465,9 @@ interface JsEncodeUtils {
     fun HMacBase64(
         data: String,
         algorithm: String,
-        key: String
-    ): String {
-        return Base64.encodeToString(
-            HMac(algorithm, key.toByteArray()).digest(data),
-            Base64.NO_WRAP
-        )
-    }
-
-
+        key: String,
+    ): String = Base64.encodeToString(
+        HMac(algorithm, key.toByteArray()).digest(data),
+        Base64.NO_WRAP,
+    )
 }

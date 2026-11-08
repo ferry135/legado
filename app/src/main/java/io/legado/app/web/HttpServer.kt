@@ -19,7 +19,9 @@ import okio.buffer
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
-class HttpServer(port: Int) : NanoHTTPD(port) {
+class HttpServer(
+    port: Int,
+) : NanoHTTPD(port) {
     private val assetsWeb = AssetsWeb("web")
 
     override fun serve(session: IHTTPSession): Response {
@@ -46,7 +48,7 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                     if (token.isNotBlank() && checkToken(session, token)) {
                         response.addHeader("Access-Control-Allow-Origin", session.headers["origin"])
                     }
-                    //response.addHeader("Access-Control-Max-Age", "3600");
+                    // response.addHeader("Access-Control-Max-Age", "3600");
                     return response
                 }
 
@@ -73,44 +75,46 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
             }
 
             if (returnData == null) {
-                if (uri.endsWith("/"))
+                if (uri.endsWith("/")) {
                     uri += "index.html"
+                }
                 val response = assetsWeb.getResponse(uri)
                 addCommonHeaders(response, session)
                 return response
             }
 
-            val response = if (returnData.data is Bitmap) {
-                val outputStream = ByteArrayOutputStream()
-                // 封面类图片用 JPEG 编码，体积与编码速度远优于 PNG
-                (returnData.data as Bitmap).compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
-                val byteArray = outputStream.toByteArray()
-                outputStream.close()
-                val inputStream = ByteArrayInputStream(byteArray)
-                newFixedLengthResponse(
-                    Response.Status.OK,
-                    "image/jpeg",
-                    inputStream,
-                    byteArray.size.toLong()
-                )
-            } else {
-                val data = returnData.data
-                if (data is List<*> && data.size > 3000) {
-                    val pipe = Pipe(16 * 1024)
-                    Coroutine.async {
-                        pipe.sink.buffer().outputStream().bufferedWriter(Charsets.UTF_8).use {
-                            GSON.toJson(returnData, it)
-                        }
-                    }
-                    newChunkedResponse(
+            val response =
+                if (returnData.data is Bitmap) {
+                    val outputStream = ByteArrayOutputStream()
+                    // 封面类图片用 JPEG 编码，体积与编码速度远优于 PNG
+                    (returnData.data as Bitmap).compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+                    val byteArray = outputStream.toByteArray()
+                    outputStream.close()
+                    val inputStream = ByteArrayInputStream(byteArray)
+                    newFixedLengthResponse(
                         Response.Status.OK,
-                        "application/json",
-                        pipe.source.buffer().inputStream()
+                        "image/jpeg",
+                        inputStream,
+                        byteArray.size.toLong(),
                     )
                 } else {
-                    newFixedLengthResponse(GSON.toJson(returnData))
+                    val data = returnData.data
+                    if (data is List<*> && data.size > 3000) {
+                        val pipe = Pipe(16 * 1024)
+                        Coroutine.async {
+                            pipe.sink.buffer().outputStream().bufferedWriter(Charsets.UTF_8).use {
+                                GSON.toJson(returnData, it)
+                            }
+                        }
+                        newChunkedResponse(
+                            Response.Status.OK,
+                            "application/json",
+                            pipe.source.buffer().inputStream(),
+                        )
+                    } else {
+                        newFixedLengthResponse(GSON.toJson(returnData))
+                    }
                 }
-            }
             addCommonHeaders(response, session)
             LogUtils.d(TAG) {
                 "${session.method.name} - $uri - ${session.queryParameterString} - End($startAt)"
@@ -122,15 +126,15 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
             }
             // 500 + JSON 错误体：只回受限摘要（异常类名），不回传原始异常消息以免泄露内部信息；
             // 完整堆栈已在上方服务端日志
-            val response = newFixedLengthResponse(
-                Response.Status.INTERNAL_ERROR,
-                "application/json",
-                GSON.toJson(ReturnData().setErrorMsg(e.javaClass.simpleName))
-            )
+            val response =
+                newFixedLengthResponse(
+                    Response.Status.INTERNAL_ERROR,
+                    "application/json",
+                    GSON.toJson(ReturnData().setErrorMsg(e.javaClass.simpleName)),
+                )
             addCommonHeaders(response, session)
             return response
         }
-
     }
 
     /**
@@ -146,16 +150,22 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
         return newFixedLengthResponse(Response.Status.UNAUTHORIZED, "text/plain", "unauthorized")
     }
 
-    private fun checkToken(session: IHTTPSession, token: String): Boolean {
+    private fun checkToken(
+        session: IHTTPSession,
+        token: String,
+    ): Boolean {
         if (token.isBlank()) {
             return true
         }
-        return session.parameters["token"]?.firstOrNull() == token
-            || session.headers["authorization"] == "Bearer $token"
-            || session.cookies.read("authToken") == token
+        return session.parameters["token"]?.firstOrNull() == token ||
+            session.headers["authorization"] == "Bearer $token" ||
+            session.cookies.read("authToken") == token
     }
 
-    private fun addCommonHeaders(response: Response, session: IHTTPSession) {
+    private fun addCommonHeaders(
+        response: Response,
+        session: IHTTPSession,
+    ) {
         val token = AppConfig.webToken
         if (token.isBlank()) {
             return
@@ -192,24 +202,24 @@ class HttpServer(port: Int) : NanoHTTPD(port) {
                 "/saveReadConfig" to { _, postData, _ -> BookController.saveWebReadConfig(postData) },
                 "/saveReplaceRule" to { _, postData, _ -> ReplaceRuleController.saveRule(postData) },
                 "/deleteReplaceRule" to { _, postData, _ -> ReplaceRuleController.delete(postData) },
-                "/testReplaceRule" to { _, postData, _ -> ReplaceRuleController.testRule(postData) }
+                "/testReplaceRule" to { _, postData, _ -> ReplaceRuleController.testRule(postData) },
             )
 
         /**
          * GET 数据接口路由表
          */
-        private val getRoutes: Map<String, (IHTTPSession) -> ReturnData?> = mapOf(
-            "/getBookSource" to { session -> BookSourceController.getSource(session.parameters) },
-            "/getBookSources" to { _ -> BookSourceController.sources },
-            "/getBookshelf" to { _ -> BookController.bookshelf },
-            "/getChapterList" to { session -> BookController.getChapterList(session.parameters) },
-            "/refreshToc" to { session -> BookController.refreshToc(session.parameters) },
-            "/getBookContent" to { session -> BookController.getBookContent(session.parameters) },
-            "/cover" to { session -> BookController.getCover(session.parameters) },
-            "/image" to { session -> BookController.getImg(session.parameters) },
-            "/getReadConfig" to { _ -> BookController.getWebReadConfig() },
-            "/getReplaceRules" to { _ -> ReplaceRuleController.allRules }
-        )
+        private val getRoutes: Map<String, (IHTTPSession) -> ReturnData?> =
+            mapOf(
+                "/getBookSource" to { session -> BookSourceController.getSource(session.parameters) },
+                "/getBookSources" to { _ -> BookSourceController.sources },
+                "/getBookshelf" to { _ -> BookController.bookshelf },
+                "/getChapterList" to { session -> BookController.getChapterList(session.parameters) },
+                "/refreshToc" to { session -> BookController.refreshToc(session.parameters) },
+                "/getBookContent" to { session -> BookController.getBookContent(session.parameters) },
+                "/cover" to { session -> BookController.getCover(session.parameters) },
+                "/image" to { session -> BookController.getImg(session.parameters) },
+                "/getReadConfig" to { _ -> BookController.getWebReadConfig() },
+                "/getReplaceRules" to { _ -> ReplaceRuleController.allRules },
+            )
     }
-
 }

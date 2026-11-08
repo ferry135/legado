@@ -23,8 +23,8 @@ import io.legado.app.ui.file.HandleFileContract
 import io.legado.app.utils.FileDoc
 import io.legado.app.utils.FileUtils
 import io.legado.app.utils.RealPathUtil
-import io.legado.app.utils.applyTransparentScrimWindow
 import io.legado.app.utils.applyTint
+import io.legado.app.utils.applyTransparentScrimWindow
 import io.legado.app.utils.cnCompare
 import io.legado.app.utils.externalFiles
 import io.legado.app.utils.getPrefString
@@ -36,14 +36,14 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.setSheetBackground
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import java.io.File
 
 /**
  * 字体选择对话框
  */
-class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
+class FontSelectDialog :
+    BaseDialogFragment(R.layout.dialog_font_select),
     Toolbar.OnMenuItemClickListener,
     FontAdapter.CallBack {
     private val fontRegex = Regex("(?i).*\\.[ot]tf")
@@ -52,28 +52,29 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
         val curFontPath = callBack?.curFontPath ?: ""
         FontAdapter(requireContext(), curFontPath, this)
     }
-    private val selectFontDir = registerForActivityResult(HandleFileContract()) {
-        it.uri?.let { uri ->
-            if (uri.isContentScheme()) {
-                putPrefString(PreferKey.fontFolder, uri.toString())
-                upFontDirLabel()
-                val doc = DocumentFile.fromTreeUri(requireContext(), uri)
-                if (doc != null) {
-                    loadFontFiles(FileDoc.fromDocumentFile(doc))
+    private val selectFontDir =
+        registerForActivityResult(HandleFileContract()) {
+            it.uri?.let { uri ->
+                if (uri.isContentScheme()) {
+                    putPrefString(PreferKey.fontFolder, uri.toString())
+                    upFontDirLabel()
+                    val doc = DocumentFile.fromTreeUri(requireContext(), uri)
+                    if (doc != null) {
+                        loadFontFiles(FileDoc.fromDocumentFile(doc))
+                    } else {
+                        RealPathUtil.getPath(requireContext(), uri)?.let { path ->
+                            loadFontFilesByPermission(path)
+                        }
+                    }
                 } else {
-                    RealPathUtil.getPath(requireContext(), uri)?.let { path ->
+                    uri.path?.let { path ->
+                        putPrefString(PreferKey.fontFolder, path)
+                        upFontDirLabel()
                         loadFontFilesByPermission(path)
                     }
                 }
-            } else {
-                uri.path?.let { path ->
-                    putPrefString(PreferKey.fontFolder, path)
-                    upFontDirLabel()
-                    loadFontFilesByPermission(path)
-                }
             }
         }
-    }
 
     override fun onStart() {
         super.onStart()
@@ -84,7 +85,10 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
         setLayout(0.9f, 0.9f)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         // 12-missed-1 #20：工具栏透明置于 surface 卡底，标题/图标/文字动作项走 on_surface
         // （原主色实底按 isColorLight 取字，默认主色 #FF6B2C 判暗→白字仅 2.84:1，明暗均不达标；
         // 文字动作项随 actionBarStyle DayNight 覆盖层取字色，与卡底明暗天然匹配）
@@ -131,7 +135,7 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
                 val requireContext = requireContext()
                 alert(titleResource = R.string.system_typeface) {
                     items(
-                        requireContext.resources.getStringArray(R.array.system_typefaces).toList()
+                        requireContext.resources.getStringArray(R.array.system_typefaces).toList(),
                     ) { _, i ->
                         AppConfig.systemTypefaces = i
                         onDefaultFontChange()
@@ -156,9 +160,10 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
     }
 
     private fun upFontDirLabel() {
-        val path = getPrefString(PreferKey.fontFolder)
-            ?.let { if (it.isContentScheme()) Uri.decode(it) else it }
-            ?: "SD/Fonts"
+        val path =
+            getPrefString(PreferKey.fontFolder)
+                ?.let { if (it.isContentScheme()) Uri.decode(it) else it }
+                ?: "SD/Fonts"
         // 14-reader-brightness#04：label 与值分置两视图，文案仍走 font_dir 资源（占位传空串取前缀）
         binding.tvFontDir.text = getString(R.string.font_dir, "").trimEnd('：', ':', ' ')
         binding.tvFontDirPath.text = path
@@ -172,22 +177,23 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
     }
 
     private fun loadFontFilesByPermission(path: String) {
-        PermissionsCompat.Builder()
+        PermissionsCompat
+            .Builder()
             .addPermissions(*Permissions.Group.STORAGE)
             .rationale(R.string.tip_perm_request_storage)
             .onGranted {
                 loadFontFiles(
-                    FileDoc.fromFile(File(path))
+                    FileDoc.fromFile(File(path)),
                 )
-            }
-            .request()
+            }.request()
     }
 
     private fun loadFontFiles(fileDoc: FileDoc) {
         execute {
-            val fontItems = fileDoc.list {
-                it.name.matches(fontRegex)
-            } ?: ArrayList()
+            val fontItems =
+                fileDoc.list {
+                    it.name.matches(fontRegex)
+                } ?: ArrayList()
             mergeFontItems(fontItems, getLocalFonts())
         }.onSuccess {
             adapter.setItems(it)
@@ -199,7 +205,7 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
 
     private fun mergeFontItems(
         items1: ArrayList<FileDoc>,
-        items2: ArrayList<FileDoc>
+        items2: ArrayList<FileDoc>,
     ): List<FileDoc> {
         val items = ArrayList(items1)
         items2.forEach { item2 ->
@@ -236,6 +242,7 @@ class FontSelectDialog : BaseDialogFragment(R.layout.dialog_font_select),
 
     interface CallBack {
         fun selectFont(path: String)
+
         val curFontPath: String
     }
 }

@@ -24,7 +24,7 @@ class SheetInk(
     private val context: Context,
     val bg: Int,
     val ink: Int,
-    val secondary: Int
+    val secondary: Int,
 ) {
     /** 组间 hairline：ink 12%（InkGradient.DIVIDER） */
     fun divider(): ColorDrawable = ColorDrawable(ColorUtils.adjustAlpha(ink, InkGradient.DIVIDER))
@@ -46,7 +46,10 @@ class SheetInk(
     /** 值胶囊：ink 10% 容器底 + 8dp 圆角（InkGradient.CHIP） */
     fun chip(): GradientDrawable = inkContainer(8, InkGradient.CHIP)
 
-    private fun inkContainer(radiusDp: Int, alpha: Float) = GradientDrawable().apply {
+    private fun inkContainer(
+        radiusDp: Int,
+        alpha: Float,
+    ) = GradientDrawable().apply {
         cornerRadius = radiusDp.dpToPx().toFloat()
         setColor(ColorUtils.adjustAlpha(ink, alpha))
     }
@@ -59,6 +62,6 @@ fun Context.sheetInk(): SheetInk {
         context = this,
         bg = bg,
         ink = getPrimaryTextColor(isLight),
-        secondary = getOnSurfaceVariant(isLight)
+        secondary = getOnSurfaceVariant(isLight),
     )
 }

@@ -9,14 +9,16 @@ import io.legado.app.R
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.applyTint
 
-class EditTextPreference(context: Context, attrs: AttributeSet) :
-    androidx.preference.EditTextPreference(context, attrs) {
-
+class EditTextPreference(
+    context: Context,
+    attrs: AttributeSet,
+) : androidx.preference.EditTextPreference(context, attrs) {
     private var mOnBindEditTextListener: OnBindEditTextListener? = null
-    private val onBindEditTextListener = OnBindEditTextListener { editText ->
-        editText.applyTint(context.accentColor)
-        mOnBindEditTextListener?.onBindEditText(editText)
-    }
+    private val onBindEditTextListener =
+        OnBindEditTextListener { editText ->
+            editText.applyTint(context.accentColor)
+            mOnBindEditTextListener?.onBindEditText(editText)
+        }
 
     init {
         // isPersistent = true
@@ -32,5 +34,4 @@ class EditTextPreference(context: Context, attrs: AttributeSet) :
     override fun setOnBindEditTextListener(onBindEditTextListener: OnBindEditTextListener?) {
         mOnBindEditTextListener = onBindEditTextListener
     }
-
 }

@@ -6,8 +6,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseFragment
 import io.legado.app.constant.AppLog
@@ -27,10 +25,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class BookmarkFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_bookmark),
+class BookmarkFragment :
+    VMBaseFragment<TocViewModel>(R.layout.fragment_bookmark),
     BookmarkAdapter.Callback,
     TocViewModel.BookmarkCallBack {
     override val viewModel by activityViewModels<TocViewModel>()
@@ -39,7 +37,10 @@ class BookmarkFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_bookmark
     private val adapter by lazy { BookmarkAdapter(requireContext(), this) }
     private var durChapterIndex = 0
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         viewModel.bookMarkCallBack = this
         initRecyclerView()
         viewModel.bookData.observe(this) {
@@ -64,37 +65,42 @@ class BookmarkFragment : VMBaseFragment<TocViewModel>(R.layout.fragment_bookmark
                 else -> appDb.bookmarkDao.flowSearch(book.name, book.author, searchKey)
             }.catch {
                 AppLog.put("目录界面获取书签数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).collect {
-                adapter.setItems(it)
-                // 书签空态（设计稿02-③，同 fragment_books tv_empty_msg 模式）
-                binding.emptyTip.isGone = it.isNotEmpty()
-                var scrollPos = 0
-                withContext(Dispatchers.Default) {
-                    adapter.getItems().forEachIndexed { index, bookmark ->
-                        if (bookmark.chapterIndex >= durChapterIndex) {
-                            return@withContext
+            }.flowOn(IO)
+                .collect {
+                    adapter.setItems(it)
+                    // 书签空态（设计稿02-③，同 fragment_books tv_empty_msg 模式）
+                    binding.emptyTip.isGone = it.isNotEmpty()
+                    var scrollPos = 0
+                    withContext(Dispatchers.Default) {
+                        adapter.getItems().forEachIndexed { index, bookmark ->
+                            if (bookmark.chapterIndex >= durChapterIndex) {
+                                return@withContext
+                            }
+                            scrollPos = index
                         }
-                        scrollPos = index
                     }
+                    mLayoutManager.scrollToPositionWithOffset(scrollPos, 0)
                 }
-                mLayoutManager.scrollToPositionWithOffset(scrollPos, 0)
-            }
-
         }
     }
 
     override fun onClick(bookmark: Bookmark) {
         activity?.run {
-            setResult(Activity.RESULT_OK, Intent().apply {
-                putExtra("index", bookmark.chapterIndex)
-                putExtra("chapterPos", bookmark.chapterPos)
-            })
+            setResult(
+                Activity.RESULT_OK,
+                Intent().apply {
+                    putExtra("index", bookmark.chapterIndex)
+                    putExtra("chapterPos", bookmark.chapterPos)
+                },
+            )
             finish()
         }
     }
 
-    override fun onLongClick(bookmark: Bookmark, pos: Int) {
+    override fun onLongClick(
+        bookmark: Bookmark,
+        pos: Int,
+    ) {
         showDialogFragment(BookmarkDialog(bookmark, pos))
     }
-
 }

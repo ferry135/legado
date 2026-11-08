@@ -16,7 +16,11 @@ import splitties.init.appCtx
  * 供 ChangeBookSourceAdapter 与 ChangeChapterSourceAdapter 共用，着色分支与列表定位方式
  * （layoutPosition / bindingAdapterPosition）无关。配色按 v3 稿面更新为 primary/warning/on_surface_variant，解析方式沿用原实现。
  */
-internal fun tintVoteIcons(ivGood: ImageView, ivBad: ImageView, score: Int) {
+internal fun tintVoteIcons(
+    ivGood: ImageView,
+    ivBad: ImageView,
+    score: Int,
+) {
     when {
         score > 0 -> {
             ivBad.gone()
@@ -24,7 +28,7 @@ internal fun tintVoteIcons(ivGood: ImageView, ivBad: ImageView, score: Int) {
             DrawableCompat.setTint(ivGood.drawable, appCtx.primaryColor)
             DrawableCompat.setTint(
                 ivBad.drawable,
-                appCtx.getCompatColor(R.color.on_surface_variant)
+                appCtx.getCompatColor(R.color.on_surface_variant),
             )
         }
         score < 0 -> {
@@ -32,11 +36,11 @@ internal fun tintVoteIcons(ivGood: ImageView, ivBad: ImageView, score: Int) {
             ivBad.visible()
             DrawableCompat.setTint(
                 ivGood.drawable,
-                appCtx.getCompatColor(R.color.on_surface_variant)
+                appCtx.getCompatColor(R.color.on_surface_variant),
             )
             DrawableCompat.setTint(
                 ivBad.drawable,
-                appCtx.getCompatColor(R.color.warning)
+                appCtx.getCompatColor(R.color.warning),
             )
         }
         else -> {
@@ -44,11 +48,11 @@ internal fun tintVoteIcons(ivGood: ImageView, ivBad: ImageView, score: Int) {
             ivBad.visible()
             DrawableCompat.setTint(
                 ivGood.drawable,
-                appCtx.getCompatColor(R.color.on_surface_variant)
+                appCtx.getCompatColor(R.color.on_surface_variant),
             )
             DrawableCompat.setTint(
                 ivBad.drawable,
-                appCtx.getCompatColor(R.color.on_surface_variant)
+                appCtx.getCompatColor(R.color.on_surface_variant),
             )
         }
     }

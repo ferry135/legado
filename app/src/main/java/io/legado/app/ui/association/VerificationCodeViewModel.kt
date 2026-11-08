@@ -6,8 +6,9 @@ import io.legado.app.base.BaseViewModel
 import io.legado.app.constant.SourceType
 import io.legado.app.help.source.SourceHelp
 
-class VerificationCodeViewModel(app: Application): BaseViewModel(app) {
-
+class VerificationCodeViewModel(
+    app: Application,
+) : BaseViewModel(app) {
     var sourceOrigin = ""
     var sourceName = ""
     private var sourceType = SourceType.book
@@ -33,5 +34,4 @@ class VerificationCodeViewModel(app: Application): BaseViewModel(app) {
             block.invoke()
         }
     }
-
 }

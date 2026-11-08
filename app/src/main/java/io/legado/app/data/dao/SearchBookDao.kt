@@ -20,7 +20,7 @@ interface SearchBookDao {
         on t1.origin = t2.bookSourceUrl 
         where t1.name = :name and t1.author like '%'||:author||'%' 
         and t2.enabled = 1 and t2.bookSourceGroup like '%'||:sourceGroup||'%'
-        order by t2.customOrder"""
+        order by t2.customOrder""",
     )
     fun changeSourceByGroup(name: String, author: String, sourceGroup: String): List<SearchBook>
 
@@ -34,13 +34,13 @@ interface SearchBookDao {
         and t2.bookSourceGroup like '%'||:sourceGroup||'%'
         and (originName like '%'||:key||'%' or t1.latestChapterTitle like '%'||:key||'%')
         and t2.enabled = 1 
-        order by t2.customOrder"""
+        order by t2.customOrder""",
     )
     fun changeSourceSearch(
         name: String,
         author: String,
         key: String,
-        sourceGroup: String
+        sourceGroup: String,
     ): List<SearchBook>
 
     @Query(
@@ -52,7 +52,7 @@ interface SearchBookDao {
         on t1.origin = t2.bookSourceUrl 
         where t1.name = :name and t1.author = :author and t1.coverUrl is not null and t1.coverUrl <> '' and t2.enabled = 1
         order by t2.customOrder
-        """
+        """,
     )
     fun getEnableHasCover(name: String, author: String): List<SearchBook>
 

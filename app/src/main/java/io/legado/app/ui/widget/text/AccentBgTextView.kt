@@ -11,11 +11,12 @@ import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.getCompatColor
 
-class AccentBgTextView @JvmOverloads constructor(
+class AccentBgTextView
+@JvmOverloads
+constructor(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet? = null,
 ) : AppCompatTextView(context, attrs) {
-
     private var radius = 0
 
     init {
@@ -31,22 +32,25 @@ class AccentBgTextView @JvmOverloads constructor(
     }
 
     private fun upBackground() {
-        val accentColor = if (isInEditMode) {
-            context.getCompatColor(R.color.accent)
-        } else {
-            ThemeStore.accentColor(context)
-        }
-        background = Selector.shapeBuild()
-            .setCornerRadius(radius)
-            .setDefaultBgColor(accentColor)
-            .setPressedBgColor(ColorUtils.darkenColor(accentColor))
-            .create()
+        val accentColor =
+            if (isInEditMode) {
+                context.getCompatColor(R.color.accent)
+            } else {
+                ThemeStore.accentColor(context)
+            }
+        background =
+            Selector
+                .shapeBuild()
+                .setCornerRadius(radius)
+                .setDefaultBgColor(accentColor)
+                .setPressedBgColor(ColorUtils.darkenColor(accentColor))
+                .create()
         setTextColor(
             if (ColorUtils.isColorLight(accentColor)) {
                 Color.BLACK
             } else {
                 Color.WHITE
-            }
+            },
         )
     }
 }

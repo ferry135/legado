@@ -32,6 +32,4 @@ fun CodeView.addJsPattern() {
     addSyntaxPattern(jsPattern, context.color(R.color.code_key))
 }
 
-fun Context.arrayAdapter(keywords: Array<String>): ArrayAdapter<String> {
-    return ArrayAdapter(this, R.layout.item_1line_text_and_del, R.id.text_view, keywords)
-}
+fun Context.arrayAdapter(keywords: Array<String>): ArrayAdapter<String> = ArrayAdapter(this, R.layout.item_1line_text_and_del, R.id.text_view, keywords)

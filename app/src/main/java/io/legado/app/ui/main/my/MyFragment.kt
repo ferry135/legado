@@ -40,8 +40,9 @@ import io.legado.app.utils.showHelp
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
-class MyFragment() : BaseFragment(R.layout.fragment_my_config), MainFragmentInterface {
-
+class MyFragment() :
+    BaseFragment(R.layout.fragment_my_config),
+    MainFragmentInterface {
     constructor(position: Int) : this() {
         val bundle = Bundle()
         bundle.putInt("position", position)
@@ -52,13 +53,18 @@ class MyFragment() : BaseFragment(R.layout.fragment_my_config), MainFragmentInte
 
     private val binding by viewBinding(FragmentMyConfigBinding::bind)
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         setSupportToolbar(binding.titleBar.toolbar)
         val fragmentTag = "prefFragment"
         var preferenceFragment = childFragmentManager.findFragmentByTag(fragmentTag)
         if (preferenceFragment == null) preferenceFragment = MyPreferenceFragment()
-        childFragmentManager.beginTransaction()
-            .replace(R.id.pre_fragment, preferenceFragment, fragmentTag).commit()
+        childFragmentManager
+            .beginTransaction()
+            .replace(R.id.pre_fragment, preferenceFragment, fragmentTag)
+            .commit()
     }
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
@@ -74,10 +80,13 @@ class MyFragment() : BaseFragment(R.layout.fragment_my_config), MainFragmentInte
     /**
      * 配置
      */
-    class MyPreferenceFragment : PreferenceFragment(),
+    class MyPreferenceFragment :
+        PreferenceFragment(),
         SharedPreferences.OnSharedPreferenceChangeListener {
-
-        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        override fun onCreatePreferences(
+            savedInstanceState: Bundle?,
+            rootKey: String?,
+        ) {
             putPrefBoolean(PreferKey.webService, WebService.isRun)
             addPreferencesFromResource(R.xml.pref_main)
             findPreference<SwitchPreference>("webService")?.onLongClick {
@@ -95,11 +104,12 @@ class MyFragment() : BaseFragment(R.layout.fragment_my_config), MainFragmentInte
             observeEventSticky<String>(EventBus.WEB_SERVICE) {
                 findPreference<SwitchPreference>(PreferKey.webService)?.let {
                     it.isChecked = WebService.isRun
-                    it.summary = if (WebService.isRun) {
-                        WebService.hostAddress
-                    } else {
-                        getString(R.string.web_service_desc)
-                    }
+                    it.summary =
+                        if (WebService.isRun) {
+                            WebService.hostAddress
+                        } else {
+                            getString(R.string.web_service_desc)
+                        }
                 }
             }
             findPreference<NameListPreference>(PreferKey.themeMode)?.let {
@@ -110,7 +120,10 @@ class MyFragment() : BaseFragment(R.layout.fragment_my_config), MainFragmentInte
             }
         }
 
-        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        override fun onViewCreated(
+            view: View,
+            savedInstanceState: Bundle?,
+        ) {
             super.onViewCreated(view, savedInstanceState)
             listView.setEdgeEffectColor(primaryColor)
         }
@@ -127,7 +140,7 @@ class MyFragment() : BaseFragment(R.layout.fragment_my_config), MainFragmentInte
 
         override fun onSharedPreferenceChanged(
             sharedPreferences: SharedPreferences?,
-            key: String?
+            key: String?,
         ) {
             when (key) {
                 PreferKey.webService -> {
@@ -149,17 +162,20 @@ class MyFragment() : BaseFragment(R.layout.fragment_my_config), MainFragmentInte
                 "dictRuleManage" -> startActivity<DictRuleActivity>()
                 "txtTocRuleManage" -> startActivity<TxtTocRuleActivity>()
                 "bookmark" -> startActivity<AllBookmarkActivity>()
-                "setting" -> startActivity<ConfigActivity> {
-                    putExtra("configTag", ConfigTag.OTHER_CONFIG)
-                }
+                "setting" ->
+                    startActivity<ConfigActivity> {
+                        putExtra("configTag", ConfigTag.OTHER_CONFIG)
+                    }
 
-                "web_dav_setting" -> startActivity<ConfigActivity> {
-                    putExtra("configTag", ConfigTag.BACKUP_CONFIG)
-                }
+                "web_dav_setting" ->
+                    startActivity<ConfigActivity> {
+                        putExtra("configTag", ConfigTag.BACKUP_CONFIG)
+                    }
 
-                "theme_setting" -> startActivity<ConfigActivity> {
-                    putExtra("configTag", ConfigTag.THEME_CONFIG)
-                }
+                "theme_setting" ->
+                    startActivity<ConfigActivity> {
+                        putExtra("configTag", ConfigTag.THEME_CONFIG)
+                    }
 
                 "fileManage" -> startActivity<FileManageActivity>()
                 "readRecord" -> startActivity<ReadRecordActivity>()
@@ -168,7 +184,5 @@ class MyFragment() : BaseFragment(R.layout.fragment_my_config), MainFragmentInte
             }
             return super.onPreferenceTreeClick(preference)
         }
-
-
     }
 }

@@ -45,7 +45,7 @@ class ReadAloudConfigDialog : BasePrefDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         val view = LinearLayout(requireContext())
         // 10-reader-prefs#04：0.9 宽浮动弹窗统一 16dp 圆角，底色随运行时换肤 backgroundColor
@@ -55,23 +55,28 @@ class ReadAloudConfigDialog : BasePrefDialogFragment() {
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         var preferenceFragment = childFragmentManager.findFragmentByTag(readAloudPreferTag)
         if (preferenceFragment == null) preferenceFragment = ReadAloudPreferenceFragment()
-        childFragmentManager.beginTransaction()
+        childFragmentManager
+            .beginTransaction()
             .replace(view.id, preferenceFragment, readAloudPreferTag)
             .commit()
     }
 
-    class ReadAloudPreferenceFragment : PreferenceFragment(),
+    class ReadAloudPreferenceFragment :
+        PreferenceFragment(),
         SpeakEngineDialog.CallBack,
         SharedPreferences.OnSharedPreferenceChangeListener {
-
         private val speakEngineSummary: String
             get() {
-                val ttsEngine = ReadAloud.ttsEngine
-                    ?: return getString(R.string.system_tts)
+                val ttsEngine =
+                    ReadAloud.ttsEngine
+                        ?: return getString(R.string.system_tts)
                 if (StringUtils.isNumeric(ttsEngine)) {
                     return appDb.httpTTSDao.getName(ttsEngine.toLong())
                         ?: getString(R.string.system_tts)
@@ -80,7 +85,10 @@ class ReadAloudConfigDialog : BasePrefDialogFragment() {
                     ?: getString(R.string.system_tts)
             }
 
-        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        override fun onCreatePreferences(
+            savedInstanceState: Bundle?,
+            rootKey: String?,
+        ) {
             addPreferencesFromResource(R.xml.pref_config_aloud)
             upSpeakEngineSummary()
             findPreference<SwitchPreference>(PreferKey.pauseReadAloudWhilePhoneCalls)?.let {
@@ -88,7 +96,10 @@ class ReadAloudConfigDialog : BasePrefDialogFragment() {
             }
         }
 
-        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        override fun onViewCreated(
+            view: View,
+            savedInstanceState: Bundle?,
+        ) {
             super.onViewCreated(view, savedInstanceState)
             listView.setEdgeEffectColor(primaryColor)
         }
@@ -113,7 +124,7 @@ class ReadAloudConfigDialog : BasePrefDialogFragment() {
 
         override fun onSharedPreferenceChanged(
             sharedPreferences: SharedPreferences?,
-            key: String?
+            key: String?,
         ) {
             when (key) {
                 PreferKey.readAloudByPage, PreferKey.streamReadAloudAudio -> {
@@ -130,7 +141,10 @@ class ReadAloudConfigDialog : BasePrefDialogFragment() {
             }
         }
 
-        private fun upPreferenceSummary(preference: Preference?, value: String) {
+        private fun upPreferenceSummary(
+            preference: Preference?,
+            value: String,
+        ) {
             when (preference) {
                 is ListPreference -> {
                     val index = preference.findIndexOfValue(value)
@@ -146,7 +160,7 @@ class ReadAloudConfigDialog : BasePrefDialogFragment() {
         override fun upSpeakEngineSummary() {
             upPreferenceSummary(
                 findPreference(PreferKey.ttsEngine),
-                speakEngineSummary
+                speakEngineSummary,
             )
         }
     }

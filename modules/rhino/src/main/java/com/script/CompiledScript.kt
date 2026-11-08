@@ -13,14 +13,10 @@ abstract class CompiledScript {
     abstract fun getEngine(): ScriptEngine
 
     @Throws(ScriptException::class)
-    fun eval(context: ScriptContext): Any? {
-        return eval(getEngine().getRuntimeScope(context))
-    }
+    fun eval(context: ScriptContext): Any? = eval(getEngine().getRuntimeScope(context))
 
     @Throws(ScriptException::class)
-    fun eval(scope: Scriptable): Any? {
-        return eval(scope, null)
-    }
+    fun eval(scope: Scriptable): Any? = eval(scope, null)
 
     @Throws(ScriptException::class)
     abstract fun eval(scope: Scriptable, coroutineContext: CoroutineContext?): Any?
@@ -44,7 +40,5 @@ abstract class CompiledScript {
     }
 
     @Throws(ScriptException::class)
-    fun eval(): Any? {
-        return this.eval(getEngine().context)
-    }
+    fun eval(): Any? = this.eval(getEngine().context)
 }

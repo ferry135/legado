@@ -36,12 +36,12 @@ import java.io.FileOutputStream
 class BookInfoEditActivity :
     VMBaseActivity<ActivityBookInfoEditBinding, BookInfoEditViewModel>(),
     ChangeCoverDialog.CallBack {
-
-    private val selectCover = registerForActivityResult(SelectImageContract()) {
-        it.uri?.let { uri ->
-            coverChangeTo(uri)
+    private val selectCover =
+        registerForActivityResult(SelectImageContract()) {
+            it.uri?.let { uri ->
+                coverChangeTo(uri)
+            }
         }
-    }
 
     override val binding by viewBinding(ActivityBookInfoEditBinding::inflate)
     override val viewModel by viewModels<BookInfoEditViewModel>()
@@ -82,7 +82,7 @@ class BookInfoEditActivity :
         tvChangeCover.setOnClickListener {
             viewModel.bookData.value?.let {
                 showDialogFragment(
-                    ChangeCoverDialog(it.name, it.author)
+                    ChangeCoverDialog(it.name, it.author),
                 )
             }
         }
@@ -103,7 +103,7 @@ class BookInfoEditActivity :
                 book.isImage -> 2
                 book.isAudio -> 1
                 else -> 0
-            }
+            },
         )
         tieCoverUrl.setText(book.getDisplayCover())
         tieBookIntro.setText(book.getDisplayIntro())
@@ -122,11 +122,12 @@ class BookInfoEditActivity :
         book.name = tieBookName.text?.toString() ?: ""
         book.author = tieBookAuthor.text?.toString() ?: ""
         val local = if (book.isLocal) BookType.local else 0
-        val bookType = when (spType.selectedItemPosition) {
-            2 -> BookType.image or local
-            1 -> BookType.audio or local
-            else -> BookType.text or local
-        }
+        val bookType =
+            when (spType.selectedItemPosition) {
+                2 -> BookType.image or local
+                1 -> BookType.audio or local
+                else -> BookType.text or local
+            }
         book.removeType(BookType.local, BookType.image, BookType.audio, BookType.text)
         book.addType(bookType)
         val customCoverUrl = tieCoverUrl.text?.toString()
@@ -152,9 +153,10 @@ class BookInfoEditActivity :
                 inputStream.use {
                     var file = this.externalFiles
                     val suffix = fileDoc.name.substringAfterLast(".")
-                    val fileName = uri.inputStream(this).getOrThrow().use {
-                        MD5Utils.md5Encode(it) + ".$suffix"
-                    }
+                    val fileName =
+                        uri.inputStream(this).getOrThrow().use {
+                            MD5Utils.md5Encode(it) + ".$suffix"
+                        }
                     file = FileUtils.createFileIfNotExist(file, "covers", fileName)
                     FileOutputStream(file).use { outputStream ->
                         inputStream.copyTo(outputStream)
@@ -166,5 +168,4 @@ class BookInfoEditActivity :
             }
         }
     }
-
 }

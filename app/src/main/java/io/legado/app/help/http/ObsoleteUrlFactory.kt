@@ -70,11 +70,10 @@ import javax.net.ssl.SSLSocketFactory
  * interceptors.
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
-class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFactory,
+class ObsoleteUrlFactory(private var client: OkHttpClient) :
+    URLStreamHandlerFactory,
     Cloneable {
-    fun client(): OkHttpClient {
-        return client
-    }
+    fun client(): OkHttpClient = client
 
     fun setClient(client: OkHttpClient): ObsoleteUrlFactory {
         this.client = client
@@ -85,13 +84,9 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
      * Returns a copy of this stream handler factory that includes a shallow copy of the internal
      * [HTTP client][OkHttpClient].
      */
-    public override fun clone(): ObsoleteUrlFactory {
-        return ObsoleteUrlFactory(client)
-    }
+    public override fun clone(): ObsoleteUrlFactory = ObsoleteUrlFactory(client)
 
-    fun open(url: URL): HttpURLConnection {
-        return open(url, client.proxy)
-    }
+    fun open(url: URL): HttpURLConnection = open(url, client.proxy)
 
     fun open(url: URL, proxy: Proxy?): HttpURLConnection {
         val protocol = url.protocol
@@ -110,32 +105,32 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
      * This code configures OkHttp to handle all HTTP and HTTPS connections
      * created with [java.net.URL.openConnection]: <pre>   `OkHttpClient okHttpClient = new OkHttpClient();
      * URL.setURLStreamHandlerFactory(new ObsoleteUrlFactory(okHttpClient));
-    `</pre> *
+     `</pre> *
      */
     override fun createURLStreamHandler(protocol: String): URLStreamHandler? {
-        return if (protocol != "http" && protocol != "https") null else object :
-            URLStreamHandler() {
-            override fun openConnection(url: URL): URLConnection {
-                return open(url)
-            }
+        return if (protocol != "http" && protocol != "https") {
+            null
+        } else {
+            object :
+                URLStreamHandler() {
+                override fun openConnection(url: URL): URLConnection = open(url)
 
-            override fun openConnection(url: URL, proxy: Proxy): URLConnection {
-                return open(url, proxy)
-            }
+                override fun openConnection(url: URL, proxy: Proxy): URLConnection = open(url, proxy)
 
-            override fun getDefaultPort(): Int {
-                if ((protocol == "http")) return 80
-                if ((protocol == "https")) return 443
-                throw AssertionError()
+                override fun getDefaultPort(): Int {
+                    if ((protocol == "http")) return 80
+                    if ((protocol == "https")) return 443
+                    throw AssertionError()
+                }
             }
         }
     }
 
     internal class OkHttpURLConnection(
         url: URL?, // These fields are confined to the application thread that uses HttpURLConnection.
-        var client: OkHttpClient
-    ) :
-        HttpURLConnection(url), Callback {
+        var client: OkHttpClient,
+    ) : HttpURLConnection(url),
+        Callback {
         private val networkInterceptor: NetworkInterceptor = NetworkInterceptor()
         var requestHeaders: Headers.Builder = Headers.Builder()
         var responseHeaders: Headers? = null
@@ -143,7 +138,8 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
         var call: Call? = null
 
         /** Like the superclass field of the same name, but a long and available on all platforms.  */
-        //var fixedContentLength = -1L
+
+        // var fixedContentLength = -1L
 
         // These fields are guarded by lock.
         private val lock = Any()
@@ -182,15 +178,15 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
             call!!.cancel()
         }
 
-        override fun getErrorStream(): InputStream? {
-            return try {
-                val response = getResponse(true)
-                if (hasBody(response) && response.code >= HTTP_BAD_REQUEST) {
-                    response.body!!.byteStream()
-                } else null
-            } catch (e: IOException) {
+        override fun getErrorStream(): InputStream? = try {
+            val response = getResponse(true)
+            if (hasBody(response) && response.code >= HTTP_BAD_REQUEST) {
+                response.body!!.byteStream()
+            } else {
                 null
             }
+        } catch (e: IOException) {
+            null
         }
 
         @get:Throws(IOException::class)
@@ -207,45 +203,40 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
                 return responseHeaders as Headers
             }
 
-        override fun getHeaderField(position: Int): String? {
-            return try {
-                val headers = headers
-                if (position < 0 || position >= headers.size) null
-                else headers.value(position)
-            } catch (e: IOException) {
+        override fun getHeaderField(position: Int): String? = try {
+            val headers = headers
+            if (position < 0 || position >= headers.size) {
                 null
+            } else {
+                headers.value(position)
             }
+        } catch (e: IOException) {
+            null
         }
 
-        override fun getHeaderField(fieldName: String?): String? {
-            return try {
-                if (fieldName == null) statusLineToString(getResponse(true)) else headers[fieldName]
-            } catch (e: IOException) {
-                null
-            }
+        override fun getHeaderField(fieldName: String?): String? = try {
+            if (fieldName == null) statusLineToString(getResponse(true)) else headers[fieldName]
+        } catch (e: IOException) {
+            null
         }
 
-        override fun getHeaderFieldKey(position: Int): String? {
-            return try {
-                val headers = headers
-                if (position < 0 || position >= headers.size) null else headers.name(position)
-            } catch (e: IOException) {
-                null
-            }
+        override fun getHeaderFieldKey(position: Int): String? = try {
+            val headers = headers
+            if (position < 0 || position >= headers.size) null else headers.name(position)
+        } catch (e: IOException) {
+            null
         }
 
-        override fun getHeaderFields(): Map<String, List<String>> {
-            return try {
-                toMultimap(headers, statusLineToString(getResponse(true)))
-            } catch (e: IOException) {
-                emptyMap()
-            }
+        override fun getHeaderFields(): Map<String, List<String>> = try {
+            toMultimap(headers, statusLineToString(getResponse(true)))
+        } catch (e: IOException) {
+            emptyMap()
         }
 
         override fun getRequestProperties(): Map<String, List<String>> {
             if (connected) {
                 throw IllegalStateException(
-                    "Cannot access request header fields after connection is set"
+                    "Cannot access request header fields after connection is set",
                 )
             }
             return toMultimap(requestHeaders.build(), null)
@@ -287,9 +278,7 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
             return SocketPermission("$hostname:$hostPort", "connect, resolve")
         }
 
-        override fun getRequestProperty(field: String?): String? {
-            return if (field == null) null else requestHeaders[field]
-        }
+        override fun getRequestProperty(field: String?): String? = if (field == null) null else requestHeaders[field]
 
         override fun setConnectTimeout(timeoutMillis: Int) {
             client = client.newBuilder()
@@ -303,13 +292,9 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
                 .build()
         }
 
-        override fun getInstanceFollowRedirects(): Boolean {
-            return client.followRedirects
-        }
+        override fun getInstanceFollowRedirects(): Boolean = client.followRedirects
 
-        override fun getConnectTimeout(): Int {
-            return client.connectTimeoutMillis
-        }
+        override fun getConnectTimeout(): Int = client.connectTimeoutMillis
 
         override fun setReadTimeout(timeoutMillis: Int) {
             client = client.newBuilder()
@@ -317,9 +302,7 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
                 .build()
         }
 
-        override fun getReadTimeout(): Int {
-            return client.readTimeoutMillis
-        }
+        override fun getReadTimeout(): Int = client.readTimeoutMillis
 
         @Throws(IOException::class)
         private fun buildCall(): Call {
@@ -353,12 +336,16 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
                     contentLength = contentLengthString.toLong()
                 }
                 requestBody =
-                    if (stream) StreamedRequestBody(contentLength) else BufferedRequestBody(
-                        contentLength
-                    )
+                    if (stream) {
+                        StreamedRequestBody(contentLength)
+                    } else {
+                        BufferedRequestBody(
+                            contentLength,
+                        )
+                    }
                 requestBody.timeout!!.timeout(
                     client.writeTimeoutMillis.toLong(),
-                    TimeUnit.MILLISECONDS
+                    TimeUnit.MILLISECONDS,
                 )
             }
             val url: HttpUrl
@@ -454,14 +441,10 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
         }
 
         @Throws(IOException::class)
-        override fun getResponseMessage(): String {
-            return getResponse(true).message
-        }
+        override fun getResponseMessage(): String = getResponse(true).message
 
         @Throws(IOException::class)
-        override fun getResponseCode(): Int {
-            return getResponse(true).code
-        }
+        override fun getResponseCode(): Int = getResponse(true).code
 
         override fun setRequestProperty(field: String?, newValue: String?) {
             if (connected) {
@@ -601,8 +584,8 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
                     if (closed) throw IOException("closed") // Not IllegalStateException!
                     if (expectedContentLength != -1L && bytesReceived + byteCount > expectedContentLength) {
                         throw ProtocolException(
-                            "expected " + expectedContentLength
-                                    + " bytes but received " + bytesReceived + byteCount
+                            "expected " + expectedContentLength +
+                                " bytes but received " + bytesReceived + byteCount,
                         )
                     }
                     bytesReceived += byteCount.toLong()
@@ -615,7 +598,7 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
 
                 @Throws(IOException::class)
                 override fun flush() {
-                    if (closed) return  // Weird, but consistent with historical behavior.
+                    if (closed) return // Weird, but consistent with historical behavior.
                     sink.flush()
                 }
 
@@ -624,8 +607,10 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
                     closed = true
                     if (expectedContentLength != -1L && bytesReceived < expectedContentLength) {
                         throw ProtocolException(
-                            ("expected " + expectedContentLength
-                                    + " bytes but received " + bytesReceived)
+                            (
+                                "expected " + expectedContentLength +
+                                    " bytes but received " + bytesReceived
+                                ),
                         )
                     }
                     sink.close()
@@ -633,23 +618,18 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
             }
         }
 
-        override fun contentLength(): Long {
-            return expectedContentLength
-        }
+        override fun contentLength(): Long = expectedContentLength
 
         override fun contentType(): MediaType? {
             return null // Let the caller provide this in a regular header.
         }
 
         @Throws(IOException::class)
-        open fun prepareToSendRequest(request: Request): Request {
-            return request
-        }
+        open fun prepareToSendRequest(request: Request): Request = request
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
-    internal class BufferedRequestBody(expectedContentLength: Long) :
-        OutputStreamRequestBody() {
+    internal class BufferedRequestBody(expectedContentLength: Long) : OutputStreamRequestBody() {
         val buffer = Buffer()
         var contentLength = -1L
 
@@ -657,9 +637,7 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
             initOutputStream(buffer, expectedContentLength)
         }
 
-        override fun contentLength(): Long {
-            return contentLength
-        }
+        override fun contentLength(): Long = contentLength
 
         @Throws(IOException::class)
         override fun prepareToSendRequest(request: Request): Request {
@@ -677,17 +655,14 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
         }
     }
 
-    internal class StreamedRequestBody(expectedContentLength: Long) :
-        OutputStreamRequestBody() {
+    internal class StreamedRequestBody(expectedContentLength: Long) : OutputStreamRequestBody() {
         private val pipe = Pipe(8192)
 
         init {
             initOutputStream(pipe.sink.buffer(), expectedContentLength)
         }
 
-        override fun isOneShot(): Boolean {
-            return true
-        }
+        override fun isOneShot(): Boolean = true
 
         @Throws(IOException::class)
         override fun writeTo(sink: BufferedSink) {
@@ -698,8 +673,7 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
         }
     }
 
-    internal abstract class DelegatingHttpsURLConnection(private val delegate: HttpURLConnection) :
-        HttpsURLConnection(delegate.url) {
+    internal abstract class DelegatingHttpsURLConnection(private val delegate: HttpURLConnection) : HttpsURLConnection(delegate.url) {
         protected abstract fun handshake(): Handshake?
         abstract override fun setHostnameVerifier(hostnameVerifier: HostnameVerifier)
         abstract override fun getHostnameVerifier(): HostnameVerifier
@@ -722,13 +696,9 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
             return if (result.isNotEmpty()) result.toTypedArray() else null
         }
 
-        override fun getPeerPrincipal(): Principal? {
-            return handshake()?.peerPrincipal
-        }
+        override fun getPeerPrincipal(): Principal? = handshake()?.peerPrincipal
 
-        override fun getLocalPrincipal(): Principal? {
-            return handshake()?.localPrincipal
-        }
+        override fun getLocalPrincipal(): Principal? = handshake()?.localPrincipal
 
         @Throws(IOException::class)
         override fun connect() {
@@ -740,165 +710,97 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
             delegate.disconnect()
         }
 
-        override fun getErrorStream(): InputStream? {
-            return delegate.errorStream
-        }
+        override fun getErrorStream(): InputStream? = delegate.errorStream
 
-        override fun getRequestMethod(): String {
-            return delegate.requestMethod
-        }
+        override fun getRequestMethod(): String = delegate.requestMethod
 
         @Throws(IOException::class)
-        override fun getResponseCode(): Int {
-            return delegate.responseCode
-        }
+        override fun getResponseCode(): Int = delegate.responseCode
 
         @Throws(IOException::class)
-        override fun getResponseMessage(): String? {
-            return delegate.responseMessage
-        }
+        override fun getResponseMessage(): String? = delegate.responseMessage
 
         @Throws(ProtocolException::class)
         override fun setRequestMethod(method: String) {
             delegate.requestMethod = method
         }
 
-        override fun usingProxy(): Boolean {
-            return delegate.usingProxy()
-        }
+        override fun usingProxy(): Boolean = delegate.usingProxy()
 
-        override fun getInstanceFollowRedirects(): Boolean {
-            return delegate.instanceFollowRedirects
-        }
+        override fun getInstanceFollowRedirects(): Boolean = delegate.instanceFollowRedirects
 
         override fun setInstanceFollowRedirects(followRedirects: Boolean) {
             delegate.instanceFollowRedirects = followRedirects
         }
 
-        override fun getAllowUserInteraction(): Boolean {
-            return delegate.allowUserInteraction
-        }
+        override fun getAllowUserInteraction(): Boolean = delegate.allowUserInteraction
 
         @Throws(IOException::class)
-        override fun getContent(): Any {
-            return delegate.content
-        }
+        override fun getContent(): Any = delegate.content
 
         @Throws(IOException::class)
-        override fun getContent(types: Array<Class<*>?>?): Any? {
-            return delegate.getContent(types)
-        }
+        override fun getContent(types: Array<Class<*>?>?): Any? = delegate.getContent(types)
 
-        override fun getContentEncoding(): String? {
-            return delegate.contentEncoding
-        }
+        override fun getContentEncoding(): String? = delegate.contentEncoding
 
-        override fun getContentLength(): Int {
-            return delegate.contentLength
-        }
+        override fun getContentLength(): Int = delegate.contentLength
 
         // Should only be invoked on Java 8+ or Android API 24+.
         @RequiresApi(Build.VERSION_CODES.N)
-        override fun getContentLengthLong(): Long {
-            return delegate.contentLengthLong
-        }
+        override fun getContentLengthLong(): Long = delegate.contentLengthLong
 
-        override fun getContentType(): String? {
-            return delegate.contentType
-        }
+        override fun getContentType(): String? = delegate.contentType
 
-        override fun getDate(): Long {
-            return delegate.date
-        }
+        override fun getDate(): Long = delegate.date
 
-        override fun getDefaultUseCaches(): Boolean {
-            return delegate.defaultUseCaches
-        }
+        override fun getDefaultUseCaches(): Boolean = delegate.defaultUseCaches
 
-        override fun getDoInput(): Boolean {
-            return delegate.doInput
-        }
+        override fun getDoInput(): Boolean = delegate.doInput
 
-        override fun getDoOutput(): Boolean {
-            return delegate.doOutput
-        }
+        override fun getDoOutput(): Boolean = delegate.doOutput
 
-        override fun getExpiration(): Long {
-            return delegate.expiration
-        }
+        override fun getExpiration(): Long = delegate.expiration
 
-        override fun getHeaderField(pos: Int): String? {
-            return delegate.getHeaderField(pos)
-        }
+        override fun getHeaderField(pos: Int): String? = delegate.getHeaderField(pos)
 
-        override fun getHeaderFields(): Map<String, List<String>> {
-            return delegate.headerFields
-        }
+        override fun getHeaderFields(): Map<String, List<String>> = delegate.headerFields
 
-        override fun getRequestProperties(): Map<String, List<String>> {
-            return delegate.requestProperties
-        }
+        override fun getRequestProperties(): Map<String, List<String>> = delegate.requestProperties
 
         override fun addRequestProperty(field: String, newValue: String) {
             delegate.addRequestProperty(field, newValue)
         }
 
-        override fun getHeaderField(key: String): String? {
-            return delegate.getHeaderField(key)
-        }
+        override fun getHeaderField(key: String): String? = delegate.getHeaderField(key)
 
         // Should only be invoked on Java 8+ or Android API 24+.
         @RequiresApi(Build.VERSION_CODES.N)
-        override fun getHeaderFieldLong(field: String, defaultValue: Long): Long {
-            return delegate.getHeaderFieldLong(field, defaultValue)
-        }
+        override fun getHeaderFieldLong(field: String, defaultValue: Long): Long = delegate.getHeaderFieldLong(field, defaultValue)
 
-        override fun getHeaderFieldDate(field: String, defaultValue: Long): Long {
-            return delegate.getHeaderFieldDate(field, defaultValue)
-        }
+        override fun getHeaderFieldDate(field: String, defaultValue: Long): Long = delegate.getHeaderFieldDate(field, defaultValue)
 
-        override fun getHeaderFieldInt(field: String, defaultValue: Int): Int {
-            return delegate.getHeaderFieldInt(field, defaultValue)
-        }
+        override fun getHeaderFieldInt(field: String, defaultValue: Int): Int = delegate.getHeaderFieldInt(field, defaultValue)
 
-        override fun getHeaderFieldKey(position: Int): String? {
-            return delegate.getHeaderFieldKey(position)
-        }
+        override fun getHeaderFieldKey(position: Int): String? = delegate.getHeaderFieldKey(position)
 
-        override fun getIfModifiedSince(): Long {
-            return delegate.ifModifiedSince
-        }
+        override fun getIfModifiedSince(): Long = delegate.ifModifiedSince
 
         @Throws(IOException::class)
-        override fun getInputStream(): InputStream {
-            return delegate.inputStream
-        }
+        override fun getInputStream(): InputStream = delegate.inputStream
 
-        override fun getLastModified(): Long {
-            return delegate.lastModified
-        }
+        override fun getLastModified(): Long = delegate.lastModified
 
         @Throws(IOException::class)
-        override fun getOutputStream(): OutputStream {
-            return delegate.outputStream
-        }
+        override fun getOutputStream(): OutputStream = delegate.outputStream
 
         @Throws(IOException::class)
-        override fun getPermission(): Permission {
-            return delegate.permission
-        }
+        override fun getPermission(): Permission = delegate.permission
 
-        override fun getRequestProperty(field: String): String? {
-            return delegate.getRequestProperty(field)
-        }
+        override fun getRequestProperty(field: String): String? = delegate.getRequestProperty(field)
 
-        override fun getURL(): URL {
-            return delegate.url
-        }
+        override fun getURL(): URL = delegate.url
 
-        override fun getUseCaches(): Boolean {
-            return delegate.useCaches
-        }
+        override fun getUseCaches(): Boolean = delegate.useCaches
 
         override fun setAllowUserInteraction(newValue: Boolean) {
             delegate.allowUserInteraction = newValue
@@ -937,21 +839,15 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
             delegate.connectTimeout = timeoutMillis
         }
 
-        override fun getConnectTimeout(): Int {
-            return delegate.connectTimeout
-        }
+        override fun getConnectTimeout(): Int = delegate.connectTimeout
 
         override fun setReadTimeout(timeoutMillis: Int) {
             delegate.readTimeout = timeoutMillis
         }
 
-        override fun getReadTimeout(): Int {
-            return delegate.readTimeout
-        }
+        override fun getReadTimeout(): Int = delegate.readTimeout
 
-        override fun toString(): String {
-            return delegate.toString()
-        }
+        override fun toString(): String = delegate.toString()
 
         override fun setFixedLengthStreamingMode(contentLength: Int) {
             delegate.setFixedLengthStreamingMode(contentLength)
@@ -962,8 +858,7 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
         }
     }
 
-    internal class OkHttpsURLConnection(private val delegate: OkHttpURLConnection) :
-        DelegatingHttpsURLConnection(delegate) {
+    internal class OkHttpsURLConnection(private val delegate: OkHttpURLConnection) : DelegatingHttpsURLConnection(delegate) {
         constructor(url: URL?, client: OkHttpClient) : this(OkHttpURLConnection(url, client))
 
         override fun handshake(): Handshake? {
@@ -979,9 +874,7 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
                 .build()
         }
 
-        override fun getHostnameVerifier(): HostnameVerifier {
-            return delegate.client.hostnameVerifier
-        }
+        override fun getHostnameVerifier(): HostnameVerifier = delegate.client.hostnameVerifier
 
         override fun setSSLSocketFactory(sslSocketFactory: SSLSocketFactory?) {
             if (sslSocketFactory == null) {
@@ -993,9 +886,7 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
                 .build()
         }
 
-        override fun getSSLSocketFactory(): SSLSocketFactory {
-            return delegate.client.sslSocketFactory
-        }
+        override fun getSSLSocketFactory(): SSLSocketFactory = delegate.client.sslSocketFactory
     }
 
     internal class UnexpectedException(cause: Throwable?) : IOException(cause) {
@@ -1016,7 +907,7 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
         const val SELECTED_PROTOCOL = "ObsoleteUrlFactory-Selected-Protocol"
         const val RESPONSE_SOURCE = "ObsoleteUrlFactory-Response-Source"
         val METHODS: Set<String> = LinkedHashSet(
-            listOf("OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "PATCH")
+            listOf("OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "PATCH"),
         )
         val UTC: TimeZone = TimeZone.getTimeZone("GMT")
         const val HTTP_CONTINUE = 100
@@ -1025,7 +916,7 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
             // Date format specified by RFC 7231 section 7.1.1.1.
             val rfc1123: DateFormat = SimpleDateFormat(
                 "EEE, dd MMM yyyy HH:mm:ss 'GMT'",
-                Locale.US
+                Locale.US,
             )
             rfc1123.isLenient = false
             rfc1123.timeZone = UTC
@@ -1047,15 +938,11 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
 
         @Suppress(
             "RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS",
-            "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS"
+            "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS",
         )
-        fun format(value: Date?): String {
-            return STANDARD_DATE_FORMAT.get().format(value)
-        }
+        fun format(value: Date?): String = STANDARD_DATE_FORMAT.get().format(value)
 
-        fun permitsRequestBody(method: String): Boolean {
-            return !((method == "GET") || (method == "HEAD"))
-        }
+        fun permitsRequestBody(method: String): Boolean = !((method == "GET") || (method == "HEAD"))
 
         /** Returns true if the response must have a (possibly 0-length) body. See RFC 7231.  */
         fun hasBody(response: Response): Boolean {
@@ -1064,20 +951,23 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
                 return false
             }
             val responseCode = response.code
-            if (((responseCode < HTTP_CONTINUE || responseCode >= 200)
-                        && (responseCode != HttpURLConnection.HTTP_NO_CONTENT
-                        ) && (responseCode != HttpURLConnection.HTTP_NOT_MODIFIED))
+            if ((
+                (responseCode < HTTP_CONTINUE || responseCode >= 200) &&
+                    (responseCode != HttpURLConnection.HTTP_NO_CONTENT) && (responseCode != HttpURLConnection.HTTP_NOT_MODIFIED)
+                )
             ) {
                 return true
             }
 
             // If the Content-Length or Transfer-Encoding headers disagree with the response code, the
             // response is malformed. For best compatibility, we honor the headers.
-            return (contentLength(response.headers) != -1L
-                    || "chunked".equals(
-                response.header("Transfer-Encoding"),
-                ignoreCase = true
-            ))
+            return (
+                contentLength(response.headers) != -1L ||
+                    "chunked".equals(
+                        response.header("Transfer-Encoding"),
+                        ignoreCase = true,
+                    )
+                )
         }
 
         fun contentLength(headers: Headers): Long {
@@ -1096,11 +986,11 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
             return if (response.cacheResponse == null) "NETWORK " + response.code else "CONDITIONAL_CACHE " + response.networkResponse!!.code
         }
 
-        fun statusLineToString(response: Response): String {
-            return ((if (response.protocol == Protocol.HTTP_1_0) "HTTP/1.0" else "HTTP/1.1")
-                    + ' ' + response.code
-                    + ' ' + response.message)
-        }
+        fun statusLineToString(response: Response): String = (
+            (if (response.protocol == Protocol.HTTP_1_0) "HTTP/1.0" else "HTTP/1.1") +
+                ' ' + response.code +
+                ' ' + response.message
+            )
 
         fun toHumanReadableAscii(s: String): String {
             var i = 0
@@ -1119,7 +1009,7 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
                 while (j < length) {
                     c = s.codePointAt(j)
                     buffer.writeUtf8CodePoint(
-                        (if (c > '\u001f'.code && c < '\u007f'.code) c else '?') as Int
+                        (if (c > '\u001f'.code && c < '\u007f'.code) c else '?') as Int,
                     )
                     j += Character.charCount(c)
                 }
@@ -1182,7 +1072,7 @@ class ObsoleteUrlFactory(private var client: OkHttpClient) : URLStreamHandlerFac
             val url = URL("https://publicobject.com/helloworld.txt")
             val urlConnection = url.openConnection() as HttpURLConnection
             BufferedReader(
-                InputStreamReader(urlConnection.inputStream)
+                InputStreamReader(urlConnection.inputStream),
             ).use { reader ->
                 var line: String?
                 while ((reader.readLine().also { line = it }) != null) {

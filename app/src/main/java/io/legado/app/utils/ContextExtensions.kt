@@ -65,18 +65,18 @@ fun Context.startActivityForBook(
     book: Book,
     configIntent: Intent.() -> Unit = {},
 ) {
-    val cls = when {
-        book.isAudio -> AudioPlayActivity::class.java
-        !book.isLocal && book.isImage && AppConfig.showMangaUi -> ReadMangaActivity::class.java
-        else -> ReadBookActivity::class.java
-    }
+    val cls =
+        when {
+            book.isAudio -> AudioPlayActivity::class.java
+            !book.isLocal && book.isImage && AppConfig.showMangaUi -> ReadMangaActivity::class.java
+            else -> ReadBookActivity::class.java
+        }
     val intent = Intent(this, cls)
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     intent.putExtra("bookUrl", book.bookUrl)
     intent.apply(configIntent)
     startActivity(intent)
 }
-
 
 inline fun <reified T : Service> Context.startService(configIntent: Intent.() -> Unit = {}) {
     startService(Intent(this, T::class.java).apply(configIntent))
@@ -94,11 +94,12 @@ inline fun <reified T : Service> Context.servicePendingIntent(
     val intent = Intent(this, T::class.java)
     intent.action = action
     configIntent.invoke(intent)
-    val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
-    } else {
-        FLAG_UPDATE_CURRENT
-    }
+    val flags =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
+        } else {
+            FLAG_UPDATE_CURRENT
+        }
     return getService(this, requestCode, intent, flags)
 }
 
@@ -107,11 +108,12 @@ fun Context.activityPendingIntent(
     action: String,
 ): PendingIntent? {
     intent.action = action
-    val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
-    } else {
-        FLAG_UPDATE_CURRENT
-    }
+    val flags =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
+        } else {
+            FLAG_UPDATE_CURRENT
+        }
     return getActivity(this, 0, intent, flags)
 }
 
@@ -122,11 +124,12 @@ inline fun <reified T : Activity> Context.activityPendingIntent(
     val intent = Intent(this, T::class.java)
     intent.action = action
     configIntent.invoke(intent)
-    val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
-    } else {
-        FLAG_UPDATE_CURRENT
-    }
+    val flags =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
+        } else {
+            FLAG_UPDATE_CURRENT
+        }
     return getActivity(this, 0, intent, flags)
 }
 
@@ -137,11 +140,12 @@ inline fun <reified T : BroadcastReceiver> Context.broadcastPendingIntent(
     val intent = Intent(this, T::class.java)
     intent.action = action
     configIntent.invoke(intent)
-    val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
-    } else {
-        FLAG_UPDATE_CURRENT
-    }
+    val flags =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
+        } else {
+            FLAG_UPDATE_CURRENT
+        }
     return getBroadcast(this, 0, intent, flags)
 }
 
@@ -156,62 +160,85 @@ fun Context.startForegroundServiceCompat(intent: Intent) {
 val Context.defaultSharedPreferences: SharedPreferences
     get() = PreferenceManager.getDefaultSharedPreferences(this)
 
-fun Context.getPrefBoolean(key: String, defValue: Boolean = false) =
-    defaultSharedPreferences.getBoolean(key, defValue)
+fun Context.getPrefBoolean(
+    key: String,
+    defValue: Boolean = false,
+) = defaultSharedPreferences.getBoolean(key, defValue)
 
-fun Context.putPrefBoolean(key: String, value: Boolean = false) =
-    defaultSharedPreferences.edit { putBoolean(key, value) }
+fun Context.putPrefBoolean(
+    key: String,
+    value: Boolean = false,
+) = defaultSharedPreferences.edit { putBoolean(key, value) }
 
-fun Context.getPrefInt(key: String, defValue: Int = 0) =
-    defaultSharedPreferences.getInt(key, defValue)
+fun Context.getPrefInt(
+    key: String,
+    defValue: Int = 0,
+) = defaultSharedPreferences.getInt(key, defValue)
 
-fun Context.putPrefInt(key: String, value: Int) =
-    defaultSharedPreferences.edit { putInt(key, value) }
+fun Context.putPrefInt(
+    key: String,
+    value: Int,
+) = defaultSharedPreferences.edit { putInt(key, value) }
 
-fun Context.getPrefLong(key: String, defValue: Long = 0L) =
-    defaultSharedPreferences.getLong(key, defValue)
+fun Context.getPrefLong(
+    key: String,
+    defValue: Long = 0L,
+) = defaultSharedPreferences.getLong(key, defValue)
 
-fun Context.putPrefLong(key: String, value: Long) =
-    defaultSharedPreferences.edit { putLong(key, value) }
+fun Context.putPrefLong(
+    key: String,
+    value: Long,
+) = defaultSharedPreferences.edit { putLong(key, value) }
 
-fun Context.getPrefString(key: String, defValue: String? = null) =
-    defaultSharedPreferences.getString(key, defValue)
+fun Context.getPrefString(
+    key: String,
+    defValue: String? = null,
+) = defaultSharedPreferences.getString(key, defValue)
 
-fun Context.putPrefString(key: String, value: String?) =
-    defaultSharedPreferences.edit { putString(key, value) }
+fun Context.putPrefString(
+    key: String,
+    value: String?,
+) = defaultSharedPreferences.edit { putString(key, value) }
 
 fun Context.getPrefStringSet(
     key: String,
     defValue: MutableSet<String>? = null,
 ): MutableSet<String>? = defaultSharedPreferences.getStringSet(key, defValue)
 
-fun Context.putPrefStringSet(key: String, value: MutableSet<String>) =
-    defaultSharedPreferences.edit { putStringSet(key, value) }
+fun Context.putPrefStringSet(
+    key: String,
+    value: MutableSet<String>,
+) = defaultSharedPreferences.edit { putStringSet(key, value) }
 
-fun Context.removePref(key: String) =
-    defaultSharedPreferences.edit { remove(key) }
+fun Context.removePref(key: String) = defaultSharedPreferences.edit { remove(key) }
 
+fun Context.getCompatColor(
+    @ColorRes id: Int,
+): Int = ContextCompat.getColor(this, id)
 
-fun Context.getCompatColor(@ColorRes id: Int): Int = ContextCompat.getColor(this, id)
+fun Context.getCompatDrawable(
+    @DrawableRes id: Int,
+): Drawable? = ContextCompat.getDrawable(this, id)
 
-fun Context.getCompatDrawable(@DrawableRes id: Int): Drawable? = ContextCompat.getDrawable(this, id)
+fun Context.getCompatColorStateList(
+    @ColorRes id: Int,
+): ColorStateList? = ContextCompat.getColorStateList(this, id)
 
-fun Context.getCompatColorStateList(@ColorRes id: Int): ColorStateList? =
-    ContextCompat.getColorStateList(this, id)
-
-fun Context.checkSelfUriPermission(uri: Uri, modeFlags: Int): Int =
-    checkUriPermission(uri, Process.myPid(), Process.myUid(), modeFlags)
+fun Context.checkSelfUriPermission(
+    uri: Uri,
+    modeFlags: Int,
+): Int = checkUriPermission(uri, Process.myPid(), Process.myUid(), modeFlags)
 
 fun Context.restart() {
     val intent: Intent? = packageManager.getLaunchIntentForPackage(packageName)
     intent?.let {
         intent.addFlags(
             Intent.FLAG_ACTIVITY_NEW_TASK
-                    or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                or Intent.FLAG_ACTIVITY_CLEAR_TOP,
         )
         startActivity(intent)
-        //杀掉以前进程
+        // 杀掉以前进程
         Process.killProcess(Process.myPid())
         exitProcess(0)
     }
@@ -222,11 +249,12 @@ fun Context.restart() {
  */
 val Context.sysScreenOffTime: Int
     get() {
-        return kotlin.runCatching {
-            Settings.System.getInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT)
-        }.onFailure {
-            it.printOnDebug()
-        }.getOrDefault(0)
+        return kotlin
+            .runCatching {
+                Settings.System.getInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT)
+            }.onFailure {
+                it.printOnDebug()
+            }.getOrDefault(0)
     }
 
 val Context.statusBarHeight: Int
@@ -246,7 +274,10 @@ val Context.navigationBarHeight: Int
         return resources.getDimensionPixelSize(resourceId)
     }
 
-fun Context.share(text: String, title: String = getString(R.string.share)) {
+fun Context.share(
+    text: String,
+    title: String = getString(R.string.share),
+) {
     kotlin.runCatching {
         val intent = Intent(Intent.ACTION_SEND)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -257,7 +288,10 @@ fun Context.share(text: String, title: String = getString(R.string.share)) {
     }
 }
 
-fun Context.share(file: File, type: String = "text/*") {
+fun Context.share(
+    file: File,
+    type: String = "text/*",
+) {
     val fileUri = FileProvider.getUriForFile(this, AppConst.authority, file)
     val intent = Intent(Intent.ACTION_SEND)
     intent.type = type
@@ -267,8 +301,8 @@ fun Context.share(file: File, type: String = "text/*") {
     startActivity(
         Intent.createChooser(
             intent,
-            getString(R.string.share_selected_source)
-        )
+            getString(R.string.share_selected_source),
+        ),
     )
 }
 
@@ -310,7 +344,11 @@ fun Context.sendToClip(text: String) {
 fun Context.getClipText(): String? {
     clipboardManager.primaryClip?.let {
         if (it.itemCount > 0) {
-            return it.getItemAt(0).text.toString().trim()
+            return it
+                .getItemAt(0)
+                .text
+                .toString()
+                .trim()
         }
     }
     return null
@@ -362,16 +400,23 @@ fun Context.openUrl(uri: Uri) {
 }
 
 @SuppressLint("ObsoleteSdkInt")
-fun Context.openFileUri(uri: Uri, type: String? = null) {
+fun Context.openFileUri(
+    uri: Uri,
+    type: String? = null,
+) {
     val intent = Intent()
     intent.action = Intent.ACTION_VIEW
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        //7.0版本以上
+        // 7.0版本以上
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
-    val uri = if (uri.isContentScheme()) uri
-    else FileProvider.getUriForFile(this, AppConst.authority, File(uri.path!!))
+    val uri =
+        if (uri.isContentScheme()) {
+            uri
+        } else {
+            FileProvider.getUriForFile(this, AppConst.authority, File(uri.path!!))
+        }
     intent.setDataAndType(uri, type ?: IntentType.from(uri))
     try {
         startActivity(intent)

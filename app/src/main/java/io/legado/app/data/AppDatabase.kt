@@ -48,7 +48,8 @@ import splitties.init.appCtx
 import java.util.Locale
 
 val appDb by lazy {
-    Room.databaseBuilder(appCtx, AppDatabase::class.java, AppDatabase.DATABASE_NAME)
+    Room
+        .databaseBuilder(appCtx, AppDatabase::class.java, AppDatabase.DATABASE_NAME)
         .fallbackToDestructiveMigrationFrom(false, 1, 2, 3, 4, 5, 6, 7, 8, 9)
         .addMigrations(*DatabaseMigrations.migrations)
         .allowMainThreadQueries()
@@ -59,10 +60,12 @@ val appDb by lazy {
 @Database(
     version = 76,
     exportSchema = true,
-    entities = [Book::class, BookGroup::class, BookSource::class, BookChapter::class,
+    entities = [
+        Book::class, BookGroup::class, BookSource::class, BookChapter::class,
         ReplaceRule::class, SearchBook::class, SearchKeyword::class, Cookie::class,
         Bookmark::class, TxtTocRule::class, ReadRecord::class, HttpTTS::class, Cache::class,
-        DictRule::class, KeyboardAssist::class, Server::class],
+        DictRule::class, KeyboardAssist::class, Server::class,
+    ],
     views = [BookSourcePart::class],
     autoMigrations = [
         AutoMigration(from = 43, to = 44),
@@ -98,10 +101,9 @@ val appDb by lazy {
         AutoMigration(from = 73, to = 74),
         AutoMigration(from = 74, to = 75),
         AutoMigration(from = 75, to = 76, spec = DatabaseMigrations.Migration_75_76::class),
-    ]
+    ],
 )
 abstract class AppDatabase : RoomDatabase() {
-
     abstract val bookDao: BookDao
     abstract val bookGroupDao: BookGroupDao
     abstract val bookSourceDao: BookSourceDao
@@ -120,105 +122,109 @@ abstract class AppDatabase : RoomDatabase() {
     abstract val serverDao: ServerDao
 
     companion object {
-
         const val DATABASE_NAME = "legado.db"
 
         const val BOOK_TABLE_NAME = "books"
         const val BOOK_SOURCE_TABLE_NAME = "book_sources"
 
-        val dbCallback = object : Callback() {
-
-            override fun onCreate(db: SupportSQLiteDatabase) {
-                // 只在 API 级别 23 (Marshmallow) 及以上版本尝试设置区域设置
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    try {
-                        Log.d("AppDatabaseCallback", "准备 设置 locale for API ${Build.VERSION.SDK_INT}...")
-                        db.setLocale(Locale.CHINESE)
-                        // 在 21 上报错，但无法拦截
-                        Log.d("AppDatabaseCallback", "成功 设置 locale for API ${Build.VERSION.SDK_INT}.")
-                    } catch (e: Exception) {
-                        Log.e("AppDatabaseCallback", "错误 设置 locale in onCreate for API ${Build.VERSION.SDK_INT}", e)
+        val dbCallback =
+            object : Callback() {
+                override fun onCreate(db: SupportSQLiteDatabase) {
+                    // 只在 API 级别 23 (Marshmallow) 及以上版本尝试设置区域设置
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        try {
+                            Log.d("AppDatabaseCallback", "准备 设置 locale for API ${Build.VERSION.SDK_INT}...")
+                            db.setLocale(Locale.CHINESE)
+                            // 在 21 上报错，但无法拦截
+                            Log.d("AppDatabaseCallback", "成功 设置 locale for API ${Build.VERSION.SDK_INT}.")
+                        } catch (e: Exception) {
+                            Log.e("AppDatabaseCallback", "错误 设置 locale in onCreate for API ${Build.VERSION.SDK_INT}", e)
+                        }
+                    } else {
+                        Log.i("AppDatabaseCallback", "跳过 setLocale for API ${Build.VERSION.SDK_INT} (below M).")
                     }
-                } else {
-                    Log.i("AppDatabaseCallback", "跳过 setLocale for API ${Build.VERSION.SDK_INT} (below M).")
                 }
-            }
 
-            override fun onOpen(db: SupportSQLiteDatabase) {
-                @Language("sql")
-                val insertBookGroupAllSql = """
-                    insert into book_groups(groupId, groupName, 'order', show) 
-                    select ${BookGroup.IdAll}, '全部', -10, 1
-                    where not exists (select * from book_groups where groupId = ${BookGroup.IdAll})
-                """.trimIndent()
-                db.execSQL(insertBookGroupAllSql)
-                @Language("sql")
-                val insertBookGroupLocalSql = """
-                    insert into book_groups(groupId, groupName, 'order', enableRefresh, show) 
-                    select ${BookGroup.IdLocal}, '本地', -9, 0, 1
-                    where not exists (select * from book_groups where groupId = ${BookGroup.IdLocal})
-                """.trimIndent()
-                db.execSQL(insertBookGroupLocalSql)
-                @Language("sql")
-                val insertBookGroupMusicSql = """
-                    insert into book_groups(groupId, groupName, 'order', show) 
-                    select ${BookGroup.IdAudio}, '音频', -8, 1
-                    where not exists (select * from book_groups where groupId = ${BookGroup.IdAudio})
-                """.trimIndent()
-                db.execSQL(insertBookGroupMusicSql)
-                @Language("sql")
-                val insertBookGroupNetNoneGroupSql = """
-                    insert into book_groups(groupId, groupName, 'order', show) 
-                    select ${BookGroup.IdNetNone}, '网络未分组', -7, 1
-                    where not exists (select * from book_groups where groupId = ${BookGroup.IdNetNone})
-                """.trimIndent()
-                db.execSQL(insertBookGroupNetNoneGroupSql)
-                @Language("sql")
-                val insertBookGroupLocalNoneGroupSql = """
-                    insert into book_groups(groupId, groupName, 'order', show) 
-                    select ${BookGroup.IdLocalNone}, '本地未分组', -6, 0
-                    where not exists (select * from book_groups where groupId = ${BookGroup.IdLocalNone})
-                """.trimIndent()
-                db.execSQL(insertBookGroupLocalNoneGroupSql)
-                @Language("sql")
-                val insertBookGroupErrorSql = """
-                    insert into book_groups(groupId, groupName, 'order', show) 
-                    select ${BookGroup.IdError}, '更新失败', -1, 1
-                    where not exists (select * from book_groups where groupId = ${BookGroup.IdError})
-                """.trimIndent()
-                db.execSQL(insertBookGroupErrorSql)
-                @Language("sql")
-                val upBookSourceLoginUiSql =
-                    "update book_sources set loginUi = null where loginUi = 'null'"
-                db.execSQL(upBookSourceLoginUiSql)
-                @Language("sql")
-                val upHttpTtsLoginUiSql =
-                    "update httpTTS set loginUi = null where loginUi = 'null'"
-                db.execSQL(upHttpTtsLoginUiSql)
-                @Language("sql")
-                val upHttpTtsConcurrentRateSql =
-                    "update httpTTS set concurrentRate = '0' where concurrentRate is null"
-                db.execSQL(upHttpTtsConcurrentRateSql)
-                db.query("select * from keyboardAssists order by serialNo").use {
-                    if (it.count == 0) {
-                        DefaultData.keyboardAssists.forEach { keyboardAssist ->
-                            val contentValues = ContentValues().apply {
-                                put("type", keyboardAssist.type)
-                                put("key", keyboardAssist.key)
-                                put("value", keyboardAssist.value)
-                                put("serialNo", keyboardAssist.serialNo)
+                override fun onOpen(db: SupportSQLiteDatabase) {
+                    @Language("sql")
+                    val insertBookGroupAllSql =
+                        """
+                        insert into book_groups(groupId, groupName, 'order', show) 
+                        select ${BookGroup.IdAll}, '全部', -10, 1
+                        where not exists (select * from book_groups where groupId = ${BookGroup.IdAll})
+                        """.trimIndent()
+                    db.execSQL(insertBookGroupAllSql)
+                    @Language("sql")
+                    val insertBookGroupLocalSql =
+                        """
+                        insert into book_groups(groupId, groupName, 'order', enableRefresh, show) 
+                        select ${BookGroup.IdLocal}, '本地', -9, 0, 1
+                        where not exists (select * from book_groups where groupId = ${BookGroup.IdLocal})
+                        """.trimIndent()
+                    db.execSQL(insertBookGroupLocalSql)
+                    @Language("sql")
+                    val insertBookGroupMusicSql =
+                        """
+                        insert into book_groups(groupId, groupName, 'order', show) 
+                        select ${BookGroup.IdAudio}, '音频', -8, 1
+                        where not exists (select * from book_groups where groupId = ${BookGroup.IdAudio})
+                        """.trimIndent()
+                    db.execSQL(insertBookGroupMusicSql)
+                    @Language("sql")
+                    val insertBookGroupNetNoneGroupSql =
+                        """
+                        insert into book_groups(groupId, groupName, 'order', show) 
+                        select ${BookGroup.IdNetNone}, '网络未分组', -7, 1
+                        where not exists (select * from book_groups where groupId = ${BookGroup.IdNetNone})
+                        """.trimIndent()
+                    db.execSQL(insertBookGroupNetNoneGroupSql)
+                    @Language("sql")
+                    val insertBookGroupLocalNoneGroupSql =
+                        """
+                        insert into book_groups(groupId, groupName, 'order', show) 
+                        select ${BookGroup.IdLocalNone}, '本地未分组', -6, 0
+                        where not exists (select * from book_groups where groupId = ${BookGroup.IdLocalNone})
+                        """.trimIndent()
+                    db.execSQL(insertBookGroupLocalNoneGroupSql)
+                    @Language("sql")
+                    val insertBookGroupErrorSql =
+                        """
+                        insert into book_groups(groupId, groupName, 'order', show) 
+                        select ${BookGroup.IdError}, '更新失败', -1, 1
+                        where not exists (select * from book_groups where groupId = ${BookGroup.IdError})
+                        """.trimIndent()
+                    db.execSQL(insertBookGroupErrorSql)
+                    @Language("sql")
+                    val upBookSourceLoginUiSql =
+                        "update book_sources set loginUi = null where loginUi = 'null'"
+                    db.execSQL(upBookSourceLoginUiSql)
+                    @Language("sql")
+                    val upHttpTtsLoginUiSql =
+                        "update httpTTS set loginUi = null where loginUi = 'null'"
+                    db.execSQL(upHttpTtsLoginUiSql)
+                    @Language("sql")
+                    val upHttpTtsConcurrentRateSql =
+                        "update httpTTS set concurrentRate = '0' where concurrentRate is null"
+                    db.execSQL(upHttpTtsConcurrentRateSql)
+                    db.query("select * from keyboardAssists order by serialNo").use {
+                        if (it.count == 0) {
+                            DefaultData.keyboardAssists.forEach { keyboardAssist ->
+                                val contentValues =
+                                    ContentValues().apply {
+                                        put("type", keyboardAssist.type)
+                                        put("key", keyboardAssist.key)
+                                        put("value", keyboardAssist.value)
+                                        put("serialNo", keyboardAssist.serialNo)
+                                    }
+                                db.insert(
+                                    "keyboardAssists",
+                                    SQLiteDatabase.CONFLICT_REPLACE,
+                                    contentValues,
+                                )
                             }
-                            db.insert(
-                                "keyboardAssists",
-                                SQLiteDatabase.CONFLICT_REPLACE,
-                                contentValues
-                            )
                         }
                     }
                 }
             }
-        }
-
     }
-
 }

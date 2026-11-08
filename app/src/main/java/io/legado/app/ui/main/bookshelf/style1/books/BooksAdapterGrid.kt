@@ -11,18 +11,17 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.utils.invisible
 import splitties.views.onLongClick
 
-class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
-    BaseBooksAdapter<ItemBookshelfGridBinding>(context) {
-
-    override fun getViewBinding(parent: ViewGroup): ItemBookshelfGridBinding {
-        return ItemBookshelfGridBinding.inflate(inflater, parent, false)
-    }
+class BooksAdapterGrid(
+    context: Context,
+    private val callBack: CallBack,
+) : BaseBooksAdapter<ItemBookshelfGridBinding>(context) {
+    override fun getViewBinding(parent: ViewGroup): ItemBookshelfGridBinding = ItemBookshelfGridBinding.inflate(inflater, parent, false)
 
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemBookshelfGridBinding,
         item: Book,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) = binding.run {
         if (payloads.isEmpty()) {
             tvName.text = item.name
@@ -42,7 +41,10 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
         }
     }
 
-    private fun upRefresh(binding: ItemBookshelfGridBinding, item: Book) {
+    private fun upRefresh(
+        binding: ItemBookshelfGridBinding,
+        item: Book,
+    ) {
         if (!item.isLocal && callBack.isUpdate(item.bookUrl)) {
             binding.bvUnread.invisible()
             binding.rlLoading.visible()
@@ -57,7 +59,10 @@ class BooksAdapterGrid(context: Context, private val callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemBookshelfGridBinding) {
+    override fun registerListener(
+        holder: ItemViewHolder,
+        binding: ItemBookshelfGridBinding,
+    ) {
         holder.itemView.apply {
             setOnClickListener {
                 getItem(holder.layoutPosition)?.let {

@@ -5,10 +5,10 @@ import android.content.Context
 import io.legado.app.R
 import io.legado.app.databinding.DialogWaitBinding
 
-
 @Suppress("unused")
-class WaitDialog(context: Context) : Dialog(context) {
-
+class WaitDialog(
+    context: Context,
+) : Dialog(context) {
     val binding = DialogWaitBinding.inflate(layoutInflater)
 
     init {
@@ -28,5 +28,4 @@ class WaitDialog(context: Context) : Dialog(context) {
         binding.tvMsg.setText(res)
         return this
     }
-
 }

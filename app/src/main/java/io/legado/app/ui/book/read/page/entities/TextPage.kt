@@ -38,9 +38,8 @@ data class TextPage(
     var chapterIndex: Int = 0,
     var height: Float = 0f,
     var leftLineSize: Int = 0,
-    var renderHeight: Int = 0
+    var renderHeight: Int = 0,
 ) {
-
     companion object {
         val readProgressFormatter = DecimalFormat("0.0%")
         val emptyTextPage = TextPage()
@@ -85,10 +84,8 @@ data class TextPage(
         textLines.add(line)
     }
 
-    fun getLine(index: Int): TextLine {
-        return textLines.getOrElse(index) {
-            textLines.last()
-        }
+    fun getLine(index: Int): TextLine = textLines.getOrElse(index) {
+        textLines.last()
     }
 
     /**
@@ -147,10 +144,16 @@ data class TextPage(
             textLines.clear()
             val visibleWidth = ChapterProvider.visibleRight - ChapterProvider.paddingLeft
             val paint = ChapterProvider.contentPaint
-            val layout = StaticLayout(
-                text, paint, visibleWidth,
-                Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false
-            )
+            val layout =
+                StaticLayout(
+                    text,
+                    paint,
+                    visibleWidth,
+                    Layout.Alignment.ALIGN_NORMAL,
+                    1f,
+                    0f,
+                    false,
+                )
             val letterSpacing = paint.letterSpacing * paint.textSize
             var y = (ChapterProvider.visibleHeight - layout.height) / 2f
             if (y < 0) y = 0f
@@ -161,7 +164,8 @@ data class TextPage(
                     ChapterProvider.paddingTop + y + layout.getLineBaseline(lineIndex)
                 textLine.lineBottom =
                     ChapterProvider.paddingTop + y + layout.getLineBottom(lineIndex)
-                var x = ChapterProvider.paddingLeft +
+                var x =
+                    ChapterProvider.paddingLeft +
                         (visibleWidth - layout.getLineMax(lineIndex)) / 2
                 textLine.text =
                     text.substring(layout.getLineStart(lineIndex), layout.getLineEnd(lineIndex))
@@ -173,7 +177,7 @@ data class TextPage(
                     }
                     val x1 = x + cw
                     textLine.addColumn(
-                        TextColumn(start = x, end = x1, char)
+                        TextColumn(start = x, end = x1, char),
                     )
                     x = x1
                 }
@@ -258,7 +262,10 @@ data class TextPage(
      * @param columnIndex 字符在第几列
      * @return 字符在本页位置
      */
-    fun getPosByLineColumn(lineIndex: Int, columnIndex: Int): Int {
+    fun getPosByLineColumn(
+        lineIndex: Int,
+        columnIndex: Int,
+    ): Int {
         var length = 0
         val maxIndex = min(lineIndex, lineSize - 1)
         for (index in 0 until maxIndex) {
@@ -280,9 +287,7 @@ data class TextPage(
     /**
      * @return 页面所在章节
      */
-    fun getTextChapter(): TextChapter {
-        return textChapter
-    }
+    fun getTextChapter(): TextChapter = textChapter
 
     /**
      * 判断章节字符位置是否在这一页中
@@ -297,7 +302,11 @@ data class TextPage(
         return chapterPos in startPos..<endPos
     }
 
-    fun draw(view: ContentTextView, canvas: Canvas, relativeOffset: Float) {
+    fun draw(
+        view: ContentTextView,
+        canvas: Canvas,
+        relativeOffset: Float,
+    ) {
         if (AppConfig.optimizeRender) {
             render(view)
             canvas.withTranslation(0f, relativeOffset) {
@@ -319,13 +328,16 @@ data class TextPage(
                 0f,
                 (paddingLeft + visibleWidth).toFloat(),
                 height - 1.dpToPx(),
-                paint
+                paint,
             )
             PaintPool.recycle(paint)
         }
     }
 
-    private fun drawPage(view: ContentTextView, canvas: Canvas) {
+    private fun drawPage(
+        view: ContentTextView,
+        canvas: Canvas,
+    ) {
         for (i in lines.indices) {
             val line = lines[i]
             canvas.withTranslation(0f, line.lineTop) {
@@ -359,9 +371,7 @@ data class TextPage(
         }
     }
 
-    fun hasImageOrEmpty(): Boolean {
-        return textLines.any { it.isImage } || textLines.isEmpty()
-    }
+    fun hasImageOrEmpty(): Boolean = textLines.any { it.isImage } || textLines.isEmpty()
 
     fun upRenderHeight() {
         renderHeight = ceil(lines.last().lineBottom).toInt()

@@ -19,51 +19,58 @@ import io.legado.app.utils.externalFiles
 import io.legado.app.utils.postEvent
 import java.io.File
 
-class BgAdapter(context: Context, val textColor: Int) :
-    RecyclerAdapter<String, ItemBgImageBinding>(context) {
-
+class BgAdapter(
+    context: Context,
+    val textColor: Int,
+) : RecyclerAdapter<String, ItemBgImageBinding>(context) {
     companion object {
         // 稿 .ph 8dp 圆角：缩略图容器统一圆角裁剪，普通格位图/选中环/虚线头格三态圆角一致；
         // 容器无背景（背景 outline alpha 0 不参与裁剪），以显式 outlineProvider 提供圆角轮廓。
         // 无状态单实例（按目标 view 尺寸实时取轮廓，跨视图共享安全），BgTextConfigDialog
         // 头格「选择图片」复用同一实现，圆角值单点维护
-        val thumbOutline = object : ViewOutlineProvider() {
-            override fun getOutline(view: View, outline: Outline) {
-                outline.setRoundRect(0, 0, view.width, view.height, 8.dpToPx().toFloat())
+        val thumbOutline =
+            object : ViewOutlineProvider() {
+                override fun getOutline(
+                    view: View,
+                    outline: Outline,
+                ) {
+                    outline.setRoundRect(0, 0, view.width, view.height, 8.dpToPx().toFloat())
+                }
             }
-        }
     }
 
-    override fun getViewBinding(parent: ViewGroup): ItemBgImageBinding {
-        return ItemBgImageBinding.inflate(inflater, parent, false).apply {
-            vwBgThumb.outlineProvider = thumbOutline
-            vwBgThumb.clipToOutline = true
-        }
+    override fun getViewBinding(parent: ViewGroup): ItemBgImageBinding = ItemBgImageBinding.inflate(inflater, parent, false).apply {
+        vwBgThumb.outlineProvider = thumbOutline
+        vwBgThumb.clipToOutline = true
     }
 
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemBgImageBinding,
         item: String,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
         binding.run {
             // read-bg-text-config#05「自定义图入列」：assets/bg ∪ externalFiles/bg 合并数据源，
             // convert 按 externalFiles 优先、assets 兜底双分支读图（NEED-DECISION ⑤，可回退）
             val bgFile = File(context.externalFiles, "bg${File.separator}$item")
             if (bgFile.exists()) {
-                ImageLoader.load(context, bgFile)
+                ImageLoader
+                    .load(context, bgFile)
                     .centerCrop()
                     .into(ivBg)
             } else {
                 // 合并数据源后自定义图可能在 setItems 之后被外部删除（弹层停留期间滚动触发
                 // 重绑定），assets.open 对不存在名抛 FileNotFoundException（绑定期崩溃）；
                 // bind 时捕获兜底——upBgImages 过滤仍有列表后被删的 TOCTOU 窗口，此处彻底关闭
-                val assetBytes = kotlin.runCatching {
-                    context.assets.open("bg${File.separator}$item").readBytes()
-                }.getOrNull()
+                val assetBytes =
+                    kotlin
+                        .runCatching {
+                            context.assets.open("bg${File.separator}$item").readBytes()
+                        }.getOrNull()
                 if (assetBytes != null) {
-                    ImageLoader.load(context, assetBytes)
+                    ImageLoader
+                        .load(context, assetBytes)
                         .centerCrop()
                         .into(ivBg)
                 } else {
@@ -86,16 +93,18 @@ class BgAdapter(context: Context, val textColor: Int) :
                 val primary = context.primaryColor
                 // 覆盖环叠缩略图上（勿用 View#setForeground：API 23+ 而 minSdk 21、item 根 LinearLayout）
                 vwRing.visibility = View.VISIBLE
-                vwRing.background = GradientDrawable().apply {
-                    cornerRadius = 8.dpToPx().toFloat()
-                    setColor(Color.TRANSPARENT)
-                    setStroke(1.5f.dpToPx().toInt(), primary)
-                }
+                vwRing.background =
+                    GradientDrawable().apply {
+                        cornerRadius = 8.dpToPx().toFloat()
+                        setColor(Color.TRANSPARENT)
+                        setStroke(1.5f.dpToPx().toInt(), primary)
+                    }
                 vwBadge.visibility = View.VISIBLE
-                vwBadge.background = GradientDrawable().apply {
-                    shape = GradientDrawable.OVAL
-                    setColor(primary)
-                }
+                vwBadge.background =
+                    GradientDrawable().apply {
+                        shape = GradientDrawable.OVAL
+                        setColor(primary)
+                    }
             } else {
                 vwRing.visibility = View.GONE
                 vwBadge.visibility = View.GONE
@@ -103,7 +112,10 @@ class BgAdapter(context: Context, val textColor: Int) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemBgImageBinding) {
+    override fun registerListener(
+        holder: ItemViewHolder,
+        binding: ItemBgImageBinding,
+    ) {
         holder.itemView.apply {
             this.setOnClickListener {
                 getItemByLayoutPosition(holder.layoutPosition)?.let {

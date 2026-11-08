@@ -31,13 +31,15 @@ import io.legado.app.utils.snackbar
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
-
     private val binding by viewBinding(FragmentWebViewLoginBinding::bind)
     private val viewModel by activityViewModels<SourceLoginViewModel>()
 
     private var checking = false
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         setSupportToolbar(binding.titleBar.toolbar)
         viewModel.source?.let {
             binding.titleBar.title = getString(R.string.login_source, it.getTag())
@@ -79,67 +81,76 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
             }
         }
         val cookieManager = CookieManager.getInstance()
-        binding.webView.webViewClient = object : WebViewClient() {
-            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                val cookie = cookieManager.getCookie(url)
-                CookieStore.setCookie(source.getKey(), cookie)
-                super.onPageStarted(view, url, favicon)
-            }
-
-            override fun onPageFinished(view: WebView?, url: String?) {
-                val cookie = cookieManager.getCookie(url)
-                CookieStore.setCookie(source.getKey(), cookie)
-                if (checking) {
-                    activity?.finish()
+        binding.webView.webViewClient =
+            object : WebViewClient() {
+                override fun onPageStarted(
+                    view: WebView?,
+                    url: String?,
+                    favicon: Bitmap?,
+                ) {
+                    val cookie = cookieManager.getCookie(url)
+                    CookieStore.setCookie(source.getKey(), cookie)
+                    super.onPageStarted(view, url, favicon)
                 }
-                super.onPageFinished(view, url)
-            }
 
-            override fun shouldOverrideUrlLoading(
-                view: WebView,
-                request: WebResourceRequest
-            ): Boolean {
-                return shouldOverrideUrlLoading(request.url)
-            }
-
-            @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION", "KotlinRedundantDiagnosticSuppress")
-            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                return shouldOverrideUrlLoading(Uri.parse(url))
-            }
-
-            private fun shouldOverrideUrlLoading(url: Uri): Boolean {
-                when (url.scheme) {
-                    "http", "https" -> {
-                        return false
+                override fun onPageFinished(
+                    view: WebView?,
+                    url: String?,
+                ) {
+                    val cookie = cookieManager.getCookie(url)
+                    CookieStore.setCookie(source.getKey(), cookie)
+                    if (checking) {
+                        activity?.finish()
                     }
+                    super.onPageFinished(view, url)
+                }
 
-                    else -> {
-                        binding.root.longSnackbar(R.string.jump_to_another_app, R.string.confirm) {
-                            context?.openUrl(url)
+                override fun shouldOverrideUrlLoading(
+                    view: WebView,
+                    request: WebResourceRequest,
+                ): Boolean = shouldOverrideUrlLoading(request.url)
+
+                @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION", "KotlinRedundantDiagnosticSuppress")
+                override fun shouldOverrideUrlLoading(
+                    view: WebView,
+                    url: String,
+                ): Boolean = shouldOverrideUrlLoading(Uri.parse(url))
+
+                private fun shouldOverrideUrlLoading(url: Uri): Boolean {
+                    when (url.scheme) {
+                        "http", "https" -> {
+                            return false
                         }
-                        return true
+
+                        else -> {
+                            binding.root.longSnackbar(R.string.jump_to_another_app, R.string.confirm) {
+                                context?.openUrl(url)
+                            }
+                            return true
+                        }
                     }
                 }
-            }
 
-            @SuppressLint("WebViewClientOnReceivedSslError")
-            override fun onReceivedSslError(
-                view: WebView?,
-                handler: SslErrorHandler?,
-                error: SslError?
-            ) {
-                handler?.proceed()
+                @SuppressLint("WebViewClientOnReceivedSslError")
+                override fun onReceivedSslError(
+                    view: WebView?,
+                    handler: SslErrorHandler?,
+                    error: SslError?,
+                ) {
+                    handler?.proceed()
+                }
             }
-        }
-        binding.webView.webChromeClient = object : WebChromeClient() {
-
-            override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                super.onProgressChanged(view, newProgress)
-                binding.progressBar.setDurProgress(newProgress)
-                binding.progressBar.gone(newProgress == 100)
+        binding.webView.webChromeClient =
+            object : WebChromeClient() {
+                override fun onProgressChanged(
+                    view: WebView?,
+                    newProgress: Int,
+                ) {
+                    super.onProgressChanged(view, newProgress)
+                    binding.progressBar.setDurProgress(newProgress)
+                    binding.progressBar.gone(newProgress == 100)
+                }
             }
-
-        }
         loadUrl(source)
     }
 
@@ -153,5 +164,4 @@ class WebViewLoginFragment : BaseFragment(R.layout.fragment_web_view_login) {
         super.onDestroy()
         binding.webView.destroy()
     }
-
 }

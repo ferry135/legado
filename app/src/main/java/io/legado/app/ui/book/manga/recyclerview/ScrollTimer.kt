@@ -60,16 +60,18 @@ class ScrollTimer(
     }
 
     private fun startScrollPage() {
-        mScrollPageJob = coroutineScope.launch {
-            while (isActive) {
-                delay(distance.times(1000L))
-                callback.scrollPage()
+        mScrollPageJob =
+            coroutineScope.launch {
+                while (isActive) {
+                    delay(distance.times(1000L))
+                    callback.scrollPage()
+                }
             }
-        }
     }
 
     interface ScrollCallback {
         fun scrollBy(distance: Int)
+
         fun scrollPage()
     }
 }

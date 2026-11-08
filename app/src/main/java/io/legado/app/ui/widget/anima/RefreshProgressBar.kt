@@ -8,13 +8,14 @@ import android.graphics.RectF
 import android.os.Looper
 import android.util.AttributeSet
 import android.view.View
-
 import io.legado.app.R
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
-class RefreshProgressBar @JvmOverloads constructor(
+class RefreshProgressBar
+@JvmOverloads
+constructor(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet? = null,
 ) : View(context, attrs) {
     private var a = 1
     private var durProgress = 0
@@ -51,15 +52,17 @@ class RefreshProgressBar @JvmOverloads constructor(
         speed = a.getDimensionPixelSize(R.styleable.RefreshProgressBar_speed, speed)
         maxProgress = a.getInt(R.styleable.RefreshProgressBar_max_progress, maxProgress)
         durProgress = a.getInt(R.styleable.RefreshProgressBar_dur_progress, durProgress)
-        secondDurProgress = a.getDimensionPixelSize(
-            R.styleable.RefreshProgressBar_second_dur_progress,
-            secondDurProgress
-        )
+        secondDurProgress =
+            a.getDimensionPixelSize(
+                R.styleable.RefreshProgressBar_second_dur_progress,
+                secondDurProgress,
+            )
         secondFinalProgress = secondDurProgress
-        secondMaxProgress = a.getDimensionPixelSize(
-            R.styleable.RefreshProgressBar_second_max_progress,
-            secondMaxProgress
-        )
+        secondMaxProgress =
+            a.getDimensionPixelSize(
+                R.styleable.RefreshProgressBar_second_max_progress,
+                secondMaxProgress,
+            )
         bgColor = a.getColor(R.styleable.RefreshProgressBar_bg_color, bgColor)
         secondColor = a.getColor(R.styleable.RefreshProgressBar_second_color, secondColor)
         fontColor = a.getColor(R.styleable.RefreshProgressBar_font_color, fontColor)
@@ -85,7 +88,7 @@ class RefreshProgressBar @JvmOverloads constructor(
                 measuredWidth / 2 - tempW / 2,
                 0,
                 measuredWidth / 2 + tempW / 2,
-                measuredHeight
+                measuredHeight,
             )
             canvas.drawRect(secondRect, paint)
         }
@@ -96,7 +99,7 @@ class RefreshProgressBar @JvmOverloads constructor(
                 0f,
                 0f,
                 measuredWidth.toFloat() * 1.0f * (durProgress * 1.0f / maxProgress),
-                measuredHeight.toFloat()
+                measuredHeight.toFloat(),
             )
             canvas.drawRect(fontRectF, paint)
         }
@@ -108,10 +111,11 @@ class RefreshProgressBar @JvmOverloads constructor(
                 a = 1
             }
             secondDurProgress += a * speed
-            if (secondDurProgress < 0)
+            if (secondDurProgress < 0) {
                 secondDurProgress = 0
-            else if (secondDurProgress > secondMaxProgress)
+            } else if (secondDurProgress > secondMaxProgress) {
                 secondDurProgress = secondMaxProgress
+            }
             secondFinalProgress = secondDurProgress
             invalidate()
         } else {
@@ -132,9 +136,7 @@ class RefreshProgressBar @JvmOverloads constructor(
         }
     }
 
-    fun getDurProgress(): Int {
-        return durProgress
-    }
+    fun getDurProgress(): Int = durProgress
 
     fun setDurProgress(durProgress: Int) {
         var durProgress1 = durProgress
@@ -152,9 +154,7 @@ class RefreshProgressBar @JvmOverloads constructor(
         }
     }
 
-    fun getSecondDurProgress(): Int {
-        return secondDurProgress
-    }
+    fun getSecondDurProgress(): Int = secondDurProgress
 
     fun setSecondDurProgress(secondDur: Int) {
         this.secondDurProgress = secondDur

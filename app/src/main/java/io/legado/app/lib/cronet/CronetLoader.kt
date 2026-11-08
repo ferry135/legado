@@ -31,7 +31,7 @@ import java.util.Objects
 @Suppress("ConstPropertyName")
 @Keep
 object CronetLoader : CronetEngine.Builder.LibraryLoader(), Cronet.LoaderInterface {
-    //https://storage.googleapis.com/chromium-cronet/android/92.0.4515.159/Release/cronet/libs/arm64-v8a/libcronet.92.0.4515.159.so
+    // https://storage.googleapis.com/chromium-cronet/android/92.0.4515.159/Release/cronet/libs/arm64-v8a/libcronet.92.0.4515.159.so
 
     private const val soVersion = BuildConfig.Cronet_Version
     private const val soName = "libcronet.$soVersion.so"
@@ -46,9 +46,11 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader(), Cronet.LoaderInterfa
     private var cacheInstall = false
 
     init {
-        soUrl = ("https://storage.googleapis.com/chromium-cronet/android/"
-                + soVersion + "/Release/cronet/libs/"
-                + getCpuAbi(appCtx) + "/" + soName)
+        soUrl = (
+            "https://storage.googleapis.com/chromium-cronet/android/" +
+                soVersion + "/Release/cronet/libs/" +
+                getCpuAbi(appCtx) + "/" + soName
+            )
         md5 = getMd5(appCtx)
         val dir = appCtx.getDir("cronet", Context.MODE_PRIVATE)
         soFile = File(dir.toString() + "/" + getCpuAbi(appCtx), soName)
@@ -77,13 +79,12 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader(), Cronet.LoaderInterfa
         return cacheInstall
     }
 
-
     /**
      * 预加载Cronet
      */
     override fun preDownload() {
         Coroutine.async {
-            //md5 = getUrlMd5(md5Url)
+            // md5 = getUrlMd5(md5Url)
             if (soFile.exists() && md5 == getFileMD5(soFile)) {
                 DebugLog.d(javaClass.simpleName, "So 库已存在")
             } else {
@@ -96,14 +97,15 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader(), Cronet.LoaderInterfa
     private fun getMd5(context: Context): String {
         val stringBuilder = StringBuilder()
         return try {
-            //获取assets资源管理器
+            // 获取assets资源管理器
             val assetManager = context.assets
-            //通过管理器打开文件并读取
-            val bf = BufferedReader(
-                InputStreamReader(
-                    assetManager.open("cronet.json")
+            // 通过管理器打开文件并读取
+            val bf =
+                BufferedReader(
+                    InputStreamReader(
+                        assetManager.open("cronet.json"),
+                    ),
                 )
-            )
             var line: String?
             while (bf.readLine().also { line = it } != null) {
                 stringBuilder.append(line)
@@ -120,48 +122,48 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader(), Cronet.LoaderInterfa
         val start = System.currentTimeMillis()
         @Suppress("SameParameterValue")
         try {
-            //非cronet的so调用系统方法加载
+            // 非cronet的so调用系统方法加载
             if (!libName.contains("cronet")) {
                 System.loadLibrary(libName)
                 return
             }
-            //以下逻辑为cronet加载，优先加载本地，否则从远程加载
-            //首先调用系统行为进行加载
+            // 以下逻辑为cronet加载，优先加载本地，否则从远程加载
+            // 首先调用系统行为进行加载
             System.loadLibrary(libName)
             DebugLog.d(javaClass.simpleName, "load from system")
         } catch (e: Throwable) {
-            //如果找不到，则从远程下载
-            //删除历史文件
+            // 如果找不到，则从远程下载
+            // 删除历史文件
             deleteHistoryFile(Objects.requireNonNull(soFile.parentFile), soFile)
-            //md5 = getUrlMd5(md5Url)
+            // md5 = getUrlMd5(md5Url)
             DebugLog.d(javaClass.simpleName, "soMD5:$md5")
             if (md5.length != 32 || soUrl.isEmpty()) {
-                //如果md5或下载的url为空，则调用系统行为进行加载
+                // 如果md5或下载的url为空，则调用系统行为进行加载
                 System.loadLibrary(libName)
                 return
             }
             if (!soFile.exists() || !soFile.isFile) {
                 soFile.delete()
                 download(soUrl, md5, downloadFile, soFile)
-                //如果文件不存在或不是文件，则调用系统行为进行加载
+                // 如果文件不存在或不是文件，则调用系统行为进行加载
                 System.loadLibrary(libName)
                 return
             }
             if (soFile.exists()) {
-                //如果文件存在，则校验md5值
+                // 如果文件存在，则校验md5值
                 val fileMD5 = getFileMD5(soFile)
                 if (fileMD5 != null && fileMD5.equals(md5, ignoreCase = true)) {
-                    //md5值一样，则加载
+                    // md5值一样，则加载
                     System.load(soFile.absolutePath)
                     DebugLog.d(javaClass.simpleName, "load from:$soFile")
                     return
                 }
-                //md5不一样则删除
+                // md5不一样则删除
                 soFile.delete()
             }
-            //不存在则下载
+            // 不存在则下载
             download(soUrl, md5, downloadFile, soFile)
-            //使用系统加载方法
+            // 使用系统加载方法
             System.loadLibrary(libName)
         } finally {
             DebugLog.d(javaClass.simpleName, "time:" + (System.currentTimeMillis() - start))
@@ -188,11 +190,13 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader(), Cronet.LoaderInterfa
         return cpuAbi
     }
 
-
     /**
      * 删除历史文件
      */
-    private fun deleteHistoryFile(dir: File, currentFile: File?) {
+    private fun deleteHistoryFile(
+        dir: File,
+        currentFile: File?,
+    ) {
         val files = dir.listFiles()
         @Suppress("SameParameterValue")
         if (files != null && files.isNotEmpty()) {
@@ -211,7 +215,10 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader(), Cronet.LoaderInterfa
     /**
      * 下载文件
      */
-    private fun downloadFileIfNotExist(url: String, destFile: File): Boolean {
+    private fun downloadFileIfNotExist(
+        url: String,
+        destFile: File,
+    ): Boolean {
         var inputStream: InputStream? = null
         var outputStream: OutputStream? = null
         try {
@@ -263,7 +270,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader(), Cronet.LoaderInterfa
         url: String,
         md5: String?,
         downloadTempFile: File,
-        destSuccessFile: File
+        destSuccessFile: File,
     ) {
         if (download) {
             return
@@ -273,7 +280,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader(), Cronet.LoaderInterfa
         Coroutine.async {
             val result = downloadFileIfNotExist(url, downloadTempFile)
             DebugLog.d(javaClass.simpleName, "download result:$result")
-            //文件md5再次校验
+            // 文件md5再次校验
             val fileMD5 = getFileMD5(downloadTempFile)
             if (md5 != null && !md5.equals(fileMD5, ignoreCase = true)) {
                 val delete = downloadTempFile.delete()
@@ -284,7 +291,7 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader(), Cronet.LoaderInterfa
                 return@async
             }
             DebugLog.d(javaClass.simpleName, "download success, copy to $destSuccessFile")
-            //下载成功拷贝文件
+            // 下载成功拷贝文件
             copyFile(downloadTempFile, destSuccessFile)
             cacheInstall = false
             val parentFile = downloadTempFile.parentFile
@@ -296,7 +303,10 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader(), Cronet.LoaderInterfa
     /**
      * 拷贝文件
      */
-    private fun copyFile(source: File?, dest: File?): Boolean {
+    private fun copyFile(
+        source: File?,
+        dest: File?,
+    ): Boolean {
         if (source == null || !source.exists() || !source.isFile || dest == null) {
             return false
         }
@@ -371,5 +381,4 @@ object CronetLoader : CronetEngine.Builder.LibraryLoader(), Cronet.LoaderInterfa
         }
         return null
     }
-
 }

@@ -9,12 +9,13 @@ import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.ReadView
 import io.legado.app.ui.book.read.page.provider.ChapterProvider
 
-class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
-
+class ScrollPageDelegate(
+    readView: ReadView,
+) : PageDelegate(readView) {
     // 滑动追踪的时间
     private val velocityDuration = 1000
 
-    //速度追踪器
+    // 速度追踪器
     private val mVelocity: VelocityTracker = VelocityTracker.obtain()
     private val slopSquare get() = readView.pageSlopSquare2
 
@@ -22,10 +23,16 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
 
     override fun onAnimStart(animationSpeed: Int) {
         readView.onScrollAnimStart()
-        //惯性滚动
+        // 惯性滚动
         fling(
-            0, touchY.toInt(), 0, mVelocity.yVelocity.toInt(),
-            0, 0, -10 * viewHeight, 10 * viewHeight
+            0,
+            touchY.toInt(),
+            0,
+            mVelocity.yVelocity.toInt(),
+            0,
+            0,
+            -10 * viewHeight,
+            10 * viewHeight,
         )
     }
 
@@ -34,16 +41,16 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
     }
 
     override fun onTouch(event: MotionEvent) {
-        //在多点触控时，事件不走ACTION_DOWN分支而产生的特殊事件处理
+        // 在多点触控时，事件不走ACTION_DOWN分支而产生的特殊事件处理
         if (event.actionMasked == MotionEvent.ACTION_POINTER_DOWN) {
-            //当多个手指同时按下的情况，将最后一个按下的手指的坐标设置为起始坐标，所以只有最后一个手指的滑动事件被处理
+            // 当多个手指同时按下的情况，将最后一个按下的手指的坐标设置为起始坐标，所以只有最后一个手指的滑动事件被处理
             readView.setStartPoint(
                 event.getX(event.pointerCount - 1),
                 event.getY(event.pointerCount - 1),
-                false
+                false,
             )
         } else if (event.actionMasked == MotionEvent.ACTION_POINTER_UP) {
-            //当多个手指同时按下的情况，当抬起一个手指时，起始坐标恢复为第一次按下的手指的坐标
+            // 当多个手指同时按下的情况，当抬起一个手指时，起始坐标恢复为第一次按下的手指的坐标
             readView.setStartPoint(event.x, event.y, false)
             return
         }
@@ -74,8 +81,8 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
     private fun onScroll(event: MotionEvent) {
         mVelocity.addMovement(event)
         mVelocity.computeCurrentVelocity(velocityDuration)
-        //取最后添加(即最新的)一个触摸点来计算滚动位置
-        //多点触控时即最后按下的手指产生的事件点
+        // 取最后添加(即最新的)一个触摸点来计算滚动位置
+        // 多点触控时即最后按下的手指产生的事件点
         val pointX = event.getX(event.pointerCount - 1)
         val pointY = event.getY(event.pointerCount - 1)
         if (isMoved || readView.isLongScreenShot()) {
@@ -163,7 +170,11 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
         if (!isTextStyle && visiblePage.hasImageOrEmpty()) {
             return -visibleHeight
         }
-        val lastLineTop = visiblePage.lines.last().lineTop.toInt()
+        val lastLineTop =
+            visiblePage.lines
+                .last()
+                .lineTop
+                .toInt()
         val offset = lastLineTop - ChapterProvider.paddingTop
         return -offset
     }
@@ -179,7 +190,11 @@ class ScrollPageDelegate(readView: ReadView) : PageDelegate(readView) {
         if (!isTextStyle && visiblePage.hasImageOrEmpty()) {
             return visibleHeight
         }
-        val firstLineBottom = visiblePage.lines.first().lineBottom.toInt()
+        val firstLineBottom =
+            visiblePage.lines
+                .first()
+                .lineBottom
+                .toInt()
         val offset = visibleHeight - (firstLineBottom - ChapterProvider.paddingTop)
         return offset
     }

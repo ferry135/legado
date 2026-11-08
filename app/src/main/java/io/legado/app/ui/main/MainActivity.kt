@@ -61,10 +61,10 @@ import kotlin.coroutines.suspendCoroutine
 /**
  * 主界面
  */
-class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
+class MainActivity :
+    VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     BottomNavigationView.OnNavigationItemSelectedListener,
     BottomNavigationView.OnNavigationItemReselectedListener {
-
     override val binding by viewBinding(ActivityMainBinding::inflate)
     override val viewModel by viewModels<MainViewModel>()
     private val idBookshelf = 0
@@ -130,16 +130,16 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         lifecycleScope.launch {
-            //隐私协议
+            // 隐私协议
             if (!privacyPolicy()) return@launch
-            //版本更新
+            // 版本更新
             upVersion()
-            //设置本地密码
+            // 设置本地密码
             setLocalPassword()
             notifyAppCrash()
-            //备份同步
+            // 备份同步
             backupSync()
-            //自动更新书籍
+            // 自动更新书籍
             val isAutoRefreshedBook = savedInstanceState?.getBoolean("isAutoRefreshedBook") ?: false
             if (AppConfig.autoRefreshBook && !isAutoRefreshedBook) {
                 binding.viewPagerMain.postDelayed(1000) {
@@ -264,9 +264,10 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             return@suspendCoroutine
         }
         alert(R.string.set_local_password, R.string.set_local_password_summary) {
-            val editTextBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = "password"
-            }
+            val editTextBinding =
+                DialogEditTextBinding.inflate(layoutInflater).apply {
+                    editView.hint = "password"
+                }
             customView {
                 editTextBinding.root
             }
@@ -380,9 +381,10 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     private fun upHomePage() {
         when (AppConfig.defaultHomePage) {
             "bookshelf" -> {}
-            "explore" -> if (AppConfig.showDiscovery) {
-                binding.viewPagerMain.setCurrentItem(realPositions.indexOf(idExplore), false)
-            }
+            "explore" ->
+                if (AppConfig.showDiscovery) {
+                    binding.viewPagerMain.setCurrentItem(realPositions.indexOf(idExplore), false)
+                }
 
             "my" -> binding.viewPagerMain.setCurrentItem(realPositions.indexOf(idMy), false)
         }
@@ -397,51 +399,48 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
     }
 
     private inner class PageChangeCallback : ViewPager.SimpleOnPageChangeListener() {
-
         override fun onPageSelected(position: Int) {
             pagePosition = position
             binding.bottomNavigationView.menu
-                .getItem(realPositions[position]).isChecked = true
+                .getItem(realPositions[position])
+                .isChecked = true
         }
-
     }
 
     @Suppress("DEPRECATION")
-    private inner class TabFragmentPageAdapter(fm: FragmentManager) :
-        FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-
-        private fun getId(position: Int): Int {
-            return getFragmentId(position)
-        }
+    private inner class TabFragmentPageAdapter(
+        fm: FragmentManager,
+    ) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+        private fun getId(position: Int): Int = getFragmentId(position)
 
         override fun getItemPosition(any: Any): Int {
-            val position = (any as MainFragmentInterface).position
-                ?: return POSITION_NONE
+            val position =
+                (any as MainFragmentInterface).position
+                    ?: return POSITION_NONE
             val fragmentId = getId(position)
-            if ((fragmentId == idBookshelf1 && any is BookshelfFragment1)
-                || (fragmentId == idBookshelf2 && any is BookshelfFragment2)
-                || (fragmentId == idExplore && any is ExploreFragment)
-                || (fragmentId == idMy && any is MyFragment)
+            if ((fragmentId == idBookshelf1 && any is BookshelfFragment1) ||
+                (fragmentId == idBookshelf2 && any is BookshelfFragment2) ||
+                (fragmentId == idExplore && any is ExploreFragment) ||
+                (fragmentId == idMy && any is MyFragment)
             ) {
                 return POSITION_UNCHANGED
             }
             return POSITION_NONE
         }
 
-        override fun getItem(position: Int): Fragment {
-            return when (getId(position)) {
-                idBookshelf1 -> BookshelfFragment1(position)
-                idBookshelf2 -> BookshelfFragment2(position)
-                idExplore -> ExploreFragment(position)
-                else -> MyFragment(position)
-            }
+        override fun getItem(position: Int): Fragment = when (getId(position)) {
+            idBookshelf1 -> BookshelfFragment1(position)
+            idBookshelf2 -> BookshelfFragment2(position)
+            idExplore -> ExploreFragment(position)
+            else -> MyFragment(position)
         }
 
-        override fun getCount(): Int {
-            return bottomMenuCount
-        }
+        override fun getCount(): Int = bottomMenuCount
 
-        override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        override fun instantiateItem(
+            container: ViewGroup,
+            position: Int,
+        ): Any {
             var fragment = super.instantiateItem(container, position) as Fragment
             if (fragment.isCreated && getItemPosition(fragment) == POSITION_NONE) {
                 destroyItem(container, position, fragment)
@@ -450,7 +449,5 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
             fragmentMap[getId(position)] = fragment
             return fragment
         }
-
     }
-
 }

@@ -47,10 +47,8 @@ object ZipUtils {
      */
     suspend fun zipFiles(
         srcFiles: Collection<String>,
-        zipFilePath: String
-    ): Boolean {
-        return zipFiles(srcFiles, zipFilePath, null)
-    }
+        zipFilePath: String,
+    ): Boolean = zipFiles(srcFiles, zipFilePath, null)
 
     /**
      * Zip the files.
@@ -64,13 +62,14 @@ object ZipUtils {
     suspend fun zipFiles(
         srcFilePaths: Collection<String>?,
         zipFilePath: String?,
-        comment: String?
+        comment: String?,
     ): Boolean = withContext(IO) {
         if (srcFilePaths == null || zipFilePath == null) return@withContext false
         ZipOutputStream(FileOutputStream(zipFilePath)).use {
             for (srcFile in srcFilePaths) {
-                if (!zipFile(getFileByPath(srcFile)!!, "", it, comment))
+                if (!zipFile(getFileByPath(srcFile)!!, "", it, comment)) {
                     return@withContext false
+                }
             }
             return@withContext true
         }
@@ -90,7 +89,7 @@ object ZipUtils {
     fun zipFiles(
         srcFiles: Collection<File>?,
         zipFile: File?,
-        comment: String? = null
+        comment: String? = null,
     ): Boolean {
         if (srcFiles == null || zipFile == null) return false
         ZipOutputStream(FileOutputStream(zipFile)).use {
@@ -112,10 +111,8 @@ object ZipUtils {
     @Throws(IOException::class)
     fun zipFile(
         srcFilePath: String,
-        zipFilePath: String
-    ): Boolean {
-        return zipFile(getFileByPath(srcFilePath), getFileByPath(zipFilePath), null)
-    }
+        zipFilePath: String,
+    ): Boolean = zipFile(getFileByPath(srcFilePath), getFileByPath(zipFilePath), null)
 
     /**
      * Zip the file.
@@ -130,10 +127,8 @@ object ZipUtils {
     fun zipFile(
         srcFilePath: String,
         zipFilePath: String,
-        comment: String
-    ): Boolean {
-        return zipFile(getFileByPath(srcFilePath), getFileByPath(zipFilePath), comment)
-    }
+        comment: String,
+    ): Boolean = zipFile(getFileByPath(srcFilePath), getFileByPath(zipFilePath), comment)
 
     /**
      * Zip the file.
@@ -149,7 +144,7 @@ object ZipUtils {
     fun zipFile(
         srcFile: File?,
         zipFile: File?,
-        comment: String? = null
+        comment: String? = null,
     ): Boolean {
         if (srcFile == null || zipFile == null) return false
         ZipOutputStream(FileOutputStream(zipFile)).use { zos ->
@@ -162,7 +157,7 @@ object ZipUtils {
         srcFile: File,
         rootPath: String,
         zos: ZipOutputStream,
-        comment: String?
+        comment: String?,
     ): Boolean {
         var rootPath1 = rootPath
         if (!srcFile.exists()) return true
@@ -192,46 +187,38 @@ object ZipUtils {
     }
 
     @Throws(SecurityException::class)
-    fun unZipToPath(file: File, path: String, filter: ((String) -> Boolean)? = null): List<File> {
-        return FileInputStream(file).use {
-            unZipToPath(it, path, filter)
-        }
+    fun unZipToPath(file: File, path: String, filter: ((String) -> Boolean)? = null): List<File> = FileInputStream(file).use {
+        unZipToPath(it, path, filter)
     }
 
     @Throws(SecurityException::class)
-    fun unZipToPath(file: File, dir: File, filter: ((String) -> Boolean)? = null): List<File> {
-        return FileInputStream(file).use {
-            unZipToPath(it, dir, filter)
-        }
+    fun unZipToPath(file: File, dir: File, filter: ((String) -> Boolean)? = null): List<File> = FileInputStream(file).use {
+        unZipToPath(it, dir, filter)
     }
 
     @Throws(SecurityException::class)
     fun unZipToPath(
         inputStream: InputStream,
         path: String,
-        filter: ((String) -> Boolean)? = null
-    ): List<File> {
-        return ZipInputStream(inputStream).use {
-            unZipToPath(it, File(path), filter)
-        }
+        filter: ((String) -> Boolean)? = null,
+    ): List<File> = ZipInputStream(inputStream).use {
+        unZipToPath(it, File(path), filter)
     }
 
     @Throws(SecurityException::class)
     fun unZipToPath(
         inputStream: InputStream,
         dir: File,
-        filter: ((String) -> Boolean)? = null
-    ): List<File> {
-        return ZipInputStream(inputStream).use {
-            unZipToPath(it, dir, filter)
-        }
+        filter: ((String) -> Boolean)? = null,
+    ): List<File> = ZipInputStream(inputStream).use {
+        unZipToPath(it, dir, filter)
     }
 
     @Throws(SecurityException::class)
     private fun unZipToPath(
         zipInputStream: ZipInputStream,
         dir: File,
-        filter: ((String) -> Boolean)? = null
+        filter: ((String) -> Boolean)? = null,
     ): List<File> {
         val files = arrayListOf<File>()
         var entry: ZipEntry?
@@ -268,17 +255,15 @@ object ZipUtils {
     @Throws(SecurityException::class)
     fun getFilesName(
         inputStream: InputStream,
-        filter: ((String) -> Boolean)? = null
-    ): List<String> {
-        return ZipInputStream(inputStream).use {
-            getFilesName(it, filter)
-        }
+        filter: ((String) -> Boolean)? = null,
+    ): List<String> = ZipInputStream(inputStream).use {
+        getFilesName(it, filter)
     }
 
     @Throws(SecurityException::class)
     private fun getFilesName(
         zipInputStream: ZipInputStream,
-        filter: ((String) -> Boolean)? = null
+        filter: ((String) -> Boolean)? = null,
     ): List<String> {
         val fileNames = mutableListOf<String>()
         var entry: ZipEntry?
@@ -287,8 +272,9 @@ object ZipUtils {
                 continue
             }
             val fileName = entry!!.name
-            if (filter != null && filter.invoke(fileName))
+            if (filter != null && filter.invoke(fileName)) {
                 fileNames.add(fileName)
+            }
         }
         return fileNames
     }
@@ -301,9 +287,7 @@ object ZipUtils {
      * @throws IOException if an I/O error has occurred
      */
     @Throws(IOException::class)
-    fun getFilesPath(zipFilePath: String): List<String>? {
-        return getFilesPath(getFileByPath(zipFilePath))
-    }
+    fun getFilesPath(zipFilePath: String): List<String>? = getFilesPath(getFileByPath(zipFilePath))
 
     /**
      * Return the files' path in ZIP file.
@@ -339,9 +323,7 @@ object ZipUtils {
      * @throws IOException if an I/O error has occurred
      */
     @Throws(IOException::class)
-    fun getComments(zipFilePath: String): List<String>? {
-        return getComments(getFileByPath(zipFilePath))
-    }
+    fun getComments(zipFilePath: String): List<String>? = getComments(getFileByPath(zipFilePath))
 
     /**
      * Return the files' comment in ZIP file.
@@ -364,9 +346,7 @@ object ZipUtils {
         return comments
     }
 
-    private fun createOrExistsDir(file: File?): Boolean {
-        return file != null && if (file.exists()) file.isDirectory else file.mkdirs()
-    }
+    private fun createOrExistsDir(file: File?): Boolean = file != null && if (file.exists()) file.isDirectory else file.mkdirs()
 
     private fun createOrExistsFile(file: File?): Boolean {
         if (file == null) return false
@@ -380,9 +360,7 @@ object ZipUtils {
         }
     }
 
-    private fun getFileByPath(filePath: String): File? {
-        return if (isSpace(filePath)) null else File(filePath)
-    }
+    private fun getFileByPath(filePath: String): File? = if (isSpace(filePath)) null else File(filePath)
 
     private fun isSpace(s: String?): Boolean {
         if (s == null) return true

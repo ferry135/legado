@@ -49,29 +49,34 @@ import io.legado.app.utils.toastOnUi
 import splitties.init.appCtx
 import java.io.FileOutputStream
 
-
 @Suppress("SameParameterValue")
-class ThemeConfigFragment : PreferenceFragment(),
+class ThemeConfigFragment :
+    PreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener,
     MenuProvider {
-
     private val requestCodeBgLight = 121
     private val requestCodeBgDark = 122
-    private val selectImage = registerForActivityResult(SelectImageContract()) {
-        it.uri?.let { uri ->
-            when (it.requestCode) {
-                requestCodeBgLight -> setBgFromUri(uri, PreferKey.bgImage) {
-                    upTheme(false)
-                }
+    private val selectImage =
+        registerForActivityResult(SelectImageContract()) {
+            it.uri?.let { uri ->
+                when (it.requestCode) {
+                    requestCodeBgLight ->
+                        setBgFromUri(uri, PreferKey.bgImage) {
+                            upTheme(false)
+                        }
 
-                requestCodeBgDark -> setBgFromUri(uri, PreferKey.bgImageN) {
-                    upTheme(true)
+                    requestCodeBgDark ->
+                        setBgFromUri(uri, PreferKey.bgImageN) {
+                            upTheme(true)
+                        }
                 }
             }
         }
-    }
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+    override fun onCreatePreferences(
+        savedInstanceState: Bundle?,
+        rootKey: String?,
+    ) {
         addPreferencesFromResource(R.xml.pref_config_theme)
         if (Build.VERSION.SDK_INT < 26) {
             preferenceScreen.removePreferenceRecursively(PreferKey.launcherIcon)
@@ -102,7 +107,10 @@ class ThemeConfigFragment : PreferenceFragment(),
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         activity?.setTitle(R.string.theme_setting)
         listView.setEdgeEffectColor(primaryColor)
@@ -119,7 +127,10 @@ class ThemeConfigFragment : PreferenceFragment(),
         preferenceManager.sharedPreferences?.unregisterOnSharedPreferenceChangeListener(this)
     }
 
-    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+    override fun onCreateMenu(
+        menu: Menu,
+        menuInflater: MenuInflater,
+    ) {
         menuInflater.inflate(R.menu.theme_config, menu)
         menu.applyTint(requireContext())
     }
@@ -135,7 +146,10 @@ class ThemeConfigFragment : PreferenceFragment(),
         return false
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+    override fun onSharedPreferenceChanged(
+        sharedPreferences: SharedPreferences?,
+        key: String?,
+    ) {
         sharedPreferences ?: return
         when (key) {
             PreferKey.launcherIcon -> LauncherIconHelp.changeIcon(getPrefString(key))
@@ -144,69 +158,74 @@ class ThemeConfigFragment : PreferenceFragment(),
             PreferKey.cPrimary,
             PreferKey.cAccent,
             PreferKey.cBackground,
-            PreferKey.cBBackground -> {
+            PreferKey.cBBackground,
+            -> {
                 upTheme(false)
             }
 
             PreferKey.cNPrimary,
             PreferKey.cNAccent,
             PreferKey.cNBackground,
-            PreferKey.cNBBackground -> {
+            PreferKey.cNBBackground,
+            -> {
                 upTheme(true)
             }
 
             PreferKey.bgImage,
-            PreferKey.bgImageN -> {
+            PreferKey.bgImageN,
+            -> {
                 upPreferenceSummary(key, getPrefString(key))
             }
         }
-
     }
 
     @SuppressLint("PrivateResource")
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (val key = preference.key) {
-            PreferKey.barElevation -> NumberPickerDialog(requireContext())
-                .setTitle(getString(R.string.bar_elevation))
-                .setMaxValue(32)
-                .setMinValue(0)
-                .setValue(AppConfig.elevation)
-                .setCustomButton((R.string.btn_default_s)) {
-                    AppConfig.elevation = AppConst.sysElevation
-                    recreateActivities()
-                }
-                .show {
-                    AppConfig.elevation = it
-                    recreateActivities()
-                }
+            PreferKey.barElevation ->
+                NumberPickerDialog(requireContext())
+                    .setTitle(getString(R.string.bar_elevation))
+                    .setMaxValue(32)
+                    .setMinValue(0)
+                    .setValue(AppConfig.elevation)
+                    .setCustomButton((R.string.btn_default_s)) {
+                        AppConfig.elevation = AppConst.sysElevation
+                        recreateActivities()
+                    }.show {
+                        AppConfig.elevation = it
+                        recreateActivities()
+                    }
 
-            PreferKey.fontScale -> NumberPickerDialog(requireContext())
-                .setTitle(getString(R.string.font_scale))
-                .setMaxValue(16)
-                .setMinValue(8)
-                .setValue(10)
-                .setCustomButton((R.string.btn_default_s)) {
-                    putPrefInt(PreferKey.fontScale, 0)
-                    recreateActivities()
-                }
-                .show {
-                    putPrefInt(PreferKey.fontScale, it)
-                    recreateActivities()
-                }
+            PreferKey.fontScale ->
+                NumberPickerDialog(requireContext())
+                    .setTitle(getString(R.string.font_scale))
+                    .setMaxValue(16)
+                    .setMinValue(8)
+                    .setValue(10)
+                    .setCustomButton((R.string.btn_default_s)) {
+                        putPrefInt(PreferKey.fontScale, 0)
+                        recreateActivities()
+                    }.show {
+                        putPrefInt(PreferKey.fontScale, it)
+                        recreateActivities()
+                    }
 
             PreferKey.bgImage -> selectBgAction(false)
             PreferKey.bgImageN -> selectBgAction(true)
             "themeList" -> ThemeListDialog().show(childFragmentManager, "themeList")
             "saveDayTheme",
-            "saveNightTheme" -> alertSaveTheme(key)
+            "saveNightTheme",
+            -> alertSaveTheme(key)
 
-            "coverConfig" -> startActivity<ConfigActivity> {
-                putExtra("configTag", ConfigTag.COVER_CONFIG)
-            }
+            "coverConfig" ->
+                startActivity<ConfigActivity> {
+                    putExtra("configTag", ConfigTag.COVER_CONFIG)
+                }
 
-            "welcomeStyle" -> startActivity<ConfigActivity> {
-                putExtra("configTag", ConfigTag.WELCOME_CONFIG)
-            }
+            "welcomeStyle" ->
+                startActivity<ConfigActivity> {
+                    putExtra("configTag", ConfigTag.WELCOME_CONFIG)
+                }
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -214,9 +233,10 @@ class ThemeConfigFragment : PreferenceFragment(),
     @SuppressLint("InflateParams")
     private fun alertSaveTheme(key: String) {
         alert(R.string.theme_name) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = "name"
-            }
+            val alertBinding =
+                DialogEditTextBinding.inflate(layoutInflater).apply {
+                    editView.hint = "name"
+                }
             customView { alertBinding.root }
             okButton {
                 alertBinding.editView.text?.toString()?.let { themeName ->
@@ -238,18 +258,20 @@ class ThemeConfigFragment : PreferenceFragment(),
     private fun selectBgAction(isNight: Boolean) {
         val bgKey = if (isNight) PreferKey.bgImageN else PreferKey.bgImage
         val blurringKey = if (isNight) PreferKey.bgImageNBlurring else PreferKey.bgImageBlurring
-        val actions = arrayListOf(
-            getString(R.string.background_image_blurring),
-            getString(R.string.select_image)
-        )
+        val actions =
+            arrayListOf(
+                getString(R.string.background_image_blurring),
+                getString(R.string.select_image),
+            )
         if (!getPrefString(bgKey).isNullOrEmpty()) {
             actions.add(getString(R.string.delete))
         }
         context?.selector(items = actions) { _, i ->
             when (i) {
-                0 -> alertImageBlurring(blurringKey) {
-                    upTheme(isNight)
-                }
+                0 ->
+                    alertImageBlurring(blurringKey) {
+                        upTheme(isNight)
+                    }
 
                 1 -> {
                     if (isNight) {
@@ -267,23 +289,29 @@ class ThemeConfigFragment : PreferenceFragment(),
         }
     }
 
-    private fun alertImageBlurring(preferKey: String, success: () -> Unit) {
+    private fun alertImageBlurring(
+        preferKey: String,
+        success: () -> Unit,
+    ) {
         alert(R.string.background_image_blurring) {
-            val alertBinding = DialogImageBlurringBinding.inflate(layoutInflater).apply {
-                getPrefInt(preferKey, 0).let {
-                    seekBar.progress = it
-                    textViewValue.text = it.toString()
-                }
-                seekBar.setOnSeekBarChangeListener(object : SeekBarChangeListener {
-                    override fun onProgressChanged(
-                        seekBar: SeekBar,
-                        progress: Int,
-                        fromUser: Boolean
-                    ) {
-                        textViewValue.text = progress.toString()
+            val alertBinding =
+                DialogImageBlurringBinding.inflate(layoutInflater).apply {
+                    getPrefInt(preferKey, 0).let {
+                        seekBar.progress = it
+                        textViewValue.text = it.toString()
                     }
-                })
-            }
+                    seekBar.setOnSeekBarChangeListener(
+                        object : SeekBarChangeListener {
+                            override fun onProgressChanged(
+                                seekBar: SeekBar,
+                                progress: Int,
+                                fromUser: Boolean,
+                            ) {
+                                textViewValue.text = progress.toString()
+                            }
+                        },
+                    )
+                }
             customView { alertBinding.root }
             okButton {
                 alertBinding.seekBar.progress.let {
@@ -308,11 +336,15 @@ class ThemeConfigFragment : PreferenceFragment(),
         postEvent(EventBus.RECREATE, "")
     }
 
-    private fun upPreferenceSummary(preferenceKey: String, value: String? = null) {
+    private fun upPreferenceSummary(
+        preferenceKey: String,
+        value: String? = null,
+    ) {
         val preference = findPreference<Preference>(preferenceKey) ?: return
         when (preferenceKey) {
-            PreferKey.barElevation -> preference.summary =
-                getString(R.string.bar_elevation_s, value)
+            PreferKey.barElevation ->
+                preference.summary =
+                    getString(R.string.bar_elevation_s, value)
 
             PreferKey.fontScale -> {
                 val fontScale = AppContextWrapper.getFontScale(requireContext())
@@ -320,34 +352,42 @@ class ThemeConfigFragment : PreferenceFragment(),
             }
 
             PreferKey.bgImage,
-            PreferKey.bgImageN -> preference.summary = if (value.isNullOrBlank()) {
-                getString(R.string.select_image)
-            } else {
-                value
-            }
+            PreferKey.bgImageN,
+            ->
+                preference.summary =
+                    if (value.isNullOrBlank()) {
+                        getString(R.string.select_image)
+                    } else {
+                        value
+                    }
 
             else -> preference.summary = value
         }
     }
 
-    private fun setBgFromUri(uri: Uri, preferenceKey: String, success: () -> Unit) {
+    private fun setBgFromUri(
+        uri: Uri,
+        preferenceKey: String,
+        success: () -> Unit,
+    ) {
         readUri(uri) { fileDoc, inputStream ->
-            kotlin.runCatching {
-                var file = requireContext().externalFiles
-                val suffix = fileDoc.name.substringAfterLast(".")
-                val fileName = uri.inputStream(requireContext()).getOrThrow().use {
-                    MD5Utils.md5Encode(it) + ".$suffix"
+            kotlin
+                .runCatching {
+                    var file = requireContext().externalFiles
+                    val suffix = fileDoc.name.substringAfterLast(".")
+                    val fileName =
+                        uri.inputStream(requireContext()).getOrThrow().use {
+                            MD5Utils.md5Encode(it) + ".$suffix"
+                        }
+                    file = FileUtils.createFileIfNotExist(file, preferenceKey, fileName)
+                    FileOutputStream(file).use {
+                        inputStream.copyTo(it)
+                    }
+                    putPrefString(preferenceKey, file.absolutePath)
+                    success()
+                }.onFailure {
+                    appCtx.toastOnUi(it.localizedMessage)
                 }
-                file = FileUtils.createFileIfNotExist(file, preferenceKey, fileName)
-                FileOutputStream(file).use {
-                    inputStream.copyTo(it)
-                }
-                putPrefString(preferenceKey, file.absolutePath)
-                success()
-            }.onFailure {
-                appCtx.toastOnUi(it.localizedMessage)
-            }
         }
     }
-
 }

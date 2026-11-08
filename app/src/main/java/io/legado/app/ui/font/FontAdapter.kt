@@ -14,22 +14,19 @@ import io.legado.app.utils.*
 import java.io.File
 import java.net.URLDecoder
 
-class FontAdapter(context: Context, curFilePath: String, val callBack: CallBack) :
-    RecyclerAdapter<FileDoc, ItemFontBinding>(context) {
+class FontAdapter(context: Context, curFilePath: String, val callBack: CallBack) : RecyclerAdapter<FileDoc, ItemFontBinding>(context) {
 
     private val curName = kotlin.runCatching {
         URLDecoder.decode(curFilePath, "utf-8")
     }.getOrNull()?.substringAfterLast(File.separator)
 
-    override fun getViewBinding(parent: ViewGroup): ItemFontBinding {
-        return ItemFontBinding.inflate(inflater, parent, false)
-    }
+    override fun getViewBinding(parent: ViewGroup): ItemFontBinding = ItemFontBinding.inflate(inflater, parent, false)
 
     override fun convert(
         holder: ItemViewHolder,
         binding: ItemFontBinding,
         item: FileDoc,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
         binding.run {
             kotlin.runCatching {

@@ -20,7 +20,9 @@ import io.legado.app.model.webBook.WebBook
 import io.legado.app.utils.postEvent
 import io.legado.app.utils.toastOnUi
 
-class AudioPlayViewModel(application: Application) : BaseViewModel(application) {
+class AudioPlayViewModel(
+    application: Application,
+) : BaseViewModel(application) {
     val titleData = MutableLiveData<String>()
     val coverData = MutableLiveData<String>()
 
@@ -92,7 +94,11 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
         }
     }
 
-    fun changeTo(source: BookSource, book: Book, toc: List<BookChapter>) {
+    fun changeTo(
+        source: BookSource,
+        book: Book,
+        toc: List<BookChapter>,
+    ) {
         execute {
             AudioPlay.book?.migrateTo(book, toc)
             book.removeType(BookType.updateError)
@@ -116,5 +122,4 @@ class AudioPlayViewModel(application: Application) : BaseViewModel(application) 
             success?.invoke()
         }
     }
-
 }

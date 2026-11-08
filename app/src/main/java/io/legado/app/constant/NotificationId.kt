@@ -5,7 +5,6 @@ package io.legado.app.constant
  */
 @Suppress("ConstPropertyName")
 object NotificationId {
-
     const val ReadAloudService = 101
     const val AudioPlayService = 102
     const val CacheBookService = 103
@@ -15,5 +14,4 @@ object NotificationId {
     const val CheckSourceService = 107
     const val Download = 10000
     const val ExportBook = 201
-
 }

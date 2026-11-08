@@ -24,7 +24,7 @@ import io.legado.app.R
 import io.legado.app.ui.widget.dialog.TextDialog
 
 inline fun <reified T : DialogFragment> AppCompatActivity.showDialogFragment(
-    arguments: Bundle.() -> Unit = {}
+    arguments: Bundle.() -> Unit = {},
 ) {
     @Suppress("DEPRECATION")
     val dialog = T::class.java.newInstance()
@@ -51,10 +51,11 @@ val WindowManager.windowSize: DisplayMetrics
         val displayMetrics = DisplayMetrics()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val windowMetrics: WindowMetrics = currentWindowMetrics
-            val insets = windowMetrics.windowInsets
-                .getInsetsIgnoringVisibility(
-                    WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout()
-                )
+            val insets =
+                windowMetrics.windowInsets
+                    .getInsetsIgnoringVisibility(
+                        WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout(),
+                    )
             val windowWidth = windowMetrics.bounds.width()
             val windowHeight = windowMetrics.bounds.height()
             var insetsWidth = insets.left + insets.right
@@ -82,7 +83,7 @@ fun Activity.fullScreen() {
         View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
     window.clearFlags(
         WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-                or WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
+            or WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION,
     )
     window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
 }
@@ -94,7 +95,7 @@ fun Activity.fullScreen() {
 fun Activity.setStatusBarColorAuto(
     @ColorInt color: Int,
     isTransparent: Boolean,
-    fullScreen: Boolean
+    fullScreen: Boolean,
 ) {
     val isLightBar = ColorUtils.isColorLight(color)
     if (fullScreen) {
@@ -116,12 +117,12 @@ fun Activity.setLightStatusBar(isLightBar: Boolean) {
             if (isLightBar) {
                 it.setSystemBarsAppearance(
                     WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
-                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
                 )
             } else {
                 it.setSystemBarsAppearance(
                     0,
-                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
                 )
             }
         }
@@ -144,7 +145,9 @@ fun Activity.setLightStatusBar(isLightBar: Boolean) {
  * 设置导航栏颜色
  */
 @Suppress("DEPRECATION")
-fun Activity.setNavigationBarColorAuto(@ColorInt color: Int) {
+fun Activity.setNavigationBarColorAuto(
+    @ColorInt color: Int,
+) {
     val isLightBor = ColorUtils.isColorLight(color)
     window.navigationBarColor = color
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -152,12 +155,12 @@ fun Activity.setNavigationBarColorAuto(@ColorInt color: Int) {
             if (isLightBor) {
                 it.setSystemBarsAppearance(
                     WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
-                    WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+                    WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
                 )
             } else {
                 it.setSystemBarsAppearance(
                     0,
-                    WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+                    WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
                 )
             }
         }
@@ -166,11 +169,12 @@ fun Activity.setNavigationBarColorAuto(@ColorInt color: Int) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val decorView = window.decorView
         var systemUiVisibility = decorView.systemUiVisibility
-        systemUiVisibility = if (isLightBor) {
-            systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-        } else {
-            systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()
-        }
+        systemUiVisibility =
+            if (isLightBor) {
+                systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+            } else {
+                systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()
+            }
         decorView.systemUiVisibility = systemUiVisibility
     }
 }
@@ -197,7 +201,7 @@ fun Activity.toggleSystemBar(show: Boolean) {
     }
 }
 
-/////以下方法需要在View完全被绘制出来之后调用，否则判断不了,在比如 onWindowFocusChanged（）方法中可以得到正确的结果/////
+// ///以下方法需要在View完全被绘制出来之后调用，否则判断不了,在比如 onWindowFocusChanged（）方法中可以得到正确的结果/////
 
 /**
  * 返回NavigationBar
@@ -208,8 +212,8 @@ val Activity.navigationBar: View?
         for (i in 0 until viewGroup.childCount) {
             val child = viewGroup.getChildAt(i)
             val childId = child.id
-            if (childId != View.NO_ID
-                && resources.getResourceEntryName(childId) == "navigationBarBackground"
+            if (childId != View.NO_ID &&
+                resources.getResourceEntryName(childId) == "navigationBarBackground"
             ) {
                 return child
             }
@@ -249,6 +253,6 @@ val Activity.navigationBarGravity: Int
  * 显示目录help下的帮助文档
  */
 fun AppCompatActivity.showHelp(fileName: String) {
-    val mdText = String(assets.open("web/help/md/${fileName}.md").readBytes())
+    val mdText = String(assets.open("web/help/md/$fileName.md").readBytes())
     showDialogFragment(TextDialog(getString(R.string.help), mdText, TextDialog.Mode.MD))
 }

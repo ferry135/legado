@@ -42,7 +42,6 @@ import java.util.Locale
 import kotlin.math.roundToInt
 
 class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
-
     private val adapter by lazy { RecordAdapter(this) }
     private var initDataJob: Job? = null
     private var sortMode
@@ -67,7 +66,10 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
         return super.onCompatCreateOptionsMenu(menu)
     }
 
-    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+    override fun onMenuOpened(
+        featureId: Int,
+        menu: Menu,
+    ): Boolean {
         menu.findItem(R.id.menu_enable_record)?.isChecked = AppConfig.enableReadRecord
         when (sortMode) {
             1 -> menu.findItem(R.id.menu_sort_read_long)?.isChecked = true
@@ -130,24 +132,27 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
         searchView.applyTint(primaryTextColor)
         searchView.isSubmitButtonEnabled = true
         searchView.queryHint = getString(R.string.search)
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                searchView.clearFocus()
-                return false
-            }
+        searchView.setOnQueryTextListener(
+            object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    searchView.clearFocus()
+                    return false
+                }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                initData(newText)
-                return false
-            }
-        })
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    initData(newText)
+                    return false
+                }
+            },
+        )
     }
 
     private fun initAllTime() {
         lifecycleScope.launch {
-            val allTime = withContext(IO) {
-                appDb.readRecordDao.allTime
-            }
+            val allTime =
+                withContext(IO) {
+                    appDb.readRecordDao.allTime
+                }
             binding.tvReadingTime.text = formatDuring(allTime)
         }
     }
@@ -156,45 +161,58 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
         // 竞态防护（评审项 1）：onQueryTextChange 逐字符触发且不取消前一查询，IO 并行下
         // 旧 searchKey 的结果可能晚于新查询返回并覆盖列表与空态；取消前一查询，只提交最后一次
         initDataJob?.cancel()
-        initDataJob = lifecycleScope.launch {
-            val readRecords = withContext(IO) {
-                appDb.readRecordDao.search(searchKey ?: "").let { records ->
-                    when (sortMode) {
-                        1 -> records.sortedByDescending { it.readTime }
-                        2 -> records.sortedByDescending { it.lastRead }
-                        else -> records.sortedWith { o1, o2 ->
-                            o1.bookName.cnCompare(o2.bookName)
+        initDataJob =
+            lifecycleScope.launch {
+                val readRecords =
+                    withContext(IO) {
+                        appDb.readRecordDao.search(searchKey ?: "").let { records ->
+                            when (sortMode) {
+                                1 -> records.sortedByDescending { it.readTime }
+                                2 -> records.sortedByDescending { it.lastRead }
+                                else ->
+                                    records.sortedWith { o1, o2 ->
+                                        o1.bookName.cnCompare(o2.bookName)
+                                    }
+                            }
                         }
                     }
-                }
+                adapter.setItems(readRecords)
+                upEmptyTip(searchKey, readRecords.isEmpty())
             }
-            adapter.setItems(readRecords)
-            upEmptyTip(searchKey, readRecords.isEmpty())
-        }
     }
 
     // 空态按 searchKey 分支（设计稿 §05 第 8 条）：initData 同时服务首载与搜索实时过滤
     // （onQueryTextChange → initData(newText)），不能只判「结果为空」——
     // 搜索无命中须显示独立文案，不得误显「开启记录」引导
-    private fun upEmptyTip(searchKey: String?, empty: Boolean) {
+    private fun upEmptyTip(
+        searchKey: String?,
+        empty: Boolean,
+    ) {
         binding.emptyTip.isGone = !empty || !searchKey.isNullOrEmpty()
         binding.emptyTipSearch.isGone = !empty || searchKey.isNullOrEmpty()
     }
 
     // 行分割线：绘制范围/取界与 androidx DividerItemDecoration.drawVertical 一致（javap 1.2.0 核实），
     // 仅按 adapter 位置跳过末项，使末行下不画线（对齐 read-record-page.html §01）
-    private inner class RowDivider(context: Context) : RecyclerView.ItemDecoration() {
-
+    private inner class RowDivider(
+        context: Context,
+    ) : RecyclerView.ItemDecoration() {
         private val divider = ContextCompat.getDrawable(context, R.drawable.ic_divider)!!
         private val inset = 16.dpToPx()
         private val bounds = Rect()
 
-        override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
+        override fun onDraw(
+            c: Canvas,
+            parent: RecyclerView,
+            state: RecyclerView.State,
+        ) {
             c.save()
             if (parent.clipToPadding) {
                 c.clipRect(
-                    parent.paddingLeft, parent.paddingTop,
-                    parent.width - parent.paddingRight, parent.height - parent.paddingBottom
+                    parent.paddingLeft,
+                    parent.paddingTop,
+                    parent.width - parent.paddingRight,
+                    parent.height - parent.paddingBottom,
                 )
             }
             val lastPos = state.itemCount - 1
@@ -210,14 +228,12 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
         }
     }
 
-    inner class RecordAdapter(context: Context) :
-        RecyclerAdapter<ReadRecordShow, ItemReadRecordBinding>(context) {
-
+    inner class RecordAdapter(
+        context: Context,
+    ) : RecyclerAdapter<ReadRecordShow, ItemReadRecordBinding>(context) {
         private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
-        override fun getViewBinding(parent: ViewGroup): ItemReadRecordBinding {
-            return ItemReadRecordBinding.inflate(inflater, parent, false)
-        }
+        override fun getViewBinding(parent: ViewGroup): ItemReadRecordBinding = ItemReadRecordBinding.inflate(inflater, parent, false)
 
         override fun convert(
             holder: ItemViewHolder,
@@ -236,14 +252,18 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder, binding: ItemReadRecordBinding) {
+        override fun registerListener(
+            holder: ItemViewHolder,
+            binding: ItemReadRecordBinding,
+        ) {
             binding.apply {
                 root.setOnClickListener {
                     val item = getItem(holder.bindingAdapterPosition) ?: return@setOnClickListener
                     lifecycleScope.launch {
-                        val book = withContext(IO) {
-                            appDb.bookDao.findByName(item.bookName).firstOrNull()
-                        }
+                        val book =
+                            withContext(IO) {
+                                appDb.bookDao.findByName(item.bookName).firstOrNull()
+                            }
                         if (book == null) {
                             SearchActivity.start(this@ReadRecordActivity, item.bookName)
                         } else {
@@ -271,7 +291,6 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
                 noButton()
             }
         }
-
     }
 
     fun formatDuring(mss: Long): String {
@@ -289,5 +308,4 @@ class ReadRecordActivity : BaseActivity<ActivityReadRecordBinding>() {
         }
         return time
     }
-
 }

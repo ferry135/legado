@@ -5,8 +5,9 @@ import android.util.SparseArray
 import androidx.core.util.getOrDefault
 import kotlin.math.ceil
 
-class TextMeasure(private var paint: TextPaint) {
-
+class TextMeasure(
+    private var paint: TextPaint,
+) {
     private var chineseCommonWidth = paint.measureText("一")
     private val asciiWidths = FloatArray(128) { -1f }
     private val codePointWidths = SparseArray<Float>()
@@ -16,7 +17,7 @@ class TextMeasure(private var paint: TextPaint) {
             return asciiWidths[codePoint]
         }
         // 中文 Unicode 范围 U+4E00 - U+9FA5
-        if (codePoint in 19968 .. 40869) {
+        if (codePoint in 19968..40869) {
             return chineseCommonWidth
         }
         return codePointWidths.getOrDefault(codePoint, -1f)
@@ -51,7 +52,6 @@ class TextMeasure(private var paint: TextPaint) {
             }
         }
     }
-
 
     fun measureTextSplit(text: String): Pair<ArrayList<String>, ArrayList<Float>> {
         var needMeasureCodePoints: HashSet<Int>? = null
@@ -139,5 +139,4 @@ class TextMeasure(private var paint: TextPaint) {
         codePointWidths.clear()
         asciiWidths.fill(-1f)
     }
-
 }

@@ -16,5 +16,4 @@ object VMBridgeReflect {
             isAccessible = true
         }.get(null) as ThreadLocal<Any>
     }
-
 }

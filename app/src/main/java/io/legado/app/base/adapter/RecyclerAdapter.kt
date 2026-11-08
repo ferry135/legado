@@ -22,9 +22,9 @@ import java.util.Collections
  * 通用的adapter 可添加header，footer，以及不同类型item
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
-abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Context) :
-    RecyclerView.Adapter<ItemViewHolder>() {
-
+abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(
+    protected val context: Context,
+) : RecyclerView.Adapter<ItemViewHolder>() {
     val inflater: LayoutInflater = LayoutInflater.from(context)
 
     private val headerItems: SparseArray<(parent: ViewGroup) -> ViewBinding> by lazy { SparseArray() }
@@ -110,77 +110,93 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
     fun setItems(
         items: List<ITEM>?,
         itemCallback: DiffUtil.ItemCallback<ITEM>,
-        skipDiff: Boolean = false
+        skipDiff: Boolean = false,
     ) {
         kotlin.runCatching {
             val oldItems = this.items.toList()
             val itemsSize = items?.size ?: 0
             val headerCount = getHeaderCount()
             val footerCount = getFooterCount()
-            val callback = object : DiffUtil.Callback() {
-                override fun getOldListSize(): Int {
-                    return itemCount
-                }
+            val callback =
+                object : DiffUtil.Callback() {
+                    override fun getOldListSize(): Int = itemCount
 
-                override fun getNewListSize(): Int {
-                    return itemsSize + headerCount + footerCount
-                }
+                    override fun getNewListSize(): Int = itemsSize + headerCount + footerCount
 
-                override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                    val oldItem = oldItems.getOrNull(oldItemPosition - headerCount)
-                        ?: return true
-                    val newItem = items?.getOrNull(newItemPosition - headerCount)
-                        ?: return true
-                    return itemCallback.areItemsTheSame(oldItem, newItem)
-                }
+                    override fun areItemsTheSame(
+                        oldItemPosition: Int,
+                        newItemPosition: Int,
+                    ): Boolean {
+                        val oldItem =
+                            oldItems.getOrNull(oldItemPosition - headerCount)
+                                ?: return true
+                        val newItem =
+                            items?.getOrNull(newItemPosition - headerCount)
+                                ?: return true
+                        return itemCallback.areItemsTheSame(oldItem, newItem)
+                    }
 
-                override fun areContentsTheSame(
-                    oldItemPosition: Int,
-                    newItemPosition: Int
-                ): Boolean {
-                    val oldItem = oldItems.getOrNull(oldItemPosition - headerCount)
-                        ?: return true
-                    val newItem = items?.getOrNull(newItemPosition - headerCount)
-                        ?: return true
-                    return itemCallback.areContentsTheSame(oldItem, newItem)
-                }
+                    override fun areContentsTheSame(
+                        oldItemPosition: Int,
+                        newItemPosition: Int,
+                    ): Boolean {
+                        val oldItem =
+                            oldItems.getOrNull(oldItemPosition - headerCount)
+                                ?: return true
+                        val newItem =
+                            items?.getOrNull(newItemPosition - headerCount)
+                                ?: return true
+                        return itemCallback.areContentsTheSame(oldItem, newItem)
+                    }
 
-                override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-                    val oldItem = oldItems.getOrNull(oldItemPosition - headerCount)
-                        ?: return null
-                    val newItem = items?.getOrNull(newItemPosition - headerCount)
-                        ?: return null
-                    return itemCallback.getChangePayload(oldItem, newItem)
+                    override fun getChangePayload(
+                        oldItemPosition: Int,
+                        newItemPosition: Int,
+                    ): Any? {
+                        val oldItem =
+                            oldItems.getOrNull(oldItemPosition - headerCount)
+                                ?: return null
+                        val newItem =
+                            items?.getOrNull(newItemPosition - headerCount)
+                                ?: return null
+                        return itemCallback.getChangePayload(oldItem, newItem)
+                    }
                 }
-            }
             diffJob?.cancel()
-            diffJob = Coroutine.async {
-                val diffResult = if (skipDiff) withTimeoutOrNullAsync(500L) {
-                    DiffUtil.calculateDiff(callback, itemsSize < 2000)
-                } else {
-                    DiffUtil.calculateDiff(callback, itemsSize < 2000)
+            diffJob =
+                Coroutine.async {
+                    val diffResult =
+                        if (skipDiff) {
+                            withTimeoutOrNullAsync(500L) {
+                                DiffUtil.calculateDiff(callback, itemsSize < 2000)
+                            }
+                        } else {
+                            DiffUtil.calculateDiff(callback, itemsSize < 2000)
+                        }
+                    ensureActive()
+                    handler.post {
+                        if (diffResult == null) {
+                            setItems(items)
+                            return@post
+                        }
+                        if (this@RecyclerAdapter.items.isNotEmpty()) {
+                            this@RecyclerAdapter.items.clear()
+                        }
+                        if (items != null) {
+                            this@RecyclerAdapter.items.addAll(items)
+                        }
+                        diffResult.dispatchUpdatesTo(this@RecyclerAdapter)
+                        onCurrentListChanged()
+                    }
                 }
-                ensureActive()
-                handler.post {
-                    if (diffResult == null) {
-                        setItems(items)
-                        return@post
-                    }
-                    if (this@RecyclerAdapter.items.isNotEmpty()) {
-                        this@RecyclerAdapter.items.clear()
-                    }
-                    if (items != null) {
-                        this@RecyclerAdapter.items.addAll(items)
-                    }
-                    diffResult.dispatchUpdatesTo(this@RecyclerAdapter)
-                    onCurrentListChanged()
-                }
-            }
         }
     }
 
     @Synchronized
-    fun setItem(position: Int, item: ITEM) {
+    fun setItem(
+        position: Int,
+        item: ITEM,
+    ) {
         kotlin.runCatching {
             val oldSize = getActualItemCount()
             if (position in 0 until oldSize) {
@@ -203,7 +219,10 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
     }
 
     @Synchronized
-    fun addItems(position: Int, newItems: List<ITEM>) {
+    fun addItems(
+        position: Int,
+        newItems: List<ITEM>,
+    ) {
         kotlin.runCatching {
             if (this.items.addAll(position, newItems)) {
                 notifyItemRangeInserted(position + getHeaderCount(), newItems.size)
@@ -260,7 +279,10 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
     }
 
     @Synchronized
-    fun swapItem(oldPosition: Int, newPosition: Int) {
+    fun swapItem(
+        oldPosition: Int,
+        newPosition: Int,
+    ) {
         kotlin.runCatching {
             val size = getActualItemCount()
             if (oldPosition in 0 until size && newPosition in 0 until size) {
@@ -286,7 +308,10 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
     }
 
     @Synchronized
-    fun updateItem(position: Int, payload: Any) {
+    fun updateItem(
+        position: Int,
+        payload: Any,
+    ) {
         kotlin.runCatching {
             val size = getActualItemCount()
             if (position in 0 until size) {
@@ -296,14 +321,18 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
     }
 
     @Synchronized
-    fun updateItems(fromPosition: Int, toPosition: Int, payloads: Any) {
+    fun updateItems(
+        fromPosition: Int,
+        toPosition: Int,
+        payloads: Any,
+    ) {
         kotlin.runCatching {
             val size = getActualItemCount()
             if (fromPosition in 0 until size && toPosition in 0 until size) {
                 notifyItemRangeChanged(
                     fromPosition + getHeaderCount(),
                     toPosition - fromPosition + 1,
-                    payloads
+                    payloads,
                 )
             }
         }
@@ -328,9 +357,7 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
      */
     fun getActualItemCount() = items.size
 
-
     fun getHeaderCount() = headerItems.size()
-
 
     fun getFooterCount() = footerItems.size()
 
@@ -340,28 +367,37 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
 
     fun getItems(): List<ITEM> = items.toList()
 
-    protected open fun getItemViewType(item: ITEM, position: Int) = 0
+    protected open fun getItemViewType(
+        item: ITEM,
+        position: Int,
+    ) = 0
 
     /**
      * grid 模式下使用
      */
-    protected open fun getSpanSize(viewType: Int, position: Int) = 1
+    protected open fun getSpanSize(
+        viewType: Int,
+        position: Int,
+    ) = 1
 
     final override fun getItemCount() = getActualItemCount() + getHeaderCount() + getFooterCount()
 
     final override fun getItemViewType(position: Int) = when {
         isHeader(position) -> TYPE_HEADER_VIEW + position
         isFooter(position) -> TYPE_FOOTER_VIEW + position - getActualItemCount() - getHeaderCount()
-        else -> getItemByLayoutPosition(position)?.let {
-            getItemViewType(it, getActualPosition(position))
-        } ?: 0
+        else ->
+            getItemByLayoutPosition(position)?.let {
+                getItemViewType(it, getActualPosition(position))
+            } ?: 0
     }
 
     open fun onCurrentListChanged() {
-
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ) = when {
         viewType < TYPE_HEADER_VIEW + getHeaderCount() -> {
             ItemViewHolder(headerItems.get(viewType).invoke(parent))
         }
@@ -377,13 +413,16 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
 
     protected abstract fun getViewBinding(parent: ViewGroup): VB
 
-    final override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {}
+    final override fun onBindViewHolder(
+        holder: ItemViewHolder,
+        position: Int,
+    ) {}
 
     @Suppress("UNCHECKED_CAST")
     final override fun onBindViewHolder(
         holder: ItemViewHolder,
         position: Int,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
         if (!isHeader(holder.layoutPosition) && !isFooter(holder.layoutPosition)) {
             registerListener(holder, (holder.binding as VB))
@@ -423,11 +462,10 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
         super.onAttachedToRecyclerView(recyclerView)
         val manager = recyclerView.layoutManager
         if (manager is GridLayoutManager) {
-            manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                override fun getSpanSize(position: Int): Int {
-                    return getSpanSize(getItemViewType(position), position)
+            manager.spanSizeLookup =
+                object : GridLayoutManager.SpanSizeLookup() {
+                    override fun getSpanSize(position: Int): Int = getSpanSize(getItemViewType(position), position)
                 }
-            }
         }
     }
 
@@ -448,7 +486,10 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
         }
     }
 
-    protected open fun startAnimation(holder: ItemViewHolder, item: ItemAnimation) {
+    protected open fun startAnimation(
+        holder: ItemViewHolder,
+        item: ItemAnimation,
+    ) {
         item.itemAnimation?.let {
             for (anim in it.getAnimators(holder.itemView)) {
                 anim.setDuration(item.itemAnimDuration).start()
@@ -465,22 +506,20 @@ abstract class RecyclerAdapter<ITEM, VB : ViewBinding>(protected val context: Co
         holder: ItemViewHolder,
         binding: VB,
         item: ITEM,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     )
 
     /**
      * 注册事件
      */
-    abstract fun registerListener(holder: ItemViewHolder, binding: VB)
+    abstract fun registerListener(
+        holder: ItemViewHolder,
+        binding: VB,
+    )
 
     companion object {
         private const val TYPE_HEADER_VIEW = Int.MIN_VALUE
         const val TYPE_FOOTER_VIEW = Int.MAX_VALUE - 999
         private val handler by lazy { buildMainHandler() }
     }
-
 }
-
-
-
-

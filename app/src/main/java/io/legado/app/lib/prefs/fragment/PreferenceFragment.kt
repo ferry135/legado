@@ -15,10 +15,12 @@ import io.legado.app.lib.prefs.MultiSelectListPreferenceDialog
 import io.legado.app.utils.applyNavigationBarPadding
 
 abstract class PreferenceFragment : PreferenceFragmentCompat() {
-
     private val dialogFragmentTag = "androidx.preference.PreferenceFragment.DIALOG"
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         listView.clipToPadding = false
         listView.applyNavigationBarPadding()
@@ -26,7 +28,6 @@ abstract class PreferenceFragment : PreferenceFragmentCompat() {
 
     @SuppressLint("RestrictedApi")
     override fun onDisplayPreferenceDialog(preference: Preference) {
-
         var handled = false
         if (callbackFragment is OnPreferenceDisplayDialogCallback) {
             handled =
@@ -34,8 +35,9 @@ abstract class PreferenceFragment : PreferenceFragmentCompat() {
                     .onPreferenceDisplayDialog(this, preference)
         }
         if (!handled && activity is OnPreferenceDisplayDialogCallback) {
-            handled = (activity as OnPreferenceDisplayDialogCallback)
-                .onPreferenceDisplayDialog(this, preference)
+            handled =
+                (activity as OnPreferenceDisplayDialogCallback)
+                    .onPreferenceDisplayDialog(this, preference)
         }
 
         if (handled) {
@@ -47,29 +49,29 @@ abstract class PreferenceFragment : PreferenceFragmentCompat() {
             return
         }
 
-        val dialogFragment: DialogFragment = when (preference) {
-            is EditTextPreference -> {
-                EditTextPreferenceDialog.newInstance(preference.getKey())
+        val dialogFragment: DialogFragment =
+            when (preference) {
+                is EditTextPreference -> {
+                    EditTextPreferenceDialog.newInstance(preference.getKey())
+                }
+                is ListPreference -> {
+                    ListPreferenceDialog.newInstance(preference.getKey())
+                }
+                is MultiSelectListPreference -> {
+                    MultiSelectListPreferenceDialog.newInstance(preference.getKey())
+                }
+                else -> {
+                    throw IllegalArgumentException(
+                        "Cannot display dialog for an unknown Preference type: " +
+                            preference.javaClass.simpleName +
+                            ". Make sure to implement onPreferenceDisplayDialog() to handle " +
+                            "displaying a custom dialog for this Preference.",
+                    )
+                }
             }
-            is ListPreference -> {
-                ListPreferenceDialog.newInstance(preference.getKey())
-            }
-            is MultiSelectListPreference -> {
-                MultiSelectListPreferenceDialog.newInstance(preference.getKey())
-            }
-            else -> {
-                throw IllegalArgumentException(
-                    "Cannot display dialog for an unknown Preference type: "
-                            + preference.javaClass.simpleName
-                            + ". Make sure to implement onPreferenceDisplayDialog() to handle "
-                            + "displaying a custom dialog for this Preference."
-                )
-            }
-        }
         @Suppress("DEPRECATION")
         dialogFragment.setTargetFragment(this, 0)
 
         dialogFragment.show(parentFragmentManager, dialogFragmentTag)
     }
-
 }

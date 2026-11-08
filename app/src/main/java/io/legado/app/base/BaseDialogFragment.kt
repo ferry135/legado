@@ -25,12 +25,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext
 
-
 abstract class BaseDialogFragment(
     @LayoutRes layoutID: Int,
-    private val adaptationSoftKeyboard: Boolean = false
+    private val adaptationSoftKeyboard: Boolean = false,
 ) : DialogFragment(layoutID) {
-
     private var onDismissListener: OnDismissListener? = null
 
     fun setOnDismissListener(onDismissListener: OnDismissListener?) {
@@ -51,19 +49,21 @@ abstract class BaseDialogFragment(
                 it.decorView.setBackgroundKeepPadding(R.color.transparent)
             }
             // 修改gravity的时机一般在子类的onStart方法中, 因此需要在onStart之后执行.
-            lifecycle.addObserver(LifecycleEventObserver { _, event ->
-                if (event == Lifecycle.Event.ON_START) {
-                    when (dialog?.window?.attributes?.gravity) {
-                        Gravity.TOP -> view?.setBackgroundResource(R.drawable.bg_eink_border_bottom)
-                        Gravity.BOTTOM -> view?.setBackgroundResource(R.drawable.bg_eink_border_top)
-                        else -> {
-                            val padding = 2.dpToPx();
-                            view?.setPadding(padding, padding, padding, padding)
-                            view?.setBackgroundResource(R.drawable.bg_eink_border_dialog)
+            lifecycle.addObserver(
+                LifecycleEventObserver { _, event ->
+                    if (event == Lifecycle.Event.ON_START) {
+                        when (dialog?.window?.attributes?.gravity) {
+                            Gravity.TOP -> view?.setBackgroundResource(R.drawable.bg_eink_border_bottom)
+                            Gravity.BOTTOM -> view?.setBackgroundResource(R.drawable.bg_eink_border_top)
+                            else -> {
+                                val padding = 2.dpToPx()
+                                view?.setPadding(padding, padding, padding, padding)
+                                view?.setBackgroundResource(R.drawable.bg_eink_border_dialog)
+                            }
                         }
                     }
-                }
-            })
+                },
+            )
         } else {
             // 普通弹窗的内容卡已在 onViewCreated 染成 16dp 圆角 sheet；窗口默认
             // 方形背景会从圆角外露出直角边缘与方形投影（深色下尤其明显），一并
@@ -75,12 +75,15 @@ abstract class BaseDialogFragment(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            //不加这个android 5.0对话框顶部会有空白
+            // 不加这个android 5.0对话框顶部会有空白
             setStyle(STYLE_NO_TITLE, 0)
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         if (adaptationSoftKeyboard) {
             view.findViewById<View>(R.id.vw_bg)?.setOnClickListener(null)
@@ -92,16 +95,23 @@ abstract class BaseDialogFragment(
         observeLiveBus()
     }
 
-    abstract fun onFragmentCreated(view: View, savedInstanceState: Bundle?)
+    abstract fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    )
 
-    override fun show(manager: FragmentManager, tag: String?) {
-        kotlin.runCatching {
-            //在每个add事务前增加一个remove事务，防止连续的add
-            manager.beginTransaction().remove(this).commit()
-            super.show(manager, tag)
-        }.onFailure {
-            AppLog.put("显示对话框失败 tag:$tag", it)
-        }
+    override fun show(
+        manager: FragmentManager,
+        tag: String?,
+    ) {
+        kotlin
+            .runCatching {
+                // 在每个add事务前增加一个remove事务，防止连续的add
+                manager.beginTransaction().remove(this).commit()
+                super.show(manager, tag)
+            }.onFailure {
+                AppLog.put("显示对话框失败 tag:$tag", it)
+            }
     }
 
     override fun onDismiss(dialog: DialogInterface) {
@@ -112,7 +122,7 @@ abstract class BaseDialogFragment(
     fun <T> execute(
         scope: CoroutineScope = lifecycleScope,
         context: CoroutineContext = Dispatchers.IO,
-        block: suspend CoroutineScope.() -> T
+        block: suspend CoroutineScope.() -> T,
     ) = Coroutine.async(scope, context) { block() }
 
     open fun observeLiveBus() {

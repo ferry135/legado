@@ -4,7 +4,6 @@ import io.legado.app.model.ReadBook
 import io.legado.app.ui.book.read.page.entities.TextChapter
 
 interface DataSource {
-
     val pageIndex: Int get() = ReadBook.durPageIndex
 
     val currentChapter: TextChapter?
@@ -19,6 +18,8 @@ interface DataSource {
 
     fun hasPrevChapter(): Boolean
 
-    fun upContent(relativePosition: Int = 0, resetPageOffset: Boolean = true)
-
+    fun upContent(
+        relativePosition: Int = 0,
+        resetPageOffset: Boolean = true,
+    )
 }

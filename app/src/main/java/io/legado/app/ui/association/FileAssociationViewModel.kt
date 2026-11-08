@@ -18,7 +18,7 @@ class FileAssociationViewModel(application: Application) : BaseAssociationViewMo
 
     fun dispatchIntent(uri: Uri) {
         execute {
-            //如果是普通的url，需要根据返回的内容判断是什么
+            // 如果是普通的url，需要根据返回的内容判断是什么
             if (uri.isContentScheme() || uri.isFileScheme()) {
                 val fileDoc = FileDoc.fromUri(uri, false)
                 val fileName = fileDoc.name

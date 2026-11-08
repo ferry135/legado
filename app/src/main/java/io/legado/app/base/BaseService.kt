@@ -20,7 +20,6 @@ import kotlinx.coroutines.sync.Semaphore
 import kotlin.coroutines.CoroutineContext
 
 abstract class BaseService : LifecycleService() {
-
     private val simpleName = this::class.simpleName.toString()
     private var isForeground = false
 
@@ -30,7 +29,7 @@ abstract class BaseService : LifecycleService() {
         start: CoroutineStart = CoroutineStart.DEFAULT,
         executeContext: CoroutineContext = Dispatchers.Main,
         semaphore: Semaphore? = null,
-        block: suspend CoroutineScope.() -> T
+        block: suspend CoroutineScope.() -> T,
     ) = Coroutine.async(scope, context, start, executeContext, semaphore, block)
 
     @CallSuper
@@ -41,7 +40,11 @@ abstract class BaseService : LifecycleService() {
     }
 
     @CallSuper
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    override fun onStartCommand(
+        intent: Intent?,
+        flags: Int,
+        startId: Int,
+    ): Int {
         LogUtils.d(simpleName) {
             "onStartCommand $intent ${intent?.toUri(0)}"
         }
@@ -81,24 +84,24 @@ abstract class BaseService : LifecycleService() {
      * 开启前台服务并发送通知
      */
     open fun startForegroundNotification() {
-
     }
 
     /**
      * 检测通知权限和后台权限
      */
     private fun checkPermission() {
-        PermissionsCompat.Builder()
+        PermissionsCompat
+            .Builder()
             .addPermissions(Permissions.POST_NOTIFICATIONS)
             .rationale(R.string.notification_permission_rationale)
             .onGranted {
                 if (lifecycleScope.isActive) {
                     startForegroundNotification()
                 }
-            }
-            .request()
+            }.request()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PermissionsCompat.Builder()
+            PermissionsCompat
+                .Builder()
                 .addPermissions(Permissions.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
                 .rationale(R.string.ignore_battery_permission_rationale)
                 .request()

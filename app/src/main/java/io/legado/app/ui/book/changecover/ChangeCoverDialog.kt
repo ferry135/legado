@@ -7,8 +7,6 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isGone
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle.State.STARTED
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import io.legado.app.R
 import io.legado.app.base.BaseDialogFragment
@@ -19,20 +17,20 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.launch
 
 /**
  * 换封面
  */
-class ChangeCoverDialog() : BaseDialogFragment(R.layout.dialog_change_cover),
+class ChangeCoverDialog() :
+    BaseDialogFragment(R.layout.dialog_change_cover),
     Toolbar.OnMenuItemClickListener,
     CoverAdapter.CallBack {
-
     constructor(name: String, author: String) : this() {
-        arguments = Bundle().apply {
-            putString("name", name)
-            putString("author", author)
-        }
+        arguments =
+            Bundle().apply {
+                putString("name", name)
+                putString("author", author)
+            }
     }
 
     private val binding by viewBinding(DialogChangeCoverBinding::bind)
@@ -48,7 +46,10 @@ class ChangeCoverDialog() : BaseDialogFragment(R.layout.dialog_change_cover),
         setLayout(1f, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         binding.toolBar.setTitle(R.string.change_cover_source)
         viewModel.initData(arguments)
         initMenu()
@@ -74,7 +75,6 @@ class ChangeCoverDialog() : BaseDialogFragment(R.layout.dialog_change_cover),
                 upEmptyMsgView()
                 delay(1000)
             }
-
         }
     }
 
@@ -84,7 +84,8 @@ class ChangeCoverDialog() : BaseDialogFragment(R.layout.dialog_change_cover),
      */
     private fun upEmptyMsgView() {
         binding.emptyTip.isGone =
-            adapter.itemCount > 1 || viewModel.searchStateData.value != false
+            adapter.itemCount > 1 ||
+            viewModel.searchStateData.value != false
     }
 
     override fun observeLiveBus() {
@@ -105,7 +106,6 @@ class ChangeCoverDialog() : BaseDialogFragment(R.layout.dialog_change_cover),
             binding.toolBar.menu.applyTint(requireContext())
             upEmptyMsgView()
         }
-
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {

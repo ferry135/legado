@@ -17,13 +17,19 @@ private var toast: Toast? = null
 
 private var toastLegacy: Toast? = null
 
-fun Context.toastOnUi(message: Int, duration: Int = Toast.LENGTH_SHORT) {
+fun Context.toastOnUi(
+    message: Int,
+    duration: Int = Toast.LENGTH_SHORT,
+) {
     toastOnUi(getString(message), duration)
 }
 
 @SuppressLint("InflateParams")
 @Suppress("DEPRECATION")
-fun Context.toastOnUi(message: CharSequence?, duration: Int = Toast.LENGTH_SHORT) {
+fun Context.toastOnUi(
+    message: CharSequence?,
+    duration: Int = Toast.LENGTH_SHORT,
+) {
     runOnUI {
         kotlin.runCatching {
             toast?.cancel()

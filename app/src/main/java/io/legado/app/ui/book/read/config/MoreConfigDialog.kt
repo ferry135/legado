@@ -45,7 +45,7 @@ class MoreConfigDialog : BasePrefDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         (activity as ReadBookActivity).bottomDialog++
         val view = LinearLayout(context)
@@ -56,11 +56,15 @@ class MoreConfigDialog : BasePrefDialogFragment() {
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         var preferenceFragment = childFragmentManager.findFragmentByTag(readPreferTag)
         if (preferenceFragment == null) preferenceFragment = ReadPreferenceFragment()
-        childFragmentManager.beginTransaction()
+        childFragmentManager
+            .beginTransaction()
             .replace(view.id, preferenceFragment, readPreferTag)
             .commit()
     }
@@ -70,13 +74,16 @@ class MoreConfigDialog : BasePrefDialogFragment() {
         (activity as ReadBookActivity).bottomDialog--
     }
 
-    class ReadPreferenceFragment : PreferenceFragment(),
+    class ReadPreferenceFragment :
+        PreferenceFragment(),
         SharedPreferences.OnSharedPreferenceChangeListener {
-
         private val slopSquare by lazy { ViewConfiguration.get(requireContext()).scaledTouchSlop }
 
         @SuppressLint("RestrictedApi")
-        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        override fun onCreatePreferences(
+            savedInstanceState: Bundle?,
+            rootKey: String?,
+        ) {
             addPreferencesFromResource(R.xml.pref_config_read)
             upPreferenceSummary(PreferKey.pageTouchSlop, slopSquare.toString())
             if (!CanvasRecorderFactory.isSupport) {
@@ -85,7 +92,10 @@ class MoreConfigDialog : BasePrefDialogFragment() {
             }
         }
 
-        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        override fun onViewCreated(
+            view: View,
+            savedInstanceState: Bundle?,
+        ) {
             super.onViewCreated(view, savedInstanceState)
             listView.setEdgeEffectColor(primaryColor)
         }
@@ -106,7 +116,7 @@ class MoreConfigDialog : BasePrefDialogFragment() {
 
         override fun onSharedPreferenceChanged(
             sharedPreferences: SharedPreferences?,
-            key: String?
+            key: String?,
         ) {
             when (key) {
                 PreferKey.readBodyToLh -> activity?.recreate()
@@ -128,7 +138,8 @@ class MoreConfigDialog : BasePrefDialogFragment() {
 
                 PreferKey.textFullJustify,
                 PreferKey.textBottomJustify,
-                PreferKey.useZhLayout -> {
+                PreferKey.useZhLayout,
+                -> {
                     postEvent(EventBus.UP_CONFIG, arrayListOf(5))
                 }
 
@@ -146,7 +157,8 @@ class MoreConfigDialog : BasePrefDialogFragment() {
                 }
 
                 PreferKey.showReadTitleAddition,
-                PreferKey.readBarStyleFollowPage -> {
+                PreferKey.readBarStyleFollowPage,
+                -> {
                     postEvent(EventBus.UPDATE_READ_ACTION_BAR, true)
                 }
 
@@ -193,13 +205,16 @@ class MoreConfigDialog : BasePrefDialogFragment() {
         }
 
         @Suppress("SameParameterValue")
-        private fun upPreferenceSummary(preferenceKey: String, value: String?) {
+        private fun upPreferenceSummary(
+            preferenceKey: String,
+            value: String?,
+        ) {
             val preference = findPreference<Preference>(preferenceKey) ?: return
             when (preferenceKey) {
-                PreferKey.pageTouchSlop -> preference.summary =
-                    getString(R.string.page_touch_slop_summary, value)
+                PreferKey.pageTouchSlop ->
+                    preference.summary =
+                        getString(R.string.page_touch_slop_summary, value)
             }
         }
-
     }
 }

@@ -11,8 +11,8 @@ import io.legado.app.R
 import splitties.systemservices.audioManager
 
 object MediaHelp {
-
-    const val MEDIA_SESSION_ACTIONS = (PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
+    const val MEDIA_SESSION_ACTIONS = (
+        PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
             or PlaybackStateCompat.ACTION_REWIND
             or PlaybackStateCompat.ACTION_PLAY
             or PlaybackStateCompat.ACTION_PLAY_PAUSE
@@ -32,21 +32,24 @@ object MediaHelp {
             or PlaybackStateCompat.ACTION_PREPARE_FROM_URI
             or PlaybackStateCompat.ACTION_SET_REPEAT_MODE
             or PlaybackStateCompat.ACTION_SET_SHUFFLE_MODE
-            or PlaybackStateCompat.ACTION_SET_CAPTIONING_ENABLED)
+            or PlaybackStateCompat.ACTION_SET_CAPTIONING_ENABLED
+        )
 
     fun buildAudioFocusRequestCompat(
-        audioFocusChangeListener: AudioManager.OnAudioFocusChangeListener
+        audioFocusChangeListener: AudioManager.OnAudioFocusChangeListener,
     ): AudioFocusRequestCompat {
-        val mPlaybackAttributes = AudioAttributesCompat.Builder()
-            .setUsage(AudioAttributesCompat.USAGE_MEDIA)
-            .setContentType(AudioAttributesCompat.CONTENT_TYPE_MUSIC)
-            .build()
-        return AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN)
+        val mPlaybackAttributes =
+            AudioAttributesCompat
+                .Builder()
+                .setUsage(AudioAttributesCompat.USAGE_MEDIA)
+                .setContentType(AudioAttributesCompat.CONTENT_TYPE_MUSIC)
+                .build()
+        return AudioFocusRequestCompat
+            .Builder(AudioManagerCompat.AUDIOFOCUS_GAIN)
             .setAudioAttributes(mPlaybackAttributes)
             .setOnAudioFocusChangeListener(audioFocusChangeListener)
             .build()
     }
-
 
     /**
      * @return 音频焦点

@@ -16,7 +16,8 @@ import io.legado.app.utils.*
 import splitties.init.appCtx
 import java.io.FileOutputStream
 
-class WelcomeConfigFragment : PreferenceFragment(),
+class WelcomeConfigFragment :
+    PreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
     private val requestWelcomeImage = 221
@@ -56,7 +57,8 @@ class WelcomeConfigFragment : PreferenceFragment(),
         sharedPreferences ?: return
         when (key) {
             PreferKey.welcomeImage,
-            PreferKey.welcomeImageDark -> {
+            PreferKey.welcomeImageDark,
+            -> {
                 upPreferenceSummary(key, getPrefString(key))
             }
         }
@@ -72,8 +74,8 @@ class WelcomeConfigFragment : PreferenceFragment(),
                     context?.selector(
                         items = arrayListOf(
                             getString(R.string.delete),
-                            getString(R.string.select_image)
-                        )
+                            getString(R.string.select_image),
+                        ),
                     ) { _, i ->
                         if (i == 0) {
                             removePref(preference.key)
@@ -90,8 +92,8 @@ class WelcomeConfigFragment : PreferenceFragment(),
                     context?.selector(
                         items = arrayListOf(
                             getString(R.string.delete),
-                            getString(R.string.select_image)
-                        )
+                            getString(R.string.select_image),
+                        ),
                     ) { _, i ->
                         if (i == 0) {
                             removePref(preference.key)
@@ -109,7 +111,8 @@ class WelcomeConfigFragment : PreferenceFragment(),
         val preference = findPreference<Preference>(preferenceKey) ?: return
         when (preferenceKey) {
             PreferKey.welcomeImage,
-            PreferKey.welcomeImageDark -> preference.summary = if (value.isNullOrBlank()) {
+            PreferKey.welcomeImageDark,
+            -> preference.summary = if (value.isNullOrBlank()) {
                 getString(R.string.select_image)
             } else {
                 value
@@ -136,5 +139,4 @@ class WelcomeConfigFragment : PreferenceFragment(),
             }
         }
     }
-
 }

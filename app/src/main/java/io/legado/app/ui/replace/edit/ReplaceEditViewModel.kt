@@ -26,7 +26,7 @@ class ReplaceEditViewModel(application: Application) : BaseViewModel(application
                     name = pattern,
                     pattern = pattern,
                     isRegex = isRegex,
-                    scope = scope
+                    scope = scope,
                 )
             }
         }.onFinally {
@@ -65,5 +65,4 @@ class ReplaceEditViewModel(application: Application) : BaseViewModel(application
             context.toastOnUi("save error, ${it.localizedMessage}")
         }
     }
-
 }

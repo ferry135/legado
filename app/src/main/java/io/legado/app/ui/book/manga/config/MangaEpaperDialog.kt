@@ -16,13 +16,17 @@ class MangaEpaperDialog : BaseDialogFragment(R.layout.dialog_manga_epaper) {
     private val binding by viewBinding(DialogMangaEpaperBinding::bind)
     private val callback get() = activity as? Callback
     private var mMangaEInkThreshold = 150
+
     override fun onStart() {
         super.onStart()
         dialog?.window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         initData()
         initView()
     }
@@ -46,5 +50,4 @@ class MangaEpaperDialog : BaseDialogFragment(R.layout.dialog_manga_epaper) {
     interface Callback {
         fun updateEepaper(value: Int)
     }
-
 }

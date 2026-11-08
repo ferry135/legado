@@ -13,25 +13,27 @@ import splitties.init.appCtx
  * 搜索范围
  */
 @Suppress("unused")
-data class SearchScope(private var scope: String) {
-
+data class SearchScope(
+    private var scope: String,
+) {
     constructor(groups: List<String>) : this(groups.joinToString(","))
 
     constructor(source: BookSource) : this(
-        "${source.bookSourceName.replace(":", "")}::${source.bookSourceUrl}"
+        "${source.bookSourceName.replace(":", "")}::${source.bookSourceUrl}",
     )
 
     constructor(source: BookSourcePart) : this(
-        "${source.bookSourceName.replace(":", "")}::${source.bookSourceUrl}"
+        "${source.bookSourceName.replace(":", "")}::${source.bookSourceUrl}",
     )
 
-    override fun toString(): String {
-        return scope
-    }
+    override fun toString(): String = scope
 
     val stateLiveData = MutableLiveData(scope)
 
-    fun update(scope: String, postValue: Boolean = true) {
+    fun update(
+        scope: String,
+        postValue: Boolean = true,
+    ) {
         this.scope = scope
         if (postValue) stateLiveData.postValue(scope)
         save()
@@ -49,9 +51,7 @@ data class SearchScope(private var scope: String) {
         save()
     }
 
-    fun isSource(): Boolean {
-        return scope.contains("::")
-    }
+    fun isSource(): Boolean = scope.contains("::")
 
     val display: String
         get() {
@@ -114,11 +114,12 @@ data class SearchScope(private var scope: String) {
                 }
             } else {
                 val oldScope = scope.splitNotBlank(",")
-                val newScope = oldScope.filter {
-                    val bookSources = appDb.bookSourceDao.getEnabledPartByGroup(it)
-                    list.addAll(bookSources)
-                    bookSources.isNotEmpty()
-                }
+                val newScope =
+                    oldScope.filter {
+                        val bookSources = appDb.bookSourceDao.getEnabledPartByGroup(it)
+                        list.addAll(bookSources)
+                        bookSources.isNotEmpty()
+                    }
                 if (oldScope.size != newScope.size) {
                     update(newScope)
                     stateLiveData.postValue(scope)
@@ -137,9 +138,7 @@ data class SearchScope(private var scope: String) {
         return list.sortedBy { it.customOrder }
     }
 
-    fun isAll(): Boolean {
-        return scope.isEmpty()
-    }
+    fun isAll(): Boolean = scope.isEmpty()
 
     fun save() {
         AppConfig.searchScope = scope
@@ -149,5 +148,4 @@ data class SearchScope(private var scope: String) {
             AppConfig.searchGroup = scope
         }
     }
-
 }

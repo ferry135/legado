@@ -11,7 +11,7 @@ data class MangaFooterConfig(
     var hidePageNumber: Boolean = false,
     var hideProgressRatioLabel: Boolean = false,
     var hideProgressRatio: Boolean = false,
-    var footerOrientation: Int = ReaderInfoBarView.ALIGN_LEFT,//默认靠左
+    var footerOrientation: Int = ReaderInfoBarView.ALIGN_LEFT, // 默认靠左
     var hideFooter: Boolean = false,
-    var hideChapterName:Boolean=false,
+    var hideChapterName: Boolean = false,
 )

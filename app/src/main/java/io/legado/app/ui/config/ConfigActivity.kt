@@ -11,7 +11,6 @@ import io.legado.app.utils.observeEvent
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class ConfigActivity : VMBaseActivity<ActivityConfigBinding, ConfigViewModel>() {
-
     override val binding by viewBinding(ActivityConfigBinding::inflate)
     override val viewModel by viewModels<ConfigViewModel>()
 
@@ -34,9 +33,11 @@ class ConfigActivity : VMBaseActivity<ActivityConfigBinding, ConfigViewModel>() 
     inline fun <reified T : Fragment> replaceFragment(configTag: String) {
         intent.putExtra("configTag", configTag)
         @Suppress("DEPRECATION")
-        val configFragment = supportFragmentManager.findFragmentByTag(configTag)
-            ?: T::class.java.newInstance()
-        supportFragmentManager.beginTransaction()
+        val configFragment =
+            supportFragmentManager.findFragmentByTag(configTag)
+                ?: T::class.java.newInstance()
+        supportFragmentManager
+            .beginTransaction()
             .replace(R.id.configFrameLayout, configFragment, configTag)
             .commit()
     }
@@ -47,5 +48,4 @@ class ConfigActivity : VMBaseActivity<ActivityConfigBinding, ConfigViewModel>() 
             recreate()
         }
     }
-
 }

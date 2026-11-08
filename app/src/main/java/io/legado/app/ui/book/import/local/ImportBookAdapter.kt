@@ -15,15 +15,14 @@ import io.legado.app.utils.gone
 import io.legado.app.utils.invisible
 import io.legado.app.utils.visible
 
-
-class ImportBookAdapter(context: Context, val callBack: CallBack) :
-    RecyclerAdapter<ImportBook, ItemImportBookBinding>(context) {
+class ImportBookAdapter(
+    context: Context,
+    val callBack: CallBack,
+) : RecyclerAdapter<ImportBook, ItemImportBookBinding>(context) {
     val selected = hashSetOf<ImportBook>()
     var checkableCount = 0
 
-    override fun getViewBinding(parent: ViewGroup): ItemImportBookBinding {
-        return ItemImportBookBinding.inflate(inflater, parent, false)
-    }
+    override fun getViewBinding(parent: ViewGroup): ItemImportBookBinding = ItemImportBookBinding.inflate(inflater, parent, false)
 
     override fun onCurrentListChanged() {
         upCheckableCount()
@@ -33,7 +32,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
         holder: ItemViewHolder,
         binding: ItemImportBookBinding,
         item: ImportBook,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
         binding.run {
             if (payloads.isEmpty()) {
@@ -67,7 +66,10 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
         }
     }
 
-    override fun registerListener(holder: ItemViewHolder, binding: ItemImportBookBinding) {
+    override fun registerListener(
+        holder: ItemViewHolder,
+        binding: ItemImportBookBinding,
+    ) {
         holder.itemView.setOnClickListener {
             getItem(holder.layoutPosition)?.let {
                 if (it.isDir) {
@@ -81,7 +83,7 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
                     notifyItemChanged(holder.layoutPosition, true)
                     callBack.upCountView()
                 } else {
-                    /* 点击开始阅读 */
+                    // 点击开始阅读
                     callBack.startRead(it.file)
                 }
             }
@@ -137,8 +139,9 @@ class ImportBookAdapter(context: Context, val callBack: CallBack) :
 
     interface CallBack {
         fun nextDoc(fileDoc: FileDoc)
+
         fun upCountView()
+
         fun startRead(fileDoc: FileDoc)
     }
-
 }

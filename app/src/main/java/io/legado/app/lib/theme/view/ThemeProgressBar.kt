@@ -6,8 +6,10 @@ import android.widget.ProgressBar
 import io.legado.app.lib.theme.accentColor
 import io.legado.app.utils.applyTint
 
-class ThemeProgressBar(context: Context, attrs: AttributeSet) : ProgressBar(context, attrs) {
-
+class ThemeProgressBar(
+    context: Context,
+    attrs: AttributeSet,
+) : ProgressBar(context, attrs) {
     init {
         if (!isInEditMode) {
             applyTint(context.accentColor)

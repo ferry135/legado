@@ -35,21 +35,20 @@ import splitties.init.appCtx
 import java.io.File
 import java.io.FileOutputStream
 
-class FileAssociationActivity :
-    VMBaseActivity<ActivityTranslucenceBinding, FileAssociationViewModel>() {
-
-    private val localBookTreeSelect = registerForActivityResult(HandleFileContract()) {
-        intent.data?.let { uri ->
-            it.uri?.let { treeUri ->
-                AppConfig.defaultBookTreeUri = treeUri.toString()
-                importBook(treeUri, uri)
-            } ?: let {
-                val storageHelp = String(assets.open("storageHelp.md").readBytes())
-                toastOnUi(storageHelp)
-                importBook(null, uri)
+class FileAssociationActivity : VMBaseActivity<ActivityTranslucenceBinding, FileAssociationViewModel>() {
+    private val localBookTreeSelect =
+        registerForActivityResult(HandleFileContract()) {
+            intent.data?.let { uri ->
+                it.uri?.let { treeUri ->
+                    AppConfig.defaultBookTreeUri = treeUri.toString()
+                    importBook(treeUri, uri)
+                } ?: let {
+                    val storageHelp = String(assets.open("storageHelp.md").readBytes())
+                    toastOnUi(storageHelp)
+                    importBook(null, uri)
+                }
             }
         }
-    }
 
     override val binding by viewBinding(ActivityTranslucenceBinding::inflate)
 
@@ -96,7 +95,7 @@ class FileAssociationActivity :
             binding.rotateLoading.gone()
             alert(
                 title = appCtx.getString(R.string.draw),
-                message = appCtx.getString(R.string.file_not_supported, data.second)
+                message = appCtx.getString(R.string.file_not_supported, data.second),
             ) {
                 yesButton {
                     importBook(data.first)
@@ -113,7 +112,8 @@ class FileAssociationActivity :
             if (data.isContentScheme() && data.canRead()) {
                 viewModel.dispatchIntent(data)
             } else {
-                PermissionsCompat.Builder()
+                PermissionsCompat
+                    .Builder()
                     .addPermissions(*Permissions.Group.STORAGE)
                     .rationale(R.string.tip_perm_request_storage)
                     .onGranted {
@@ -144,7 +144,10 @@ class FileAssociationActivity :
         }
     }
 
-    private fun importBook(treeUri: Uri?, uri: Uri) {
+    private fun importBook(
+        treeUri: Uri?,
+        uri: Uri,
+    ) {
         lifecycleScope.launch {
             runCatching {
                 withContext(IO) {
@@ -155,7 +158,7 @@ class FileAssociationActivity :
                             DocumentFile.fromTreeUri(this@FileAssociationActivity, treeUri)
                         if (!treeDoc!!.checkWrite()) {
                             throw InvalidBooksDirException(
-                                "请重新设置书籍保存位置\nPermission Denial"
+                                "请重新设置书籍保存位置\nPermission Denial",
                             )
                         }
                         readUri(uri) { fileDoc, inputStream ->
@@ -165,7 +168,7 @@ class FileAssociationActivity :
                                 if (doc == null) {
                                     doc = treeDoc.createFile(FileUtils.getMimeType(name), name)
                                         ?: throw InvalidBooksDirException(
-                                            "请重新设置书籍保存位置\nPermission Denial"
+                                            "请重新设置书籍保存位置\nPermission Denial",
                                         )
                                 }
                                 contentResolver.openOutputStream(doc.uri)!!.use { oStream ->
@@ -179,7 +182,7 @@ class FileAssociationActivity :
                         val treeFile = File(treeUri.path ?: treeUri.toString())
                         if (!treeFile.checkWrite()) {
                             throw InvalidBooksDirException(
-                                "请重新设置书籍保存位置\nPermission Denial"
+                                "请重新设置书籍保存位置\nPermission Denial",
                             )
                         }
                         readUri(uri) { fileDoc, inputStream ->
@@ -197,10 +200,11 @@ class FileAssociationActivity :
                 }
             }.onFailure {
                 when (it) {
-                    is InvalidBooksDirException -> localBookTreeSelect.launch {
-                        title = getString(R.string.select_book_folder)
-                        mode = HandleFileContract.DIR_SYS
-                    }
+                    is InvalidBooksDirException ->
+                        localBookTreeSelect.launch {
+                            title = getString(R.string.select_book_folder)
+                            mode = HandleFileContract.DIR_SYS
+                        }
 
                     else -> {
                         val msg = "导入书籍失败\n${it.localizedMessage}"
@@ -214,5 +218,4 @@ class FileAssociationActivity :
             }
         }
     }
-
 }

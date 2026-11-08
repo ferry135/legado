@@ -11,7 +11,6 @@ import com.google.android.renderscript.Toolkit
 import java.io.*
 import kotlin.math.*
 
-
 @Suppress("WeakerAccess", "MemberVisibilityCanBePrivate")
 object BitmapUtils {
 
@@ -48,12 +47,12 @@ object BitmapUtils {
     private fun calculateInSampleSize(
         options: BitmapFactory.Options,
         width: Int? = null,
-        height: Int? = null
+        height: Int? = null,
     ): Int {
-        //获取比例大小
+        // 获取比例大小
         val wRatio = width?.let { options.outWidth / it } ?: -1
         val hRatio = height?.let { options.outHeight / it } ?: -1
-        //如果超出指定大小，则缩小相应的比例
+        // 如果超出指定大小，则缩小相应的比例
         return when {
             wRatio > 1 && hRatio > 1 -> max(wRatio, hRatio)
             wRatio > 1 -> wRatio
@@ -103,7 +102,7 @@ object BitmapUtils {
         val op = BitmapFactory.Options()
         // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
         op.inJustDecodeBounds = true
-        BitmapFactory.decodeResource(context.resources, resId, op) //获取尺寸信息
+        BitmapFactory.decodeResource(context.resources, resId, op) // 获取尺寸信息
         op.inSampleSize = calculateInSampleSize(op, width, height)
         op.inJustDecodeBounds = false
         return BitmapFactory.decodeResource(context.resources, resId, op)
@@ -122,14 +121,14 @@ object BitmapUtils {
         context: Context,
         fileNameInAssets: String,
         width: Int,
-        height: Int
+        height: Int,
     ): Bitmap? {
         var inputStream = context.assets.open(fileNameInAssets)
         return inputStream.use {
             val op = BitmapFactory.Options()
             // inJustDecodeBounds如果设置为true,仅仅返回图片实际的宽和高,宽和高是赋值给opts.outWidth,opts.outHeight;
             op.inJustDecodeBounds = true
-            BitmapFactory.decodeStream(inputStream, null, op) //获取尺寸信息
+            BitmapFactory.decodeStream(inputStream, null, op) // 获取尺寸信息
             op.inSampleSize = calculateInSampleSize(op, width, height)
             inputStream = context.assets.open(fileNameInAssets)
             op.inJustDecodeBounds = false
@@ -150,7 +149,7 @@ object BitmapUtils {
     fun computeSampleSize(
         options: BitmapFactory.Options,
         minSideLength: Int,
-        maxNumOfPixels: Int
+        maxNumOfPixels: Int,
     ): Int {
         val initialSize = computeInitialSampleSize(options, minSideLength, maxNumOfPixels)
         var roundedSize: Int
@@ -165,13 +164,11 @@ object BitmapUtils {
         return roundedSize
     }
 
-
     private fun computeInitialSampleSize(
         options: BitmapFactory.Options,
         minSideLength: Int,
-        maxNumOfPixels: Int
+        maxNumOfPixels: Int,
     ): Int {
-
         val w = options.outWidth.toDouble()
         val h = options.outHeight.toDouble()
 
@@ -184,7 +181,7 @@ object BitmapUtils {
             -1 -> 128
             else -> min(
                 floor(w / minSideLength),
-                floor(h / minSideLength)
+                floor(h / minSideLength),
             ).toInt()
         }
 
@@ -214,17 +211,17 @@ object BitmapUtils {
      */
     fun toInputStream(bitmap: Bitmap): InputStream {
         val bos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 90 /*ignored for PNG*/, bos)
+        // ignored for PNG
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, bos)
         return ByteArrayInputStream(bos.toByteArray()).also { bos.close() }
     }
-
 }
 
 /**
  * 获取指定宽高的图片
  */
 fun Bitmap.resizeAndRecycle(newWidth: Int, newHeight: Int): Bitmap {
-    //获取新的bitmap
+    // 获取新的bitmap
     val bitmap = Toolkit.resize(this, newWidth, newHeight)
     recycle()
     return bitmap
@@ -233,9 +230,7 @@ fun Bitmap.resizeAndRecycle(newWidth: Int, newHeight: Int): Bitmap {
 /**
  * 高斯模糊
  */
-fun Bitmap.stackBlur(radius: Int = 8): Bitmap {
-    return Toolkit.blur(this, radius)
-}
+fun Bitmap.stackBlur(radius: Int = 8): Bitmap = Toolkit.blur(this, radius)
 
 /**
  * 取平均色
@@ -251,7 +246,7 @@ fun Bitmap.getMeanColor(): Int {
         for (j in 70..99) {
             pixel = this.getPixel(
                 (i * width / 100.toFloat()).roundToInt(),
-                (j * height / 100.toFloat()).roundToInt()
+                (j * height / 100.toFloat()).roundToInt(),
             )
             pixelSumRed += Color.red(pixel)
             pixelSumGreen += Color.green(pixel)
@@ -264,7 +259,6 @@ fun Bitmap.getMeanColor(): Int {
     return Color.rgb(
         averagePixelRed + 3,
         averagePixelGreen + 3,
-        averagePixelBlue + 3
+        averagePixelBlue + 3,
     )
-
 }

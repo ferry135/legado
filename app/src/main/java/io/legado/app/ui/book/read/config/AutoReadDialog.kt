@@ -18,16 +18,14 @@ import io.legado.app.service.BaseReadAloudService
 import io.legado.app.ui.book.read.BaseReadBookActivity
 import io.legado.app.ui.book.read.ReadBookActivity
 import io.legado.app.ui.widget.seekbar.SeekBarChangeListener
-import io.legado.app.utils.applyBottomSheetWindow
 import io.legado.app.utils.ColorUtils
+import io.legado.app.utils.applyBottomSheetWindow
 import io.legado.app.utils.getCompatColor
 import io.legado.app.utils.setSheetBackground
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 import java.util.Locale
 
-
 class AutoReadDialog : BaseDialogFragment(R.layout.dialog_auto_read) {
-
     private val binding by viewBinding(DialogAutoReadBinding::bind)
     private val callBack: CallBack? get() = activity as? CallBack
 
@@ -42,7 +40,10 @@ class AutoReadDialog : BaseDialogFragment(R.layout.dialog_auto_read) {
         (activity as ReadBookActivity).bottomDialog--
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) = binding.run {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) = binding.run {
         val bottomDialog = (activity as ReadBookActivity).bottomDialog++
         if (bottomDialog > 0) {
             dismiss()
@@ -77,18 +78,24 @@ class AutoReadDialog : BaseDialogFragment(R.layout.dialog_auto_read) {
     }
 
     private fun initOnChange() {
-        binding.seekAutoRead.setOnSeekBarChangeListener(object : SeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                val speed = if (progress < 1) 1 else progress
-                binding.tvReadSpeed.text = String.format(Locale.ROOT, "%ds", speed)
-            }
+        binding.seekAutoRead.setOnSeekBarChangeListener(
+            object : SeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar,
+                    progress: Int,
+                    fromUser: Boolean,
+                ) {
+                    val speed = if (progress < 1) 1 else progress
+                    binding.tvReadSpeed.text = String.format(Locale.ROOT, "%ds", speed)
+                }
 
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-                ReadBookConfig.autoReadSpeed =
-                    if (binding.seekAutoRead.progress < 1) 1 else binding.seekAutoRead.progress
-                upTtsSpeechRate()
-            }
-        })
+                override fun onStopTrackingTouch(seekBar: SeekBar) {
+                    ReadBookConfig.autoReadSpeed =
+                        if (binding.seekAutoRead.progress < 1) 1 else binding.seekAutoRead.progress
+                    upTtsSpeechRate()
+                }
+            },
+        )
     }
 
     private fun initEvent() {
@@ -121,7 +128,9 @@ class AutoReadDialog : BaseDialogFragment(R.layout.dialog_auto_read) {
 
     interface CallBack {
         fun showMenuBar()
+
         fun openChapterList()
+
         fun autoPageStop()
     }
 }

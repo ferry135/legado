@@ -18,14 +18,20 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @Entity(
     tableName = "searchBooks",
-    indices = [(Index(value = ["bookUrl"], unique = true)),
-        (Index(value = ["origin"], unique = false))],
-    foreignKeys = [(ForeignKey(
-        entity = BookSource::class,
-        parentColumns = ["bookSourceUrl"],
-        childColumns = ["origin"],
-        onDelete = ForeignKey.CASCADE
-    ))]
+    indices = [
+        (Index(value = ["bookUrl"], unique = true)),
+        (Index(value = ["origin"], unique = false)),
+    ],
+    foreignKeys = [
+        (
+            ForeignKey(
+                entity = BookSource::class,
+                parentColumns = ["bookSourceUrl"],
+                childColumns = ["origin"],
+                onDelete = ForeignKey.CASCADE,
+            )
+            ),
+    ],
 )
 data class SearchBook(
     @PrimaryKey
@@ -51,9 +57,10 @@ data class SearchBook(
     @ColumnInfo(defaultValue = "-1")
     var chapterWordCount: Int = -1,
     @ColumnInfo(defaultValue = "-1")
-    var respondTime: Int = -1
-) : Parcelable, BaseBook, Comparable<SearchBook> {
-
+    var respondTime: Int = -1,
+) : Parcelable,
+    BaseBook,
+    Comparable<SearchBook> {
     @Ignore
     @IgnoredOnParcel
     override var infoHtml: String? = null
@@ -66,9 +73,7 @@ data class SearchBook(
 
     override fun hashCode() = bookUrl.hashCode()
 
-    override fun compareTo(other: SearchBook): Int {
-        return other.originOrder - this.originOrder
-    }
+    override fun compareTo(other: SearchBook): Int = other.originOrder - this.originOrder
 
     @delegate:Transient
     @delegate:Ignore
@@ -109,13 +114,9 @@ data class SearchBook(
         tocHtml = null
     }
 
-    fun primaryStr(): String {
-        return origin + bookUrl
-    }
+    fun primaryStr(): String = origin + bookUrl
 
-    fun sameBookTypeLocal(bookType: Int): Boolean {
-        return type and BookType.allBookTypeLocal == bookType and BookType.allBookTypeLocal
-    }
+    fun sameBookTypeLocal(bookType: Int): Boolean = type and BookType.allBookTypeLocal == bookType and BookType.allBookTypeLocal
 
     fun toBook() = Book(
         name = name,
@@ -131,7 +132,7 @@ data class SearchBook(
         intro = intro,
         tocUrl = tocUrl,
         originOrder = originOrder,
-        variable = variable
+        variable = variable,
     ).apply {
         this.infoHtml = this@SearchBook.infoHtml
         this.tocHtml = this@SearchBook.tocHtml

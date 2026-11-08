@@ -19,12 +19,12 @@ class ZhLayout(
     width: Int,
     words: List<String>,
     widths: List<Float>,
-    indentSize: Int
+    indentSize: Int,
 ) : Layout(text, textPaint, width, Alignment.ALIGN_NORMAL, 0f, 0f) {
     companion object {
         private val postPanc = hashSetOf(
             "，", "。", "：", "？", "！", "、", "”", "’", "）", "》", "}",
-            "】", ")", ">", "]", "}", ",", ".", "?", "!", ":", "」", "；", ";"
+            "】", ")", ">", "]", "}", ",", ".", "?", "!", ":", "」", "；", ";",
         )
         private val prePanc = hashSetOf("“", "（", "《", "【", "‘", "‘", "(", "<", "[", "{", "「")
         private val cnCharWidthCache = WeakHashMap<Paint, Float>()
@@ -67,16 +67,22 @@ class ZhLayout(
             if (lineW > width) {
                 /*禁止在行尾的标点处理*/
                 breakMod = if (index >= 1 && isPrePanc(words[index - 1])) {
-                    if (index >= 2 && isPrePanc(words[index - 2])) BreakMod.CPS_2//如果后面还有一个禁首标点则异常
-                    else BreakMod.BREAK_ONE_CHAR //无异常场景
-                }
-                /*禁止在行首的标点处理*/
-                else if (isPostPanc(words[index])) {
-                    if (index >= 1 && isPostPanc(words[index - 1])) BreakMod.CPS_1//如果后面还有一个禁首标点则异常，不过三个连续行尾标点的用法不通用
-                    else if (index >= 2 && isPrePanc(words[index - 2])) BreakMod.CPS_3//如果后面还有一个禁首标点则异常
-                    else BreakMod.BREAK_ONE_CHAR //无异常场景
+                    if (index >= 2 && isPrePanc(words[index - 2])) {
+                        BreakMod.CPS_2 // 如果后面还有一个禁首标点则异常
+                    } else {
+                        BreakMod.BREAK_ONE_CHAR // 无异常场景
+                    }
+                } else if (isPostPanc(words[index])) {
+                    // 禁止在行首的标点处理
+                    if (index >= 1 && isPostPanc(words[index - 1])) {
+                        BreakMod.CPS_1 // 如果后面还有一个禁首标点则异常，不过三个连续行尾标点的用法不通用
+                    } else if (index >= 2 && isPrePanc(words[index - 2])) {
+                        BreakMod.CPS_3 // 如果后面还有一个禁首标点则异常
+                    } else {
+                        BreakMod.BREAK_ONE_CHAR // 无异常场景
+                    }
                 } else {
-                    BreakMod.NORMAL //无异常场景
+                    BreakMod.NORMAL // 无异常场景
                 }
 
                 /*判断上述逻辑解决不了的特殊情况*/
@@ -84,16 +90,25 @@ class ZhLayout(
                 var breakIndex = 0
                 if (breakMod == BreakMod.CPS_1 &&
                     (inCompressible(widths[index]) || inCompressible(widths[index - 1]))
-                ) reCheck = true
+                ) {
+                    reCheck = true
+                }
                 if (breakMod == BreakMod.CPS_2 &&
                     (inCompressible(widths[index - 1]) || inCompressible(widths[index - 2]))
-                ) reCheck = true
+                ) {
+                    reCheck = true
+                }
                 if (breakMod == BreakMod.CPS_3 &&
                     (inCompressible(widths[index]) || inCompressible(widths[index - 2]))
-                ) reCheck = true
-                if (breakMod > BreakMod.BREAK_MORE_CHAR
-                    && index < words.lastIndex && isPostPanc(words[index + 1])
-                ) reCheck = true
+                ) {
+                    reCheck = true
+                }
+                if (breakMod > BreakMod.BREAK_MORE_CHAR &&
+                    index < words.lastIndex &&
+                    isPostPanc(words[index + 1])
+                ) {
+                    reCheck = true
+                }
 
                 /*特殊标点使用难保证显示效果，所以不考虑间隔，直接查找到能满足条件的分割字*/
                 var breakLength = 0
@@ -117,37 +132,37 @@ class ZhLayout(
                 }
 
                 when (breakMod) {
-                    BreakMod.NORMAL -> {//模式0 正常断行
+                    BreakMod.NORMAL -> { // 模式0 正常断行
                         offset = cw
                         lineStart[line + 1] = length
                         breakCharCnt = 1
                     }
 
-                    BreakMod.BREAK_ONE_CHAR -> {//模式1 当前行下移一个字
+                    BreakMod.BREAK_ONE_CHAR -> { // 模式1 当前行下移一个字
                         offset = cw + cwPre
                         lineStart[line + 1] = length - words[index - 1].length
                         breakCharCnt = 2
                     }
 
-                    BreakMod.BREAK_MORE_CHAR -> {//模式2 当前行下移多个字
+                    BreakMod.BREAK_MORE_CHAR -> { // 模式2 当前行下移多个字
                         offset = cw + cwPre
                         lineStart[line + 1] = length - breakLength
                         breakCharCnt = breakIndex + 1
                     }
 
-                    BreakMod.CPS_1 -> {//模式3 两个后置标点压缩
+                    BreakMod.CPS_1 -> { // 模式3 两个后置标点压缩
                         offset = 0f
                         lineStart[line + 1] = length + s.length
                         breakCharCnt = 0
                     }
 
-                    BreakMod.CPS_2 -> { //模式4 前置标点压缩+前置标点压缩+字
+                    BreakMod.CPS_2 -> { // 模式4 前置标点压缩+前置标点压缩+字
                         offset = 0f
                         lineStart[line + 1] = length + s.length
                         breakCharCnt = 0
                     }
 
-                    BreakMod.CPS_3 -> {//模式5 前置标点压缩+字+后置标点压缩
+                    BreakMod.CPS_3 -> { // 模式5 前置标点压缩+字+后置标点压缩
                         offset = 0f
                         lineStart[line + 1] = length + s.length
                         breakCharCnt = 0
@@ -183,7 +198,6 @@ class ZhLayout(
         }
 
         lineCount = line
-
     }
 
     private fun addLineArray(line: Int) {
@@ -193,17 +207,11 @@ class ZhLayout(
         }
     }
 
-    private fun isPostPanc(string: String): Boolean {
-        return postPanc.contains(string)
-    }
+    private fun isPostPanc(string: String): Boolean = postPanc.contains(string)
 
-    private fun isPrePanc(string: String): Boolean {
-        return prePanc.contains(string)
-    }
+    private fun isPrePanc(string: String): Boolean = prePanc.contains(string)
 
-    private fun inCompressible(width: Float): Boolean {
-        return width < cnCharWidth
-    }
+    private fun inCompressible(width: Float): Boolean = width < cnCharWidth
 
     private val gap = (cnCharWidth / 12.75).toFloat()
     private fun getPostPancOffset(string: String): Float {
@@ -227,52 +235,27 @@ class ZhLayout(
         return width
     }
 
-    override fun getLineCount(): Int {
-        return lineCount
-    }
+    override fun getLineCount(): Int = lineCount
 
-    override fun getLineTop(line: Int): Int {
-        return 0
-    }
+    override fun getLineTop(line: Int): Int = 0
 
-    override fun getLineDescent(line: Int): Int {
-        return 0
-    }
+    override fun getLineDescent(line: Int): Int = 0
 
-    override fun getLineStart(line: Int): Int {
-        return lineStart[line]
-    }
+    override fun getLineStart(line: Int): Int = lineStart[line]
 
-    override fun getParagraphDirection(line: Int): Int {
-        return 0
-    }
+    override fun getParagraphDirection(line: Int): Int = 0
 
-    override fun getLineContainsTab(line: Int): Boolean {
-        return true
-    }
+    override fun getLineContainsTab(line: Int): Boolean = true
 
-    override fun getLineDirections(line: Int): Directions? {
-        return null
-    }
+    override fun getLineDirections(line: Int): Directions? = null
 
-    override fun getTopPadding(): Int {
-        return 0
-    }
+    override fun getTopPadding(): Int = 0
 
-    override fun getBottomPadding(): Int {
-        return 0
-    }
+    override fun getBottomPadding(): Int = 0
 
-    override fun getLineWidth(line: Int): Float {
-        return lineWidth[line]
-    }
+    override fun getLineWidth(line: Int): Float = lineWidth[line]
 
-    override fun getEllipsisStart(line: Int): Int {
-        return 0
-    }
+    override fun getEllipsisStart(line: Int): Int = 0
 
-    override fun getEllipsisCount(line: Int): Int {
-        return 0
-    }
-
+    override fun getEllipsisCount(line: Int): Int = 0
 }

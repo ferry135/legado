@@ -47,12 +47,10 @@ import kotlin.coroutines.CoroutineContext
  */
 internal class RhinoCompiledScript(
     private val engine: RhinoScriptEngine,
-    private val script: Script
+    private val script: Script,
 ) : CompiledScript() {
 
-    override fun getEngine(): ScriptEngine {
-        return engine
-    }
+    override fun getEngine(): ScriptEngine = engine
 
     override fun eval(scope: Scriptable, coroutineContext: CoroutineContext?): Any? {
         val cx = Context.enter() as RhinoContext
@@ -131,5 +129,4 @@ internal class RhinoCompiledScript(
         }
         return engine.unwrapReturnValue(ret)
     }
-
 }

@@ -47,10 +47,12 @@ import kotlin.math.abs
 /**
  * 阅读视图
  */
-class ReadView(context: Context, attrs: AttributeSet) :
-    FrameLayout(context, attrs),
-    DataSource, LayoutProgressListener {
-
+class ReadView(
+    context: Context,
+    attrs: AttributeSet,
+) : FrameLayout(context, attrs),
+    DataSource,
+    LayoutProgressListener {
     val callBack: CallBack get() = activity as CallBack
     var pageFactory: TextPageFactory = TextPageFactory(this)
     var pageDelegate: PageDelegate? = null
@@ -68,28 +70,29 @@ class ReadView(context: Context, attrs: AttributeSet) :
     private var pressDown = false
     private var isMove = false
 
-    //起始点
+    // 起始点
     var startX: Float = 0f
     var startY: Float = 0f
 
-    //上一个触碰点
+    // 上一个触碰点
     var lastX: Float = 0f
     var lastY: Float = 0f
 
-    //触碰点
+    // 触碰点
     var touchX: Float = 0f
     var touchY: Float = 0f
 
-    //是否停止动画动作
+    // 是否停止动画动作
     var isAbortAnim = false
 
-    //长按
+    // 长按
     private var longPressed = false
     private val longPressTimeout = 600L
-    private val longPressRunnable = Runnable {
-        longPressed = true
-        onLongPress()
-    }
+    private val longPressRunnable =
+        Runnable {
+            longPressed = true
+            onLongPress()
+        }
     var isTextSelected = false
     private var pressOnTextSelected = false
     private val initialTextPos = TextPos(0, 0, 0)
@@ -138,7 +141,12 @@ class ReadView(context: Context, attrs: AttributeSet) :
         brRect.set(width * 0.66f, height * 0.66f, width.toFloat(), height.toFloat())
     }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+    override fun onSizeChanged(
+        w: Int,
+        h: Int,
+        oldw: Int,
+        oldh: Int,
+    ) {
         super.onSizeChanged(w, h, oldw, oldh)
         setRect9x()
         prevPage.x = -w.toFloat()
@@ -160,9 +168,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
         autoPager.computeOffset()
     }
 
-    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-        return true
-    }
+    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean = true
 
     /**
      * 触摸事件
@@ -170,21 +176,27 @@ class ReadView(context: Context, attrs: AttributeSet) :
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val insets = this.rootWindowInsets.getInsetsIgnoringVisibility(
-                WindowInsets.Type.mandatorySystemGestures()
-            )
-            val height = activity?.windowManager?.currentWindowMetrics?.bounds?.height()
+            val insets =
+                this.rootWindowInsets.getInsetsIgnoringVisibility(
+                    WindowInsets.Type.mandatorySystemGestures(),
+                )
+            val height =
+                activity
+                    ?.windowManager
+                    ?.currentWindowMetrics
+                    ?.bounds
+                    ?.height()
             if (height != null) {
-                if (event.y > height.minus(insets.bottom)
-                    && event.action != MotionEvent.ACTION_UP
-                    && event.action != MotionEvent.ACTION_CANCEL
+                if (event.y > height.minus(insets.bottom) &&
+                    event.action != MotionEvent.ACTION_UP &&
+                    event.action != MotionEvent.ACTION_CANCEL
                 ) {
                     return true
                 }
             }
         }
 
-        //在多点触控时，事件不走ACTION_DOWN分支而产生的特殊事件处理
+        // 在多点触控时，事件不走ACTION_DOWN分支而产生的特殊事件处理
         if (event.actionMasked == MotionEvent.ACTION_POINTER_DOWN || event.actionMasked == MotionEvent.ACTION_POINTER_UP) {
             pageDelegate?.onTouch(event)
         }
@@ -281,7 +293,11 @@ class ReadView(context: Context, attrs: AttributeSet) :
     /**
      * 保存开始位置
      */
-    fun setStartPoint(x: Float, y: Float, invalidate: Boolean = true) {
+    fun setStartPoint(
+        x: Float,
+        y: Float,
+        invalidate: Boolean = true,
+    ) {
         startX = x
         startY = y
         lastX = x
@@ -297,7 +313,11 @@ class ReadView(context: Context, attrs: AttributeSet) :
     /**
      * 保存当前位置
      */
-    fun setTouchPoint(x: Float, y: Float, invalidate: Boolean = true) {
+    fun setTouchPoint(
+        x: Float,
+        y: Float,
+        invalidate: Boolean = true,
+    ) {
         lastX = touchX
         lastY = touchY
         touchX = x
@@ -388,9 +408,10 @@ class ReadView(context: Context, attrs: AttributeSet) :
     private fun onSingleTapUp() {
         when {
             isTextSelected -> Unit
-            mcRect.contains(startX, startY) -> if (!isAbortAnim) {
-                click(AppConfig.clickActionMC)
-            }
+            mcRect.contains(startX, startY) ->
+                if (!isAbortAnim) {
+                    click(AppConfig.clickActionMC)
+                }
 
             bcRect.contains(startX, startY) -> {
                 click(AppConfig.clickActionBC)
@@ -447,10 +468,12 @@ class ReadView(context: Context, attrs: AttributeSet) :
             9 -> callBack.changeReplaceRuleState()
             10 -> callBack.openChapterList()
             11 -> callBack.openSearchActivity(null)
-            12 -> ReadBook.syncProgress(
-                { progress -> callBack.sureNewProgress(progress) },
-                { context.longToastOnUi(context.getString(R.string.upload_book_success)) },
-                { context.longToastOnUi(context.getString(R.string.sync_book_progress_success)) })
+            12 ->
+                ReadBook.syncProgress(
+                    { progress -> callBack.sureNewProgress(progress) },
+                    { context.longToastOnUi(context.getString(R.string.upload_book_success)) },
+                    { context.longToastOnUi(context.getString(R.string.sync_book_progress_success)) },
+                )
             13 -> {
                 if (BaseReadAloudService.isPlay()) {
                     ReadAloud.pause(context)
@@ -464,7 +487,10 @@ class ReadView(context: Context, attrs: AttributeSet) :
     /**
      * 选择文本
      */
-    private fun selectText(x: Float, y: Float) {
+    private fun selectText(
+        x: Float,
+        y: Float,
+    ) {
         curPage.selectText(x, y) { textPos ->
             val compare = initialTextPos.compare(textPos)
             when {
@@ -473,7 +499,7 @@ class ReadView(context: Context, attrs: AttributeSet) :
                     curPage.selectEndMoveIndex(
                         initialTextPos.relativePagePos,
                         initialTextPos.lineIndex,
-                        initialTextPos.columnIndex - 1
+                        initialTextPos.columnIndex - 1,
                     )
                 }
 
@@ -498,18 +524,16 @@ class ReadView(context: Context, attrs: AttributeSet) :
      * 翻页动画完成后事件
      * @param direction 翻页方向
      */
-    fun fillPage(direction: PageDirection): Boolean {
-        return when (direction) {
-            PageDirection.PREV -> {
-                pageFactory.moveToPrev(true)
-            }
-
-            PageDirection.NEXT -> {
-                pageFactory.moveToNext(true)
-            }
-
-            else -> false
+    fun fillPage(direction: PageDirection): Boolean = when (direction) {
+        PageDirection.PREV -> {
+            pageFactory.moveToPrev(true)
         }
+
+        PageDirection.NEXT -> {
+            pageFactory.moveToNext(true)
+        }
+
+        else -> false
     }
 
     /**
@@ -519,25 +543,30 @@ class ReadView(context: Context, attrs: AttributeSet) :
         isScroll = ReadBook.pageAnim() == 3
         ChapterProvider.upLayout()
         when (ReadBook.pageAnim()) {
-            PageAnim.coverPageAnim -> if (pageDelegate !is CoverPageDelegate) {
-                pageDelegate = CoverPageDelegate(this)
-            }
+            PageAnim.coverPageAnim ->
+                if (pageDelegate !is CoverPageDelegate) {
+                    pageDelegate = CoverPageDelegate(this)
+                }
 
-            PageAnim.slidePageAnim -> if (pageDelegate !is SlidePageDelegate) {
-                pageDelegate = SlidePageDelegate(this)
-            }
+            PageAnim.slidePageAnim ->
+                if (pageDelegate !is SlidePageDelegate) {
+                    pageDelegate = SlidePageDelegate(this)
+                }
 
-            PageAnim.simulationPageAnim -> if (pageDelegate !is SimulationPageDelegate) {
-                pageDelegate = SimulationPageDelegate(this)
-            }
+            PageAnim.simulationPageAnim ->
+                if (pageDelegate !is SimulationPageDelegate) {
+                    pageDelegate = SimulationPageDelegate(this)
+                }
 
-            PageAnim.scrollPageAnim -> if (pageDelegate !is ScrollPageDelegate) {
-                pageDelegate = ScrollPageDelegate(this)
-            }
+            PageAnim.scrollPageAnim ->
+                if (pageDelegate !is ScrollPageDelegate) {
+                    pageDelegate = ScrollPageDelegate(this)
+                }
 
-            else -> if (pageDelegate !is NoAnimPageDelegate) {
-                pageDelegate = NoAnimPageDelegate(this)
-            }
+            else ->
+                if (pageDelegate !is NoAnimPageDelegate) {
+                    pageDelegate = NoAnimPageDelegate(this)
+                }
         }
         (pageDelegate as? ScrollPageDelegate)?.noAnim = AppConfig.noAnimScrollPage
         if (upRecorder) {
@@ -558,7 +587,10 @@ class ReadView(context: Context, attrs: AttributeSet) :
      * @param relativePosition 相对位置 -1 上一页 0 当前页 1 下一页
      * @param resetPageOffset 滚动阅读是是否重置位置
      */
-    override fun upContent(relativePosition: Int, resetPageOffset: Boolean) {
+    override fun upContent(
+        relativePosition: Int,
+        resetPageOffset: Boolean,
+    ) {
         post {
             curPage.setContentDescription(pageFactory.curPage.text)
         }
@@ -663,17 +695,11 @@ class ReadView(context: Context, attrs: AttributeSet) :
     /**
      * @return 选择的文本
      */
-    fun getSelectText(): String {
-        return curPage.selectedText
-    }
+    fun getSelectText(): String = curPage.selectedText
 
-    fun getCurVisiblePage(): TextPage {
-        return curPage.getCurVisiblePage()
-    }
+    fun getCurVisiblePage(): TextPage = curPage.getCurVisiblePage()
 
-    fun getCurPagePosition(): Int {
-        return curPage.getCurVisibleFirstLine()?.pagePosition ?: 0
-    }
+    fun getCurPagePosition(): Int = curPage.getCurVisibleFirstLine()?.pagePosition ?: 0
 
     fun invalidateTextPage() {
         if (!AppConfig.optimizeRender) {
@@ -707,11 +733,12 @@ class ReadView(context: Context, attrs: AttributeSet) :
         curPage.submitRenderTask()
     }
 
-    fun isLongScreenShot(): Boolean {
-        return curPage.isLongScreenShot()
-    }
+    fun isLongScreenShot(): Boolean = curPage.isLongScreenShot()
 
-    override fun onLayoutPageCompleted(index: Int, page: TextPage) {
+    override fun onLayoutPageCompleted(
+        index: Int,
+        page: TextPage,
+    ) {
         upProgressThrottle.invoke()
     }
 
@@ -730,25 +757,31 @@ class ReadView(context: Context, attrs: AttributeSet) :
             return if (callBack.isInitFinish) ReadBook.textChapter(-1) else null
         }
 
-    override fun hasNextChapter(): Boolean {
-        return ReadBook.durChapterIndex < ReadBook.simulatedChapterSize - 1
-    }
+    override fun hasNextChapter(): Boolean = ReadBook.durChapterIndex < ReadBook.simulatedChapterSize - 1
 
-    override fun hasPrevChapter(): Boolean {
-        return ReadBook.durChapterIndex > 0
-    }
+    override fun hasPrevChapter(): Boolean = ReadBook.durChapterIndex > 0
 
     interface CallBack {
         val isInitFinish: Boolean
+
         fun showActionMenu()
+
         fun screenOffTimerStart()
+
         fun showTextActionMenu()
+
         fun autoPageStop()
+
         fun openChapterList()
+
         fun addBookmark()
+
         fun changeReplaceRuleState()
+
         fun openSearchActivity(searchWord: String?)
+
         fun upSystemUiVisibility()
+
         fun sureNewProgress(progress: BookProgress)
     }
 }

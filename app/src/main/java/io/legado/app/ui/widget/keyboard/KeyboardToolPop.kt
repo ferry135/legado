@@ -38,10 +38,9 @@ class KeyboardToolPop(
     private val context: Context,
     private val scope: CoroutineScope,
     private val rootView: View,
-    private val callBack: CallBack
+    private val callBack: CallBack,
 ) : PopupWindow(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT),
     ViewTreeObserver.OnGlobalLayoutListener {
-
     private val helpChar = "❓"
 
     private val binding = PopupKeyboardToolBinding.inflate(LayoutInflater.from(context))
@@ -55,7 +54,7 @@ class KeyboardToolPop(
         isTouchable = true
         isOutsideTouchable = false
         isFocusable = false
-        inputMethodMode = INPUT_METHOD_NEEDED //解决遮盖输入法
+        inputMethodMode = INPUT_METHOD_NEEDED // 解决遮盖输入法
         initRecyclerView()
         upAdapterData()
     }
@@ -105,18 +104,22 @@ class KeyboardToolPop(
     @Suppress("MemberVisibilityCanBePrivate")
     fun upAdapterData() {
         scope.launch {
-            appDb.keyboardAssistsDao.flowByType(0).catch {
-                AppLog.put("键盘帮助浮窗获取数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).collect {
-                adapter.setItems(it)
-            }
+            appDb.keyboardAssistsDao
+                .flowByType(0)
+                .catch {
+                    AppLog.put("键盘帮助浮窗获取数据失败\n${it.localizedMessage}", it)
+                }.flowOn(IO)
+                .collect {
+                    adapter.setItems(it)
+                }
         }
     }
 
     private fun helpAlert() {
-        val items = arrayListOf(
-            SelectItem(context.getString(R.string.assists_key_config), "keyConfig")
-        )
+        val items =
+            arrayListOf(
+                SelectItem(context.getString(R.string.assists_key_config), "keyConfig"),
+            )
         items.addAll(callBack.helpActions())
         context.selector(context.getString(R.string.help), items) { _, selectItem, _ ->
             when (selectItem.value) {
@@ -130,25 +133,26 @@ class KeyboardToolPop(
         contentView.activity?.showDialogFragment<KeyboardAssistsConfig>()
     }
 
-    inner class Adapter(context: Context) :
-        RecyclerAdapter<KeyboardAssist, ItemFilletTextBinding>(context) {
-
-        override fun getViewBinding(parent: ViewGroup): ItemFilletTextBinding {
-            return ItemFilletTextBinding.inflate(inflater, parent, false)
-        }
+    inner class Adapter(
+        context: Context,
+    ) : RecyclerAdapter<KeyboardAssist, ItemFilletTextBinding>(context) {
+        override fun getViewBinding(parent: ViewGroup): ItemFilletTextBinding = ItemFilletTextBinding.inflate(inflater, parent, false)
 
         override fun convert(
             holder: ItemViewHolder,
             binding: ItemFilletTextBinding,
             item: KeyboardAssist,
-            payloads: MutableList<Any>
+            payloads: MutableList<Any>,
         ) {
             binding.run {
                 textView.text = item.key
             }
         }
 
-        override fun registerListener(holder: ItemViewHolder, binding: ItemFilletTextBinding) {
+        override fun registerListener(
+            holder: ItemViewHolder,
+            binding: ItemFilletTextBinding,
+        ) {
             holder.itemView.apply {
                 setOnClickListener {
                     getItemByLayoutPosition(holder.layoutPosition)?.let {
@@ -160,13 +164,10 @@ class KeyboardToolPop(
     }
 
     interface CallBack {
-
         fun helpActions(): List<SelectItem<String>> = arrayListOf()
 
         fun onHelpActionSelect(action: String)
 
         fun sendText(text: String)
-
     }
-
 }

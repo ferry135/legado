@@ -19,10 +19,11 @@ import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.progressAdd
 
-
-class DetailSeekBar @JvmOverloads constructor(
+class DetailSeekBar
+@JvmOverloads
+constructor(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet? = null,
 ) : FrameLayout(context, attrs),
     SeekBarChangeListener {
     private var binding: ViewDetailSeekBarBinding =
@@ -87,17 +88,19 @@ class DetailSeekBar @JvmOverloads constructor(
             binding.ivSeekPlus.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
             binding.ivSeekReduce.setColorFilter(textColor, PorterDuff.Mode.SRC_IN)
             // 13-read-style#10：行容器 = ink 8% 圆角 12dp 卡（内边距 14×6dp），随换肤自适应（档位取 InkGradient）
-            binding.root.background = GradientDrawable().apply {
-                cornerRadius = context.resources.getDimension(R.dimen.corner_radius_md)
-                setColor(ColorUtils.adjustAlpha(textColor, InkGradient.CONTAINER))
-            }
+            binding.root.background =
+                GradientDrawable().apply {
+                    cornerRadius = context.resources.getDimension(R.dimen.corner_radius_md)
+                    setColor(ColorUtils.adjustAlpha(textColor, InkGradient.CONTAINER))
+                }
             binding.root.setPadding(14.dpToPx(), 6.dpToPx(), 14.dpToPx(), 6.dpToPx())
             // 13-read-style#11：值 = ink 10% 圆角 8dp 胶囊、文字自适应 primaryText（对齐 dialog_auto_read
             // tv_read_speed 的 on_surface 口径；62% ink / secondary 在胶囊叠层上实算 4.40/4.09:1 < 4.5，故不用弱化字色）
-            binding.tvSeekValue.background = GradientDrawable().apply {
-                cornerRadius = context.resources.getDimension(R.dimen.corner_radius_sm)
-                setColor(ColorUtils.adjustAlpha(textColor, InkGradient.CHIP))
-            }
+            binding.tvSeekValue.background =
+                GradientDrawable().apply {
+                    cornerRadius = context.resources.getDimension(R.dimen.corner_radius_sm)
+                    setColor(ColorUtils.adjustAlpha(textColor, InkGradient.CHIP))
+                }
             binding.tvSeekValue.setTextColor(textColor)
         }
         binding.ivSeekPlus.setOnClickListener {
@@ -119,16 +122,18 @@ class DetailSeekBar @JvmOverloads constructor(
         }
     }
 
-    override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+    override fun onProgressChanged(
+        seekBar: SeekBar,
+        progress: Int,
+        fromUser: Boolean,
+    ) {
         upValue(progress)
     }
 
     override fun onStartTrackingTouch(seekBar: SeekBar) {
-
     }
 
     override fun onStopTrackingTouch(seekBar: SeekBar) {
         onChanged?.invoke(binding.seekBar.progress)
     }
-
 }

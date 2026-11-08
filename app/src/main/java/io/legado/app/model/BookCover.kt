@@ -51,7 +51,6 @@ object BookCover {
     lateinit var defaultDrawable: Drawable
         private set
 
-
     init {
         upDefaultCover()
     }
@@ -199,11 +198,9 @@ object BookCover {
             .thumbnail(loadBlur)
     }
 
-    fun getCoverRule(): CoverRule {
-        return GSON.fromJsonObject<CoverRule>(CacheManager.get(coverRuleConfigKey))
-            .getOrNull()
-            ?: DefaultData.coverRule
-    }
+    fun getCoverRule(): CoverRule = GSON.fromJsonObject<CoverRule>(CacheManager.get(coverRuleConfigKey))
+        .getOrNull()
+        ?: DefaultData.coverRule
 
     suspend fun searchCover(book: Book): String? {
         val config = getCoverRule()
@@ -215,7 +212,7 @@ object BookCover {
             book.name,
             source = config,
             coroutineContext = coroutineContext,
-            hasLoginHeader = false
+            hasLoginHeader = false,
         )
         val res = analyzeUrl.getStrResponseAwait()
         val analyzeRule = AnalyzeRule(book)
@@ -247,13 +244,8 @@ object BookCover {
         override var enabledCookieJar: Boolean? = false,
     ) : BaseSource {
 
-        override fun getTag(): String {
-            return searchUrl
-        }
+        override fun getTag(): String = searchUrl
 
-        override fun getKey(): String {
-            return searchUrl
-        }
+        override fun getKey(): String = searchUrl
     }
-
 }

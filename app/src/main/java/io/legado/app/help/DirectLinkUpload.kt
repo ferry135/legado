@@ -27,7 +27,7 @@ object DirectLinkUpload {
         fileName: String,
         file: Any,
         contentType: String,
-        rule: Rule = getRule()
+        rule: Rule = getRule(),
     ): String {
         val url = rule.uploadUrl
         if (url.isBlank()) {
@@ -73,14 +73,12 @@ object DirectLinkUpload {
     val defaultRules: List<Rule> by lazy {
         val json = String(
             appCtx.assets.open("defaultData${File.separator}directLinkUpload.json")
-                .readBytes()
+                .readBytes(),
         )
         GSON.fromJsonArray<Rule>(json).getOrThrow()
     }
 
-    fun getRule(): Rule {
-        return getConfig() ?: defaultRules[0]
-    }
+    fun getRule(): Rule = getConfig() ?: defaultRules[0]
 
     fun getConfig(): Rule? {
         val json = ACache.get(cacheDir = false).getAsString(ruleFileName)
@@ -95,22 +93,16 @@ object DirectLinkUpload {
         ACache.get(cacheDir = false).remove(ruleFileName)
     }
 
-    fun getSummary(): String {
-        return getRule().summary
-    }
+    fun getSummary(): String = getRule().summary
 
     @Keep
     data class Rule(
-        var uploadUrl: String, //上传url
-        var downloadUrlRule: String, //下载链接规则
-        var summary: String, //注释
-        var compress: Boolean = false, //是否压缩
+        var uploadUrl: String, // 上传url
+        var downloadUrlRule: String, // 下载链接规则
+        var summary: String, // 注释
+        var compress: Boolean = false, // 是否压缩
     ) {
 
-        override fun toString(): String {
-            return summary
-        }
-
+        override fun toString(): String = summary
     }
-
 }

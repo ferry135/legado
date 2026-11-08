@@ -15,10 +15,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
-
 @Dao
 interface ReplaceRuleDao {
-
     @Query("SELECT * FROM replace_rules ORDER BY sortOrder ASC")
     fun flowAll(): Flow<List<ReplaceRule>>
 
@@ -59,17 +57,23 @@ interface ReplaceRuleDao {
         """SELECT * FROM replace_rules WHERE isEnabled = 1 and scopeContent = 1
         AND (scope LIKE '%' || :name || '%' or scope LIKE '%' || :origin || '%' or scope is null or scope = '')
         and (excludeScope is null or (excludeScope not LIKE '%' || :name || '%' and excludeScope not LIKE '%' || :origin || '%'))
-        order by sortOrder"""
+        order by sortOrder""",
     )
-    fun findEnabledByContentScope(name: String, origin: String): List<ReplaceRule>
+    fun findEnabledByContentScope(
+        name: String,
+        origin: String,
+    ): List<ReplaceRule>
 
     @Query(
         """SELECT * FROM replace_rules WHERE isEnabled = 1 and scopeTitle = 1
         AND (scope LIKE '%' || :name || '%' or scope LIKE '%' || :origin || '%' or scope is null or scope = '')
         and (excludeScope is null or (excludeScope not LIKE '%' || :name || '%' and excludeScope not LIKE '%' || :origin || '%'))
-        order by sortOrder"""
+        order by sortOrder""",
     )
-    fun findEnabledByTitleScope(name: String, origin: String): List<ReplaceRule>
+    fun findEnabledByTitleScope(
+        name: String,
+        origin: String,
+    ): List<ReplaceRule>
 
     @Query("select * from replace_rules where `group` like '%' || :group || '%'")
     fun getByGroup(group: String): List<ReplaceRule>
@@ -106,9 +110,8 @@ interface ReplaceRuleDao {
 
     fun allGroups(): List<String> = dealGroups(allGroupsUnProcessed)
 
-    fun flowGroups(): Flow<List<String>> {
-        return flowGroupsUnProcessed().map { list ->
+    fun flowGroups(): Flow<List<String>> = flowGroupsUnProcessed()
+        .map { list ->
             dealGroups(list)
         }.flowOn(IO)
-    }
 }

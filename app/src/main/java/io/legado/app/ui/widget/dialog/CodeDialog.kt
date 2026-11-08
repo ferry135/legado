@@ -16,13 +16,13 @@ import io.legado.app.utils.setLayout
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
 class CodeDialog() : BaseDialogFragment(R.layout.dialog_code_view) {
-
     constructor(code: String, disableEdit: Boolean = true, requestId: String? = null) : this() {
-        arguments = Bundle().apply {
-            putBoolean("disableEdit", disableEdit)
-            putString("code", IntentData.put(code))
-            putString("requestId", requestId)
-        }
+        arguments =
+            Bundle().apply {
+                putBoolean("disableEdit", disableEdit)
+                putString("code", IntentData.put(code))
+                putString("requestId", requestId)
+            }
     }
 
     val binding by viewBinding(DialogCodeViewBinding::bind)
@@ -36,7 +36,10 @@ class CodeDialog() : BaseDialogFragment(R.layout.dialog_code_view) {
         setLayout(1f, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
-    override fun onFragmentCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onFragmentCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         if (arguments?.getBoolean("disableEdit") == true) {
             binding.toolBar.title = "code view"
             binding.codeView.disableEdit()
@@ -71,11 +74,10 @@ class CodeDialog() : BaseDialogFragment(R.layout.dialog_code_view) {
         }
     }
 
-
     interface Callback {
-
-        fun onCodeSave(code: String, requestId: String?)
-
+        fun onCodeSave(
+            code: String,
+            requestId: String?,
+        )
     }
-
 }

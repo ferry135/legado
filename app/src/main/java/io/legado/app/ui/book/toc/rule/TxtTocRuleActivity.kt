@@ -6,8 +6,6 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -45,48 +43,53 @@ import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
-class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleViewModel>(),
+class TxtTocRuleActivity :
+    VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleViewModel>(),
     TxtTocRuleAdapter.CallBack,
     SelectActionBar.CallBack,
     TxtTocRuleEditDialog.Callback,
     PopupMenu.OnMenuItemClickListener {
-
     override val viewModel: TxtTocRuleViewModel by viewModels()
     override val binding: ActivityTxtTocRuleBinding by viewBinding(ActivityTxtTocRuleBinding::inflate)
     private val adapter: TxtTocRuleAdapter by lazy {
         TxtTocRuleAdapter(this, this)
     }
     private val importTocRuleKey = "tocRuleUrl"
-    private val qrCodeResult = registerForActivityResult(QrCodeResult()) {
-        it ?: return@registerForActivityResult
-        showDialogFragment(ImportTxtTocRuleDialog(it))
-    }
-    private val importDoc = registerForActivityResult(HandleFileContract()) {
-        kotlin.runCatching {
-            it.uri?.readText(this)?.let {
-                showDialogFragment(ImportTxtTocRuleDialog(it))
-            }
-        }.onFailure {
-            toastOnUi("readTextError:${it.localizedMessage}")
+    private val qrCodeResult =
+        registerForActivityResult(QrCodeResult()) {
+            it ?: return@registerForActivityResult
+            showDialogFragment(ImportTxtTocRuleDialog(it))
         }
-    }
-    private val exportResult = registerForActivityResult(HandleFileContract()) {
-        it.uri?.let { uri ->
-            alert(R.string.export_success) {
-                if (uri.toString().isAbsUrl()) {
-                    setMessage(DirectLinkUpload.getSummary())
+    private val importDoc =
+        registerForActivityResult(HandleFileContract()) {
+            kotlin
+                .runCatching {
+                    it.uri?.readText(this)?.let {
+                        showDialogFragment(ImportTxtTocRuleDialog(it))
+                    }
+                }.onFailure {
+                    toastOnUi("readTextError:${it.localizedMessage}")
                 }
-                val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                    editView.hint = getString(R.string.path)
-                    editView.setText(uri.toString())
-                }
-                customView { alertBinding.root }
-                okButton {
-                    sendToClip(uri.toString())
+        }
+    private val exportResult =
+        registerForActivityResult(HandleFileContract()) {
+            it.uri?.let { uri ->
+                alert(R.string.export_success) {
+                    if (uri.toString().isAbsUrl()) {
+                        setMessage(DirectLinkUpload.getSummary())
+                    }
+                    val alertBinding =
+                        DialogEditTextBinding.inflate(layoutInflater).apply {
+                            editView.hint = getString(R.string.path)
+                            editView.setText(uri.toString())
+                        }
+                    customView { alertBinding.root }
+                    okButton {
+                        sendToClip(uri.toString())
+                    }
                 }
             }
         }
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         initView()
@@ -118,12 +121,15 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
 
     private fun initData() {
         launchCollectWithLifecycle {
-            appDb.txtTocRuleDao.observeAll().catch {
-                AppLog.put("TXT目录规则界面获取数据失败\n${it.localizedMessage}", it)
-            }.flowOn(IO).conflate().collect { tocRules ->
-                adapter.setItems(tocRules, adapter.diffItemCallBack)
-            }
-
+            appDb.txtTocRuleDao
+                .observeAll()
+                .catch {
+                    AppLog.put("TXT目录规则界面获取数据失败\n${it.localizedMessage}", it)
+                }.flowOn(IO)
+                .conflate()
+                .collect { tocRules ->
+                    adapter.setItems(tocRules, adapter.diffItemCallBack)
+                }
         }
     }
 
@@ -135,15 +141,15 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_add -> showDialogFragment(TxtTocRuleEditDialog())
-            R.id.menu_import_local -> importDoc.launch {
-                mode = HandleFileContract.FILE
-                allowExtensions = arrayOf("txt", "json")
-            }
+            R.id.menu_import_local ->
+                importDoc.launch {
+                    mode = HandleFileContract.FILE
+                    allowExtensions = arrayOf("txt", "json")
+                }
             R.id.menu_import_onLine -> showImportDialog()
             R.id.menu_import_qr -> qrCodeResult.launch()
             R.id.menu_import_default -> viewModel.importDefault()
             R.id.menu_help -> showHelp("txtTocRuleHelp")
-
         }
         return super.onCompatOptionsItemSelected(item)
     }
@@ -214,23 +220,25 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
     private fun showImportDialog() {
         val aCache = ACache.get(cacheDir = false)
         val defaultUrl = "https://gitee.com/fisher52/YueDuJson/raw/master/myTxtChapterRule.json"
-        val cacheUrls: MutableList<String> = aCache
-            .getAsString(importTocRuleKey)
-            ?.splitNotBlank(",")
-            ?.toMutableList()
-            ?: mutableListOf()
+        val cacheUrls: MutableList<String> =
+            aCache
+                .getAsString(importTocRuleKey)
+                ?.splitNotBlank(",")
+                ?.toMutableList()
+                ?: mutableListOf()
         if (!cacheUrls.contains(defaultUrl)) {
             cacheUrls.add(0, defaultUrl)
         }
         alert(titleResource = R.string.import_on_line) {
-            val alertBinding = DialogEditTextBinding.inflate(layoutInflater).apply {
-                editView.hint = "url"
-                editView.setFilterValues(cacheUrls)
-                editView.delCallBack = {
-                    cacheUrls.remove(it)
-                    aCache.put(importTocRuleKey, cacheUrls.joinToString(","))
+            val alertBinding =
+                DialogEditTextBinding.inflate(layoutInflater).apply {
+                    editView.hint = "url"
+                    editView.setFilterValues(cacheUrls)
+                    editView.delCallBack = {
+                        cacheUrls.remove(it)
+                        aCache.put(importTocRuleKey, cacheUrls.joinToString(","))
+                    }
                 }
-            }
             customView { alertBinding.root }
             okButton {
                 val text = alertBinding.editView.text?.toString()
@@ -250,16 +258,17 @@ class TxtTocRuleActivity : VMBaseActivity<ActivityTxtTocRuleBinding, TxtTocRuleV
         when (item.itemId) {
             R.id.menu_enable_selection -> viewModel.enableSelection(*adapter.selection.toTypedArray())
             R.id.menu_disable_selection -> viewModel.disableSelection(*adapter.selection.toTypedArray())
-            R.id.menu_export_selection -> exportResult.launch {
-                mode = HandleFileContract.EXPORT
-                fileData = HandleFileContract.FileData(
-                    "exportTxtTocRule.json",
-                    GSON.toJson(adapter.selection).toByteArray(),
-                    "application/json"
-                )
-            }
+            R.id.menu_export_selection ->
+                exportResult.launch {
+                    mode = HandleFileContract.EXPORT
+                    fileData =
+                        HandleFileContract.FileData(
+                            "exportTxtTocRule.json",
+                            GSON.toJson(adapter.selection).toByteArray(),
+                            "application/json",
+                        )
+                }
         }
         return true
     }
-
 }

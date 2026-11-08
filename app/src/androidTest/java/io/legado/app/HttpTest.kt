@@ -14,7 +14,6 @@ import splitties.init.appCtx
 import splitties.systemservices.downloadManager
 
 class HttpTest {
-
     @Test
     fun test() {
         webViewDownloadTest()
@@ -59,17 +58,18 @@ class HttpTest {
                         val statusIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
                         val progress = cursor.getInt(progressIndex)
                         val max = cursor.getInt(fileSizeIndex)
-                        val status = when (cursor.getInt(statusIndex)) {
-                            DownloadManager.STATUS_PAUSED -> appCtx.getString(R.string.pause)
-                            DownloadManager.STATUS_PENDING -> appCtx.getString(R.string.wait_download)
-                            DownloadManager.STATUS_RUNNING -> appCtx.getString(R.string.downloading)
-                            DownloadManager.STATUS_SUCCESSFUL -> {
-                                appCtx.getString(R.string.download_success)
-                            }
+                        val status =
+                            when (cursor.getInt(statusIndex)) {
+                                DownloadManager.STATUS_PAUSED -> appCtx.getString(R.string.pause)
+                                DownloadManager.STATUS_PENDING -> appCtx.getString(R.string.wait_download)
+                                DownloadManager.STATUS_RUNNING -> appCtx.getString(R.string.downloading)
+                                DownloadManager.STATUS_SUCCESSFUL -> {
+                                    appCtx.getString(R.string.download_success)
+                                }
 
-                            DownloadManager.STATUS_FAILED -> appCtx.getString(R.string.download_error)
-                            else -> appCtx.getString(R.string.unknown_state)
-                        }
+                                DownloadManager.STATUS_FAILED -> appCtx.getString(R.string.download_error)
+                                else -> appCtx.getString(R.string.unknown_state)
+                            }
                         print(status)
                         delay(1000)
                     } else {
@@ -79,5 +79,4 @@ class HttpTest {
             }
         }
     }
-
 }

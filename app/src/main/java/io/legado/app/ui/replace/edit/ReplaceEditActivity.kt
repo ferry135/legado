@@ -7,7 +7,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
 import androidx.activity.viewModels
-import androidx.core.view.ViewCompat
 import androidx.lifecycle.lifecycleScope
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
@@ -28,15 +27,13 @@ import io.legado.app.utils.viewbindingdelegate.viewBinding
 class ReplaceEditActivity :
     VMBaseActivity<ActivityReplaceEditBinding, ReplaceEditViewModel>(),
     KeyboardToolPop.CallBack {
-
     companion object {
-
         fun startIntent(
             context: Context,
             id: Long = -1,
             pattern: String? = null,
             isRegex: Boolean = false,
-            scope: String? = null
+            scope: String? = null,
         ): Intent {
             val intent = Intent(context, ReplaceEditActivity::class.java)
             intent.putExtra("id", id)
@@ -45,7 +42,6 @@ class ReplaceEditActivity :
             intent.putExtra("scope", scope)
             return intent
         }
-
     }
 
     override val binding by viewBinding(ActivityReplaceEditBinding::inflate)
@@ -70,15 +66,17 @@ class ReplaceEditActivity :
 
     override fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_save -> viewModel.save(getReplaceRule()) {
-                setResult(RESULT_OK)
-                finish()
-            }
+            R.id.menu_save ->
+                viewModel.save(getReplaceRule()) {
+                    setResult(RESULT_OK)
+                    finish()
+                }
 
             R.id.menu_copy_rule -> sendToClip(GSON.toJson(getReplaceRule()))
-            R.id.menu_paste_rule -> viewModel.pasteRule {
-                upReplaceView(it)
-            }
+            R.id.menu_paste_rule ->
+                viewModel.pasteRule {
+                    upReplaceView(it)
+                }
         }
         return true
     }
@@ -122,15 +120,17 @@ class ReplaceEditActivity :
         replaceRule.scopeContent = cbScopeContent.isChecked
         replaceRule.scope = etScope.text.toString()
         replaceRule.excludeScope = etExcludeScope.text.toString()
-        replaceRule.timeoutMillisecond = etTimeout.text.toString().ifEmpty { "3000" }.toLong()
+        replaceRule.timeoutMillisecond =
+            etTimeout.text
+                .toString()
+                .ifEmpty { "3000" }
+                .toLong()
         return replaceRule
     }
 
-    override fun helpActions(): List<SelectItem<String>> {
-        return arrayListOf(
-            SelectItem("正则教程", "regexHelp")
-        )
-    }
+    override fun helpActions(): List<SelectItem<String>> = arrayListOf(
+        SelectItem("正则教程", "regexHelp"),
+    )
 
     override fun onHelpActionSelect(action: String) {
         when (action) {
@@ -144,15 +144,14 @@ class ReplaceEditActivity :
         if (view is EditText) {
             val start = view.selectionStart
             val end = view.selectionEnd
-            //获取EditText的文字
+            // 获取EditText的文字
             val edit = view.editableText
             if (start < 0 || start >= edit.length) {
                 edit.append(text)
             } else {
-                //光标所在位置插入文字
+                // 光标所在位置插入文字
                 edit.replace(start, end, text)
             }
         }
     }
-
 }

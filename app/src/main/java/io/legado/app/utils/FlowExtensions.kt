@@ -25,7 +25,7 @@ import kotlin.coroutines.coroutineContext
 @OptIn(ExperimentalCoroutinesApi::class)
 inline fun <T> Flow<T>.onEachParallel(
     concurrency: Int,
-    crossinline action: suspend (T) -> Unit
+    crossinline action: suspend (T) -> Unit,
 ): Flow<T> = flatMapMerge(concurrency) { value ->
     flow {
         action(value)
@@ -36,7 +36,7 @@ inline fun <T> Flow<T>.onEachParallel(
 @OptIn(ExperimentalCoroutinesApi::class)
 inline fun <T> Flow<T>.onEachParallelSafe(
     concurrency: Int,
-    crossinline action: suspend (T) -> Unit
+    crossinline action: suspend (T) -> Unit,
 ): Flow<T> = flatMapMerge(concurrency) { value ->
     flow {
         try {
@@ -53,7 +53,6 @@ inline fun <T, R> Flow<T>.mapParallel(
     concurrency: Int,
     crossinline transform: suspend (T) -> R,
 ): Flow<R> = flatMapMerge(concurrency) { value -> flow { emit(transform(value)) } }.buffer(0)
-
 
 @OptIn(ExperimentalCoroutinesApi::class)
 inline fun <T, R> Flow<T>.mapParallelSafe(
@@ -109,93 +108,101 @@ inline fun <T, R> Flow<T>.mapIndexed(
 
 inline fun <T, R> Flow<T>.mapAsync(
     concurrency: Int,
-    crossinline transform: suspend (T) -> R
+    crossinline transform: suspend (T) -> R,
 ): Flow<R> = if (concurrency == 1) {
     map { transform(it) }
 } else {
-    Semaphore(concurrency).let { semaphore ->
-        channelFlow {
-            collect {
-                semaphore.acquire()
-                send(async { transform(it) })
-            }
-        }.map {
-            it.await()
-        }.onEach { semaphore.release() }
-    }.buffer(0)
+    Semaphore(concurrency)
+        .let { semaphore ->
+            channelFlow {
+                collect {
+                    semaphore.acquire()
+                    send(async { transform(it) })
+                }
+            }.map {
+                it.await()
+            }.onEach { semaphore.release() }
+        }.buffer(0)
 }
 
 inline fun <T, R> Flow<T>.mapAsyncIndexed(
     concurrency: Int,
-    crossinline transform: suspend (index: Int, T) -> R
+    crossinline transform: suspend (index: Int, T) -> R,
 ): Flow<R> = if (concurrency == 1) {
     mapIndexed { index, value ->
         transform(index, value)
     }
 } else {
-    Semaphore(concurrency).let { semaphore ->
-        channelFlow {
-            var index = 0
-            collect {
-                semaphore.acquire()
-                val i = index++
-                send(async { transform(i, it) })
-            }
-        }.map {
-            it.await()
-        }.onEach { semaphore.release() }
-    }.buffer(0)
+    Semaphore(concurrency)
+        .let { semaphore ->
+            channelFlow {
+                var index = 0
+                collect {
+                    semaphore.acquire()
+                    val i = index++
+                    send(async { transform(i, it) })
+                }
+            }.map {
+                it.await()
+            }.onEach { semaphore.release() }
+        }.buffer(0)
 }
 
 inline fun <T> Flow<T>.onEachAsync(
     concurrency: Int,
-    crossinline action: suspend (T) -> Unit
+    crossinline action: suspend (T) -> Unit,
 ): Flow<T> = if (concurrency == 1) {
     onEach { action(it) }
 } else {
-    Semaphore(concurrency).let { semaphore ->
-        channelFlow {
-            collect {
-                semaphore.acquire()
-                send(async {
-                    action(it)
-                    it
-                })
-            }
-        }.map {
-            it.await()
-        }.onEach { semaphore.release() }
-    }.buffer(0)
+    Semaphore(concurrency)
+        .let { semaphore ->
+            channelFlow {
+                collect {
+                    semaphore.acquire()
+                    send(
+                        async {
+                            action(it)
+                            it
+                        },
+                    )
+                }
+            }.map {
+                it.await()
+            }.onEach { semaphore.release() }
+        }.buffer(0)
 }
 
 inline fun <T> Flow<T>.onEachAsyncIndexed(
     concurrency: Int,
-    crossinline action: suspend (index: Int, T) -> Unit
+    crossinline action: suspend (index: Int, T) -> Unit,
 ): Flow<T> = if (concurrency == 1) {
     onEachIndexed { index, value ->
         action(index, value)
     }
 } else {
-    Semaphore(concurrency).let { semaphore ->
-        channelFlow {
-            var index = 0
-            collect {
-                semaphore.acquire()
-                val i = index++
-                send(async {
-                    action(i, it)
-                    it
-                })
-            }
-        }.map {
-            it.await()
-        }.onEach { semaphore.release() }
-    }.buffer(0)
+    Semaphore(concurrency)
+        .let { semaphore ->
+            channelFlow {
+                var index = 0
+                collect {
+                    semaphore.acquire()
+                    val i = index++
+                    send(
+                        async {
+                            action(i, it)
+                            it
+                        },
+                    )
+                }
+            }.map {
+                it.await()
+            }.onEach { semaphore.release() }
+        }.buffer(0)
 }
 
 fun <T> Flow<T>.flowWithLifecycleFirst(
     lifecycle: Lifecycle,
-    minActiveState: Lifecycle.State = Lifecycle.State.STARTED
+    minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
 ): Flow<T> = callbackFlow {
     if (!lifecycle.currentState.isAtLeast(minActiveState)) {
         send(first())
@@ -211,14 +218,15 @@ fun <T> Flow<T>.flowWithLifecycleFirst(
 fun <T> Flow<T>.flowWithLifecycleAndDatabaseChange(
     lifecycle: Lifecycle,
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
-    table: String
+    table: String,
 ): Flow<T> = callbackFlow {
     var update = 0
-    val channel = appDb.invalidationTracker
-        .createFlow(table)
-        .conflate()
-        .onEach { update++ }
-        .produceIn(this)
+    val channel =
+        appDb.invalidationTracker
+            .createFlow(table)
+            .conflate()
+            .onEach { update++ }
+            .produceIn(this)
     lifecycle.repeatOnLifecycle(minActiveState) {
         if (update == 0) {
             channel.receive()
@@ -234,15 +242,16 @@ fun <T> Flow<T>.flowWithLifecycleAndDatabaseChange(
 fun <T> Flow<T>.flowWithLifecycleAndDatabaseChangeFirst(
     lifecycle: Lifecycle,
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
-    table: String
+    table: String,
 ): Flow<T> = callbackFlow {
     var update = 0
     val isActive = lifecycle.currentState.isAtLeast(minActiveState)
-    val channel = appDb.invalidationTracker
-        .createFlow(table, emitInitialState = isActive)
-        .conflate()
-        .onEach { update++ }
-        .produceIn(this)
+    val channel =
+        appDb.invalidationTracker
+            .createFlow(table, emitInitialState = isActive)
+            .conflate()
+            .onEach { update++ }
+            .produceIn(this)
     if (!isActive) {
         send(first())
     }

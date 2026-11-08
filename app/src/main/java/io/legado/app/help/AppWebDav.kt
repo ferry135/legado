@@ -61,10 +61,10 @@ object AppWebDav {
         get() {
             val configUrl = appCtx.getPrefString(PreferKey.webDavUrl)?.trim()
             var url = if (configUrl.isNullOrEmpty()) defaultWebDavUrl else configUrl
-            if (!url.endsWith("/")) url = "${url}/"
+            if (!url.endsWith("/")) url = "$url/"
             AppConfig.webDavDir?.trim()?.let {
                 if (it.isNotEmpty()) {
-                    url = "${url}${it}/"
+                    url = "${url}$it/"
                 }
             }
             return url
@@ -130,27 +130,25 @@ object AppWebDav {
 
     suspend fun hasBackUp(backUpName: String): Boolean {
         authorization?.let {
-            val url = "$rootWebDavUrl${backUpName}"
+            val url = "$rootWebDavUrl$backUpName"
             return WebDav(url, it).exists()
         }
         return false
     }
 
-    suspend fun lastBackUp(): Result<WebDavFile?> {
-        return kotlin.runCatching {
-            authorization?.let {
-                var lastBackupFile: WebDavFile? = null
-                WebDav(rootWebDavUrl, it).listFiles().reversed().forEach { webDavFile ->
-                    if (webDavFile.displayName.startsWith("backup")) {
-                        if (lastBackupFile == null
-                            || webDavFile.lastModify > lastBackupFile.lastModify
-                        ) {
-                            lastBackupFile = webDavFile
-                        }
+    suspend fun lastBackUp(): Result<WebDavFile?> = kotlin.runCatching {
+        authorization?.let {
+            var lastBackupFile: WebDavFile? = null
+            WebDav(rootWebDavUrl, it).listFiles().reversed().forEach { webDavFile ->
+                if (webDavFile.displayName.startsWith("backup")) {
+                    if (lastBackupFile == null ||
+                        webDavFile.lastModify > lastBackupFile.lastModify
+                    ) {
+                        lastBackupFile = webDavFile
                     }
                 }
-                lastBackupFile
             }
+            lastBackupFile
         }
     }
 
@@ -170,14 +168,13 @@ object AppWebDav {
     /**
      * 获取云端所有背景名称
      */
-    private suspend fun getAllBgWebDavFiles(): Result<List<WebDavFile>> {
-        return kotlin.runCatching {
-            if (!NetworkUtils.isAvailable())
-                throw NoStackTraceException("网络未连接")
-            authorization.let {
-                it ?: throw NoStackTraceException("webDav未配置")
-                WebDav(bgWebDavUrl, it).listFiles()
-            }
+    private suspend fun getAllBgWebDavFiles(): Result<List<WebDavFile>> = kotlin.runCatching {
+        if (!NetworkUtils.isAvailable()) {
+            throw NoStackTraceException("网络未连接")
+        }
+        authorization.let {
+            it ?: throw NoStackTraceException("webDav未配置")
+            WebDav(bgWebDavUrl, it).listFiles()
         }
     }
 
@@ -269,13 +266,9 @@ object AppWebDav {
         }
     }
 
-    private fun getProgressUrl(name: String, author: String): String {
-        return bookProgressUrl + getProgressFileName(name, author)
-    }
+    private fun getProgressUrl(name: String, author: String): String = bookProgressUrl + getProgressFileName(name, author)
 
-    private fun getProgressFileName(name: String, author: String): String {
-        return UrlUtil.replaceReservedChar("${name}_${author}") + ".json"
-    }
+    private fun getProgressFileName(name: String, author: String): String = UrlUtil.replaceReservedChar("${name}_$author") + ".json"
 
     /**
      * 获取书籍进度
@@ -311,13 +304,15 @@ object AppWebDav {
             val webDavFile = map[progressFileName]
             webDavFile ?: return
             if (webDavFile.lastModify <= book.syncTime) {
-                //本地同步时间大于上传时间不用同步
+                // 本地同步时间大于上传时间不用同步
                 return
             }
             getBookProgress(book)?.let { bookProgress ->
-                if (bookProgress.durChapterIndex > book.durChapterIndex
-                    || (bookProgress.durChapterIndex == book.durChapterIndex
-                            && bookProgress.durChapterPos > book.durChapterPos)
+                if (bookProgress.durChapterIndex > book.durChapterIndex ||
+                    (
+                        bookProgress.durChapterIndex == book.durChapterIndex &&
+                            bookProgress.durChapterPos > book.durChapterPos
+                        )
                 ) {
                     book.durChapterIndex = bookProgress.durChapterIndex
                     book.durChapterPos = bookProgress.durChapterPos
@@ -329,5 +324,4 @@ object AppWebDav {
             }
         }
     }
-
 }

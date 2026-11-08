@@ -7,13 +7,12 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.abs
 
 class RecyclerViewAtPager2 : RecyclerView {
-
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
-        defStyleAttr
+        defStyleAttr,
     )
 
     private var startX = 0
@@ -40,9 +39,9 @@ class RecyclerViewAtPager2 : RecyclerView {
                 }
             }
             MotionEvent.ACTION_UP,
-            MotionEvent.ACTION_CANCEL -> parent.requestDisallowInterceptTouchEvent(false)
+            MotionEvent.ACTION_CANCEL,
+            -> parent.requestDisallowInterceptTouchEvent(false)
         }
         return super.dispatchTouchEvent(ev)
     }
-
 }
