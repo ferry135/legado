@@ -91,6 +91,9 @@ android {
                 ]
             }
         }
+
+        // 只打包中文/英文语言资源,其余语言(es/pt/vi/ja 等)不进 APK
+        resourceConfigurations += ['zh', 'zh-rTW', 'zh-rHK', 'en']
     }
     buildFeatures {
         buildConfig true
@@ -288,23 +291,12 @@ dependencies {
     //apache
     implementation(libs.commons.text)
 
-    //MarkDown
-    implementation(libs.markwon.core)
-    implementation(libs.markwon.image.glide)
-    implementation(libs.markwon.ext.tables)
-    implementation(libs.markwon.html)
-
     //转换繁体
     implementation(libs.quick.chinese.transfer.core)
 
     //加解密类库,有些书源使用
     //noinspection GradleDependency,GradlePackageUpdate
     implementation(libs.hutool.crypto)
-
-    //firebase, 崩溃统计和性能统计
-    implementation platform(libs.firebase.bom)
-    implementation libs.firebase.analytics
-    implementation libs.firebase.perf
 
     implementation libs.glide.recyclerview
 

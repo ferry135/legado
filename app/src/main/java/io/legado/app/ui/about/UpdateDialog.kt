@@ -14,12 +14,9 @@ import io.legado.app.model.Download
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.dpToPx
 import io.legado.app.utils.setLayout
+import io.legado.app.utils.setMarkdown
 import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import io.noties.markwon.Markwon
-import io.noties.markwon.ext.tables.TablePlugin
-import io.noties.markwon.html.HtmlPlugin
-import io.noties.markwon.image.glide.GlideImagesPlugin
 
 class UpdateDialog() : BaseDialogFragment(R.layout.dialog_update) {
     constructor(updateInfo: AppUpdate.UpdateInfo) : this() {
@@ -51,13 +48,7 @@ class UpdateDialog() : BaseDialogFragment(R.layout.dialog_update) {
             return
         }
         binding.textView.post {
-            Markwon
-                .builder(requireContext())
-                .usePlugin(GlideImagesPlugin.create(requireContext()))
-                .usePlugin(HtmlPlugin.create())
-                .usePlugin(TablePlugin.create(requireContext()))
-                .build()
-                .setMarkdown(binding.textView, updateBody)
+            binding.textView.setMarkdown(updateBody)
         }
         binding.toolBar.inflateMenu(R.menu.app_update)
         binding.toolBar.setOnMenuItemClickListener {

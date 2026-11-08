@@ -243,6 +243,20 @@ fun TextView.setHtml(html: String) {
     }
 }
 
+/**
+ * 轻量 Markdown 展示:剥离常见的 md 标记后按纯文本显示。
+ * 用于帮助文档/更新日志等静态内容,仅求可读,不做完整 md 渲染。
+ */
+fun TextView.setMarkdown(markdown: String) {
+    text = markdown
+        .replace(Regex("!\\[([^\\]]*)]\\([^)]*\\)"), "$1") // 图片:仅保留 alt 文本
+        .replace(Regex("\\[([^\\]]*)]\\(([^)]*)\\)"), "$1($2)") // 链接:text(url)
+        .replace(Regex("^#{1,6}\\s*", RegexOption.MULTILINE), "") // 标题:去掉 # 号
+        .replace(Regex("\\*\\*([^*]+)\\*\\*"), "$1") // 粗体
+        .replace(Regex("\\*([^*]+)\\*"), "$1") // 斜体
+        .replace(Regex("`([^`]+)`"), "$1") // 行内代码
+}
+
 fun TextView.setTextIfNotEqual(charSequence: CharSequence?) {
     if (text != charSequence) {
         text = charSequence

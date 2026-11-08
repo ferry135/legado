@@ -13,15 +13,10 @@ import io.legado.app.help.IntentData
 import io.legado.app.utils.applyTint
 import io.legado.app.utils.setHtml
 import io.legado.app.utils.setLayout
+import io.legado.app.utils.setMarkdown
 import io.legado.app.utils.viewbindingdelegate.viewBinding
-import io.noties.markwon.Markwon
-import io.noties.markwon.ext.tables.TablePlugin
-import io.noties.markwon.html.HtmlPlugin
-import io.noties.markwon.image.glide.GlideImagesPlugin
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
     enum class Mode {
@@ -73,25 +68,12 @@ class TextDialog() : BaseDialogFragment(R.layout.dialog_text_view) {
             binding.toolBar.title = it.getString("title")
             val content = IntentData.get(it.getString("content")) ?: ""
             when (it.getString("mode")) {
-                Mode.MD.name ->
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            binding.textView.setTextClassifier(TextClassifier.NO_OP)
-                        }
-                        val markwon: Markwon
-                        val markdown =
-                            withContext(IO) {
-                                markwon =
-                                    Markwon
-                                        .builder(requireContext())
-                                        .usePlugin(GlideImagesPlugin.create(requireContext()))
-                                        .usePlugin(HtmlPlugin.create())
-                                        .usePlugin(TablePlugin.create(requireContext()))
-                                        .build()
-                                markwon.toMarkdown(content)
-                            }
-                        markwon.setParsedMarkdown(binding.textView, markdown)
+                Mode.MD.name -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        binding.textView.setTextClassifier(TextClassifier.NO_OP)
                     }
+                    binding.textView.setMarkdown(content)
+                }
 
                 Mode.HTML.name -> binding.textView.setHtml(content)
                 else -> {

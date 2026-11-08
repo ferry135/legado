@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 书籍详情内容面板：顶部 24dp 圆角、与页面同色 blend（02） -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/surface" />
-    <corners
-        android:topLeftRadius="@dimen/corner_radius_xxl"
-        android:topRightRadius="@dimen/corner_radius_xxl" />
-</shape>
