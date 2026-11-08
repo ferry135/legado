@@ -23,7 +23,6 @@ import splitties.init.appCtx
 
 @Suppress("MemberVisibilityCanBePrivate", "ConstPropertyName")
 object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
-    val isCronet = appCtx.getPrefBoolean(PreferKey.cronet)
     var useAntiAlias = appCtx.getPrefBoolean(PreferKey.antiAlias)
     var userAgent: String = getPrefUserAgent()
     var isEInkMode = appCtx.getPrefString(PreferKey.themeMode) == "3"
@@ -572,7 +571,9 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     private fun getPrefUserAgent(): String {
         val ua = appCtx.getPrefString(PreferKey.userAgent)
         if (ua.isNullOrBlank()) {
-            return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/" + BuildConfig.Cronet_Main_Version + " Safari/537.36"
+            // Chrome 主版本号原先取自 BuildConfig.Cronet_Main_Version(cronet 已裁),改为常量
+            return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
+                "(KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
         }
         return ua
     }

@@ -15,7 +15,6 @@ plugins {
     alias libs.plugins.spotless
     alias libs.plugins.detekt
 }
-apply from: 'download.gradle'
 
 detekt {
     buildUponDefaultConfig = true
@@ -79,8 +78,10 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         project.ext.set("archivesBaseName", name + "_" + version)
 
-        buildConfigField "String", "Cronet_Version", "\"$CronetVersion\""
-        buildConfigField "String", "Cronet_Main_Version", "\"$CronetMainVersion\""
+        // 只打包 arm ABI:x86/x86_64 仅为模拟器用,真机用不到
+        ndk {
+            abiFilters += ['arm64-v8a', 'armeabi-v7a']
+        }
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -113,7 +114,7 @@ android {
 
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'cronet-proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
             if (project.hasProperty("RELEASE_STORE_FILE")) {
@@ -124,7 +125,7 @@ android {
             applicationIdSuffix '.classic'
             versionNameSuffix 'debug'
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'cronet-proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     //noinspection GrDeprecatedAPIUsage
@@ -261,10 +262,6 @@ dependencies {
 
     //网络
     implementation(libs.okhttp)
-    implementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
-    // cronet jar 的隐式运行时依赖:org.chromium.net.httpflags.* 引用 protobuf
-    // (fileTree 无 pom,依赖树看不到,曾误删导致 R8 Missing class,勿动)
-    implementation(libs.protobuf.javalite)
 
     //Glide
     implementation(libs.glide.glide)
