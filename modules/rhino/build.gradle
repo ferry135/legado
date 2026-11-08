@@ -18,6 +18,8 @@ spotless {
     kotlin {
         target 'src/**/*.kt'
         ktlint(libs.versions.ktlint.get()).editorConfigOverride([
+                // 行宽写在 override 里(而非只靠磁盘 .editorconfig):spotless 的 up-to-date 检查不感知磁盘 .editorconfig 变化,写进构建脚本才进任务输入
+                'max_line_length': '140',
                 // 不可自动修复且属项目既有风格/交由 detekt(带 baseline)把关的规则
                 'ktlint_standard_max-line-length': 'disabled',
                 'ktlint_standard_no-wildcard-imports': 'disabled',
