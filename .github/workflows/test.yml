@@ -41,6 +41,9 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew spotlessCheck --build-cache --parallel --daemon --warning-mode all
+      - name: Detekt
+        run: |
+          ./gradlew detekt --build-cache --parallel --daemon --warning-mode all
       - name: Run Lint
         run: |
           chmod +x gradlew
@@ -54,6 +57,7 @@ jobs:
           path: |
             app/build/reports/lint-results-appDebug.html
             app/build/reports/lint-results-appDebug.xml
+            **/build/reports/detekt/**
 
   prepare:
     runs-on: ubuntu-latest

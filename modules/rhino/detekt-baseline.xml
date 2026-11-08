@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexCondition:ExternalScriptable.kt$ExternalScriptable$obj !is Number &amp;&amp; obj !is String &amp;&amp; obj !is Boolean &amp;&amp; obj !is Char</ID>
+    <ID>ComplexCondition:ExternalScriptable.kt$ExternalScriptable$typeHint != ScriptRuntime.NumberClass &amp;&amp; typeHint != ScriptRuntime.ByteClass &amp;&amp; typeHint != java.lang.Byte.TYPE &amp;&amp; typeHint != ScriptRuntime.ShortClass &amp;&amp; typeHint != java.lang.Short.TYPE &amp;&amp; typeHint != ScriptRuntime.IntegerClass &amp;&amp; typeHint != Integer.TYPE &amp;&amp; typeHint != ScriptRuntime.FloatClass &amp;&amp; typeHint != java.lang.Float.TYPE &amp;&amp; typeHint != ScriptRuntime.DoubleClass &amp;&amp; typeHint != java.lang.Double.TYPE</ID>
+    <ID>CyclomaticComplexMethod:ExternalScriptable.kt$ExternalScriptable$override fun getDefaultValue(typeHint: Class&lt;*&gt;?): Any</ID>
+    <ID>InstanceOfCheckForException:RhinoCompiledScript.kt$RhinoCompiledScript$re is JavaScriptException</ID>
+    <ID>InstanceOfCheckForException:RhinoScriptEngine.kt$RhinoScriptEngine$re is JavaScriptException</ID>
+    <ID>LongMethod:ExternalScriptable.kt$ExternalScriptable$override fun getDefaultValue(typeHint: Class&lt;*&gt;?): Any</ID>
+    <ID>MaxLineLength:AbstractScriptEngine.kt$AbstractScriptEngine$override fun eval(script: String, scope: Scriptable, coroutineContext: CoroutineContext?): Any?</ID>
+    <ID>MaxLineLength:AbstractScriptEngine.kt$AbstractScriptEngine$override suspend fun evalSuspend(script: String, scope: Scriptable): Any?</ID>
+    <ID>MaxLineLength:JavaAdapter.kt$JavaAdapter$override</ID>
+    <ID>MaxLineLength:ReadOnlyJavaObject.kt$ReadOnlyJavaObject$class</ID>
+    <ID>MaxLineLength:RhinoTopLevel.kt$RhinoTopLevel$class</ID>
+    <ID>MaxLineLength:RhinoTopLevel.kt$RhinoTopLevel.Companion$fun</ID>
+    <ID>NestedBlockDepth:ExternalScriptable.kt$ExternalScriptable$override fun getDefaultValue(typeHint: Class&lt;*&gt;?): Any</ID>
+    <ID>SwallowedException:JSAdapter.kt$JSAdapter$re: RhinoException</ID>
+    <ID>SwallowedException:RhinoExtensions.kt$e: IllegalStateException</ID>
+    <ID>SwallowedException:RhinoScriptEngine.kt$RhinoScriptEngine$var3: ScriptException</ID>
+    <ID>SwallowedException:RhinoScriptEngine.kt$RhinoScriptEngine$var4: ScriptException</ID>
+    <ID>SwallowedException:RhinoScriptEngine.kt$RhinoScriptEngine$var6: AccessControlException</ID>
+    <ID>ThrowsCount:RhinoScriptEngine.kt$RhinoScriptEngine$@Suppress("UNCHECKED_CAST") @Throws(ScriptException::class, NoSuchMethodException::class) private operator fun invoke(thiz: Any?, name: String?, vararg args: Any?): Any?</ID>
+    <ID>TooManyFunctions:JSAdapter.kt$JSAdapter : ScriptableFunction</ID>
+    <ID>TooManyFunctions:ScriptEngine.kt$ScriptEngine</ID>
+    <ID>UseRequire:InterfaceImplementor.kt$InterfaceImplementor$throw IllegalArgumentException("interface Class expected")</ID>
+    <ID>UseRequire:RhinoScriptEngine.kt$RhinoScriptEngine$throw IllegalArgumentException("脚本对象不能为空")</ID>
+  </CurrentIssues>
+</SmellBaseline>

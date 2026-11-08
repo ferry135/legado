@@ -1,0 +1,733 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexCondition:AnalyzeByJSoup.kt$AnalyzeByJSoup.ElementsSingle$(start &lt; 0 &amp;&amp; end &lt; 0) || (start &gt;= len &amp;&amp; end &gt;= len)</ID>
+    <ID>ComplexCondition:AnalyzeRule.kt$AnalyzeRule.SourceRule$mode != Mode.Js &amp;&amp; mode != Mode.Regex &amp;&amp; (evalMatcher.start() == 0 || !tmp.contains("##"))</ID>
+    <ID>ComplexCondition:BaseBooksAdapter.kt$BaseBooksAdapter.&lt;no name provided&gt;$oldItem.lastCheckCount != newItem.lastCheckCount || oldItem.durChapterTime != newItem.durChapterTime || oldItem.getUnreadChapterNum() != newItem.getUnreadChapterNum() || oldItem.lastCheckCount != newItem.lastCheckCount</ID>
+    <ID>ComplexCondition:BaseReadAloudService.kt$BaseReadAloudService$exactPaceAvailable() &amp;&amp; storedBasePace &lt;= 0f &amp;&amp; exactPaceChars &lt; 30 &amp;&amp; paceMsPerChar &lt;= 0f</ID>
+    <ID>ComplexCondition:BookInfoViewModel.kt$BookInfoViewModel$!inBookshelf &amp;&amp; dbBook != null &amp;&amp; !dbBook.isNotShelf &amp;&amp; dbBook.origin == book.origin</ID>
+    <ID>ComplexCondition:CacheManager.kt$AppCacheManager$it.startsWith("v_") || it.startsWith("userInfo_") || it.startsWith("loginHeader_") || it.startsWith("sourceVariable_")</ID>
+    <ID>ComplexCondition:ChapterProvider.kt$ChapterProvider$isTitle &amp;&amp; (ReadBookConfig.isMiddleTitle || emptyContent || isVolumeTitle)</ID>
+    <ID>ComplexCondition:CodeView.kt$CodeView$charAtCursor != '\n' &amp;&amp; c == '/' &amp;&amp; iEnd + 1 &lt; dEnd &amp;&amp; dest[iEnd] == c</ID>
+    <ID>ComplexCondition:CodeView.kt$CodeView$modified &amp;&amp; end - start == 1 &amp;&amp; start &lt; source.length &amp;&amp; dStart &lt; dest.length</ID>
+    <ID>ComplexCondition:ContentTextView.kt$ContentTextView$hasNextPlus() &amp;&amp; nextPlusPage.render(view) &amp;&amp; callBack.isScroll &amp;&amp; relativeOffset(2) &lt; ChapterProvider.visibleHeight</ID>
+    <ID>ComplexCondition:CoverPageDelegate.kt$CoverPageDelegate$(mDirection == PageDirection.NEXT &amp;&amp; offsetX &gt; 0) || (mDirection == PageDirection.PREV &amp;&amp; offsetX &lt; 0)</ID>
+    <ID>ComplexCondition:CronetLoader.kt$CronetLoader$source == null || !source.exists() || !source.isFile || dest == null</ID>
+    <ID>ComplexCondition:DragSelectTouchHelper.kt$DragSelectTouchHelper$oldLeft != left || oldRight != right || oldTop != top || oldBottom != bottom</ID>
+    <ID>ComplexCondition:HandleFileActivity.kt$HandleFileActivity$file.exists() &amp;&amp; file.isDirectory &amp;&amp; isExternalStorage(file) &amp;&amp; file.checkWrite()</ID>
+    <ID>ComplexCondition:ImportOldData.kt$ImportOldData$!newRule.startsWith("@CSS:", true) &amp;&amp; !newRule.startsWith("@XPath:", true) &amp;&amp; !newRule.startsWith("//") &amp;&amp; !newRule.startsWith("##") &amp;&amp; !newRule.startsWith(":") &amp;&amp; !newRule.contains("@js:", true) &amp;&amp; !newRule.contains("&lt;js&gt;", true)</ID>
+    <ID>ComplexCondition:ImportOldData.kt$ImportOldData$newRule.contains("&amp;") &amp;&amp; !newRule.contains("&amp;&amp;") &amp;&amp; !newRule.contains("http") &amp;&amp; !newRule.startsWith("/")</ID>
+    <ID>ComplexCondition:JsoupExtensions.kt$&lt;no name provided&gt;$sb.isNotEmpty() &amp;&amp; (node.isBlock || node.tag().name == "br") &amp;&amp; !lastCharIsWhitespace(sb)</ID>
+    <ID>ComplexCondition:MainActivity.kt$MainActivity.TabFragmentPageAdapter$(fragmentId == idBookshelf1 &amp;&amp; any is BookshelfFragment1) || (fragmentId == idBookshelf2 &amp;&amp; any is BookshelfFragment2) || (fragmentId == idExplore &amp;&amp; any is ExploreFragment) || (fragmentId == idMy &amp;&amp; any is MyFragment)</ID>
+    <ID>ComplexCondition:MangaColorFilterConfig.kt$MangaColorFilterConfig$r == 0 &amp;&amp; g == 0 &amp;&amp; b == 0 &amp;&amp; a == 0 &amp;&amp; l == 0</ID>
+    <ID>ComplexCondition:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.Companion$( (responseCode &lt; HTTP_CONTINUE || responseCode &gt;= 200) &amp;&amp; (responseCode != HttpURLConnection.HTTP_NO_CONTENT) &amp;&amp; (responseCode != HttpURLConnection.HTTP_NOT_MODIFIED) )</ID>
+    <ID>ComplexCondition:Preference.kt$weightLayoutRes != null &amp;&amp; weightLayoutRes != 0 &amp;&amp; viewId != null &amp;&amp; viewId != 0</ID>
+    <ID>ComplexCondition:ReadBook.kt$ReadBook$progress == null || progress.durChapterIndex &lt; book.durChapterIndex || ( progress.durChapterIndex == book.durChapterIndex &amp;&amp; progress.durChapterPos &lt; book.durChapterPos )</ID>
+    <ID>ComplexCondition:ReadManga.kt$ReadManga$progress == null || progress.durChapterIndex &lt; book.durChapterIndex || ( progress.durChapterIndex == book.durChapterIndex &amp;&amp; progress.durChapterPos &lt; book.durChapterPos )</ID>
+    <ID>ComplexCondition:SearchActivity.kt$SearchActivity$binding.refreshProgressBar.isAutoLoading || (!hasFocus &amp;&amp; adapter.isNotEmpty() &amp;&amp; searchView.query.isNotBlank())</ID>
+    <ID>ComplexCondition:SlidePageDelegate.kt$SlidePageDelegate$(mDirection == PageDirection.NEXT &amp;&amp; offsetX &gt; 0) || (mDirection == PageDirection.PREV &amp;&amp; offsetX &lt; 0)</ID>
+    <ID>ComplexCondition:TextChapterLayout.kt$TextChapterLayout$isTitle &amp;&amp; ( isMiddleTitle || emptyContent || isVolumeTitle || imageStyle?.uppercase() == Book.imgStyleSingle )</ID>
+    <ID>ComplexCondition:TextFile.kt$TextFile$start &lt; bufferEnd &amp;&amp; end &gt; bufferEnd || start &lt; bufferStart &amp;&amp; end &gt; bufferStart</ID>
+    <ID>ComplexCondition:TextLine.kt$TextLine$!AppConfig.optimizeRender || exceed || !onlyTextColumn || textPage.isMsgPage</ID>
+    <ID>ConstructorParameterNaming:ACache.kt$ACache$max_count: Int</ID>
+    <ID>ConstructorParameterNaming:ACache.kt$ACache$max_size: Long</ID>
+    <ID>ConstructorParameterNaming:FlexChildStyle.kt$FlexChildStyle$val layout_alignSelf: String = "auto"</ID>
+    <ID>ConstructorParameterNaming:FlexChildStyle.kt$FlexChildStyle$val layout_flexBasisPercent: Float = -1F</ID>
+    <ID>ConstructorParameterNaming:FlexChildStyle.kt$FlexChildStyle$val layout_flexGrow: Float = 0F</ID>
+    <ID>ConstructorParameterNaming:FlexChildStyle.kt$FlexChildStyle$val layout_flexShrink: Float = 1F</ID>
+    <ID>ConstructorParameterNaming:FlexChildStyle.kt$FlexChildStyle$val layout_wrapBefore: Boolean = false</ID>
+    <ID>CyclomaticComplexMethod:AnalyzeByJSonPath.kt$AnalyzeByJSonPath$internal fun getList(rule: String): ArrayList&lt;Any&gt;?</ID>
+    <ID>CyclomaticComplexMethod:AnalyzeByJSonPath.kt$AnalyzeByJSonPath$internal fun getStringList(rule: String): List&lt;String&gt;</ID>
+    <ID>CyclomaticComplexMethod:AnalyzeByJSoup.kt$AnalyzeByJSoup$internal fun getStringList(ruleStr: String): List&lt;String&gt;</ID>
+    <ID>CyclomaticComplexMethod:AnalyzeByJSoup.kt$AnalyzeByJSoup$private fun getElements(temp: Element?, rule: String): Elements</ID>
+    <ID>CyclomaticComplexMethod:AnalyzeByJSoup.kt$AnalyzeByJSoup$private fun getResultLast(elements: Elements, lastRule: String): ArrayList&lt;String&gt;</ID>
+    <ID>CyclomaticComplexMethod:AnalyzeByJSoup.kt$AnalyzeByJSoup.ElementsSingle$fun getElementsSingle(temp: Element, rule: String): Elements</ID>
+    <ID>CyclomaticComplexMethod:AnalyzeByJSoup.kt$AnalyzeByJSoup.ElementsSingle$private fun findIndexSet(rule: String)</ID>
+    <ID>CyclomaticComplexMethod:AnalyzeRule.kt$AnalyzeRule$@JvmOverloads fun getString( ruleList: List&lt;SourceRule&gt;, mContent: Any? = null, isUrl: Boolean = false, unescape: Boolean = true, ): String</ID>
+    <ID>CyclomaticComplexMethod:AnalyzeRule.kt$AnalyzeRule$@JvmOverloads fun getStringList( ruleList: List&lt;SourceRule&gt;, mContent: Any? = null, isUrl: Boolean = false, ): List&lt;String&gt;?</ID>
+    <ID>CyclomaticComplexMethod:AnalyzeRule.kt$AnalyzeRule.SourceRule$fun makeUpRule(result: Any?)</ID>
+    <ID>CyclomaticComplexMethod:AnalyzeUrl.kt$AnalyzeUrl$private fun analyzeUrl()</ID>
+    <ID>CyclomaticComplexMethod:AnalyzeUrl.kt$AnalyzeUrl$suspend fun getStrResponseAwait( jsStr: String? = null, sourceRegex: String? = null, useWebView: Boolean = true, ): StrResponse</ID>
+    <ID>CyclomaticComplexMethod:AppConfig.kt$AppConfig$override fun onSharedPreferenceChanged( sharedPreferences: SharedPreferences?, key: String?, )</ID>
+    <ID>CyclomaticComplexMethod:AudioPlayService.kt$AudioPlayService$override fun onStartCommand( intent: Intent?, flags: Int, startId: Int, ): Int</ID>
+    <ID>CyclomaticComplexMethod:Backup.kt$Backup$private suspend fun backup(context: Context, path: String?)</ID>
+    <ID>CyclomaticComplexMethod:BackupConfig.kt$BackupConfig$fun keyIsNotIgnore(key: String): Boolean</ID>
+    <ID>CyclomaticComplexMethod:BgTextConfigDialog.kt$BgTextConfigDialog$private fun exportConfig(uri: Uri)</ID>
+    <ID>CyclomaticComplexMethod:BookChapterList.kt$BookChapterList$suspend fun analyzeChapterList( bookSource: BookSource, book: Book, baseUrl: String, redirectUrl: String, body: String?, ): List&lt;BookChapter&gt;</ID>
+    <ID>CyclomaticComplexMethod:BookContent.kt$BookContent$@Throws(Exception::class) suspend fun analyzeContent( bookSource: BookSource, book: Book, bookChapter: BookChapter, baseUrl: String, redirectUrl: String, body: String?, nextChapterUrl: String?, needSave: Boolean = true, ): String</ID>
+    <ID>CyclomaticComplexMethod:BookHelp.kt$BookHelp$fun getDurChapter( oldDurChapterIndex: Int, oldDurChapterName: String?, newChapterList: List&lt;BookChapter&gt;, oldChapterListSize: Int = 0, ): Int</ID>
+    <ID>CyclomaticComplexMethod:BookInfo.kt$BookInfo$suspend fun analyzeBookInfo( book: Book, body: String, analyzeRule: AnalyzeRule, bookSource: BookSource, baseUrl: String, redirectUrl: String, canReName: Boolean, )</ID>
+    <ID>CyclomaticComplexMethod:BookInfoActivity.kt$BookInfoActivity$override fun onCompatOptionsItemSelected(item: MenuItem): Boolean</ID>
+    <ID>CyclomaticComplexMethod:BookInfoActivity.kt$BookInfoActivity$private fun initViewEvent()</ID>
+    <ID>CyclomaticComplexMethod:BookList.kt$BookList$@Throws(Exception::class) suspend fun analyzeBookList( bookSource: BookSource, ruleData: RuleData, analyzeUrl: AnalyzeUrl, baseUrl: String, body: String?, isSearch: Boolean = true, isRedirect: Boolean = false, filter: ((name: String, author: String) -&gt; Boolean)? = null, shouldBreak: ((size: Int) -&gt; Boolean)? = null, ): ArrayList&lt;SearchBook&gt;</ID>
+    <ID>CyclomaticComplexMethod:BookSource.kt$BookSource$fun equal(source: BookSource): Boolean</ID>
+    <ID>CyclomaticComplexMethod:BookSourceActivity.kt$BookSourceActivity$override fun onCompatOptionsItemSelected(item: MenuItem): Boolean</ID>
+    <ID>CyclomaticComplexMethod:BookSourceActivity.kt$BookSourceActivity$private fun upBookSource(searchKey: String? = null)</ID>
+    <ID>CyclomaticComplexMethod:BookSourceEditActivity.kt$BookSourceEditActivity$private fun getSource(): BookSource</ID>
+    <ID>CyclomaticComplexMethod:BookSourceViewModel.kt$BookSourceViewModel$private fun getBookSources( searchKey: String?, sortAscending: Boolean, sort: BookSourceSort, ): List&lt;BookSource&gt;</ID>
+    <ID>CyclomaticComplexMethod:BookshelfViewModel.kt$BookshelfViewModel$fun addBookByUrl(bookUrls: String)</ID>
+    <ID>CyclomaticComplexMethod:CacheActivity.kt$CacheActivity$override fun onCompatOptionsItemSelected(item: MenuItem): Boolean</ID>
+    <ID>CyclomaticComplexMethod:CacheActivity.kt$CacheActivity$private fun configExportSection( path: String, position: Int, )</ID>
+    <ID>CyclomaticComplexMethod:ChapterProvider.kt$ChapterProvider$private suspend fun setTypeImage( book: Book, src: String, x: Int, y: Float, textPages: ArrayList&lt;TextPage&gt;, textHeight: Float, stringBuilder: StringBuilder, imageStyle: String?, ): Pair&lt;Int, Float&gt;</ID>
+    <ID>CyclomaticComplexMethod:ChapterProvider.kt$ChapterProvider$private suspend fun setTypeText( book: Book, x: Int, y: Float, text: String, textPages: ArrayList&lt;TextPage&gt;, stringBuilder: StringBuilder, textPaint: TextPaint, textHeight: Float, fontMetrics: FontMetrics, isTitle: Boolean = false, emptyContent: Boolean = false, isVolumeTitle: Boolean = false, srcList: LinkedList&lt;String&gt;? = null, ): Pair&lt;Int, Float&gt;</ID>
+    <ID>CyclomaticComplexMethod:ChapterProvider.kt$ChapterProvider$suspend fun getTextChapter( book: Book, bookChapter: BookChapter, displayTitle: String, bookContent: BookContent, chapterSize: Int, ): TextChapter</ID>
+    <ID>CyclomaticComplexMethod:CodeView.kt$CodeView$private fun autoIndent( source: CharSequence, dest: Spanned, dStart: Int, dEnd: Int, ): CharSequence</ID>
+    <ID>CyclomaticComplexMethod:ContentHelp.kt$ContentHelp$private fun findNewLines( str: String, dict: List&lt;String&gt;, ): String</ID>
+    <ID>CyclomaticComplexMethod:ContentProcessor.kt$ContentProcessor$fun getContent( book: Book, chapter: BookChapter, content: String, includeTitle: Boolean = true, useReplace: Boolean = true, chineseConvert: Boolean = true, reSegment: Boolean = true, ): BookContent</ID>
+    <ID>CyclomaticComplexMethod:ContentTextView.kt$ContentTextView$private fun touchRough( x: Float, y: Float, touched: ( relativeOffset: Float, textPos: TextPos, textPage: TextPage, textLine: TextLine, column: BaseColumn, ) -&gt; Unit, )</ID>
+    <ID>CyclomaticComplexMethod:CronetLoader.kt$CronetLoader$private fun copyFile( source: File?, dest: File?, ): Boolean</ID>
+    <ID>CyclomaticComplexMethod:EpubFile.kt$EpubFile$private fun getContent(chapter: BookChapter): String?</ID>
+    <ID>CyclomaticComplexMethod:FileAssociationActivity.kt$FileAssociationActivity$private fun importBook( treeUri: Uri?, uri: Uri, )</ID>
+    <ID>CyclomaticComplexMethod:FileUtils.kt$FileUtils$@JvmOverloads fun listDirs( startDirPath: String, excludeDirs: Array&lt;String&gt;? = null, @SortType sortType: Int = BY_NAME_ASC, ): Array&lt;File&gt;</ID>
+    <ID>CyclomaticComplexMethod:FileUtils.kt$FileUtils$@JvmOverloads fun listFiles( startDirPath: String, filterPattern: Pattern? = null, @SortType sortType: Int = BY_NAME_ASC, ): Array&lt;File&gt;</ID>
+    <ID>CyclomaticComplexMethod:HandleFileActivity.kt$HandleFileActivity$override fun onActivityCreated(savedInstanceState: Bundle?)</ID>
+    <ID>CyclomaticComplexMethod:HttpReadAloudService.kt$HttpReadAloudService$private suspend fun getSpeakStream( httpTts: HttpTTS, speakText: String, ): InputStream?</ID>
+    <ID>CyclomaticComplexMethod:HttpServer.kt$HttpServer$override fun serve(session: IHTTPSession): Response</ID>
+    <ID>CyclomaticComplexMethod:ImportBookSourceViewModel.kt$ImportBookSourceViewModel$fun importSource(text: String)</ID>
+    <ID>CyclomaticComplexMethod:ImportOldData.kt$ImportOldData$private fun fromOldBooks(json: String): List&lt;Book&gt;</ID>
+    <ID>CyclomaticComplexMethod:ImportOldData.kt$ImportOldData$private fun toNewRule(oldRule: String?): String?</ID>
+    <ID>CyclomaticComplexMethod:LibArchiveUtils.kt$LibArchiveUtils$@Throws(NullPointerException::class, SecurityException::class) private fun unArchive( archive: Long, destDir: File?, filter: ((String) -&gt; Boolean)? = null, ): List&lt;File&gt;</ID>
+    <ID>CyclomaticComplexMethod:MediaButtonReceiver.kt$MediaButtonReceiver.Companion$fun readAloud( context: Context, isMediaKey: Boolean = true, )</ID>
+    <ID>CyclomaticComplexMethod:MobiBook.kt$MobiBook$private fun readIndexEntry( indxBuffer: ByteBuffer, tagx: TagxHeader, tagTable: List&lt;TagxTag&gt;, idxtOffset: Int, ): IndexEntry</ID>
+    <ID>CyclomaticComplexMethod:MobiFile.kt$MobiFile$private fun getContentKF8( kf8Book: KF8Book, chapter: BookChapter, ): String?</ID>
+    <ID>CyclomaticComplexMethod:MoreConfigDialog.kt$MoreConfigDialog.ReadPreferenceFragment$override fun onSharedPreferenceChanged( sharedPreferences: SharedPreferences?, key: String?, )</ID>
+    <ID>CyclomaticComplexMethod:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.OkHttpURLConnection$@Throws(IOException::class) private fun buildCall(): Call</ID>
+    <ID>CyclomaticComplexMethod:OnLineImportActivity.kt$OnLineImportActivity$override fun onActivityCreated(savedInstanceState: Bundle?)</ID>
+    <ID>CyclomaticComplexMethod:OtherConfigFragment.kt$OtherConfigFragment$override fun onPreferenceTreeClick(preference: Preference): Boolean</ID>
+    <ID>CyclomaticComplexMethod:OtherConfigFragment.kt$OtherConfigFragment$override fun onSharedPreferenceChanged( sharedPreferences: SharedPreferences?, key: String?, )</ID>
+    <ID>CyclomaticComplexMethod:PageView.kt$PageView$private fun upTipStyle()</ID>
+    <ID>CyclomaticComplexMethod:PermissionActivity.kt$PermissionActivity$@SuppressLint("BatteryLife") override fun onCreate(savedInstanceState: Bundle?)</ID>
+    <ID>CyclomaticComplexMethod:PhotoView.kt$PhotoView$override fun onMeasure( widthMeasureSpec: Int, heightMeasureSpec: Int, )</ID>
+    <ID>CyclomaticComplexMethod:PhotoView.kt$PhotoView$private fun initBase()</ID>
+    <ID>CyclomaticComplexMethod:PhotoView.kt$PhotoView.GestureListener$override fun onScroll( e1: MotionEvent?, e2: MotionEvent, distanceX: Float, distanceY: Float, ): Boolean</ID>
+    <ID>CyclomaticComplexMethod:PhotoView.kt$PhotoView.Transform$fun withFling( velocityX: Float, velocityY: Float, )</ID>
+    <ID>CyclomaticComplexMethod:PhotoView.kt$PhotoView.Transform$override fun run()</ID>
+    <ID>CyclomaticComplexMethod:Preference.kt$fun &lt;T : View&gt; androidx.preference.Preference.bindView( viewHolder: PreferenceViewHolder?, weightLayoutRes: Int? = null, viewId: Int? = null, weightWidth: Int = 0, weightHeight: Int = 0, isBottomBackground: Boolean = false, ): T?</ID>
+    <ID>CyclomaticComplexMethod:ReadBook.kt$ReadBook$private fun preDownload()</ID>
+    <ID>CyclomaticComplexMethod:ReadBook.kt$ReadBook$private suspend fun applyTextChapter( book: Book, chapter: BookChapter, content: String, upContent: Boolean, resetPageOffset: Boolean, )</ID>
+    <ID>CyclomaticComplexMethod:ReadBookActivity.kt$ReadBookActivity$override fun observeLiveBus()</ID>
+    <ID>CyclomaticComplexMethod:ReadBookActivity.kt$ReadBookActivity$override fun onCompatOptionsItemSelected(item: MenuItem): Boolean</ID>
+    <ID>CyclomaticComplexMethod:ReadBookConfig.kt$ReadBookConfig$fun import(byteArray: ByteArray): Config</ID>
+    <ID>CyclomaticComplexMethod:ReadBookViewModel.kt$ReadBookViewModel$private suspend fun initBook(book: Book)</ID>
+    <ID>CyclomaticComplexMethod:ReadManga.kt$ReadManga$private fun preDownload()</ID>
+    <ID>CyclomaticComplexMethod:ReadManga.kt$ReadManga$suspend fun contentLoadFinish( chapter: BookChapter, content: String?, errorMsg: String = "加载内容失败", canceled: Boolean = false, )</ID>
+    <ID>CyclomaticComplexMethod:ReadMangaActivity.kt$ReadMangaActivity$@SuppressLint("StringFormatMatches", "NotifyDataSetChanged") override fun onCompatOptionsItemSelected(item: MenuItem): Boolean</ID>
+    <ID>CyclomaticComplexMethod:ReadMangaActivity.kt$ReadMangaActivity$private fun upInfoBar(page: Any?)</ID>
+    <ID>CyclomaticComplexMethod:ReadMangaViewModel.kt$ReadMangaViewModel$private suspend fun initManga(book: Book)</ID>
+    <ID>CyclomaticComplexMethod:ReadView.kt$ReadView$@SuppressLint("ClickableViewAccessibility") override fun onTouchEvent(event: MotionEvent): Boolean</ID>
+    <ID>CyclomaticComplexMethod:ReadView.kt$ReadView$private fun click(action: Int)</ID>
+    <ID>CyclomaticComplexMethod:ReadView.kt$ReadView$private fun onLongPress()</ID>
+    <ID>CyclomaticComplexMethod:RealPathUtil.kt$RealPathUtil$fun getPath( context: Context, uri: Uri, ): String?</ID>
+    <ID>CyclomaticComplexMethod:RefreshProgressBar.kt$RefreshProgressBar$override fun onDraw(canvas: Canvas)</ID>
+    <ID>CyclomaticComplexMethod:Restore.kt$Restore$private suspend fun restore(path: String)</ID>
+    <ID>CyclomaticComplexMethod:RuleAnalyzer.kt$RuleAnalyzer$private fun chompCodeBalanced(open: Char, close: Char): Boolean</ID>
+    <ID>CyclomaticComplexMethod:RuleAnalyzer.kt$RuleAnalyzer$private fun chompRuleBalanced(open: Char, close: Char): Boolean</ID>
+    <ID>CyclomaticComplexMethod:SearchModel.kt$SearchModel$private suspend fun mergeItems( newDataS: List&lt;SearchBook&gt;, precision: Boolean, )</ID>
+    <ID>CyclomaticComplexMethod:TTSReadAloudService.kt$TTSReadAloudService$@Synchronized override fun play()</ID>
+    <ID>CyclomaticComplexMethod:TTSReadAloudService.kt$TTSReadAloudService$private fun normalizeWavLoudness(file: File): Boolean</ID>
+    <ID>CyclomaticComplexMethod:TextChapterLayout.kt$TextChapterLayout$@Suppress("DEPRECATION") private suspend fun setTypeText( book: Book, text: String, textPaint: TextPaint, textHeight: Float, fontMetrics: Paint.FontMetrics, imageStyle: String?, isTitle: Boolean = false, isFirstLine: Boolean = true, emptyContent: Boolean = false, isVolumeTitle: Boolean = false, srcList: LinkedList&lt;String&gt;? = null, )</ID>
+    <ID>CyclomaticComplexMethod:TextChapterLayout.kt$TextChapterLayout$private suspend fun getTextChapter( book: Book, bookChapter: BookChapter, displayTitle: String, bookContent: BookContent, )</ID>
+    <ID>CyclomaticComplexMethod:TextFile.kt$TextFile$private fun analyze( fileStart: Long = 0L, fileEnd: Long = Long.MAX_VALUE, ): Pair&lt;ArrayList&lt;BookChapter&gt;, Int&gt;</ID>
+    <ID>CyclomaticComplexMethod:TextFile.kt$TextFile$private fun analyze(pattern: Pattern?): Pair&lt;ArrayList&lt;BookChapter&gt;, Int&gt;</ID>
+    <ID>CyclomaticComplexMethod:TextPage.kt$TextPage$fun upLinesPosition()</ID>
+    <ID>CyclomaticComplexMethod:ThemeConfig.kt$ThemeConfig$fun applyTheme(context: Context)</ID>
+    <ID>CyclomaticComplexMethod:TimerSliderPopup.kt$TimerSliderPopup$@Suppress("DEPRECATION") private fun syncChips(progress: Int)</ID>
+    <ID>CyclomaticComplexMethod:TintHelper.kt$TintHelper$fun setTintAuto( view: View, @ColorInt color: Int, isBackground: Boolean, isDark: Boolean, )</ID>
+    <ID>CyclomaticComplexMethod:TintHelper.kt$TintHelper$fun setTintSelector( view: View, @ColorInt color: Int, darker: Boolean, useDarkTheme: Boolean, )</ID>
+    <ID>CyclomaticComplexMethod:WebtoonRecyclerView.kt$WebtoonRecyclerView.Detector$override fun onTouchEvent(ev: MotionEvent): Boolean</ID>
+    <ID>DestructuringDeclarationWithTooManyEntries:ExportBookService.kt$ExportBookService$val (title, chapterResource, resources, chapter) = exportChapter</ID>
+    <ID>DestructuringDeclarationWithTooManyEntries:LocalBook.kt$LocalBook$val (fileName, _, _, updateTime, _) = FileDoc.fromUri(uri, false).apply { if (size == 0L) throw EmptyFileException("Unexpected empty File") bookUrl = toString() }</ID>
+    <ID>DestructuringDeclarationWithTooManyEntries:ReadBookActivity.kt$ReadBookActivity$val (pageIndex, lineIndex, charIndex, addLine, charIndex2) = viewModel.searchResultPositions(curTextChapter, searchResult)</ID>
+    <ID>ExplicitGarbageCollectionCall:TextFile.kt$TextFile$gc()</ID>
+    <ID>ExplicitGarbageCollectionCall:TextFile.kt$TextFile$runFinalization()</ID>
+    <ID>ExplicitGarbageCollectionCall:Utils.kt$Utils$gc()</ID>
+    <ID>ExplicitItLambdaParameter:BaseBooksAdapter.kt$BaseBooksAdapter${ i, it -&gt; if (it.bookUrl == bookUrl) { notifyItemChanged(i, bundleOf(Pair("refresh", null), Pair("lastUpdateTime", null))) return } }</ID>
+    <ID>ExplicitItLambdaParameter:BookAdapter.kt$BookAdapter${ index, it -&gt; if (selectedBooks.contains(it)) { selectedPosition.add(index) } }</ID>
+    <ID>ExplicitItLambdaParameter:BookSourceAdapter.kt$BookSourceAdapter${ index, it -&gt; if (selected.contains(it)) { selectedPosition.add(index) } }</ID>
+    <ID>ExplicitItLambdaParameter:BookSourceViewModel.kt$BookSourceViewModel${ index, it -&gt; it.copy(customOrder = maxOrder + index) }</ID>
+    <ID>ExplicitItLambdaParameter:BookSourceViewModel.kt$BookSourceViewModel${ index, it -&gt; it.copy(customOrder = minOrder - index) }</ID>
+    <ID>ExplicitItLambdaParameter:EpubFile.kt$EpubFile${ i, it -&gt; if (i &gt; 0) it.remove() }</ID>
+    <ID>ForEachOnRange:PdfFile.kt$PdfFile$0 until chapterCount</ID>
+    <ID>ForEachOnRange:PdfFile.kt$PdfFile$start until end</ID>
+    <ID>FunctionOnlyReturningConstant:BookSource.kt$BookSource.Converters$@TypeConverter fun reviewRuleToString(reviewRule: ReviewRule?): String</ID>
+    <ID>FunctionOnlyReturningConstant:BookSource.kt$BookSource.Converters$@TypeConverter fun stringToReviewRule(json: String?): ReviewRule?</ID>
+    <ID>FunctionOnlyReturningConstant:UmdFile.kt$UmdFile$private fun getImage( @Suppress("UNUSED_PARAMETER") href: String, ): InputStream?</ID>
+    <ID>FunctionParameterNaming:CodeView.kt$CodeView$@ColorInt Color: Int</ID>
+    <ID>FunctionParameterNaming:ConvertExtensions.kt$ConvertUtils$`is`: InputStream</ID>
+    <ID>FunctionParameterNaming:SimulationPageDelegate.kt$SimulationPageDelegate$P1: PointF</ID>
+    <ID>FunctionParameterNaming:SimulationPageDelegate.kt$SimulationPageDelegate$P2: PointF</ID>
+    <ID>FunctionParameterNaming:SimulationPageDelegate.kt$SimulationPageDelegate$P3: PointF</ID>
+    <ID>FunctionParameterNaming:SimulationPageDelegate.kt$SimulationPageDelegate$P4: PointF</ID>
+    <ID>ImplicitDefaultLocale:AnalyzeUrl.kt$AnalyzeUrl$String.format("%.0f", jsEval)</ID>
+    <ID>ImplicitDefaultLocale:BookChapter.kt$BookChapter$String.format("%05d-%s.%s", index, titleMD5, suffix)</ID>
+    <ID>ImplicitDefaultLocale:BookChapter.kt$BookChapter$String.format("%05d-%s.ttf", index, titleMD5)</ID>
+    <ID>ImplicitDefaultLocale:BookSource.kt$BookSource$String.format("%s (%s)", bookSourceName, bookSourceGroup)</ID>
+    <ID>ImplicitDefaultLocale:BookSourcePart.kt$BookSourcePart$String.format("%s (%s)", bookSourceName, bookSourceGroup)</ID>
+    <ID>ImplicitDefaultLocale:ColorUtils.kt$ColorUtils$String.format("#%06X", 0xFFFFFF and intColor)</ID>
+    <ID>ImplicitDefaultLocale:CronetLoader.kt$CronetLoader$String.format("%032x", BigInteger(1, md5.digest()))</ID>
+    <ID>ImplicitDefaultLocale:ReplaceRule.kt$ReplaceRule$String.format("%s (%s)", name, group)</ID>
+    <ID>InstanceOfCheckForException:CacheBook.kt$CacheBook.CacheBookModel$e is CancellationException</ID>
+    <ID>InstanceOfCheckForException:ChangeBookSourceViewModel.kt$ChangeBookSourceViewModel$t is CancellationException</ID>
+    <ID>InstanceOfCheckForException:HttpReadAloudService.kt$HttpReadAloudService$e !is CancellationException</ID>
+    <ID>InstanceOfCheckForException:ReadBookViewModel.kt$ReadBookViewModel$e is FileNotFoundException</ID>
+    <ID>InstanceOfCheckForException:ReadBookViewModel.kt$ReadBookViewModel$e is SecurityException</ID>
+    <ID>InstanceOfCheckForException:UriExtensions.kt$e is SecurityException</ID>
+    <ID>LargeClass:BaseReadAloudService.kt$BaseReadAloudService : BaseServiceOnAudioFocusChangeListener</ID>
+    <ID>LargeClass:BookInfoActivity.kt$BookInfoActivity : VMBaseActivityCallBackCallBackCallBackCallback</ID>
+    <ID>LargeClass:BookSourceActivity.kt$BookSourceActivity : VMBaseActivityOnMenuItemClickListenerCallBackCallBackOnQueryTextListener</ID>
+    <ID>LargeClass:ChapterProvider.kt$ChapterProvider</ID>
+    <ID>LargeClass:JsExtensions.kt$JsExtensions : JsEncodeUtils</ID>
+    <ID>LargeClass:PhotoView.kt$PhotoView : AppCompatImageView</ID>
+    <ID>LargeClass:ReadBook.kt$ReadBook : CoroutineScope</ID>
+    <ID>LargeClass:ReadBookActivity.kt$ReadBookActivity : BaseReadBookActivityOnTouchListenerCallBackCallBackCallBackOnMenuItemClickListenerCallBackCallBackCallBackCallBackCallBackCallBackCallBackCallBackColorPickerDialogListenerLayoutProgressListener</ID>
+    <ID>LargeClass:ReadMangaActivity.kt$ReadMangaActivity : VMBaseActivityCallbackCallBackCallBackCallbackScrollCallbackCallback</ID>
+    <ID>LargeClass:TextChapterLayout.kt$TextChapterLayout</ID>
+    <ID>LongMethod:AnalyzeByJSoup.kt$AnalyzeByJSoup.ElementsSingle$fun getElementsSingle(temp: Element, rule: String): Elements</ID>
+    <ID>LongMethod:AnalyzeByJSoup.kt$AnalyzeByJSoup.ElementsSingle$private fun findIndexSet(rule: String)</ID>
+    <ID>LongMethod:AnalyzeRule.kt$AnalyzeRule$@JvmOverloads fun getString( ruleList: List&lt;SourceRule&gt;, mContent: Any? = null, isUrl: Boolean = false, unescape: Boolean = true, ): String</ID>
+    <ID>LongMethod:AnalyzeRule.kt$AnalyzeRule$@JvmOverloads fun getStringList( ruleList: List&lt;SourceRule&gt;, mContent: Any? = null, isUrl: Boolean = false, ): List&lt;String&gt;?</ID>
+    <ID>LongMethod:AnalyzeUrl.kt$AnalyzeUrl$suspend fun getStrResponseAwait( jsStr: String? = null, sourceRegex: String? = null, useWebView: Boolean = true, ): StrResponse</ID>
+    <ID>LongMethod:AppDatabase.kt$AppDatabase.Companion.&lt;no name provided&gt;$override fun onOpen(db: SupportSQLiteDatabase)</ID>
+    <ID>LongMethod:AudioPlayService.kt$AudioPlayService$private fun createNotification(): NotificationCompat.Builder</ID>
+    <ID>LongMethod:Backup.kt$Backup$private suspend fun backup(context: Context, path: String?)</ID>
+    <ID>LongMethod:BaseBookshelfFragment.kt$BaseBookshelfFragment$@SuppressLint("InflateParams") fun configBookshelf()</ID>
+    <ID>LongMethod:BaseReadAloudService.kt$BaseReadAloudService$private fun createNotification(): NotificationCompat.Builder</ID>
+    <ID>LongMethod:BaseReadBookActivity.kt$BaseReadBookActivity$fun showSimulatedReading()</ID>
+    <ID>LongMethod:BevelLabelView.kt$BevelLabelView$private fun drawBackgroundText(canvas: Canvas)</ID>
+    <ID>LongMethod:BgTextConfigDialog.kt$BgTextConfigDialog$@SuppressLint("InflateParams") private fun initEvent()</ID>
+    <ID>LongMethod:BgTextConfigDialog.kt$BgTextConfigDialog$private fun exportConfig(uri: Uri)</ID>
+    <ID>LongMethod:BookChapterList.kt$BookChapterList$private suspend fun analyzeChapterList( book: Book, baseUrl: String, redirectUrl: String, body: String, tocRule: TocRule, listRule: String, bookSource: BookSource, getNextUrl: Boolean = true, log: Boolean = false, ): Pair&lt;List&lt;BookChapter&gt;, List&lt;String&gt;&gt;</ID>
+    <ID>LongMethod:BookChapterList.kt$BookChapterList$suspend fun analyzeChapterList( bookSource: BookSource, book: Book, baseUrl: String, redirectUrl: String, body: String?, ): List&lt;BookChapter&gt;</ID>
+    <ID>LongMethod:BookContent.kt$BookContent$@Throws(Exception::class) suspend fun analyzeContent( bookSource: BookSource, book: Book, bookChapter: BookChapter, baseUrl: String, redirectUrl: String, body: String?, nextChapterUrl: String?, needSave: Boolean = true, ): String</ID>
+    <ID>LongMethod:BookInfo.kt$BookInfo$suspend fun analyzeBookInfo( book: Book, body: String, analyzeRule: AnalyzeRule, bookSource: BookSource, baseUrl: String, redirectUrl: String, canReName: Boolean, )</ID>
+    <ID>LongMethod:BookInfoActivity.kt$BookInfoActivity$override fun onCompatOptionsItemSelected(item: MenuItem): Boolean</ID>
+    <ID>LongMethod:BookInfoActivity.kt$BookInfoActivity$private fun initViewEvent()</ID>
+    <ID>LongMethod:BookList.kt$BookList$@Throws(Exception::class) private suspend fun getSearchItem( bookSource: BookSource, analyzeRule: AnalyzeRule, item: Any, baseUrl: String, variable: String?, log: Boolean, filter: ((name: String, author: String) -&gt; Boolean)?, ruleName: List&lt;AnalyzeRule.SourceRule&gt;, ruleBookUrl: List&lt;AnalyzeRule.SourceRule&gt;, ruleAuthor: List&lt;AnalyzeRule.SourceRule&gt;, ruleKind: List&lt;AnalyzeRule.SourceRule&gt;, ruleCoverUrl: List&lt;AnalyzeRule.SourceRule&gt;, ruleWordCount: List&lt;AnalyzeRule.SourceRule&gt;, ruleIntro: List&lt;AnalyzeRule.SourceRule&gt;, ruleLastChapter: List&lt;AnalyzeRule.SourceRule&gt;, ): SearchBook?</ID>
+    <ID>LongMethod:BookList.kt$BookList$@Throws(Exception::class) suspend fun analyzeBookList( bookSource: BookSource, ruleData: RuleData, analyzeUrl: AnalyzeUrl, baseUrl: String, body: String?, isSearch: Boolean = true, isRedirect: Boolean = false, filter: ((name: String, author: String) -&gt; Boolean)? = null, shouldBreak: ((size: Int) -&gt; Boolean)? = null, ): ArrayList&lt;SearchBook&gt;</ID>
+    <ID>LongMethod:BookSourceActivity.kt$BookSourceActivity$override fun onCompatOptionsItemSelected(item: MenuItem): Boolean</ID>
+    <ID>LongMethod:BookSourceActivity.kt$BookSourceActivity$private fun upBookSource(searchKey: String? = null)</ID>
+    <ID>LongMethod:BookSourceEditActivity.kt$BookSourceEditActivity$private fun getSource(): BookSource</ID>
+    <ID>LongMethod:BookSourceEditActivity.kt$BookSourceEditActivity$private fun upSourceView(bookSource: BookSource?)</ID>
+    <ID>LongMethod:BookSourceViewModel.kt$BookSourceViewModel$private fun getBookSources( searchKey: String?, sortAscending: Boolean, sort: BookSourceSort, ): List&lt;BookSource&gt;</ID>
+    <ID>LongMethod:BookshelfFragment2.kt$BookshelfFragment2$private fun initBooksData()</ID>
+    <ID>LongMethod:BookshelfViewModel.kt$BookshelfViewModel$fun addBookByUrl(bookUrls: String)</ID>
+    <ID>LongMethod:CacheActivity.kt$CacheActivity$private fun configExportSection( path: String, position: Int, )</ID>
+    <ID>LongMethod:CacheBook.kt$CacheBook.CacheBookModel$@Synchronized fun download( scope: CoroutineScope, context: CoroutineContext, )</ID>
+    <ID>LongMethod:ChapterProvider.kt$ChapterProvider$private suspend fun addCharsToLineMiddle( book: Book, absStartX: Int, textLine: TextLine, words: List&lt;String&gt;, /**自然排版长度**/ desiredWidth: Float, /**起始x坐标**/ startX: Float, textWidths: List&lt;Float&gt;, srcList: LinkedList&lt;String&gt;?, )</ID>
+    <ID>LongMethod:ChapterProvider.kt$ChapterProvider$private suspend fun setTypeImage( book: Book, src: String, x: Int, y: Float, textPages: ArrayList&lt;TextPage&gt;, textHeight: Float, stringBuilder: StringBuilder, imageStyle: String?, ): Pair&lt;Int, Float&gt;</ID>
+    <ID>LongMethod:ChapterProvider.kt$ChapterProvider$private suspend fun setTypeText( book: Book, x: Int, y: Float, text: String, textPages: ArrayList&lt;TextPage&gt;, stringBuilder: StringBuilder, textPaint: TextPaint, textHeight: Float, fontMetrics: FontMetrics, isTitle: Boolean = false, emptyContent: Boolean = false, isVolumeTitle: Boolean = false, srcList: LinkedList&lt;String&gt;? = null, ): Pair&lt;Int, Float&gt;</ID>
+    <ID>LongMethod:ChapterProvider.kt$ChapterProvider$suspend fun getTextChapter( book: Book, bookChapter: BookChapter, displayTitle: String, bookContent: BookContent, chapterSize: Int, ): TextChapter</ID>
+    <ID>LongMethod:CheckSourceConfig.kt$CheckSourceConfig$override fun onFragmentCreated( view: View, savedInstanceState: Bundle?, )</ID>
+    <ID>LongMethod:ChineseUtils.kt$ChineseUtils$fun fixT2sDict()</ID>
+    <ID>LongMethod:ConcurrentRateLimiter.kt$ConcurrentRateLimiter$@Throws(ConcurrentException::class) private fun fetchStart(): ConcurrentRecord?</ID>
+    <ID>LongMethod:ContentHelp.kt$ContentHelp$private fun findNewLines( str: String, dict: List&lt;String&gt;, ): String</ID>
+    <ID>LongMethod:ContentProcessor.kt$ContentProcessor$fun getContent( book: Book, chapter: BookChapter, content: String, includeTitle: Boolean = true, useReplace: Boolean = true, chineseConvert: Boolean = true, reSegment: Boolean = true, ): BookContent</ID>
+    <ID>LongMethod:ExportBookService.kt$ExportBookService$private fun setAssetsExternal( doc: FileDoc, book: Book, epubBook: EpubBook, ): String</ID>
+    <ID>LongMethod:ExportBookService.kt$ExportBookService$private suspend fun setEpubContent( contentModel: String, book: Book, epubBook: EpubBook, )</ID>
+    <ID>LongMethod:ExportBookService.kt$ExportBookService.CustomExporter$private suspend fun setEpubContent( contentModel: String, book: Book, epubBook: EpubBook, epubBookIndex: Int, updateProgress: (chapterList: MutableList&lt;BookChapter&gt;, index: Int) -&gt; Unit, )</ID>
+    <ID>LongMethod:FastScroller.kt$FastScroller$fun setLayoutParams(viewGroup: ViewGroup)</ID>
+    <ID>LongMethod:FileAssociationActivity.kt$FileAssociationActivity$override fun onActivityCreated(savedInstanceState: Bundle?)</ID>
+    <ID>LongMethod:FileAssociationActivity.kt$FileAssociationActivity$private fun importBook( treeUri: Uri?, uri: Uri, )</ID>
+    <ID>LongMethod:GroupEditDialog.kt$GroupEditDialog$override fun onFragmentCreated( view: View, savedInstanceState: Bundle?, )</ID>
+    <ID>LongMethod:HandleFileActivity.kt$HandleFileActivity$override fun onActivityCreated(savedInstanceState: Bundle?)</ID>
+    <ID>LongMethod:HttpReadAloudService.kt$HttpReadAloudService$private suspend fun getSpeakStream( httpTts: HttpTTS, speakText: String, ): InputStream?</ID>
+    <ID>LongMethod:HttpServer.kt$HttpServer$override fun serve(session: IHTTPSession): Response</ID>
+    <ID>LongMethod:ImportOldData.kt$ImportOldData$fun fromOldBookSource(jsonItem: DocumentContext): BookSource</ID>
+    <ID>LongMethod:ImportOldData.kt$ImportOldData$fun importUri(context: Context, uri: Uri)</ID>
+    <ID>LongMethod:LibArchiveUtils.kt$LibArchiveUtils$@Throws(ArchiveException::class) private fun openArchive( channel: SeekableByteChannel, ): Long</ID>
+    <ID>LongMethod:LibArchiveUtils.kt$LibArchiveUtils$@Throws(ArchiveException::class) private fun openArchive( pfd: ParcelFileDescriptor, useCb: Boolean = true, ): Long</ID>
+    <ID>LongMethod:MangaFooterSettingDialog.kt$MangaFooterSettingDialog$override fun onFragmentCreated( view: View, savedInstanceState: Bundle?, )</ID>
+    <ID>LongMethod:MobiBook.kt$MobiBook$private fun readIndexEntry( indxBuffer: ByteBuffer, tagx: TagxHeader, tagTable: List&lt;TagxTag&gt;, idxtOffset: Int, ): IndexEntry</ID>
+    <ID>LongMethod:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.OkHttpURLConnection$@Throws(IOException::class) private fun buildCall(): Call</ID>
+    <ID>LongMethod:OnLineImportActivity.kt$OnLineImportActivity$override fun onActivityCreated(savedInstanceState: Bundle?)</ID>
+    <ID>LongMethod:OtherConfigFragment.kt$OtherConfigFragment$override fun onPreferenceTreeClick(preference: Preference): Boolean</ID>
+    <ID>LongMethod:PaddingConfigDialog.kt$PaddingConfigDialog$private fun initView()</ID>
+    <ID>LongMethod:PageView.kt$PageView$private fun upTipStyle()</ID>
+    <ID>LongMethod:PermissionActivity.kt$PermissionActivity$@SuppressLint("BatteryLife") override fun onCreate(savedInstanceState: Bundle?)</ID>
+    <ID>LongMethod:PhotoView.kt$PhotoView$override fun onMeasure( widthMeasureSpec: Int, heightMeasureSpec: Int, )</ID>
+    <ID>LongMethod:PhotoView.kt$PhotoView.GestureListener$override fun onScroll( e1: MotionEvent?, e2: MotionEvent, distanceX: Float, distanceY: Float, ): Boolean</ID>
+    <ID>LongMethod:PhotoView.kt$PhotoView.Transform$override fun run()</ID>
+    <ID>LongMethod:Preference.kt$fun &lt;T : View&gt; androidx.preference.Preference.bindView( viewHolder: PreferenceViewHolder?, weightLayoutRes: Int? = null, viewId: Int? = null, weightWidth: Int = 0, weightHeight: Int = 0, isBottomBackground: Boolean = false, ): T?</ID>
+    <ID>LongMethod:ReadBook.kt$ReadBook$private suspend fun applyTextChapter( book: Book, chapter: BookChapter, content: String, upContent: Boolean, resetPageOffset: Boolean, )</ID>
+    <ID>LongMethod:ReadBookActivity.kt$ReadBookActivity$override fun observeLiveBus()</ID>
+    <ID>LongMethod:ReadBookActivity.kt$ReadBookActivity$override fun onCompatOptionsItemSelected(item: MenuItem): Boolean</ID>
+    <ID>LongMethod:ReadBookConfig.kt$ReadBookConfig$fun import(byteArray: ByteArray): Config</ID>
+    <ID>LongMethod:ReadMangaActivity.kt$ReadMangaActivity$@SuppressLint("StringFormatMatches", "NotifyDataSetChanged") override fun onCompatOptionsItemSelected(item: MenuItem): Boolean</ID>
+    <ID>LongMethod:ReadMenu.kt$ReadMenu$private fun bindEvent()</ID>
+    <ID>LongMethod:ReadView.kt$ReadView$@SuppressLint("ClickableViewAccessibility") override fun onTouchEvent(event: MotionEvent): Boolean</ID>
+    <ID>LongMethod:ReadView.kt$ReadView$private fun onLongPress()</ID>
+    <ID>LongMethod:RealPathUtil.kt$RealPathUtil$fun getPath( context: Context, uri: Uri, ): String?</ID>
+    <ID>LongMethod:RefreshProgressBar.kt$RefreshProgressBar$override fun onDraw(canvas: Canvas)</ID>
+    <ID>LongMethod:Restore.kt$Restore$private suspend fun restore(path: String)</ID>
+    <ID>LongMethod:SearchModel.kt$SearchModel$private suspend fun mergeItems( newDataS: List&lt;SearchBook&gt;, precision: Boolean, )</ID>
+    <ID>LongMethod:Selector.kt$Selector.ShapeSelector$fun create(): StateListDrawable</ID>
+    <ID>LongMethod:SimulationPageDelegate.kt$SimulationPageDelegate$private fun calcPoints()</ID>
+    <ID>LongMethod:SimulationPageDelegate.kt$SimulationPageDelegate$private fun drawCurrentBackArea( canvas: Canvas, bitmap: Bitmap?, )</ID>
+    <ID>LongMethod:SimulationPageDelegate.kt$SimulationPageDelegate$private fun drawCurrentPageShadow(canvas: Canvas)</ID>
+    <ID>LongMethod:SourceLoginDialog.kt$SourceLoginDialog$override fun onFragmentCreated( view: View, savedInstanceState: Bundle?, )</ID>
+    <ID>LongMethod:SpeakEngineDialog.kt$SpeakEngineDialog$private fun initView()</ID>
+    <ID>LongMethod:StrokeTextView.kt$StrokeTextView$private fun upBackground()</ID>
+    <ID>LongMethod:TTSReadAloudService.kt$TTSReadAloudService$@Synchronized override fun play()</ID>
+    <ID>LongMethod:TTSReadAloudService.kt$TTSReadAloudService$private fun normalizeWavLoudness(file: File): Boolean</ID>
+    <ID>LongMethod:TextChapterLayout.kt$TextChapterLayout$@Suppress("DEPRECATION") private suspend fun setTypeText( book: Book, text: String, textPaint: TextPaint, textHeight: Float, fontMetrics: Paint.FontMetrics, imageStyle: String?, isTitle: Boolean = false, isFirstLine: Boolean = true, emptyContent: Boolean = false, isVolumeTitle: Boolean = false, srcList: LinkedList&lt;String&gt;? = null, )</ID>
+    <ID>LongMethod:TextChapterLayout.kt$TextChapterLayout$private suspend fun addCharsToLineMiddle( book: Book, absStartX: Int, textLine: TextLine, words: List&lt;String&gt;, textPaint: TextPaint, /**自然排版长度**/ desiredWidth: Float, /**起始x坐标**/ startX: Float, textWidths: List&lt;Float&gt;, srcList: LinkedList&lt;String&gt;?, )</ID>
+    <ID>LongMethod:TextChapterLayout.kt$TextChapterLayout$private suspend fun getTextChapter( book: Book, bookChapter: BookChapter, displayTitle: String, bookContent: BookContent, )</ID>
+    <ID>LongMethod:TextDialog.kt$TextDialog$override fun onFragmentCreated( view: View, savedInstanceState: Bundle?, )</ID>
+    <ID>LongMethod:TextFile.kt$TextFile$private fun analyze( fileStart: Long = 0L, fileEnd: Long = Long.MAX_VALUE, ): Pair&lt;ArrayList&lt;BookChapter&gt;, Int&gt;</ID>
+    <ID>LongMethod:TextFile.kt$TextFile$private fun analyze(pattern: Pattern?): Pair&lt;ArrayList&lt;BookChapter&gt;, Int&gt;</ID>
+    <ID>LongMethod:ThemeConfig.kt$ThemeConfig$fun applyTheme(context: Context)</ID>
+    <ID>LongMethod:TintHelper.kt$TintHelper$fun setTintAuto( view: View, @ColorInt color: Int, isBackground: Boolean, isDark: Boolean, )</ID>
+    <ID>LongMethod:TintHelper.kt$TintHelper$fun setTintSelector( view: View, @ColorInt color: Int, darker: Boolean, useDarkTheme: Boolean, )</ID>
+    <ID>LongMethod:TipConfigDialog.kt$TipConfigDialog$private fun initEvent()</ID>
+    <ID>LongMethod:WebDav.kt$WebDav$private fun parseBody(s: String): List&lt;WebDavFile&gt;</ID>
+    <ID>LongMethod:WebtoonRecyclerView.kt$WebtoonRecyclerView.Detector$override fun onTouchEvent(ev: MotionEvent): Boolean</ID>
+    <ID>LongParameterList:AnalyzeUrl.kt$AnalyzeUrl$( private val mUrl: String, private val key: String? = null, private val page: Int? = null, private val speakText: String? = null, private val speakSpeed: Int? = null, private var baseUrl: String = "", private val source: BaseSource? = null, private val ruleData: RuleDataInterface? = null, private val chapter: BookChapter? = null, private val readTimeout: Long? = null, private val callTimeout: Long? = null, private var coroutineContext: CoroutineContext = EmptyCoroutineContext, headerMapF: Map&lt;String, String&gt;? = null, hasLoginHeader: Boolean = true, )</ID>
+    <ID>LongParameterList:BackstageWebView.kt$BackstageWebView$( private val url: String? = null, private val html: String? = null, private val encode: String? = null, private val tag: String? = null, private val headerMap: Map&lt;String, String&gt;? = null, private val sourceRegex: String? = null, private val overrideUrlRegex: String? = null, private val javaScript: String? = null, private val delayTime: Long = 0, )</ID>
+    <ID>LongParameterList:BaseService.kt$BaseService$( scope: CoroutineScope = lifecycleScope, context: CoroutineContext = Dispatchers.IO, start: CoroutineStart = CoroutineStart.DEFAULT, executeContext: CoroutineContext = Dispatchers.Main, semaphore: Semaphore? = null, block: suspend CoroutineScope.() -&gt; T, )</ID>
+    <ID>LongParameterList:BaseViewModel.kt$BaseViewModel$( scope: CoroutineScope = viewModelScope, context: CoroutineContext = Dispatchers.IO, start: CoroutineStart = CoroutineStart.DEFAULT, executeContext: CoroutineContext = Dispatchers.Main, semaphore: Semaphore? = null, block: suspend CoroutineScope.() -&gt; T, )</ID>
+    <ID>LongParameterList:BookChapterList.kt$BookChapterList$( book: Book, baseUrl: String, redirectUrl: String, body: String, tocRule: TocRule, listRule: String, bookSource: BookSource, getNextUrl: Boolean = true, log: Boolean = false, )</ID>
+    <ID>LongParameterList:BookContent.kt$BookContent$( book: Book, baseUrl: String, redirectUrl: String, body: String, contentRule: ContentRule, chapter: BookChapter, bookSource: BookSource, nextChapterUrl: String?, getNextPageUrl: Boolean = true, printLog: Boolean = true, )</ID>
+    <ID>LongParameterList:BookContent.kt$BookContent$( bookSource: BookSource, book: Book, bookChapter: BookChapter, baseUrl: String, redirectUrl: String, body: String?, nextChapterUrl: String?, needSave: Boolean = true, )</ID>
+    <ID>LongParameterList:BookInfo.kt$BookInfo$( book: Book, body: String, analyzeRule: AnalyzeRule, bookSource: BookSource, baseUrl: String, redirectUrl: String, canReName: Boolean, )</ID>
+    <ID>LongParameterList:BookInfo.kt$BookInfo$( bookSource: BookSource, book: Book, baseUrl: String, redirectUrl: String, body: String?, canReName: Boolean, )</ID>
+    <ID>LongParameterList:BookList.kt$BookList$( bookSource: BookSource, analyzeRule: AnalyzeRule, analyzeUrl: AnalyzeUrl, body: String, baseUrl: String, variable: String?, isRedirect: Boolean, filter: ((name: String, author: String) -&gt; Boolean)?, )</ID>
+    <ID>LongParameterList:BookList.kt$BookList$( bookSource: BookSource, analyzeRule: AnalyzeRule, item: Any, baseUrl: String, variable: String?, log: Boolean, filter: ((name: String, author: String) -&gt; Boolean)?, ruleName: List&lt;AnalyzeRule.SourceRule&gt;, ruleBookUrl: List&lt;AnalyzeRule.SourceRule&gt;, ruleAuthor: List&lt;AnalyzeRule.SourceRule&gt;, ruleKind: List&lt;AnalyzeRule.SourceRule&gt;, ruleCoverUrl: List&lt;AnalyzeRule.SourceRule&gt;, ruleWordCount: List&lt;AnalyzeRule.SourceRule&gt;, ruleIntro: List&lt;AnalyzeRule.SourceRule&gt;, ruleLastChapter: List&lt;AnalyzeRule.SourceRule&gt;, )</ID>
+    <ID>LongParameterList:BookList.kt$BookList$( bookSource: BookSource, ruleData: RuleData, analyzeUrl: AnalyzeUrl, baseUrl: String, body: String?, isSearch: Boolean = true, isRedirect: Boolean = false, filter: ((name: String, author: String) -&gt; Boolean)? = null, shouldBreak: ((size: Int) -&gt; Boolean)? = null, )</ID>
+    <ID>LongParameterList:ChapterProvider.kt$ChapterProvider$( book: Book, absStartX: Int, textLine: TextLine, char: String, xStart: Float, xEnd: Float, isLineEnd: Boolean, srcList: LinkedList&lt;String&gt;?, )</ID>
+    <ID>LongParameterList:ChapterProvider.kt$ChapterProvider$( book: Book, absStartX: Int, textLine: TextLine, words: List&lt;String&gt;, /**自然排版长度**/ desiredWidth: Float, /**起始x坐标**/ startX: Float, textWidths: List&lt;Float&gt;, srcList: LinkedList&lt;String&gt;?, )</ID>
+    <ID>LongParameterList:ChapterProvider.kt$ChapterProvider$( book: Book, absStartX: Int, textLine: TextLine, words: List&lt;String&gt;, /**自然排版长度**/ desiredWidth: Float, textWidths: List&lt;Float&gt;, srcList: LinkedList&lt;String&gt;?, )</ID>
+    <ID>LongParameterList:ChapterProvider.kt$ChapterProvider$( book: Book, absStartX: Int, textLine: TextLine, words: List&lt;String&gt;, startX: Float, hasIndent: Boolean, textWidths: List&lt;Float&gt;, srcList: LinkedList&lt;String&gt;?, )</ID>
+    <ID>LongParameterList:ChapterProvider.kt$ChapterProvider$( book: Book, src: String, x: Int, y: Float, textPages: ArrayList&lt;TextPage&gt;, textHeight: Float, stringBuilder: StringBuilder, imageStyle: String?, )</ID>
+    <ID>LongParameterList:ChapterProvider.kt$ChapterProvider$( book: Book, x: Int, y: Float, text: String, textPages: ArrayList&lt;TextPage&gt;, stringBuilder: StringBuilder, textPaint: TextPaint, textHeight: Float, fontMetrics: FontMetrics, isTitle: Boolean = false, emptyContent: Boolean = false, isVolumeTitle: Boolean = false, srcList: LinkedList&lt;String&gt;? = null, )</ID>
+    <ID>LongParameterList:ChapterProvider.kt$ChapterProvider$( scope: CoroutineScope, book: Book, bookChapter: BookChapter, displayTitle: String, bookContent: BookContent, chapterSize: Int, )</ID>
+    <ID>LongParameterList:ContentProcessor.kt$ContentProcessor$( book: Book, chapter: BookChapter, content: String, includeTitle: Boolean = true, useReplace: Boolean = true, chineseConvert: Boolean = true, reSegment: Boolean = true, )</ID>
+    <ID>LongParameterList:Coroutine.kt$Coroutine.Companion$( scope: CoroutineScope = DEFAULT, context: CoroutineContext = Dispatchers.IO, start: CoroutineStart = CoroutineStart.DEFAULT, executeContext: CoroutineContext = Dispatchers.Main, semaphore: Semaphore? = null, block: suspend CoroutineScope.() -&gt; T, )</ID>
+    <ID>LongParameterList:CoverImageView.kt$CoverImageView$( path: String? = null, name: String? = null, author: String? = null, loadOnlyWifi: Boolean = false, sourceOrigin: String? = null, fragment: Fragment? = null, lifecycle: Lifecycle? = null, onLoadFinish: (() -&gt; Unit)? = null, )</ID>
+    <ID>LongParameterList:Debug.kt$Debug$( sourceUrl: String?, msg: String = "", print: Boolean = true, isHtml: Boolean = false, showTime: Boolean = true, state: Int = 1, )</ID>
+    <ID>LongParameterList:DownloadService.kt$DownloadService$( downloadId: Long, notificationId: Int, content: String, max: Int, progress: Int, startTime: Long, )</ID>
+    <ID>LongParameterList:FilePickerDialog.kt$FilePickerDialog.Companion$( manager: FragmentManager, mode: Int = FILE, title: String? = null, initPath: String? = null, isShowHideDir: Boolean = false, allowExtensions: Array&lt;String&gt;? = null, )</ID>
+    <ID>LongParameterList:Info.kt$Info$( rect: RectF, img: RectF, widget: RectF, base: RectF, screenCenter: PointF, scale: Float, degrees: Float, scaleType: ImageView.ScaleType?, )</ID>
+    <ID>LongParameterList:PageDelegate.kt$PageDelegate$( startX: Int, startY: Int, velocityX: Int, velocityY: Int, minX: Int, maxX: Int, minY: Int, maxY: Int, )</ID>
+    <ID>LongParameterList:PhotoView.kt$PhotoView.Transform$( fromX: Float, fromY: Float, deltaX: Float, deltaY: Float, d: Int, c: ClipCalculate?, )</ID>
+    <ID>LongParameterList:Preference.kt$( viewHolder: PreferenceViewHolder?, weightLayoutRes: Int? = null, viewId: Int? = null, weightWidth: Int = 0, weightHeight: Int = 0, isBottomBackground: Boolean = false, )</ID>
+    <ID>LongParameterList:QRCodeUtils.kt$QRCodeUtils$( content: String?, desiredWidth: Int, desiredHeight: Int, format: BarcodeFormat = BarcodeFormat.CODE_128, hints: Map&lt;EncodeHintType?, *&gt;? = null, isShowText: Boolean = true, textSize: Int = 40, @ColorInt codeColor: Int = Color.BLACK, )</ID>
+    <ID>LongParameterList:QRCodeUtils.kt$QRCodeUtils$( content: String?, heightPix: Int, logo: Bitmap?, @FloatRange(from = 0.0, to = 1.0) ratio: Float = 0.2f, hints: Map&lt;EncodeHintType, *&gt;, codeColor: Int = Color.BLACK, )</ID>
+    <ID>LongParameterList:ReadBook.kt$ReadBook$( book: Book, chapter: BookChapter, content: String, upContent: Boolean = true, resetPageOffset: Boolean, canceled: Boolean = false, success: (() -&gt; Unit)? = null, )</ID>
+    <ID>LongParameterList:ReadManga.kt$ReadManga$( bookSource: BookSource, scope: CoroutineScope, chapter: BookChapter, book: Book, semaphore: Semaphore?, success: suspend (String) -&gt; Unit = {}, error: suspend () -&gt; Unit = {}, cancel: suspend () -&gt; Unit = {}, )</ID>
+    <ID>LongParameterList:TextActionMenu.kt$TextActionMenu$( view: View, windowHeight: Int, startX: Int, startTopY: Int, startBottomY: Int, endX: Int, endBottomY: Int, )</ID>
+    <ID>LongParameterList:TextChapterLayout.kt$TextChapterLayout$( book: Book, absStartX: Int, textLine: TextLine, char: String, xStart: Float, xEnd: Float, isLineEnd: Boolean, srcList: LinkedList&lt;String&gt;?, )</ID>
+    <ID>LongParameterList:TextChapterLayout.kt$TextChapterLayout$( book: Book, absStartX: Int, textLine: TextLine, words: List&lt;String&gt;, startX: Float, hasIndent: Boolean, textWidths: List&lt;Float&gt;, srcList: LinkedList&lt;String&gt;?, )</ID>
+    <ID>LongParameterList:TextChapterLayout.kt$TextChapterLayout$( book: Book, absStartX: Int, textLine: TextLine, words: List&lt;String&gt;, textPaint: TextPaint, /**自然排版长度**/ desiredWidth: Float, /**起始x坐标**/ startX: Float, textWidths: List&lt;Float&gt;, srcList: LinkedList&lt;String&gt;?, )</ID>
+    <ID>LongParameterList:TextChapterLayout.kt$TextChapterLayout$( book: Book, absStartX: Int, textLine: TextLine, words: List&lt;String&gt;, textPaint: TextPaint, /**自然排版长度**/ desiredWidth: Float, textWidths: List&lt;Float&gt;, srcList: LinkedList&lt;String&gt;?, )</ID>
+    <ID>LongParameterList:TextChapterLayout.kt$TextChapterLayout$( book: Book, text: String, textPaint: TextPaint, textHeight: Float, fontMetrics: Paint.FontMetrics, imageStyle: String?, isTitle: Boolean = false, isFirstLine: Boolean = true, emptyContent: Boolean = false, isVolumeTitle: Boolean = false, srcList: LinkedList&lt;String&gt;? = null, )</ID>
+    <ID>LongParameterList:TintHelper.kt$TintHelper$( context: Context, from: Drawable, @ColorInt tint: Int, thumb: Boolean, compatSwitch: Boolean, useDarker: Boolean, )</ID>
+    <ID>LongParameterList:WebBook.kt$WebBook$( scope: CoroutineScope, bookSource: BookSource, book: Book, bookChapter: BookChapter, nextChapterUrl: String? = null, needSave: Boolean = true, context: CoroutineContext = Dispatchers.IO, start: CoroutineStart = CoroutineStart.DEFAULT, executeContext: CoroutineContext = Dispatchers.Main, semaphore: Semaphore? = null, )</ID>
+    <ID>LongParameterList:WebBook.kt$WebBook$( scope: CoroutineScope, bookSource: BookSource, key: String, page: Int? = 1, context: CoroutineContext = Dispatchers.IO, start: CoroutineStart = CoroutineStart.DEFAULT, executeContext: CoroutineContext = Dispatchers.Main, )</ID>
+    <ID>LongParameterList:WebBook.kt$WebBook$( scope: CoroutineScope, bookSourceParts: List&lt;BookSourcePart&gt;, name: String, author: String, context: CoroutineContext = Dispatchers.IO, semaphore: Semaphore? = null, )</ID>
+    <ID>LongParameterList:WebDavFile.kt$WebDavFile$( urlStr: String, authorization: Authorization, val displayName: String, val urlName: String, val size: Long, val contentType: String, val resourceType: String, val lastModify: Long, )</ID>
+    <ID>LongParameterList:WebtoonRecyclerView.kt$WebtoonRecyclerView$( fromRate: Float, toRate: Float, fromX: Float, toX: Float, fromY: Float, toY: Float, )</ID>
+    <ID>LoopWithTooManyJumpStatements:AnalyzeByJSoup.kt$AnalyzeByJSoup.ElementsSingle$for</ID>
+    <ID>LoopWithTooManyJumpStatements:AnalyzeByJSoup.kt$AnalyzeByJSoup.ElementsSingle$while</ID>
+    <ID>LoopWithTooManyJumpStatements:BookHelp.kt$BookHelp$while</ID>
+    <ID>LoopWithTooManyJumpStatements:BookshelfViewModel.kt$BookshelfViewModel$for</ID>
+    <ID>LoopWithTooManyJumpStatements:CodeView.kt$CodeView$while</ID>
+    <ID>LoopWithTooManyJumpStatements:ContentHelp.kt$ContentHelp$for</ID>
+    <ID>LoopWithTooManyJumpStatements:ContentTextView.kt$ContentTextView$for</ID>
+    <ID>LoopWithTooManyJumpStatements:EpubFile.kt$EpubFile$for</ID>
+    <ID>LoopWithTooManyJumpStatements:EpubFile.kt$EpubFile$while</ID>
+    <ID>LoopWithTooManyJumpStatements:ExportBookService.kt$ExportBookService.CustomExporter$for</ID>
+    <ID>LoopWithTooManyJumpStatements:ImportOldData.kt$ImportOldData$for</ID>
+    <ID>LoopWithTooManyJumpStatements:LibArchiveUtils.kt$LibArchiveUtils$while</ID>
+    <ID>LoopWithTooManyJumpStatements:MobiFile.kt$MobiFile$while</ID>
+    <ID>LoopWithTooManyJumpStatements:NetworkUtils.kt$NetworkUtils$while</ID>
+    <ID>LoopWithTooManyJumpStatements:ReadBook.kt$ReadBook$for</ID>
+    <ID>LoopWithTooManyJumpStatements:ReadManga.kt$ReadManga$for</ID>
+    <ID>LoopWithTooManyJumpStatements:RuleAnalyzer.kt$RuleAnalyzer$do</ID>
+    <ID>LoopWithTooManyJumpStatements:ZipUtils.kt$ZipUtils$while</ID>
+    <ID>MatchingDeclarationName:ConvertExtensions.kt$ConvertUtils</ID>
+    <ID>MatchingDeclarationName:CoroutineExtensions.kt$TimeoutCancellationException : CancellationException</ID>
+    <ID>MatchingDeclarationName:FileDocExtensions.kt$FileDoc</ID>
+    <ID>MaxLineLength:AboutFragment.kt$AboutFragment$Uri.parse("mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26k%3D$key")</ID>
+    <ID>MaxLineLength:AbsCallBack.kt$AbsCallBack.Companion$if</ID>
+    <ID>MaxLineLength:ActivityResult.kt$fun</ID>
+    <ID>MaxLineLength:AlertBuilder.kt$AlertBuilder$fun cancelButton(handler: ((dialog: DialogInterface) -&gt; Unit)? = null)</ID>
+    <ID>MaxLineLength:AppConfig.kt$AppConfig$return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/" + BuildConfig.Cronet_Main_Version + " Safari/537.36"</ID>
+    <ID>MaxLineLength:AppLogDialog.kt$AppLogDialog.LogAdapter$inner</ID>
+    <ID>MaxLineLength:AppLogDialog.kt$AppLogDialog.LogAdapter$override fun getViewBinding(parent: ViewGroup): ItemAppLogBinding</ID>
+    <ID>MaxLineLength:AppWebDav.kt$AppWebDav$private fun getProgressFileName(name: String, author: String): String</ID>
+    <ID>MaxLineLength:AppWebDav.kt$AppWebDav$private fun getProgressUrl(name: String, author: String): String</ID>
+    <ID>MaxLineLength:AudioPlayService.kt$AudioPlayService.&lt;no name provided&gt;$override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean</ID>
+    <ID>MaxLineLength:BaseSourceExtensions.kt$fun BaseSource.getShareScope(coroutineContext: CoroutineContext? = null): Scriptable?</ID>
+    <ID>MaxLineLength:BgAdapter.kt$BgAdapter$override</ID>
+    <ID>MaxLineLength:BookAdapter.kt$BookAdapter$override fun getViewBinding(parent: ViewGroup): ItemArrangeBookBinding</ID>
+    <ID>MaxLineLength:BookAdapter.kt$BookAdapter$override fun getViewBinding(parent: ViewGroup): ItemFilletTextBinding</ID>
+    <ID>MaxLineLength:BookChapterDao.kt$BookChapterDao$@Query("SELECT * FROM chapters where bookUrl = :bookUrl and `index` &gt;= :start and `index` &lt;= :end and title like '%'||:key||'%' order by `index`")</ID>
+    <ID>MaxLineLength:BookSearchWebSocket.kt$BookSearchWebSocket$override fun onSearchCancel(exception: Throwable?)</ID>
+    <ID>MaxLineLength:BookSourceAdapter.kt$BookSourceAdapter$override fun getViewBinding(parent: ViewGroup): ItemBookSourceBinding</ID>
+    <ID>MaxLineLength:BookSourceDebugAdapter.kt$BookSourceDebugAdapter$override fun getViewBinding(parent: ViewGroup): ItemLogLineBinding</ID>
+    <ID>MaxLineLength:BookSourcePart.kt$BookSourcePart$override fun equals(other: Any?): Boolean</ID>
+    <ID>MaxLineLength:BookmarkAdapter.kt$BookmarkAdapter$override fun getViewBinding(parent: ViewGroup): ItemBookmarkBinding</ID>
+    <ID>MaxLineLength:BookmarkDao.kt$BookmarkDao$@Query("select * from bookmarks order by bookName collate localized, bookAuthor collate localized, chapterIndex, chapterPos")</ID>
+    <ID>MaxLineLength:BooksAdapterGrid.kt$BooksAdapterGrid$override fun getViewBinding(parent: ViewGroup): ItemBookshelfGridBinding</ID>
+    <ID>MaxLineLength:BooksAdapterList.kt$BooksAdapterList$override fun getViewBinding(parent: ViewGroup): ItemBookshelfListBinding</ID>
+    <ID>MaxLineLength:BookshelfFragment1.kt$BookshelfFragment1$private</ID>
+    <ID>MaxLineLength:CacheAdapter.kt$CacheAdapter$override fun getViewBinding(parent: ViewGroup): ItemDownloadBinding</ID>
+    <ID>MaxLineLength:ChangeBookSourceAdapter.kt$ChangeBookSourceAdapter$override fun getViewBinding(parent: ViewGroup): ItemChangeSourceBinding</ID>
+    <ID>MaxLineLength:ChangeBookSourceViewModel.kt$ChangeBookSourceViewModel$fun getBookScore(searchBook: SearchBook): Int</ID>
+    <ID>MaxLineLength:ChangeChapterSourceAdapter.kt$ChangeChapterSourceAdapter$override fun getViewBinding(parent: ViewGroup): ItemChangeSourceBinding</ID>
+    <ID>MaxLineLength:ChangeChapterTocAdapter.kt$ChangeChapterTocAdapter$override fun getViewBinding(parent: ViewGroup): ItemChapterListBinding</ID>
+    <ID>MaxLineLength:ChapterListAdapter.kt$ChapterListAdapter$override fun getViewBinding(parent: ViewGroup): ItemChapterListBinding</ID>
+    <ID>MaxLineLength:CodeView.kt$CodeView$class</ID>
+    <ID>MaxLineLength:CodeViewExtensions.kt$fun Context.arrayAdapter(keywords: Array&lt;String&gt;): ArrayAdapter&lt;String&gt;</ID>
+    <ID>MaxLineLength:ContentHelp.kt$ContentHelp$// if((match(MARK_QUOTATION,string.charAt(string.length()-1)) || match(MARK_QUOTATION,string.charAt(string.length()-2)))){</ID>
+    <ID>MaxLineLength:ContextExtensions.kt$return (resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK) &gt;= Configuration.SCREENLAYOUT_SIZE_LARGE</ID>
+    <ID>MaxLineLength:ConvertExtensions.kt$ConvertUtils$private fun toDrawable(bitmap: Bitmap?): Drawable?</ID>
+    <ID>MaxLineLength:CookieManager.kt$CookieManager$private fun getSessionCookieMap(domain: String): MutableMap&lt;String, String&gt;?</ID>
+    <ID>MaxLineLength:CrashLogsDialog.kt$CrashLogsDialog.LogAdapter$override fun getViewBinding(parent: ViewGroup): ItemCrashLogBinding</ID>
+    <ID>MaxLineLength:DatabaseMigrations.kt$DatabaseMigrations.&lt;no name provided&gt;$ `customOrder` INTEGER NOT NULL, `autoUpdate` INTEGER NOT NULL, `update` INTEGER NOT NULL, PRIMARY KEY(`id`))</ID>
+    <ID>MaxLineLength:DatabaseMigrations.kt$DatabaseMigrations.&lt;no name provided&gt;$ `order` INTEGER NOT NULL, `originOrder` INTEGER NOT NULL, `variable` TEXT, `readConfig` TEXT, PRIMARY KEY(`bookUrl`))</ID>
+    <ID>MaxLineLength:DatabaseMigrations.kt$DatabaseMigrations.&lt;no name provided&gt;$ `originOrder` INTEGER NOT NULL, `useReplaceRule` INTEGER NOT NULL, `variable` TEXT, PRIMARY KEY(`bookUrl`))</ID>
+    <ID>MaxLineLength:DatabaseMigrations.kt$DatabaseMigrations.&lt;no name provided&gt;$database.execSQL("CREATE INDEX IF NOT EXISTS `index_epubChapters_bookUrl` ON `epubChapters` (`bookUrl`)")</ID>
+    <ID>MaxLineLength:DatabaseMigrations.kt$DatabaseMigrations.&lt;no name provided&gt;$database.execSQL("CREATE TABLE IF NOT EXISTS `caches` (`key` TEXT NOT NULL, `value` TEXT, `deadline` INTEGER NOT NULL, PRIMARY KEY(`key`))")</ID>
+    <ID>MaxLineLength:DatabaseMigrations.kt$DatabaseMigrations.&lt;no name provided&gt;$database.execSQL("CREATE TABLE IF NOT EXISTS `httpTTS` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `url` TEXT NOT NULL, PRIMARY KEY(`id`))")</ID>
+    <ID>MaxLineLength:DatabaseMigrations.kt$DatabaseMigrations.&lt;no name provided&gt;$database.execSQL("CREATE TABLE IF NOT EXISTS `readRecord` (`bookName` TEXT NOT NULL, `readTime` INTEGER NOT NULL, PRIMARY KEY(`bookName`))")</ID>
+    <ID>MaxLineLength:DatabaseMigrations.kt$DatabaseMigrations.&lt;no name provided&gt;$database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_books_name_author` ON `books` (`name`, `author`) ")</ID>
+    <ID>MaxLineLength:DatabaseMigrations.kt$DatabaseMigrations.&lt;no name provided&gt;$database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_epubChapters_bookUrl_href` ON `epubChapters` (`bookUrl`, `href`)")</ID>
+    <ID>MaxLineLength:DatabaseMigrations.kt$DatabaseMigrations.&lt;no name provided&gt;$database.execSQL("INSERT INTO readRecordNew(androidId, bookName, readTime) select '${AppConst.androidId}' as androidId, bookName, readTime from readRecord")</ID>
+    <ID>MaxLineLength:DatabaseMigrations.kt$DatabaseMigrations.&lt;no name provided&gt;$database.execSQL("insert into readRecord (deviceId, bookName, readTime) select androidId, bookName, readTime from readRecord1")</ID>
+    <ID>MaxLineLength:DictRuleAdapter.kt$DictRuleAdapter$override fun getViewBinding(parent: ViewGroup): ItemDictRuleBinding</ID>
+    <ID>MaxLineLength:DividerNoLast.kt$DividerNoLast$"@android:attr/listDivider was not set in the theme used for this DividerItemDecoration. Please set that attribute all call setDrawable()"</ID>
+    <ID>MaxLineLength:DividerNoLast.kt$DividerNoLast$require(!(orientation != HORIZONTAL &amp;&amp; orientation != VERTICAL)) { "Invalid orientation. It should be either HORIZONTAL or VERTICAL" }</ID>
+    <ID>MaxLineLength:EffectiveReplacesDialog.kt$EffectiveReplacesDialog.ReplaceAdapter$override fun getViewBinding(parent: ViewGroup): Item1lineTextBinding</ID>
+    <ID>MaxLineLength:ExoPlayerHelper.kt$ExoPlayerHelper$*</ID>
+    <ID>MaxLineLength:ExoPlayerHelper.kt$ExoPlayerHelper$// private fun CacheDataSource.Factory.setDefaultRequestProperties(headers: Map&lt;String, String&gt; = mapOf()): CacheDataSource.Factory {</ID>
+    <ID>MaxLineLength:ExploreAdapter.kt$ExploreAdapter$override fun getViewBinding(parent: ViewGroup): ItemFindBookBinding</ID>
+    <ID>MaxLineLength:ExploreShowAdapter.kt$ExploreShowAdapter$override fun getViewBinding(parent: ViewGroup): ItemSearchBinding</ID>
+    <ID>MaxLineLength:FastScroller.kt$FastScroller$else -&gt; throw IllegalArgumentException("Parent ViewGroup must be a ConstraintLayout, CoordinatorLayout, FrameLayout, or RelativeLayout")</ID>
+    <ID>MaxLineLength:FileDocExtensions.kt$fun</ID>
+    <ID>MaxLineLength:FileManageActivity.kt$FileManageActivity.FileAdapter$override fun getViewBinding(parent: ViewGroup): ItemFileBinding</ID>
+    <ID>MaxLineLength:FileManageActivity.kt$FileManageActivity.PathAdapter$override</ID>
+    <ID>MaxLineLength:FilePickerDialog.kt$FilePickerDialog.FileAdapter$override</ID>
+    <ID>MaxLineLength:FilePickerDialog.kt$FilePickerDialog.PathAdapter$override</ID>
+    <ID>MaxLineLength:FileUtils.kt$FileUtils.SortType$@IntDef(value = [BY_NAME_ASC, BY_NAME_DESC, BY_TIME_ASC, BY_TIME_DESC, BY_SIZE_ASC, BY_SIZE_DESC, BY_EXTENSION_ASC, BY_EXTENSION_DESC])</ID>
+    <ID>MaxLineLength:FontAdapter.kt$FontAdapter$class</ID>
+    <ID>MaxLineLength:FragmentViewBindings.kt$public</ID>
+    <ID>MaxLineLength:GroupManageDialog.kt$GroupManageDialog$LiftItemTouchCallback(adapter, cornerRadiusDp = 10, bgColorRes = R.color.surface_container_high, liftZDp = 4)</ID>
+    <ID>MaxLineLength:GroupManageDialog.kt$GroupManageDialog.GroupAdapter$override fun getViewBinding(parent: ViewGroup): ItemBookGroupManageBinding</ID>
+    <ID>MaxLineLength:GroupManageDialog.kt$GroupManageDialog.GroupAdapter$override fun getViewBinding(parent: ViewGroup): ItemGroupManageBinding</ID>
+    <ID>MaxLineLength:GroupSelectDialog.kt$GroupSelectDialog.GroupAdapter$override fun getViewBinding(parent: ViewGroup): ItemGroupSelectBinding</ID>
+    <ID>MaxLineLength:HandleFileContract.kt$HandleFileContract$class</ID>
+    <ID>MaxLineLength:HistoryKeyAdapter.kt$HistoryKeyAdapter$override fun getViewBinding(parent: ViewGroup): ItemFilletTextBinding</ID>
+    <ID>MaxLineLength:HtmlFormatter.kt$HtmlFormatter$"&lt;img[^&gt;]*\\ssrc\\s*=\\s*['\"]([^'\"{&gt;]*\\{(?:[^{}]|\\{[^}&gt;]+\\})+\\})['\"][^&gt;]*&gt;|&lt;img[^&gt;]*\\s(?:data-src|src)\\s*=\\s*['\"]([^'\"&gt;]+)['\"][^&gt;]*&gt;|&lt;img[^&gt;]*\\sdata-[^=&gt;]*=\\s*['\"]([^'\"&gt;]*)['\"][^&gt;]*&gt;"</ID>
+    <ID>MaxLineLength:HttpReadAloudService.kt$HttpReadAloudService$override fun aloudServicePendingIntent(actionStr: String): PendingIntent?</ID>
+    <ID>MaxLineLength:HttpServer.kt$HttpServer$"${session.method.name} - $uri - ${session.queryParameterString} - Error End($startAt)\n$e\n${e.stackTraceStr}"</ID>
+    <ID>MaxLineLength:IconListPreference.kt$IconListPreference.IconDialog.Adapter$override fun getViewBinding(parent: ViewGroup): ItemIconPreferenceBinding</ID>
+    <ID>MaxLineLength:ImportBookAdapter.kt$ImportBookAdapter$override fun getViewBinding(parent: ViewGroup): ItemImportBookBinding</ID>
+    <ID>MaxLineLength:ImportBookSourceDialog.kt$ImportBookSourceDialog.SourcesAdapter$override fun getViewBinding(parent: ViewGroup): ItemSourceImportBinding</ID>
+    <ID>MaxLineLength:ImportDictRuleDialog.kt$ImportDictRuleDialog.SourcesAdapter$override fun getViewBinding(parent: ViewGroup): ItemSourceImportBinding</ID>
+    <ID>MaxLineLength:ImportHttpTtsDialog.kt$ImportHttpTtsDialog.SourcesAdapter$override fun getViewBinding(parent: ViewGroup): ItemSourceImportBinding</ID>
+    <ID>MaxLineLength:ImportReplaceRuleDialog.kt$ImportReplaceRuleDialog.SourcesAdapter$override fun getViewBinding(parent: ViewGroup): ItemSourceImportBinding</ID>
+    <ID>MaxLineLength:ImportThemeDialog.kt$ImportThemeDialog.SourcesAdapter$override fun getViewBinding(parent: ViewGroup): ItemSourceImportBinding</ID>
+    <ID>MaxLineLength:ImportTxtTocRuleDialog.kt$ImportTxtTocRuleDialog.SourcesAdapter$override fun getViewBinding(parent: ViewGroup): ItemSourceImportBinding</ID>
+    <ID>MaxLineLength:JsExtensions.kt$JsExtensions$log("queryBase64TTF(String)方法已过时,并将在未来删除；请无脑使用queryTTF(Any)替代，新方法支持传入 url、本地文件、base64、ByteArray 自动判断&amp;自动缓存，特殊情况需禁用缓存请传入第二可选参数false:Boolean")</ID>
+    <ID>MaxLineLength:KeyboardAssistsConfig.kt$KeyboardAssistsConfig.KeyAdapter$override</ID>
+    <ID>MaxLineLength:KeyboardToolPop.kt$KeyboardToolPop.Adapter$override fun getViewBinding(parent: ViewGroup): ItemFilletTextBinding</ID>
+    <ID>MaxLineLength:LayoutManager.kt$LayoutManager.&lt;no name provided&gt;$override fun create(recyclerView: RecyclerView): RecyclerView.LayoutManager</ID>
+    <ID>MaxLineLength:LegadoDataUrlLoader.kt$LegadoDataUrlLoader.Factory$override fun build(multiFactory: MultiModelLoaderFactory): ModelLoader&lt;String, InputStream&gt;</ID>
+    <ID>MaxLineLength:MangaFooterSettingDialog.kt$MangaFooterSettingDialog$binding.rgFooterOrientation.check(if (config.footerOrientation == ReaderInfoBarView.ALIGN_CENTER) R.id.rb_center else R.id.rb_left)</ID>
+    <ID>MaxLineLength:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.Companion$(responseCode != HttpURLConnection.HTTP_NO_CONTENT)</ID>
+    <ID>MaxLineLength:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.Companion$return if (response.cacheResponse == null) "NETWORK " + response.code else "CONDITIONAL_CACHE " + response.networkResponse!!.code</ID>
+    <ID>MaxLineLength:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.DelegatingHttpsURLConnection$internal abstract</ID>
+    <ID>MaxLineLength:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.DelegatingHttpsURLConnection$override</ID>
+    <ID>MaxLineLength:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.DelegatingHttpsURLConnection$override fun getHeaderFieldDate(field: String, defaultValue: Long): Long</ID>
+    <ID>MaxLineLength:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.DelegatingHttpsURLConnection$override fun getHeaderFieldInt(field: String, defaultValue: Int): Int</ID>
+    <ID>MaxLineLength:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.OkHttpsURLConnection$internal</ID>
+    <ID>MaxLineLength:OtherConfigFragment.kt$OtherConfigFragment$private fun isProcessTextEnabled(): Boolean</ID>
+    <ID>MaxLineLength:PhotoView.kt$PhotoView$if</ID>
+    <ID>MaxLineLength:PhotoView.kt$PhotoView$override fun canScrollHorizontally(direction: Int): Boolean</ID>
+    <ID>MaxLineLength:PhotoView.kt$PhotoView$override fun canScrollVertically(direction: Int): Boolean</ID>
+    <ID>MaxLineLength:PhotoView.kt$PhotoView$private fun isImageCenterHeight(rect: RectF): Boolean</ID>
+    <ID>MaxLineLength:PhotoView.kt$PhotoView$private fun isImageCenterWidth(rect: RectF): Boolean</ID>
+    <ID>MaxLineLength:PopupAction.kt$PopupAction.Adapter$override fun getViewBinding(parent: ViewGroup): ItemTextBinding</ID>
+    <ID>MaxLineLength:ProgressResponseBody.kt$ProgressResponseBody$class</ID>
+    <ID>MaxLineLength:ReadRecordActivity.kt$ReadRecordActivity.RecordAdapter$override fun getViewBinding(parent: ViewGroup): ItemReadRecordBinding</ID>
+    <ID>MaxLineLength:ReadStyleDialog.kt$ReadStyleDialog.StyleAdapter$override fun getViewBinding(parent: ViewGroup): ItemReadStyleBinding</ID>
+    <ID>MaxLineLength:ReadView.kt$ReadView$if</ID>
+    <ID>MaxLineLength:RemoteBookAdapter.kt$RemoteBookAdapter$override fun getViewBinding(parent: ViewGroup): ItemImportBookBinding</ID>
+    <ID>MaxLineLength:ReplaceRuleAdapter.kt$ReplaceRuleAdapter$override fun getViewBinding(parent: ViewGroup): ItemReplaceRuleBinding</ID>
+    <ID>MaxLineLength:RuleAnalyzer.kt$RuleAnalyzer$if</ID>
+    <ID>MaxLineLength:RuleComplete.kt$RuleComplete$"""(?&lt;!(@|/|^|[|%&amp;]{2})(attr|text|ownText|textNodes|href|content|html|alt|all|value|src)(\(\))?)(?&lt;seq&gt;\&amp;{2}|%%|\|{2}|$)"""</ID>
+    <ID>MaxLineLength:SSLHelper.kt$SSLHelper$fun</ID>
+    <ID>MaxLineLength:SSLHelper.kt$SSLHelper.&lt;no name provided&gt;$fun checkServerTrusted(chain: Array&lt;X509Certificate&gt;, authType: String, host: String): List&lt;X509Certificate&gt;</ID>
+    <ID>MaxLineLength:SearchActivity.kt$SearchActivity$if</ID>
+    <ID>MaxLineLength:SearchAdapter.kt$SearchAdapter$override fun getViewBinding(parent: ViewGroup): ItemSearchBinding</ID>
+    <ID>MaxLineLength:SearchBook.kt$SearchBook$fun sameBookTypeLocal(bookType: Int): Boolean</ID>
+    <ID>MaxLineLength:SearchBookDao.kt$SearchBookDao$@Query("select * from searchBooks where name = :name and author = :author and origin in (select bookSourceUrl from book_sources) order by originOrder limit 1")</ID>
+    <ID>MaxLineLength:SearchContentActivity.kt$SearchContentActivity$this@SearchContentActivity.getString(R.string.search_content_size) + ": ${viewModel.searchResultCounts}"</ID>
+    <ID>MaxLineLength:SearchContentAdapter.kt$SearchContentAdapter$override fun getViewBinding(parent: ViewGroup): ItemSearchListBinding</ID>
+    <ID>MaxLineLength:Server.kt$Server$fun getWebDavConfig(): WebDavConfig?</ID>
+    <ID>MaxLineLength:ServersDialog.kt$ServersDialog.ServersAdapter$override fun getViewBinding(parent: ViewGroup): ItemServerSelectBinding</ID>
+    <ID>MaxLineLength:SlideInBottomAnimation.kt$SlideInBottomAnimation$override fun getAnimators(view: View): Array&lt;Animator&gt;</ID>
+    <ID>MaxLineLength:SlideInLeftAnimation.kt$SlideInLeftAnimation$override fun getAnimators(view: View): Array&lt;Animator&gt;</ID>
+    <ID>MaxLineLength:SlideInRightAnimation.kt$SlideInRightAnimation$override fun getAnimators(view: View): Array&lt;Animator&gt;</ID>
+    <ID>MaxLineLength:SmoothCheckBox.kt$SmoothCheckBox$mTickPoints[1].x + (mTickPoints[2].x - mTickPoints[1].x) * (mDrewDistance - mLeftLineDistance) / mRightLineDistance</ID>
+    <ID>MaxLineLength:SmoothCheckBox.kt$SmoothCheckBox$mTickPoints[1].y - (mTickPoints[1].y - mTickPoints[2].y) * (mDrewDistance - mLeftLineDistance) / mRightLineDistance</ID>
+    <ID>MaxLineLength:SourcePickerDialog.kt$SourcePickerDialog.SourceAdapter$override</ID>
+    <ID>MaxLineLength:SpeakEngineDialog.kt$SpeakEngineDialog.Adapter$override fun getViewBinding(parent: ViewGroup): ItemHttpTtsBinding</ID>
+    <ID>MaxLineLength:TTSReadAloudService.kt$TTSReadAloudService$override fun aloudServicePendingIntent(actionStr: String): PendingIntent?</ID>
+    <ID>MaxLineLength:TextActionMenu.kt$TextActionMenu.Adapter$override fun getViewBinding(parent: ViewGroup): ItemTextBinding</ID>
+    <ID>MaxLineLength:ThemeListDialog.kt$ThemeListDialog.Adapter$override fun getViewBinding(parent: ViewGroup): ItemThemeConfigBinding</ID>
+    <ID>MaxLineLength:ThemeStore.kt$ThemeStore.Companion$fun</ID>
+    <ID>MaxLineLength:TintHelper.kt$TintHelper$// This returns a NEW Drawable because of the mutate() call. The mutate() call is necessary because Drawables with the same resource have shared states otherwise.</ID>
+    <ID>MaxLineLength:TintHelper.kt$TintHelper$if (isDark) androidx.appcompat.R.color.ripple_material_dark else androidx.appcompat.R.color.ripple_material_light</ID>
+    <ID>MaxLineLength:TintHelper.kt$TintHelper$if (useDarkTheme) R.color.ate_button_text_disabled_dark else R.color.ate_button_text_disabled_light</ID>
+    <ID>MaxLineLength:TocActivity.kt$TocActivity.TabFragmentPageAdapter$private</ID>
+    <ID>MaxLineLength:TxtTocRuleAdapter.kt$TxtTocRuleAdapter$override fun getViewBinding(parent: ViewGroup): ItemTxtTocRuleBinding</ID>
+    <ID>MaxLineLength:TxtTocRuleDialog.kt$TxtTocRuleDialog.TocRegexAdapter$override fun getViewBinding(parent: ViewGroup): ItemTocRegexBinding</ID>
+    <ID>MaxLineLength:ViewPager2Container.kt$ViewPager2Container$*</ID>
+    <ID>MaxLineLength:WebBook.kt$WebBook$)</ID>
+    <ID>MaxLineLength:ZipUtils.kt$ZipUtils$fun</ID>
+    <ID>MaxLineLength:ZipUtils.kt$ZipUtils$private fun createOrExistsDir(file: File?): Boolean</ID>
+    <ID>MemberNameEqualsClassName:AnalyzeUrl.kt$AnalyzeUrl$private fun analyzeUrl()</ID>
+    <ID>MemberNameEqualsClassName:Backup.kt$Backup$private suspend fun backup(context: Context, path: String?)</ID>
+    <ID>MemberNameEqualsClassName:ItemAnimation.kt$ItemAnimation$var itemAnimation: BaseAnimation? = null</ID>
+    <ID>MemberNameEqualsClassName:Restore.kt$Restore$private suspend fun restore(path: String)</ID>
+    <ID>MemberNameEqualsClassName:Restore.kt$Restore$suspend fun restore( context: Context, uri: Uri, )</ID>
+    <ID>MemberNameEqualsClassName:TextFile.kt$TextFile.Companion$private var textFile: TextFile? = null</ID>
+    <ID>NestedBlockDepth:AlphanumComparator.kt$AlphanumComparator$override fun compare( s1: String, s2: String, ): Int</ID>
+    <ID>NestedBlockDepth:AnalyzeByJSonPath.kt$AnalyzeByJSonPath$internal fun getList(rule: String): ArrayList&lt;Any&gt;?</ID>
+    <ID>NestedBlockDepth:AnalyzeByJSonPath.kt$AnalyzeByJSonPath$internal fun getStringList(rule: String): List&lt;String&gt;</ID>
+    <ID>NestedBlockDepth:AnalyzeByJSoup.kt$AnalyzeByJSoup$internal fun getStringList(ruleStr: String): List&lt;String&gt;</ID>
+    <ID>NestedBlockDepth:AnalyzeByJSoup.kt$AnalyzeByJSoup$private fun getElements(temp: Element?, rule: String): Elements</ID>
+    <ID>NestedBlockDepth:AnalyzeByJSoup.kt$AnalyzeByJSoup.ElementsSingle$private fun findIndexSet(rule: String)</ID>
+    <ID>NestedBlockDepth:AnalyzeByXPath.kt$AnalyzeByXPath$internal fun getElements(xPath: String): List&lt;JXNode&gt;?</ID>
+    <ID>NestedBlockDepth:AnalyzeByXPath.kt$AnalyzeByXPath$internal fun getStringList(xPath: String): List&lt;String&gt;</ID>
+    <ID>NestedBlockDepth:AnalyzeRule.kt$AnalyzeRule$@JvmOverloads fun getString( ruleList: List&lt;SourceRule&gt;, mContent: Any? = null, isUrl: Boolean = false, unescape: Boolean = true, ): String</ID>
+    <ID>NestedBlockDepth:AnalyzeRule.kt$AnalyzeRule$@JvmOverloads fun getStringList( ruleList: List&lt;SourceRule&gt;, mContent: Any? = null, isUrl: Boolean = false, ): List&lt;String&gt;?</ID>
+    <ID>NestedBlockDepth:AnalyzeRule.kt$AnalyzeRule.SourceRule$fun makeUpRule(result: Any?)</ID>
+    <ID>NestedBlockDepth:Backup.kt$Backup$private suspend fun backup(context: Context, path: String?)</ID>
+    <ID>NestedBlockDepth:BookChapter.kt$BookChapter$fun getDisplayTitle( replaceRules: List&lt;ReplaceRule&gt;? = null, useReplace: Boolean = true, chineseConvert: Boolean = true, ): String</ID>
+    <ID>NestedBlockDepth:BookSourceAdapter.kt$BookSourceAdapter$override fun convert( holder: ItemViewHolder, binding: ItemBookSourceBinding, item: BookSourcePart, payloads: MutableList&lt;Any&gt;, )</ID>
+    <ID>NestedBlockDepth:BooksAdapterGrid.kt$BooksAdapterGrid$override fun convert( holder: ItemViewHolder, binding: ItemBookshelfGridBinding, item: Book, payloads: MutableList&lt;Any&gt;, )</ID>
+    <ID>NestedBlockDepth:BooksAdapterGrid.kt$BooksAdapterGrid.BookViewHolder$fun onBind( item: Book, position: Int, payloads: MutableList&lt;Any&gt;, )</ID>
+    <ID>NestedBlockDepth:BooksAdapterGrid.kt$BooksAdapterGrid.GroupViewHolder$fun onBind( item: BookGroup, position: Int, payloads: MutableList&lt;Any&gt;, )</ID>
+    <ID>NestedBlockDepth:BooksAdapterList.kt$BooksAdapterList$override fun convert( holder: ItemViewHolder, binding: ItemBookshelfListBinding, item: Book, payloads: MutableList&lt;Any&gt;, )</ID>
+    <ID>NestedBlockDepth:BooksAdapterList.kt$BooksAdapterList.BookViewHolder$fun onBind( item: Book, position: Int, payloads: MutableList&lt;Any&gt;, )</ID>
+    <ID>NestedBlockDepth:BooksAdapterList.kt$BooksAdapterList.GroupViewHolder$fun onBind( item: BookGroup, position: Int, payloads: MutableList&lt;Any&gt;, )</ID>
+    <ID>NestedBlockDepth:ChangeBookSourceAdapter.kt$ChangeBookSourceAdapter$override fun convert( holder: ItemViewHolder, binding: ItemChangeSourceBinding, item: SearchBook, payloads: MutableList&lt;Any&gt;, )</ID>
+    <ID>NestedBlockDepth:ChangeChapterSourceAdapter.kt$ChangeChapterSourceAdapter$override fun convert( holder: ItemViewHolder, binding: ItemChangeSourceBinding, item: SearchBook, payloads: MutableList&lt;Any&gt;, )</ID>
+    <ID>NestedBlockDepth:ChapterProvider.kt$ChapterProvider$private suspend fun setTypeImage( book: Book, src: String, x: Int, y: Float, textPages: ArrayList&lt;TextPage&gt;, textHeight: Float, stringBuilder: StringBuilder, imageStyle: String?, ): Pair&lt;Int, Float&gt;</ID>
+    <ID>NestedBlockDepth:ChapterProvider.kt$ChapterProvider$suspend fun getTextChapter( book: Book, bookChapter: BookChapter, displayTitle: String, bookContent: BookContent, chapterSize: Int, ): TextChapter</ID>
+    <ID>NestedBlockDepth:ContentHelp.kt$ContentHelp$private fun findNewLines( str: String, dict: List&lt;String&gt;, ): String</ID>
+    <ID>NestedBlockDepth:ContentProcessor.kt$ContentProcessor$fun getContent( book: Book, chapter: BookChapter, content: String, includeTitle: Boolean = true, useReplace: Boolean = true, chineseConvert: Boolean = true, reSegment: Boolean = true, ): BookContent</ID>
+    <ID>NestedBlockDepth:ContentTextView.kt$ContentTextView$fun cancelSelect(clearSearchResult: Boolean = false)</ID>
+    <ID>NestedBlockDepth:ContentTextView.kt$ContentTextView$private fun touch( x: Float, y: Float, touched: ( relativeOffset: Float, textPos: TextPos, textPage: TextPage, textLine: TextLine, column: BaseColumn, ) -&gt; Unit, )</ID>
+    <ID>NestedBlockDepth:ContentTextView.kt$ContentTextView$private fun touchRough( x: Float, y: Float, touched: ( relativeOffset: Float, textPos: TextPos, textPage: TextPage, textLine: TextLine, column: BaseColumn, ) -&gt; Unit, )</ID>
+    <ID>NestedBlockDepth:ContentTextView.kt$ContentTextView$private fun upSelectChars()</ID>
+    <ID>NestedBlockDepth:DictRuleAdapter.kt$DictRuleAdapter$override fun convert( holder: ItemViewHolder, binding: ItemDictRuleBinding, item: DictRule, payloads: MutableList&lt;Any&gt;, )</ID>
+    <ID>NestedBlockDepth:EpubFile.kt$EpubFile$private fun getChapterList(): ArrayList&lt;BookChapter&gt;</ID>
+    <ID>NestedBlockDepth:FileDocExtensions.kt$fun FileDoc.list(filter: FileDocFilter? = null): ArrayList&lt;FileDoc&gt;?</ID>
+    <ID>NestedBlockDepth:FilePickerDialog.kt$FilePickerDialog.FileAdapter$override fun convert( holder: ItemViewHolder, binding: ItemFilePickerBinding, item: File, payloads: MutableList&lt;Any&gt;, )</ID>
+    <ID>NestedBlockDepth:HttpReadAloudService.kt$HttpReadAloudService$private suspend fun getSpeakStream( httpTts: HttpTTS, speakText: String, ): InputStream?</ID>
+    <ID>NestedBlockDepth:ImportOldData.kt$ImportOldData$private fun toNewRule(oldRule: String?): String?</ID>
+    <ID>NestedBlockDepth:LibArchiveUtils.kt$LibArchiveUtils$fun getByteArrayContent( inputStream: InputStream, path: String, ): ByteArray?</ID>
+    <ID>NestedBlockDepth:Lz77Decompressor.kt$Lz77Decompressor$override fun decompress(data: ByteArray): ByteArray</ID>
+    <ID>NestedBlockDepth:MobiBook.kt$MobiBook$private fun readIndexEntry( indxBuffer: ByteBuffer, tagx: TagxHeader, tagTable: List&lt;TagxTag&gt;, idxtOffset: Int, ): IndexEntry</ID>
+    <ID>NestedBlockDepth:RealPathUtil.kt$RealPathUtil$private fun getDataColumn( context: Context, uri: Uri?, selection: String?, selectionArgs: Array&lt;String&gt;?, ): String?</ID>
+    <ID>NestedBlockDepth:ReplaceRuleAdapter.kt$ReplaceRuleAdapter$override fun convert( holder: ItemViewHolder, binding: ItemReplaceRuleBinding, item: ReplaceRule, payloads: MutableList&lt;Any&gt;, )</ID>
+    <ID>NestedBlockDepth:Restore.kt$Restore$private suspend fun restore(path: String)</ID>
+    <ID>NestedBlockDepth:SearchModel.kt$SearchModel$private suspend fun mergeItems( newDataS: List&lt;SearchBook&gt;, precision: Boolean, )</ID>
+    <ID>NestedBlockDepth:SharedJsScope.kt$SharedJsScope$fun getScope( jsLib: String?, coroutineContext: CoroutineContext?, ): Scriptable?</ID>
+    <ID>NestedBlockDepth:TextChapterLayout.kt$TextChapterLayout$private suspend fun getTextChapter( book: Book, bookChapter: BookChapter, displayTitle: String, bookContent: BookContent, )</ID>
+    <ID>NestedBlockDepth:TextFile.kt$TextFile$private fun analyze( fileStart: Long = 0L, fileEnd: Long = Long.MAX_VALUE, ): Pair&lt;ArrayList&lt;BookChapter&gt;, Int&gt;</ID>
+    <ID>NestedBlockDepth:TextFile.kt$TextFile$private fun analyze(pattern: Pattern?): Pair&lt;ArrayList&lt;BookChapter&gt;, Int&gt;</ID>
+    <ID>NestedBlockDepth:TxtTocRuleAdapter.kt$TxtTocRuleAdapter$override fun convert( holder: ItemViewHolder, binding: ItemTxtTocRuleBinding, item: TxtTocRule, payloads: MutableList&lt;Any&gt;, )</ID>
+    <ID>NestedBlockDepth:TxtTocRuleDialog.kt$TxtTocRuleDialog.TocRegexAdapter$override fun convert( holder: ItemViewHolder, binding: ItemTocRegexBinding, item: TxtTocRule, payloads: MutableList&lt;Any&gt;, )</ID>
+    <ID>PackageNaming:ExplosionAnimator.kt$package io.legado.app.ui.widget.anima.explosion_field</ID>
+    <ID>PackageNaming:ExplosionField.kt$package io.legado.app.ui.widget.anima.explosion_field</ID>
+    <ID>PackageNaming:ExplosionView.kt$package io.legado.app.ui.widget.anima.explosion_field</ID>
+    <ID>PackageNaming:OnAnimatorListener.kt$package io.legado.app.ui.widget.anima.explosion_field</ID>
+    <ID>PackageNaming:Utils.kt$package io.legado.app.ui.widget.anima.explosion_field</ID>
+    <ID>PrintStackTrace:App.kt$App$e</ID>
+    <ID>PrintStackTrace:BaseActivity.kt$BaseActivity$e</ID>
+    <ID>PrintStackTrace:BodyUploadProvider.kt$BodyUploadProvider$e</ID>
+    <ID>PrintStackTrace:BookHelp.kt$BookHelp$e</ID>
+    <ID>PrintStackTrace:CodeView.kt$CodeView$e</ID>
+    <ID>PrintStackTrace:KF8Book.kt$KF8Book$e</ID>
+    <ID>PrintStackTrace:LogUtils.kt$LogUtils$e</ID>
+    <ID>PrintStackTrace:MobiReader.kt$MobiReader$e</ID>
+    <ID>PrintStackTrace:RealPathUtil.kt$RealPathUtil$e</ID>
+    <ID>PrintStackTrace:TextChapterLayout.kt$TextChapterLayout$e</ID>
+    <ID>PrintStackTrace:WebTileService.kt$WebTileService$e</ID>
+    <ID>ReturnCount:BookController.kt$BookController$fun getBookContent(parameters: Map&lt;String, List&lt;String&gt;&gt;): ReturnData</ID>
+    <ID>ReturnCount:BookController.kt$BookController$fun refreshToc(parameters: Map&lt;String, List&lt;String&gt;&gt;): ReturnData</ID>
+    <ID>ReturnCount:CacheBook.kt$CacheBook.CacheBookModel$@Synchronized fun download( scope: CoroutineScope, context: CoroutineContext, )</ID>
+    <ID>ReturnCount:FastScroller.kt$FastScroller$@Suppress("DEPRECATION") @SuppressLint("ClickableViewAccessibility") override fun onTouchEvent(event: MotionEvent): Boolean</ID>
+    <ID>ReturnCount:GsonExtensions.kt$MapDeserializerDoubleAsIntFix$fun read(json: JsonElement): Any?</ID>
+    <ID>ReturnCount:HttpServer.kt$HttpServer$override fun serve(session: IHTTPSession): Response</ID>
+    <ID>ReturnCount:NetworkUtils.kt$NetworkUtils$fun getAbsoluteURL( baseURL: URL?, relativePath: String, ): String</ID>
+    <ID>ReturnCount:ReadBookActivity.kt$ReadBookActivity$override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean</ID>
+    <ID>ReturnCount:ReadManga.kt$ReadManga$suspend fun contentLoadFinish( chapter: BookChapter, content: String?, errorMsg: String = "加载内容失败", canceled: Boolean = false, )</ID>
+    <ID>ReturnCount:ReadView.kt$ReadView$@SuppressLint("ClickableViewAccessibility") override fun onTouchEvent(event: MotionEvent): Boolean</ID>
+    <ID>ReturnCount:RealPathUtil.kt$RealPathUtil$fun getPath( context: Context, uri: Uri, ): String?</ID>
+    <ID>ReturnCount:SourceHelp.kt$SourceHelp$private fun is18Plus(url: String?): Boolean</ID>
+    <ID>ReturnCount:TTSReadAloudService.kt$TTSReadAloudService$private fun normalizeWavLoudness(file: File): Boolean</ID>
+    <ID>SwallowedException:ACache.kt$ACache$e: Exception</ID>
+    <ID>SwallowedException:AbsCallBack.kt$AbsCallBack$e: IOException</ID>
+    <ID>SwallowedException:AbsCallBack.kt$AbsCallBack.Companion$e: Exception</ID>
+    <ID>SwallowedException:AnalyzeRule.kt$AnalyzeRule$e: Exception</ID>
+    <ID>SwallowedException:ArchiveUtils.kt$ArchiveUtils$e: Exception</ID>
+    <ID>SwallowedException:AudioPlayViewModel.kt$AudioPlayViewModel$e: Exception</ID>
+    <ID>SwallowedException:BaseActivity.kt$BaseActivity$e: OutOfMemoryError</ID>
+    <ID>SwallowedException:BookChapter.kt$BookChapter$e: CancellationException</ID>
+    <ID>SwallowedException:BookChapter.kt$BookChapter$e: RegexTimeoutException</ID>
+    <ID>SwallowedException:ContentProcessor.kt$ContentProcessor$e: Exception</ID>
+    <ID>SwallowedException:ContextExtensions.kt$e: IllegalStateException</ID>
+    <ID>SwallowedException:CoroutineExtensions.kt$e: TimeoutCancellationException</ID>
+    <ID>SwallowedException:CronetLoader.kt$CronetLoader$e: Throwable</ID>
+    <ID>SwallowedException:CronetLoader.kt$CronetLoader$e: java.lang.Exception</ID>
+    <ID>SwallowedException:FileDocExtensions.kt$e: Exception</ID>
+    <ID>SwallowedException:FileExtensions.kt$e: Exception</ID>
+    <ID>SwallowedException:FileUtils.kt$FileUtils$e: Exception</ID>
+    <ID>SwallowedException:FileUtils.kt$FileUtils$e: IOException</ID>
+    <ID>SwallowedException:FileUtils.kt$FileUtils$e: UnsupportedEncodingException</ID>
+    <ID>SwallowedException:FlowExtensions.kt$e: Throwable</ID>
+    <ID>SwallowedException:IconListPreference.kt$IconListPreference.IconDialog.Adapter$e: Exception</ID>
+    <ID>SwallowedException:JsExtensions.kt$JsExtensions$e: Exception</ID>
+    <ID>SwallowedException:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.Companion$ex: AccessControlException</ID>
+    <ID>SwallowedException:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.OkHttpURLConnection$e: IOException</ID>
+    <ID>SwallowedException:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.OutputStreamRequestBody.&lt;no name provided&gt;$e: InterruptedIOException</ID>
+    <ID>SwallowedException:PdfFile.kt$PdfFile$e: Exception</ID>
+    <ID>SwallowedException:ReadMangaViewModel.kt$ReadMangaViewModel$e: Throwable</ID>
+    <ID>SwallowedException:StrResponse.kt$StrResponse$e: Exception</ID>
+    <ID>SwallowedException:StringExtensions.kt$e: Exception</ID>
+    <ID>SwallowedException:TTSReadAloudService.kt$TTSReadAloudService$e: Exception</ID>
+    <ID>SwallowedException:TextLine.kt$TextLine.Companion$e: NoSuchMethodError</ID>
+    <ID>SwallowedException:ThemeUtils.kt$ThemeUtils$e: Exception</ID>
+    <ID>ThrowingExceptionsWithoutMessageOrCause:SSLHelper.kt$SSLHelper$NullPointerException()</ID>
+    <ID>ThrowsCount:AddToBookshelfDialog.kt$AddToBookshelfDialog.ViewModel$fun load( bookUrl: String, success: (book: Book) -&gt; Unit, )</ID>
+    <ID>ThrowsCount:AppUpdateGitHub.kt$AppUpdateGitHub$private suspend fun getLatestRelease(): List&lt;AppReleaseInfo&gt;</ID>
+    <ID>ThrowsCount:CollectionExtensions.kt$inline fun &lt;T&gt; List&lt;T&gt;.fastBinarySearch( fromIndex: Int = 0, toIndex: Int = size, comparison: (T) -&gt; Int, ): Int</ID>
+    <ID>ThrowsCount:DirectLinkUpload.kt$DirectLinkUpload$@Throws(NoStackTraceException::class) suspend fun upLoad( fileName: String, file: Any, contentType: String, rule: Rule = getRule(), ): String</ID>
+    <ID>ThrowsCount:FileAssociationActivity.kt$FileAssociationActivity$private fun importBook( treeUri: Uri?, uri: Uri, )</ID>
+    <ID>ThrowsCount:HttpReadAloudService.kt$HttpReadAloudService$private suspend fun getSpeakStream( httpTts: HttpTTS, speakText: String, ): InputStream?</ID>
+    <ID>ThrowsCount:ImportBookSourceViewModel.kt$ImportBookSourceViewModel$fun importSource(text: String)</ID>
+    <ID>ThrowsCount:LibArchiveUtils.kt$LibArchiveUtils$@Throws(ArchiveException::class) private fun openArchive( channel: SeekableByteChannel, ): Long</ID>
+    <ID>ThrowsCount:LibArchiveUtils.kt$LibArchiveUtils$@Throws(ArchiveException::class) private fun openArchive( pfd: ParcelFileDescriptor, useCb: Boolean = true, ): Long</ID>
+    <ID>ThrowsCount:LocalBook.kt$LocalBook$@Throws(SecurityException::class) fun saveBookFile( inputStream: InputStream, fileName: String, ): Uri</ID>
+    <ID>ThrowsCount:LocalBook.kt$LocalBook$private fun downloadRemoteBook(localBook: Book): Boolean</ID>
+    <ID>ThrowsCount:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.Companion$@Throws(IOException::class) fun propagate(throwable: Throwable?): IOException</ID>
+    <ID>ThrowsCount:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.OkHttpURLConnection$@Throws(IOException::class) private fun getResponse(networkResponseOnError: Boolean): Response</ID>
+    <ID>ThrowsCount:UriExtensions.kt$fun Uri.inputStream(context: Context): Result&lt;InputStream&gt;</ID>
+    <ID>ThrowsCount:UriExtensions.kt$fun Uri.outputStream(context: Context): Result&lt;OutputStream&gt;</ID>
+    <ID>ThrowsCount:UriExtensions.kt$fun Uri.toReadPfd(context: Context): Result&lt;ParcelFileDescriptor&gt;</ID>
+    <ID>ThrowsCount:UriExtensions.kt$fun Uri.toWritePfd(context: Context): Result&lt;ParcelFileDescriptor&gt;</ID>
+    <ID>ThrowsCount:WebDav.kt$WebDav$@Throws(WebDavException::class) suspend fun upload( file: File, contentType: String = DEFAULT_CONTENT_TYPE, )</ID>
+    <ID>ThrowsCount:WebDav.kt$WebDav$private fun checkResult(response: Response)</ID>
+    <ID>TooGenericExceptionThrown:ExportBookService.kt$ExportBookService.CustomExporter$throw RuntimeException("书籍&lt;${book.name}&gt;(${epubBookIndex + 1})未找到章节信息")</ID>
+    <ID>TooGenericExceptionThrown:ParcelFileDescriptorChannel.kt$ParcelFileDescriptorChannel$throw RuntimeException(e)</ID>
+    <ID>TooGenericExceptionThrown:RuleAnalyzer.kt$RuleAnalyzer$throw Error( queue.substring(0, start) + "后未平衡", )</ID>
+    <ID>TooGenericExceptionThrown:SSLHelper.kt$SSLHelper$throw RuntimeException(e)</ID>
+    <ID>TooGenericExceptionThrown:WebViewModel.kt$WebViewModel$throw Throwable("NULL")</ID>
+    <ID>TooManyFunctions:ACache.kt$ACache</ID>
+    <ID>TooManyFunctions:AlertBuilder.kt$AlertBuilder&lt;out D : DialogInterface&gt;</ID>
+    <ID>TooManyFunctions:AnalyzeRule.kt$AnalyzeRule : JsExtensions</ID>
+    <ID>TooManyFunctions:AnalyzeUrl.kt$AnalyzeUrl : JsExtensions</ID>
+    <ID>TooManyFunctions:AnalyzeUrl.kt$AnalyzeUrl$UrlOption</ID>
+    <ID>TooManyFunctions:AndroidAlertBuilder.kt$AndroidAlertBuilder : AlertBuilder</ID>
+    <ID>TooManyFunctions:AndroidDialogs.kt$io.legado.app.lib.dialogs.AndroidDialogs.kt</ID>
+    <ID>TooManyFunctions:AudioPlay.kt$AudioPlay : CoroutineScope</ID>
+    <ID>TooManyFunctions:AudioPlayService.kt$AudioPlayService : BaseServiceOnAudioFocusChangeListenerListener</ID>
+    <ID>TooManyFunctions:BaseReadAloudService.kt$BaseReadAloudService : BaseServiceOnAudioFocusChangeListener</ID>
+    <ID>TooManyFunctions:BaseReadBookActivity.kt$BaseReadBookActivity : VMBaseActivity</ID>
+    <ID>TooManyFunctions:BaseSource.kt$BaseSource : JsExtensions</ID>
+    <ID>TooManyFunctions:BevelLabelView.kt$BevelLabelView : View</ID>
+    <ID>TooManyFunctions:Book.kt$Book : ParcelableBaseBook</ID>
+    <ID>TooManyFunctions:BookDao.kt$BookDao</ID>
+    <ID>TooManyFunctions:BookExtensions.kt$io.legado.app.help.book.BookExtensions.kt</ID>
+    <ID>TooManyFunctions:BookHelp.kt$BookHelp</ID>
+    <ID>TooManyFunctions:BookInfoActivity.kt$BookInfoActivity : VMBaseActivityCallBackCallBackCallBackCallback</ID>
+    <ID>TooManyFunctions:BookInfoViewModel.kt$BookInfoViewModel : BaseViewModel</ID>
+    <ID>TooManyFunctions:BookSource.kt$BookSource : ParcelableBaseSource</ID>
+    <ID>TooManyFunctions:BookSourceActivity.kt$BookSourceActivity : VMBaseActivityOnMenuItemClickListenerCallBackCallBackOnQueryTextListener</ID>
+    <ID>TooManyFunctions:BookSourceDao.kt$BookSourceDao</ID>
+    <ID>TooManyFunctions:BookshelfManageActivity.kt$BookshelfManageActivity : VMBaseActivityOnMenuItemClickListenerCallBackCallBackCallbackCallBack</ID>
+    <ID>TooManyFunctions:CacheActivity.kt$CacheActivity : VMBaseActivityOnMenuItemClickListenerCallBack</ID>
+    <ID>TooManyFunctions:ChangeBookSourceDialog.kt$ChangeBookSourceDialog : BaseDialogFragmentOnMenuItemClickListenerCallBack</ID>
+    <ID>TooManyFunctions:ChangeBookSourceViewModel.kt$ChangeBookSourceViewModel : BaseViewModel</ID>
+    <ID>TooManyFunctions:ChangeChapterSourceDialog.kt$ChangeChapterSourceDialog : BaseDialogFragmentOnMenuItemClickListenerCallBackCallback</ID>
+    <ID>TooManyFunctions:CircleImageView.kt$CircleImageView : AppCompatImageView</ID>
+    <ID>TooManyFunctions:CodeView.kt$CodeView : ScrollMultiAutoCompleteTextView</ID>
+    <ID>TooManyFunctions:ConstraintModify.kt$ConstraintModify$ConstraintBegin</ID>
+    <ID>TooManyFunctions:ContentTextView.kt$ContentTextView : View</ID>
+    <ID>TooManyFunctions:ContextExtensions.kt$io.legado.app.utils.ContextExtensions.kt</ID>
+    <ID>TooManyFunctions:DiffRecyclerAdapter.kt$DiffRecyclerAdapter&lt;ITEM, VB : ViewBinding&gt; : Adapter</ID>
+    <ID>TooManyFunctions:DragSelectTouchHelper.kt$DragSelectTouchHelper</ID>
+    <ID>TooManyFunctions:FastScroller.kt$FastScroller : LinearLayout</ID>
+    <ID>TooManyFunctions:FileDocExtensions.kt$io.legado.app.utils.FileDocExtensions.kt</ID>
+    <ID>TooManyFunctions:FileUtils.kt$FileUtils</ID>
+    <ID>TooManyFunctions:HttpReadAloudService.kt$HttpReadAloudService : BaseReadAloudServiceListener</ID>
+    <ID>TooManyFunctions:ImportBookActivity.kt$ImportBookActivity : BaseImportBookActivityOnMenuItemClickListenerCallBackCallBack</ID>
+    <ID>TooManyFunctions:JsEncodeUtils.kt$JsEncodeUtils</ID>
+    <ID>TooManyFunctions:JsExtensions.kt$JsExtensions : JsEncodeUtils</ID>
+    <ID>TooManyFunctions:MangaAdapter.kt$MangaAdapter : AdapterPreloadModelProvider</ID>
+    <ID>TooManyFunctions:ObsoleteUrlFactory.kt$ObsoleteUrlFactory$DelegatingHttpsURLConnection : HttpsURLConnection</ID>
+    <ID>TooManyFunctions:ObsoleteUrlFactory.kt$ObsoleteUrlFactory$OkHttpURLConnection : HttpURLConnectionCallback</ID>
+    <ID>TooManyFunctions:PageDelegate.kt$PageDelegate</ID>
+    <ID>TooManyFunctions:PageView.kt$PageView : FrameLayout</ID>
+    <ID>TooManyFunctions:PhotoView.kt$PhotoView : AppCompatImageView</ID>
+    <ID>TooManyFunctions:ReadBook.kt$ReadBook : CoroutineScope</ID>
+    <ID>TooManyFunctions:ReadBookActivity.kt$ReadBookActivity : BaseReadBookActivityOnTouchListenerCallBackCallBackCallBackOnMenuItemClickListenerCallBackCallBackCallBackCallBackCallBackCallBackCallBackCallBackColorPickerDialogListenerLayoutProgressListener</ID>
+    <ID>TooManyFunctions:ReadBookViewModel.kt$ReadBookViewModel : BaseViewModel</ID>
+    <ID>TooManyFunctions:ReadManga.kt$ReadManga : CoroutineScope</ID>
+    <ID>TooManyFunctions:ReadMangaActivity.kt$ReadMangaActivity : VMBaseActivityCallbackCallBackCallBackCallbackScrollCallbackCallback</ID>
+    <ID>TooManyFunctions:ReadView.kt$ReadView : FrameLayoutDataSourceLayoutProgressListener</ID>
+    <ID>TooManyFunctions:RecyclerAdapter.kt$RecyclerAdapter&lt;ITEM, VB : ViewBinding&gt; : Adapter</ID>
+    <ID>TooManyFunctions:RemoteBookActivity.kt$RemoteBookActivity : BaseImportBookActivityCallBackCallBackCallback</ID>
+    <ID>TooManyFunctions:ReplaceRuleActivity.kt$ReplaceRuleActivity : VMBaseActivityOnQueryTextListenerOnMenuItemClickListenerCallBackCallBack</ID>
+    <ID>TooManyFunctions:SearchActivity.kt$SearchActivity : VMBaseActivityCallBackCallBackCallbackCallBack</ID>
+    <ID>TooManyFunctions:StringExtensions.kt$io.legado.app.utils.StringExtensions.kt</ID>
+    <ID>TooManyFunctions:TTSReadAloudService.kt$TTSReadAloudService : BaseReadAloudServiceOnInitListenerListener</ID>
+    <ID>TooManyFunctions:TextChapter.kt$TextChapter : LayoutProgressListener</ID>
+    <ID>TooManyFunctions:ThemeStore.kt$ThemeStore : ThemeStoreInterface</ID>
+    <ID>TooManyFunctions:ThemeStoreInterface.kt$ThemeStoreInterface</ID>
+    <ID>TooManyFunctions:TxtTocRuleActivity.kt$TxtTocRuleActivity : VMBaseActivityCallBackCallBackCallbackOnMenuItemClickListener</ID>
+    <ID>TooManyFunctions:ViewExtensions.kt$io.legado.app.utils.ViewExtensions.kt</ID>
+    <ID>TooManyFunctions:ZipUtils.kt$ZipUtils</ID>
+    <ID>UnusedParameter:TextChapterLayout.kt$TextChapterLayout$isLineEnd: Boolean</ID>
+    <ID>UnusedPrivateMember:AboutFragment.kt$AboutFragment$private fun joinQQGroup(key: String): Boolean</ID>
+    <ID>UnusedPrivateMember:BaseReadAloudService.kt$BaseReadAloudService$private fun basePaceMsPerChar(): Float</ID>
+    <ID>UnusedPrivateProperty:BaseActivity.kt$BaseActivity$private val transparent: Boolean = false</ID>
+    <ID>UnusedPrivateProperty:MobiReader.kt$MobiReader$i</ID>
+    <ID>UnusedPrivateProperty:OkHttpUtils.kt$i</ID>
+    <ID>UnusedPrivateProperty:PageDelegate.kt$PageDelegate$private var selectedOnDown = false</ID>
+    <ID>UseCheckOrError:ColorPreference.kt$ColorPreference$throw IllegalStateException("Error getting activity from context")</ID>
+    <ID>UseCheckOrError:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.OkHttpURLConnection$throw IllegalStateException( "Cannot access request header fields after connection is set", )</ID>
+    <ID>UseCheckOrError:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.OkHttpURLConnection$throw IllegalStateException("Already connected")</ID>
+    <ID>UseCheckOrError:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.OkHttpURLConnection$throw IllegalStateException("Already in chunked mode")</ID>
+    <ID>UseCheckOrError:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.OkHttpURLConnection$throw IllegalStateException("Cannot add request property after connection is made")</ID>
+    <ID>UseCheckOrError:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.OkHttpURLConnection$throw IllegalStateException("Cannot set request property after connection is made")</ID>
+    <ID>UseCheckOrError:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.OkHttpsURLConnection$throw IllegalStateException("Connection has not yet been established")</ID>
+    <ID>UseCheckOrError:TextChapter.kt$TextChapter$throw IllegalStateException("已经排版过了")</ID>
+    <ID>UseCheckOrError:ViewPager2Container.kt$ViewPager2Container$throw IllegalStateException("The root child of ViewPager2Container must contains a ViewPager2")</ID>
+    <ID>UseRequire:ArchiveUtils.kt$ArchiveUtils$throw IllegalArgumentException("Unexpected Folder input")</ID>
+    <ID>UseRequire:ArchiveUtils.kt$ArchiveUtils$throw IllegalArgumentException("Unexpected file suffix: Only 7z rar zip Accepted")</ID>
+    <ID>UseRequire:CircleImageView.kt$CircleImageView$throw IllegalArgumentException("adjustViewBounds not supported.")</ID>
+    <ID>UseRequire:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.OkHttpURLConnection$throw IllegalArgumentException("contentLength &lt; 0")</ID>
+    <ID>UseRequire:ObsoleteUrlFactory.kt$ObsoleteUrlFactory.OkHttpsURLConnection$throw IllegalArgumentException("sslSocketFactory == null")</ID>
+    <ID>VariableNaming:EpaperTransformation.kt$EpaperTransformation$private val ID = "io.legado.app.model.EpaperTransformation.$threshold"</ID>
+    <ID>VariableNaming:EpaperTransformation.kt$EpaperTransformation$private val ID_BYTES = ID.toByteArray(CHARSET)</ID>
+    <ID>VariableNaming:GrayscaleTransformation.kt$GrayscaleTransformation$private val ID = "io.legado.app.model.GrayscaleTransformation"</ID>
+    <ID>VariableNaming:GrayscaleTransformation.kt$GrayscaleTransformation$private val ID_BYTES = ID.toByteArray(StandardCharsets.UTF_8)</ID>
+    <ID>VariableNaming:PhotoView.kt$PhotoView$val ANIMA_DURING = 340</ID>
+    <ID>VariableNaming:PhotoView.kt$PhotoView$val MAX_SCALE = 2.5f</ID>
+    <ID>VariableNaming:PhotoView.kt$PhotoView$val MIN_ROTATE = 35</ID>
+    <ID>VariableNaming:PhotoView.kt$PhotoView$var MAX_ANIM_FROM_WAITE = 500</ID>
+    <ID>VariableNaming:PhotoView.kt$PhotoView$var MAX_FLING_OVER_SCROLL = 0</ID>
+    <ID>VariableNaming:PhotoView.kt$PhotoView$var MAX_OVER_RESISTANCE = 0</ID>
+    <ID>VariableNaming:PhotoView.kt$PhotoView$var MAX_OVER_SCROLL = 0</ID>
+    <ID>VariableNaming:RotateGestureDetector.kt$RotateGestureDetector$private val MAX_DEGREES_STEP = 120</ID>
+    <ID>VariableNaming:TTSReadAloudService.kt$TTSReadAloudService$private val TAG = "TTSReadAloudService"</ID>
+  </CurrentIssues>
+</SmellBaseline>

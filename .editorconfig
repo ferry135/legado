@@ -7,6 +7,8 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 
 [*.{kt,kts}]
+# detekt MaxLineLength 同样读此处
+max_line_length = 140
 # 行宽检查交给 detekt MaxLineLength(带 baseline),ktlint 不能自动折行,开着会让 spotlessCheck 永远红
 ktlint_standard_max-line-length = disabled
 # 通配符 import 是项目既有风格,该规则不可自动修复(需展开通配符),保持现状

@@ -13,8 +13,16 @@ plugins {
     alias libs.plugins.ksp
     alias libs.plugins.google.services
     alias libs.plugins.spotless
+    alias libs.plugins.detekt
 }
 apply from: 'download.gradle'
+
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom(rootProject.files('config/detekt/detekt.yml'))
+    baseline = file('detekt-baseline.xml')
+    parallel = true
+}
 
 spotless {
     kotlin {

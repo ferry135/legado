@@ -1,0 +1,42 @@
+# detekt 门禁配置:buildUponDefaultConfig=true 在默认规则集上叠加本文件
+# 原则与根 lint.xml 一致:真缺陷拦截(LongMethod/复杂度/异常处理等),存量全部进 baseline,
+# 系统性噪音在默认集上关停/调参(依据 2025-11 全量裸跑 2992 issues 的分布校准)
+build:
+  maxIssues: 0
+
+complexity:
+  TooManyFunctions:
+    # Android Activity/Adapter/ViewModel 天然函数多,默认 11 过苛
+    thresholdInFiles: 20
+    thresholdInClasses: 20
+    thresholdInInterfaces: 20
+    thresholdInObjects: 20
+    thresholdInEnums: 20
+  NestedBlockDepth:
+    threshold: 5
+
+empty-blocks:
+  EmptyFunctionBlock:
+    # override 空实现(onNothingSelected 等)惯用
+    active: false
+
+exceptions:
+  # 书源解析/IO 容错大量 catch(Exception),项目固有容错风格
+  TooGenericExceptionCaught:
+    active: false
+
+performance:
+  SpreadOperator:
+    active: false
+
+style:
+  # Android 代码特性:字面量遍布 UI/IO/排版逻辑,非风格问题
+  MagicNumber:
+    active: false
+  WildcardImport:
+    active: false
+  ReturnCount:
+    max: 5
+  # 行宽阈值读自 .editorconfig 的 max_line_length(=140),此处不设属性
+  MaxLineLength:
+    active: true

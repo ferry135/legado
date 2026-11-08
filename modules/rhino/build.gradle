@@ -4,6 +4,14 @@ plugins {
     alias libs.plugins.android.library
     alias libs.plugins.kotlin.android
     alias libs.plugins.spotless
+    alias libs.plugins.detekt
+}
+
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom(rootProject.files('config/detekt/detekt.yml'))
+    baseline = file('detekt-baseline.xml')
+    parallel = true
 }
 
 spotless {
