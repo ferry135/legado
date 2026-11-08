@@ -526,7 +526,9 @@ class ACache private constructor(cacheDir: File, max_size: Long, max_count: Int)
         }
 
         fun hasDateInfo(data: ByteArray?): Boolean = (
-            data != null && data.size > 15 && data[13] == '-'.code.toByte() &&
+            data != null &&
+                data.size > 15 &&
+                data[13] == '-'.code.toByte() &&
                 indexOf(data, mSeparator) > 14
             )
 

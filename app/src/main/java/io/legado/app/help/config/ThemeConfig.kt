@@ -255,7 +255,8 @@ object ThemeConfig {
                 val unset = Int.MIN_VALUE
                 val primary = getPrefInt(PreferKey.cNPrimary, unset)
                     .takeIf {
-                        it != unset && it != getCompatColor(R.color.md_blue_grey_600) &&
+                        it != unset &&
+                            it != getCompatColor(R.color.md_blue_grey_600) &&
                             it != getCompatColor(R.color.md_red_600)
                     }
                     ?: getCompatColor(R.color.design_orange).also {
@@ -263,7 +264,8 @@ object ThemeConfig {
                     }
                 val accent = getPrefInt(PreferKey.cNAccent, unset)
                     .takeIf {
-                        it != unset && it != getCompatColor(R.color.md_deep_orange_800) &&
+                        it != unset &&
+                            it != getCompatColor(R.color.md_deep_orange_800) &&
                             it != getCompatColor(R.color.md_red_600)
                     }
                     ?: getCompatColor(R.color.design_orange).also {
@@ -280,7 +282,8 @@ object ThemeConfig {
                 }
                 val bBackground = getPrefInt(PreferKey.cNBBackground, unset)
                     .takeIf {
-                        it != unset && it != getCompatColor(R.color.md_grey_850) &&
+                        it != unset &&
+                            it != getCompatColor(R.color.md_grey_850) &&
                             it != getCompatColor(R.color.legacy_bottom_night)
                     }
                     ?: getCompatColor(R.color.night_bottom_nav).also {
@@ -300,7 +303,8 @@ object ThemeConfig {
                 val unset = Int.MIN_VALUE
                 val primary = getPrefInt(PreferKey.cPrimary, unset)
                     .takeIf {
-                        it != unset && it != getCompatColor(R.color.md_brown_500) &&
+                        it != unset &&
+                            it != getCompatColor(R.color.md_brown_500) &&
                             it != getCompatColor(R.color.md_red_600)
                     }
                     ?: getCompatColor(R.color.design_orange).also {
@@ -322,7 +326,8 @@ object ThemeConfig {
                 }
                 val bBackground = getPrefInt(PreferKey.cBBackground, unset)
                     .takeIf {
-                        it != unset && it != getCompatColor(R.color.md_grey_200) &&
+                        it != unset &&
+                            it != getCompatColor(R.color.md_grey_200) &&
                             it != getCompatColor(R.color.legacy_bottom_day)
                     }
                     ?: getCompatColor(R.color.day_bottom_nav).also {
