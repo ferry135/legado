@@ -14,7 +14,9 @@
 
     <!-- 主题/图标系统大量经 getIdentifier 按名动态取资源
          （ContextExtensions/ActivityExtensions/IconListPreference），静态引用分析
-         对本项目几乎全为误报（696 处） -->
+         对本项目几乎全为误报（696 处）。
+         注：2026-11 曾借清理窗口删掉 40 个零引用的 drawable/layout/color；
+         values 类（strings/colors/dimens/arrays/styles）动态取名风险高，永不按 lint 清单删 -->
     <issue id="UnusedResources" severity="ignore" />
 
     <!-- ktx 迁移属代码风格决策而非缺陷，存量 162 处淹没有效信号 -->
