@@ -15,7 +15,7 @@ import io.legado.app.help.config.AppConfig
 import io.legado.app.lib.theme.Selector
 import io.legado.app.lib.theme.ThemeStore
 import io.legado.app.lib.theme.bottomBackground
-import io.legado.app.lib.theme.getSecondaryTextColor
+import io.legado.app.lib.theme.getOnSurfaceVariant
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.widget.text.BadgeView
 import io.legado.app.utils.ColorUtils
@@ -42,7 +42,9 @@ class ThemeBottomNavigationVIew(context: Context, attrs: AttributeSet) :
         //与页面保持同层，无投影分层感
         elevation = 0f
         val textIsDark = ColorUtils.isColorLight(bgColor)
-        val textColor = context.getSecondaryTextColor(textIsDark)
+        //未选中态=次要字角色（on_surface_variant：亮 #60656D/暗 #B4B0AA），
+        //原 getSecondaryTextColor 夜间落 md_dark_primary_text 纯白，越过令牌
+        val textColor = context.getOnSurfaceVariant(textIsDark)
         // 选中态随主色调（M3 语义；上游原为强调色——M3 重构后主色调在全应用几乎无
         // 可见消费者，改主色无从体现）。主色与底栏明暗同侧时选中态会隐形（夜间
         // A屏黑：黑主色落黑底），回退强调色保底；墨水屏（白主色落白底）也由此

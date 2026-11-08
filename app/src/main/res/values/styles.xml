@@ -26,6 +26,11 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primaryDark</item>
         <item name="colorAccent">@color/accent</item>
+        <!-- 主题默认文字落令牌（MASTER §2 映射 primaryText→on_surface、secondaryText→on_surface_variant），
+             否则框架 DayNight 缺省在夜间给纯白 #FFFFFF、亮色给 87% 黑，越过 M3 令牌；
+             资源本身带 values/values-night 限定符，自动随深浅模式取 #20242B/#F3F0EB 与 #60656D/#B4B0AA -->
+        <item name="android:textColorPrimary">@color/on_surface</item>
+        <item name="android:textColorSecondary">@color/on_surface_variant</item>
         <item name="tabTextColor">@color/on_surface_variant</item>
         <item name="tabSelectedTextColor">@color/on_surface</item>
         <item name="tabIndicatorColor">@color/accent</item>

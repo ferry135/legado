@@ -12,8 +12,8 @@ import androidx.core.view.isVisible
 import androidx.preference.PreferenceViewHolder
 import io.legado.app.R
 import io.legado.app.lib.theme.bottomBackground
+import io.legado.app.lib.theme.getOnSurfaceVariant
 import io.legado.app.lib.theme.getPrimaryTextColor
-import io.legado.app.lib.theme.getSecondaryTextColor
 import io.legado.app.utils.ColorUtils
 import io.legado.app.utils.getCompatColor
 import splitties.views.onLongClick
@@ -80,7 +80,9 @@ fun <T : View> androidx.preference.Preference.bindView(
         val isLight = ColorUtils.isColorLight(context.bottomBackground)
         val pTextColor = context.getPrimaryTextColor(isLight)
         tvTitle?.setTextColor(pTextColor)
-        val sTextColor = context.getSecondaryTextColor(isLight)
+        //摘要=次要字角色（on_surface_variant），与下行图标着色同源；原
+        //getSecondaryTextColor 夜间落 md_dark_primary_text 纯白，越过令牌
+        val sTextColor = context.getOnSurfaceVariant(isLight)
         tvSummary?.setTextColor(sTextColor)
     }
     val iconView = viewHolder.findViewById(R.id.preference_icon)
