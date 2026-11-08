@@ -57,8 +57,12 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
     private var synthesizeJob: Coroutine<*>? = null
     private var playErrorNo = 0
     private var synthErrorNo = 0
+    private var synthRebuildCount = 0
     private val synthSeq = AtomicInteger()
     private val TAG = "TTSReadAloudService"
+
+    /** synthesizeToFile 等待结果：Ok=成功，Error=引擎报错/入队失败，Timeout=回调丢失超时 */
+    private enum class SynthResult { Ok, Error, Timeout }
 
     private val exoPlayer: ExoPlayer by lazy {
         ExoPlayer.Builder(this).build().apply {
@@ -132,8 +136,11 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
             textToSpeech?.let {
                 it.setOnUtteranceProgressListener(synthUtteranceListener)
                 ttsInitFinish = true
-                upSpeechRate()
-                play()
+                if (!AppConfig.ttsFlowSys) {
+                    it.setSpeechRate(speechRate)
+                }
+                // 重建引擎自愈可能发生在暂停中：暂停态只做标记，恢复时再续播
+                if (!pause) play() else pageChanged = true
             }
         } else {
             toastOnUi(R.string.tts_init_failed)
@@ -168,34 +175,64 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
                 }
                 val speakText = text.replace(AppPattern.notReadAloudRegex, "")
                 val fileName = md5SpeakFileName(text)
-                if (!hasSpeakFile(fileName)) {
-                    if (speakText.isEmpty()) {
-                        createSilentSound(fileName)
-                    } else {
-                        val ok = synthesizeAwait(tts, speakText, createSynthTempFile(fileName))
-                        if (!ok || !synthTempToTarget(fileName)) {
+                val file: File = when {
+                    // 过滤后无内容：本就该静音，结果确定，可按文本缓存
+                    speakText.isEmpty() -> {
+                        if (!hasSpeakFile(fileName)) createSilentSound(fileName)
+                        getSpeakFile(fileName)
+                    }
+
+                    hasSpeakFile(fileName) -> getSpeakFile(fileName)
+
+                    else -> {
+                        val result = synthesizeAwait(tts, speakText, createSynthTempFile(fileName))
+                        val target = getSpeakFile(fileName)
+                        val ok = result == SynthResult.Ok &&
+                                synthTempToTarget(fileName) &&
+                                normalizeWavLoudness(target).also { audible ->
+                                    if (!audible) target.delete()
+                                }
+                        if (ok) {
+                            synthErrorNo = 0
+                            synthRebuildCount = 0
+                            // 单段音频精确时长 → 基准节奏校准（首段即准，后续持续精化）
+                            onExactPaceSample(wavDurationMs(target), speakText.length)
+                            target
+                        } else {
                             synthErrorNo++
+                            if (result == SynthResult.Timeout) {
+                                AppLog.put("TTS合成超时，疑似引擎假死。\n朗读文本：$speakText")
+                            } else {
+                                AppLog.put("TTS合成出错，本段将静音跳过。\n朗读文本：$speakText")
+                                toastOnUi("TTS合成出错，本段将静音跳过")
+                            }
                             if (synthErrorNo >= 5) {
                                 AppLog.put("TTS合成连续5次错误，已暂停朗读")
                                 toastOnUi("TTS合成连续5次错误，已暂停朗读")
                                 pauseReadAloud()
                                 return@execute
-                            } else {
-                                AppLog.put("TTS合成出错，本段将静音跳过。\n朗读文本：$speakText")
-                                toastOnUi("TTS合成出错，本段将静音跳过")
-                                createSilentSound(fileName)
                             }
-                        } else {
-                            synthErrorNo = 0
-                            val file = getSpeakFile(fileName)
-                            // 响度归一化后再入缓存：拉齐段间响度并提升电平，低音量下不再忽大忽小
-                            normalizeWavLoudness(file)
-                            // 单段音频精确时长 → 基准节奏校准（首段即准，后续持续精化）
-                            onExactPaceSample(wavDurationMs(file), speakText.length)
+                            if (result == SynthResult.Timeout && synthRebuildCount < 2) {
+                                // 超时=引擎回调链路挂了（第三方引擎长会话后常见）：
+                                // 清队列重建引擎自愈，onInit 完成后自动从当前段续播
+                                synthRebuildCount++
+                                AppLog.put("重建TTS引擎自愈($synthRebuildCount/2)")
+                                toastOnUi("TTS合成超时，正在重建朗读引擎")
+                                kotlin.runCatching { tts.stop() }
+                                clearTTS()
+                                runCatching { initTts() }.onFailure {
+                                    AppLog.put("重建TTS引擎失败\n${it.localizedMessage}", it, true)
+                                    toastOnUi("重建TTS引擎失败，已停止朗读")
+                                    stopSelf()
+                                }
+                                return@execute
+                            }
+                            // 失败段复用共享静音占位，不写按文本命名的缓存，
+                            // 避免引擎恢复前整章命中静音缓存「假朗读」（进度走、没声音）
+                            ensureSilentFile()
                         }
                     }
                 }
-                val file = getSpeakFile(fileName)
                 launch(Main) {
                     exoPlayer.addMediaItem(MediaItem.fromUri(Uri.fromFile(file)))
                 }
@@ -212,13 +249,13 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
     }
 
     /**
-     * 合成一段文本到临时文件并等待完成；超时/出错返回 false
+     * 合成一段文本到临时文件并等待完成；返回三态结果（超时/出错供上层区分处理）
      */
     private suspend fun synthesizeAwait(
         tts: TextToSpeech,
         text: String,
         file: File
-    ): Boolean {
+    ): SynthResult {
         val ok = withTimeoutOrNull(60_000L) {
             suspendCancellableCoroutine { cont ->
                 val id = AppConst.APP_TAG + synthSeq.incrementAndGet()
@@ -238,13 +275,20 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
                 }
             }
         }
-        if (ok == null) {
-            // 超时：清理挂起状态，临时文件留给失败路径删除
-            synthPendingId = null
-            synthContinuation = null
-            file.delete()
+        return when {
+            ok == null -> {
+                // 超时：回调链路疑似挂死，清理挂起状态并冲掉引擎队列，
+                // 临时文件留给失败路径删除（不入缓存）
+                synthPendingId = null
+                synthContinuation = null
+                file.delete()
+                kotlin.runCatching { tts.stop() }
+                SynthResult.Timeout
+            }
+
+            ok -> SynthResult.Ok
+            else -> SynthResult.Error
         }
-        return ok ?: false
     }
 
     /**
@@ -374,9 +418,17 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
                 playErrorNo = 0
                 // 列表被合成速度拖干/自然结束：空档墙钟时间不得计入节奏采样
                 invalidatePaceAnchor()
-                updateNextPos()
-                exoPlayer.stop()
-                exoPlayer.clearMediaItems()
+                if (exoPlayer.currentMediaItemIndex < exoPlayer.mediaItemCount - 1) {
+                    // ENDED 与合成协程排入新段交错：ENDED 态不会自动续播，
+                    // 此时也不能 stop+clear（会把刚排入的新段静默清掉造成跳段）；
+                    // 段落计数交由 onMediaItemTransition 的 updateNextPos 处理
+                    exoPlayer.seekToNextMediaItem()
+                    exoPlayer.prepare()
+                } else {
+                    updateNextPos()
+                    exoPlayer.stop()
+                    exoPlayer.clearMediaItems()
+                }
             }
 
             else -> Unit
@@ -439,14 +491,16 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
      * - 活跃区 = |样本| ≥ 峰值/8（约-18dB 相对门限），排除首尾/段内停顿对 RMS 的稀释
      * - 增益 = 目标RMS / 活跃RMS，最多放大 12 倍、最多衰减 6dB，并受防削波上界
      *   （增益后峰值 ≤ ~0.92 满幅）约束，动态再大的段也不削波
-     * - 近静音（峰值过低/活跃样本过少/活跃RMS过低）原样保留，避免抬升底噪
+     * - 近静音（峰值过低/活跃样本过少/活跃RMS过低）返回 false：真实文本段的合成输出不应近静音，
+     *   多为引擎输出异常（空音频），上层视为合成失败，不写入缓存
+     * - 非 RIFF/非 16bit PCM 等无法解析的格式返回 true，原样交由播放器解码
      * - 对已归一文件幂等（增益≈1 直接跳过）
      */
-    private fun normalizeWavLoudness(file: File) {
+    private fun normalizeWavLoudness(file: File): Boolean {
         try {
             val bytes = file.readBytes()
-            if (bytes.size <= 44) return
-            if (!String(bytes, 0, 4, Charsets.US_ASCII).startsWith("RIFF")) return
+            if (bytes.size <= 44) return false // 小于有效wav头，不可能是有效音频
+            if (!String(bytes, 0, 4, Charsets.US_ASCII).startsWith("RIFF")) return true
             // 遍历 RIFF 块定位 data 块真实偏移（部分引擎在 fmt 后附加 LIST 等块）
             var pos = 12
             var dataStart = -1
@@ -464,12 +518,12 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
                 }
                 pos += 8 + size + (size and 1) // RIFF 块按字对齐
             }
-            if (dataStart <= 0) return
+            if (dataStart <= 0) return true
             if (dataStart + dataSize > bytes.size || dataSize <= 0) dataSize = bytes.size - dataStart
             // 仅处理 16bit PCM：22-23声道，34-35位深（fmt 块固定起始于 12+8）
             val channels = ((bytes[23].toInt() and 0xFF) shl 8) or (bytes[22].toInt() and 0xFF)
             val bits = ((bytes[35].toInt() and 0xFF) shl 8) or (bytes[34].toInt() and 0xFF)
-            if (bits != 16 || channels < 1) return
+            if (bits != 16 || channels < 1) return true
             val end = dataStart + dataSize
             // 第一遍：峰值（定活跃门限与防削波上界）
             var peak = 0
@@ -481,7 +535,7 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
                 if (a > peak) peak = a
                 i += 2
             }
-            if (peak < 200) return // 近静音（≈-44dBFS 以下），多为静音占位，原样保留
+            if (peak < 200) return false // 近静音（≈-44dBFS 以下）：真实文本段不该如此，判定合成无效
             // 第二遍：语音活跃区 RMS（排除停顿稀释，保证段间可比）
             val gate = peak / 8
             var sumSq = 0.0
@@ -497,14 +551,14 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
                 }
                 i += 2
             }
-            if (activeCount < 32) return // 活跃样本过少（近纯静音），不处理
+            if (activeCount < 32) return false // 活跃样本过少（近纯静音），判定合成无效
             val activeRms = sqrt(sumSq / activeCount)
-            if (activeRms < 80) return // 活跃区也接近静音（≈-52dBFS），避免抬噪
+            if (activeRms < 80) return false // 活跃区也接近静音（≈-52dBFS），判定合成无效
             val targetRms = 6000.0 // ≈-14.8dBFS：对齐上次峰值归一的实际响度（音乐App级听感），段间拉齐的目标
             var gain = targetRms / activeRms
             gain = gain.coerceAtMost(30100.0 / peak) // 防削波：增益后峰值 ≤ ~0.92 满幅
             gain = gain.coerceIn(0.5, 12.0)          // 最多衰减 6dB / 最多放大 12 倍
-            if (gain in 0.97..1.03) return           // 已在目标响度（含幂等二次处理）
+            if (gain in 0.97..1.03) return true // 已在目标响度（含幂等二次处理）
             i = dataStart
             while (i + 1 < end) {
                 val raw = (bytes[i].toInt() and 0xFF) or ((bytes[i + 1].toInt() and 0xFF) shl 8)
@@ -516,8 +570,10 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
             }
             file.writeBytes(bytes)
             LogUtils.d(TAG, "响度归一化: peak=$peak activeRms=${activeRms.toInt()} gain=%.2fx %s".format(gain, file.name))
+            return true
         } catch (e: Exception) {
             AppLog.put("朗读音频响度归一化失败", e)
+            return true // 处理异常不动文件，按可用音频对待，交由播放器验证
         }
     }
 
@@ -587,6 +643,18 @@ class TTSReadAloudService : BaseReadAloudService(), TextToSpeech.OnInitListener,
 
     private fun createSilentSound(name: String) {
         getSpeakFile(name).writeBytes(resources.openRawResource(R.raw.silent_sound).readBytes())
+    }
+
+    /**
+     * 失败段共享的静音占位文件：不按文本缓存（断掉「静音毒缓存」），
+     * 引擎恢复后重读该段即正常合成
+     */
+    private fun ensureSilentFile(): File {
+        val file = File(ttsFolderPath, "silent_skip.mp3")
+        if (!file.exists()) {
+            file.writeBytes(resources.openRawResource(R.raw.silent_sound).readBytes())
+        }
+        return file
     }
 
     /**

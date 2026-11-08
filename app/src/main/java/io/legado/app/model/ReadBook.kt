@@ -736,6 +736,11 @@ object ReadBook : CoroutineScope by MainScope() {
                 prevTextChapter = textChapter
                 textChapter.layoutChannel.receiveAsFlow().collect()
                 if (upContent) callBack?.upContent(offset, resetPageOffset)
+                // 预载章排版完成时若已被切为当前章（快速连读/切章），补触发朗读，
+                // 否则 curPageChanged 在 isCompleted=false 时跳过后无人再触发，停在无声状态
+                if (chapter.index == durChapterIndex && BaseReadAloudService.isRun) {
+                    curPageChanged()
+                }
             }
 
             1 -> {
@@ -746,6 +751,10 @@ object ReadBook : CoroutineScope by MainScope() {
                         continue
                     }
                     if (upContent) callBack?.upContent(offset, resetPageOffset)
+                }
+                // 同上：预载章排版完成时已被切为当前章，补触发朗读
+                if (chapter.index == durChapterIndex && BaseReadAloudService.isRun) {
+                    curPageChanged()
                 }
             }
         }

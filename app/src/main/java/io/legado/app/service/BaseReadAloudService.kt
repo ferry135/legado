@@ -930,14 +930,19 @@ abstract class BaseReadAloudService : BaseService(),
 
     open fun prevChapter() {
         toLast = false
-        ReadBook.moveToPrevChapter(true, toLast = false)
-        play()
+        // 只清残留播放/合成，不重播本章当前段（切章后由新章就绪的 readAloud 续播）
+        playStop()
+        if (!ReadBook.moveToPrevChapter(true, toLast = false)) {
+            play() // 已在第一章：原地重播
+        }
     }
 
     open fun nextChapter() {
         ReadBook.upReadTime()
         AppLog.putDebug("${ReadBook.curTextChapter?.chapter?.title} 朗读结束跳转下一章并朗读")
-        play()
+        // 只清残留播放/合成，不重播本章末段（旧实现用旧 contentList 调 play()，
+        // 会把末段重复朗读一遍填充换章间隙）；新章就绪后 curPageChanged→readAloud 续播
+        playStop()
         if (!ReadBook.moveToNextChapter(true)) {
             stopSelf()
         }

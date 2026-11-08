@@ -56,6 +56,7 @@ import okhttp3.Response
 import org.mozilla.javascript.WrappedException
 import splitties.init.appCtx
 import java.io.File
+import java.io.IOException
 import java.io.InputStream
 import java.net.ConnectException
 import java.net.SocketTimeoutException
@@ -136,8 +137,11 @@ class HttpReadAloudService : BaseReadAloudService(),
     }
 
     override fun playStop() {
-        exoPlayer.stop()
+        // 连下载任务一起取消：nextChapter 靠它清场，残留任务会把旧章段
+        // 继续排入空列表并触发 prepare 重播
+        downloadTask?.cancel()
         playIndexJob?.cancel()
+        exoPlayer.stop()
     }
 
     private fun updateNextPos() {
@@ -166,26 +170,33 @@ class HttpReadAloudService : BaseReadAloudService(),
                     }
                     val fileName = md5SpeakFileName(text)
                     val speakText = text.replace(AppPattern.notReadAloudRegex, "")
-                    if (speakText.isEmpty()) {
-                        AppLog.put("阅读段落内容为空，使用无声音频代替。\n朗读文本：$text")
-                        createSilentSound(fileName)
-                    } else if (!hasSpeakFile(fileName)) {
-                        runCatching {
+                    val file: File = when {
+                        // 过滤后无内容：本就该静音，结果确定，可按文本缓存
+                        speakText.isEmpty() -> {
+                            AppLog.put("阅读段落内容为空，使用无声音频代替。\n朗读文本：$text")
+                            if (!hasSpeakFile(fileName)) createSilentSound(fileName)
+                            getSpeakFileAsMd5(fileName)
+                        }
+
+                        hasSpeakFile(fileName) -> getSpeakFileAsMd5(fileName)
+
+                        else -> try {
                             val inputStream = getSpeakStream(httpTts, speakText)
                             if (inputStream != null) {
                                 createSpeakFile(fileName, inputStream)
+                                getSpeakFileAsMd5(fileName)
                             } else {
-                                createSilentSound(fileName)
+                                // 下载小错误（getSpeakStream 内已提示）：静音跳过但不写
+                                // 按文本命名的缓存，避免源站恢复前整章命中静音缓存「假朗读」
+                                ensureSilentFile()
                             }
-                        }.onFailure {
-                            when (it) {
-                                is CancellationException -> Unit
-                                else -> pauseReadAloud()
+                        } catch (e: Exception) {
+                            if (e !is CancellationException) {
+                                pauseReadAloud()
                             }
                             return@execute
                         }
                     }
-                    val file = getSpeakFileAsMd5(fileName)
                     val mediaItem = MediaItem.fromUri(Uri.fromFile(file))
                     launch(Main) {
                         exoPlayer.addMediaItem(mediaItem)
@@ -213,11 +224,9 @@ class HttpReadAloudService : BaseReadAloudService(),
                 createSilentSound(fileName)
             } else if (!hasSpeakFile(fileName)) {
                 runCatching {
-                    val inputStream = getSpeakStream(httpTts, speakText)
-                    if (inputStream != null) {
-                        createSpeakFile(fileName, inputStream)
-                    } else {
-                        createSilentSound(fileName)
+                    // 预下载失败不写静音缓存：等本章朗读到该段时再重试
+                    getSpeakStream(httpTts, speakText)?.let {
+                        createSpeakFile(fileName, it)
                     }
                 }
             }
@@ -291,21 +300,26 @@ class HttpReadAloudService : BaseReadAloudService(),
         val upstreamFactory = DataSource.Factory {
             InputStreamDataSource {
                 if (speakText.isEmpty()) {
-                    null
+                    // 过滤后无内容：本就该静音
+                    resources.openRawResource(R.raw.silent_sound)
                 } else {
                     kotlin.runCatching {
                         runBlocking(lifecycleScope.coroutineContext[Job]!!) {
+                            // 下载小错误返回 null：抛跳段标记走 onPlayerError 跳过本段，
+                            // 不把静音内容写进 SimpleCache（毒缓存跨会话存活，LRU 才淘汰）
                             getSpeakStream(httpTts, speakText)
+                                ?: throw SpeakSkipException("TTS下载音频出错，本段跳过")
                         }
                     }.onFailure {
                         when (it) {
                             is InterruptedException,
-                            is CancellationException -> Unit
+                            is CancellationException,
+                            is SpeakSkipException -> Unit
 
                             else -> pauseReadAloud()
                         }
                     }.getOrThrow()
-                } ?: resources.openRawResource(R.raw.silent_sound)
+                }
             }
         }
         val factory = CacheDataSource.Factory()
@@ -416,6 +430,25 @@ class HttpReadAloudService : BaseReadAloudService(),
         val file = createSpeakFile(fileName)
         file.writeBytes(resources.openRawResource(R.raw.silent_sound).readBytes())
     }
+
+    /**
+     * 失败段共享的静音占位文件：不按文本缓存（断掉「静音毒缓存」），
+     * 源站恢复后重读该段即正常下载
+     */
+    private fun ensureSilentFile(): File {
+        val file = File(ttsFolderPath, "silent_skip.mp3")
+        if (!file.exists()) {
+            file.writeBytes(resources.openRawResource(R.raw.silent_sound).readBytes())
+        }
+        return file
+    }
+
+    /**
+     * TTS下载小错误（已重试≤5次）的跳段标记：
+     * 流式模式抛出走 onPlayerError 跳过本段——静音内容一旦写入 SimpleCache，
+     * 同文本段落在 LRU 淘汰前跨会话都无声
+     */
+    private class SpeakSkipException(message: String) : IOException(message)
 
     private fun hasSpeakFile(name: String): Boolean {
         return FileUtils.exist("${ttsFolderPath}$name.mp3")
@@ -538,9 +571,17 @@ class HttpReadAloudService : BaseReadAloudService(),
                 // 结束
                 playErrorNo = 0
                 invalidatePaceAnchor()
-                updateNextPos()
-                exoPlayer.stop()
-                exoPlayer.clearMediaItems()
+                if (exoPlayer.currentMediaItemIndex < exoPlayer.mediaItemCount - 1) {
+                    // ENDED 与下载协程排入新段交错：ENDED 态不会自动续播，
+                    // 此时也不能 stop+clear（会把刚排入的新段静默清掉造成跳段）；
+                    // 段落计数交由 onMediaItemTransition 的 updateNextPos 处理
+                    exoPlayer.seekToNextMediaItem()
+                    exoPlayer.prepare()
+                } else {
+                    updateNextPos()
+                    exoPlayer.stop()
+                    exoPlayer.clearMediaItems()
+                }
             }
         }
     }
