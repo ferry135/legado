@@ -21,3 +21,6 @@ package-lock.json
 # 模拟器验收工作产物
 .acceptance-fixtures/
 .acceptance-shots/
+
+# 本地验收截图(实际目录名为 shots/)
+/shots/
