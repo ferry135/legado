@@ -1,0 +1,4 @@
+# 全量格式化提交:spotless+ktlint 重排 752 个 Kotlin 文件(±4.7 万行),纯格式无语义变更
+# git blame 时忽略此提交;GitHub 网页 blame 自动生效,本地需:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+703597178d4ec297aaf22796471611b5b20e6d38
