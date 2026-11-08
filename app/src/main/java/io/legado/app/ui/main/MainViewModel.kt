@@ -1,5 +1,6 @@
 package io.legado.app.ui.main
 
+import android.annotation.SuppressLint
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -184,6 +185,8 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    // KeySetView 需 API 24，minSdk 21 会崩：存量已知问题，并发容器统一替换后移除
+    @SuppressLint("NewApi")
     fun postUpBooksLiveData(reset: Boolean = false) {
         if (AppConfig.showWaitUpCount) {
             onUpBooksLiveData.postValue(waitUpTocBooks.size + onUpTocBooks.size)
@@ -206,6 +209,8 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     /**
      * 缓存书籍
      */
+    // KeySetView 需 API 24，minSdk 21 会崩：存量已知问题，并发容器统一替换后移除
+    @SuppressLint("NewApi")
     private fun cacheBook() {
         if (AppConfig.preDownloadNum == 0) return
         cacheBookJob?.cancel()

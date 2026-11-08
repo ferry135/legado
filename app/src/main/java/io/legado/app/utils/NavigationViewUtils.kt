@@ -2,6 +2,7 @@
 
 package io.legado.app.utils
 
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import androidx.annotation.ColorInt
 import com.google.android.material.internal.NavigationMenuView
@@ -35,6 +36,8 @@ fun NavigationView.setItemTextColors(
     itemTextColor = textSl
 }
 
+// 刻意使用 Material 内部类 NavigationMenuView 关闭滚动条，属预期 hack
+@SuppressLint("RestrictedApi")
 fun NavigationView.disableScrollbar() {
     val navigationMenuView = getChildAt(0) as? NavigationMenuView
     navigationMenuView?.isVerticalScrollBarEnabled = false

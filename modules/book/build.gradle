@@ -25,6 +25,7 @@ android {
     }
     lint {
         checkDependencies true
+        lintConfig rootProject.file('lint.xml')
     }
 }
 

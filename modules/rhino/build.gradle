@@ -26,6 +26,7 @@ android {
     }
     lint {
         checkDependencies true
+        lintConfig rootProject.file('lint.xml')
     }
     tasks.withType(JavaCompile).tap {
         configureEach {

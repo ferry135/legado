@@ -18,8 +18,8 @@
         android:theme="@style/ThemeOverlay.AppCompat.DayNight"
         app:title="code edit"
         app:popupTheme="@style/AppTheme.PopupOverlay"
-        app:titleTextAppearance="@style/ToolbarTitle">
-        app:titleTextColor="@color/on_surface"
+        app:titleTextAppearance="@style/ToolbarTitle"
+        app:titleTextColor="@color/on_surface">
 
         <!-- 「只读」徽标（§05⑧·新增可移除）：pill_field 半透明底 + on_surface_variant 11sp，
              仅 disableEdit=true 时 visible（CodeDialog），删去即回「仅标题」现状 -->

@@ -1,5 +1,6 @@
 package io.legado.app.model
 
+import android.annotation.SuppressLint
 import io.legado.app.constant.AppLog
 import io.legado.app.data.appDb
 import io.legado.app.data.entities.Book
@@ -70,6 +71,8 @@ object ReadManga : CoroutineScope by MainScope() {
     val mangaContents get() = buildMangaContent()
     val hasNextChapter get() = durChapterIndex < simulatedChapterSize - 1
 
+    // KeySetView 需 API 24，minSdk 21 会崩：存量已知问题，并发容器统一替换后移除
+    @SuppressLint("NewApi")
     fun resetData(book: Book) {
         ReadManga.book = book
         readRecord.bookName = book.name
@@ -93,6 +96,8 @@ object ReadManga : CoroutineScope by MainScope() {
         downloadFailChapters.clear()
     }
 
+    // KeySetView 需 API 24，minSdk 21 会崩：存量已知问题，并发容器统一替换后移除
+    @SuppressLint("NewApi")
     fun upData(book: Book) {
         ReadManga.book = book
         chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)

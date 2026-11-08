@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Android Lint 门禁配置（经 2025-11 基线扫描校准：90 errors / 1057 warnings）。
+  原则：真缺陷保持 error（阻断），系统性误报或刻意取舍关闭/降级，
+  未列出的规则维持默认级别。三个模块通过 lint{ lintConfig } 共用本文件。
+-->
+<lint>
+
+    <!-- ============ 系统性误报：关闭 ============ -->
+
+    <!-- 中文优先应用：values/ 是英文基准，其余语言为社区渐进翻译（各仅 1~2 个文件），
+         翻译缺失是常态而非缺陷；且该规则为 fatal，曾靠 CI continue-on-error 掩盖（64 处） -->
+    <issue id="MissingTranslation" severity="ignore" />
+
+    <!-- 主题/图标系统大量经 getIdentifier 按名动态取资源
+         （ContextExtensions/ActivityExtensions/IconListPreference），静态引用分析
+         对本项目几乎全为误报（696 处） -->
+    <issue id="UnusedResources" severity="ignore" />
+
+    <!-- ktx 迁移属代码风格决策而非缺陷，存量 162 处淹没有效信号 -->
+    <issue id="UseKtx" severity="ignore" />
+
+    <!-- 阅读器面向 CJK 场景，未计划支持 RTL，39 处均为方向性提示 -->
+    <issue id="RtlHardcoded" severity="ignore" />
+    <issue id="RtlSymmetry" severity="ignore" />
+
+    <!-- 主题系统运行时动态染色背景，静态 overdraw 推断在动态场景误导（36 处） -->
+    <issue id="Overdraw" severity="ignore" />
+
+    <!-- 版本锁定是刻意的（升级点由 //noinspection GradleDependency 人工标注） -->
+    <issue id="GradleDependency" severity="ignore" />
+
+    <!-- ============ 降噪：error → warning（可见但不阻断） ============ -->
+
+    <!-- 翻译文件间结构不一致（数组条目数不匹配等），值得修但不阻断（10 处） -->
+    <issue id="ExtraTranslation" severity="warning" />
+
+    <!-- IntDef 位运算组合/透传的注解摩擦（BookType or 组合、LayoutManager 透传等 4 处） -->
+    <issue id="WrongConstant" severity="warning" />
+
+    <!-- local.properties 为本机文件，Gradle 可容忍反斜杠盘符路径 -->
+    <issue id="PropertyEscape" severity="warning" />
+
+</lint>

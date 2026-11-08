@@ -1,5 +1,6 @@
 package io.legado.app.model
 
+import android.annotation.SuppressLint
 import io.legado.app.constant.AppLog
 import io.legado.app.constant.EventBus
 import io.legado.app.constant.PageAnim.scrollPageAnim
@@ -87,6 +88,8 @@ object ReadBook : CoroutineScope by MainScope() {
     val preDownloadSemaphore = Semaphore(2)
     val executor = globalExecutor
 
+    // KeySetView 需 API 24，minSdk 21 会崩：存量已知问题，并发容器统一替换后移除
+    @SuppressLint("NewApi")
     fun resetData(book: Book) {
         ReadBook.book = book
         readRecord.bookName = book.name
@@ -118,6 +121,8 @@ object ReadBook : CoroutineScope by MainScope() {
         downloadFailChapters.clear()
     }
 
+    // KeySetView 需 API 24，minSdk 21 会崩：存量已知问题，并发容器统一替换后移除
+    @SuppressLint("NewApi")
     fun upData(book: Book) {
         ReadBook.book = book
         chapterSize = appDb.bookChapterDao.getChapterCount(book.bookUrl)
