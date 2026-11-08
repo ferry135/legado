@@ -262,6 +262,9 @@ dependencies {
     //网络
     implementation(libs.okhttp)
     implementation(fileTree(dir: 'cronetlib', include: ['*.jar', '*.aar']))
+    // cronet jar 的隐式运行时依赖:org.chromium.net.httpflags.* 引用 protobuf
+    // (fileTree 无 pom,依赖树看不到,曾误删导致 R8 Missing class,勿动)
+    implementation(libs.protobuf.javalite)
 
     //Glide
     implementation(libs.glide.glide)
